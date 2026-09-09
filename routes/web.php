@@ -23,6 +23,7 @@ use App\Http\Controllers\PosController;
 use App\Http\Controllers\PrincipioActivoController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProductoLoteController;
+use App\Http\Controllers\ProductoPresentacionController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\ResolucionFacturacionController;
@@ -223,6 +224,9 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('principios-activos', PrincipioActivoController::class);
         Route::resource('lotes', ProductoLoteController::class)->only(['index', 'create', 'store', 'destroy']);
     });
+
+    // Fase 24: Ferreterías y Conversión de Unidades / Presentaciones
+    Route::resource('productos.presentaciones', ProductoPresentacionController::class)->only(['index', 'store', 'destroy']);
 });
 
 

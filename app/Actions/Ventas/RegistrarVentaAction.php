@@ -131,9 +131,32 @@ class RegistrarVentaAction
                 $descuentoVenta += $descuentoItem;
                 $impuestoVenta += $impuestoLinea;
 
+                $presentacionId = $item['presentacion_id'] ?? null;
+                $factorConversion = 1.0;
+                if ($presentacionId) {
+                    $presentacion = \App\Models\ProductoPresentacion::where('empresa_id', $empresaId)
+                        ->where('producto_id', $producto->id)
+                        ->findOrFail($presentacionId);
+                    $factorConversion = (float) $presentacion->factor_conversion;
+                }
+
+                $loteId = $item['lote_id'] ?? null;
+                $lote = null;
+                if ($loteId) {
+                    $lote = \App\Models\ProductoLote::where('empresa_id', $empresaId)
+                        ->where('sucursal_id', $sucursalId)
+                        ->where('producto_id', $producto->id)
+                        ->findOrFail($loteId);
+                }
+
                 $detallesParaInsertar[] = [
                     'producto' => $producto,
                     'cantidad' => $cantidad,
+                    'factor_conversion' => $factorConversion,
+                    'cantidad_base' => $cantidad * $factorConversion,
+                    'presentacion_id' => $presentacionId,
+                    'lote_id' => $loteId,
+                    'lote' => $lote,
                     'precio_unitario' => $precioUnitario,
                     'costo_unitario' => (float) ($producto->precio_costo ?? 0),
                     'descuento' => $descuentoItem,
@@ -198,6 +221,9 @@ class RegistrarVentaAction
                     'venta_id' => $venta->id,
                     'producto_id' => $det['producto']->id,
                     'cantidad' => $det['cantidad'],
+                    'factor_conversion' => $det['factor_conversion'],
+                    'presentacion_id' => $det['presentacion_id'],
+                    'lote_id' => $det['lote_id'],
                     'precio_unitario' => $det['precio_unitario'],
                     'costo_unitario' => $det['costo_unitario'],
                     'descuento' => $det['descuento'],
@@ -207,12 +233,17 @@ class RegistrarVentaAction
                     'total' => $det['total'],
                 ]);
 
-                // Disminuir existencias físicas en la sucursal
+                // Descontar del lote si aplica
+                if ($det['lote']) {
+                    $det['lote']->descontarStock($det['cantidad_base']);
+                }
+
+                // Disminuir existencias físicas en la sucursal (en unidad base)
                 $this->inventarioAction->execute(new MovimientoInventarioDTO(
                     productoId: $det['producto']->id,
                     sucursalId: $sucursalId,
                     tipo: TipoMovimientoInventario::SALIDA_VENTA,
-                    cantidad: $det['cantidad'],
+                    cantidad: $det['cantidad_base'],
                     referencia: $numeroVenta,
                     costoUnitario: $det['costo_unitario'],
                     userId: $userId,

@@ -134,6 +134,14 @@ class Producto extends Model
     }
 
     /**
+     * Presentaciones comerciales y factores de conversión (cajas, metros, rollos, bultos).
+     */
+    public function presentaciones(): HasMany
+    {
+        return $this->hasMany(ProductoPresentacion::class, 'producto_id');
+    }
+
+    /**
      * Registros de existencias por sucursal.
      */
     public function inventarios(): HasMany

@@ -26,11 +26,15 @@ class VentaDetalle extends Model
         'impuesto_monto',
         'subtotal',
         'total',
+        'lote_id',
+        'presentacion_id',
+        'factor_conversion',
     ];
 
     protected $casts = [
         'cantidad' => 'decimal:4',
         'cantidad_devuelta' => 'decimal:4',
+        'factor_conversion' => 'decimal:4',
         'precio_unitario' => 'decimal:2',
         'costo_unitario' => 'decimal:2',
         'descuento' => 'decimal:2',
@@ -39,6 +43,16 @@ class VentaDetalle extends Model
         'subtotal' => 'decimal:2',
         'total' => 'decimal:2',
     ];
+
+    public function presentacion(): BelongsTo
+    {
+        return $this->belongsTo(ProductoPresentacion::class, 'presentacion_id');
+    }
+
+    public function lote(): BelongsTo
+    {
+        return $this->belongsTo(ProductoLote::class, 'lote_id');
+    }
 
     public function cantidadPendienteDevolucion(): float
     {
