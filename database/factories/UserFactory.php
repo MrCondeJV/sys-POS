@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\EstadoGeneral;
+use App\Models\Empresa;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -12,6 +14,8 @@ use Illuminate\Support\Str;
  */
 class UserFactory extends Factory
 {
+    protected $model = User::class;
+
     /**
      * The current password being used by the factory.
      */
@@ -25,10 +29,15 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
+            'empresa_id' => Empresa::factory(),
+            'sucursal_id' => null,
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+            'telefono' => fake()->phoneNumber(),
+            'cargo' => 'Operador',
+            'estado' => EstadoGeneral::ACTIVO,
             'remember_token' => Str::random(10),
         ];
     }
@@ -40,6 +49,21 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    public function inactivo(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'estado' => EstadoGeneral::INACTIVO,
+        ]);
+    }
+
+    public function superAdmin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'empresa_id' => null,
+            'cargo' => 'Super Admin',
         ]);
     }
 }

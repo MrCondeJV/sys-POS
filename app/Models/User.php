@@ -2,16 +2,22 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\EstadoGeneral;
+use App\Enums\RolSistema;
+use App\Support\Tenancy\BelongsToCompany;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use BelongsToCompany, HasFactory, HasRoles, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -22,6 +28,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'empresa_id',
+        'sucursal_id',
+        'telefono',
+        'cargo',
+        'estado',
     ];
 
     /**
@@ -44,6 +55,47 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'estado' => EstadoGeneral::class,
         ];
+    }
+
+    /**
+     * Sucursal a la cual está asignado el usuario.
+     */
+    public function sucursal(): BelongsTo
+    {
+        return $this->belongsTo(Sucursal::class, 'sucursal_id');
+    }
+
+    /**
+     * Scope para filtrar usuarios activos.
+     */
+    public function scopeActivo(Builder $query): Builder
+    {
+        return $query->where('estado', EstadoGeneral::ACTIVO->value);
+    }
+
+    /**
+     * Verifica si el usuario tiene el rol de Super Administrador.
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->hasRole(RolSistema::SUPER_ADMIN->value);
+    }
+
+    /**
+     * Verifica si el usuario es administrador de su empresa.
+     */
+    public function isAdminEmpresa(): bool
+    {
+        return $this->hasRole(RolSistema::ADMIN_EMPRESA->value);
+    }
+
+    /**
+     * Verifica si el usuario se encuentra activo.
+     */
+    public function isActivo(): bool
+    {
+        return $this->estado === EstadoGeneral::ACTIVO;
     }
 }

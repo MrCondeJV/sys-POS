@@ -37,7 +37,21 @@ Este archivo registra el avance fase por fase según las normas estrictas del [R
 ---
 
 ## FASE 2 — Autenticación, Usuarios y Permisos
-- **Estado:** PENDIENTE
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle de tareas:**
+  - Instalación y configuración de `spatie/laravel-permission` con soporte multiempresa (`teams = true`, `team_foreign_key = empresa_id`): OK
+  - Instalación de Livewire 3: OK
+  - Migración para asociar `users` a `empresa_id`, `sucursal_id`, `estado` y soft deletes: OK
+  - Migración de tablas de permisos de Spatie con soporte para roles por empresa y globales: OK
+  - Enums creados: `RolSistema` (6 roles) y `PermisoSistema` (18 permisos base): OK
+  - Modelo `User` actualizado con `HasRoles`, `BelongsToCompany`, relaciones y métodos de autorización (`isSuperAdmin`, `isAdminEmpresa`, `isActivo`): OK
+  - Middleware `SetCompanyContext` para sincronizar tenant y permisos de Spatie por petición: OK
+  - Políticas de seguridad `EmpresaPolicy` y `SucursalPolicy` registradas: OK
+  - Controlador `LoginController` con protección de rate limiting, logout y vistas Blade/Tailwind: OK
+  - Sembrador `RolesAndPermissionsSeeder` y `DatabaseSeeder` con usuarios demo: OK
+  - Pruebas automatizadas unitarias y de feature al 100% (25 tests, 66 assertions): OK
+  - Formateo de código con Laravel Pint: OK
 
 ---
 
