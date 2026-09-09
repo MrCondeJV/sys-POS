@@ -38,6 +38,7 @@
             }
         }
     </style>
+    @yield('styles')
     @livewireStyles
 </head>
 <body class="h-full font-sans antialiased text-slate-800 bg-slate-50 flex" x-data="{ mobileMenuOpen: false }">

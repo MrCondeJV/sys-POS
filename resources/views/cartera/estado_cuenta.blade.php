@@ -2,10 +2,122 @@
 
 @section('title', 'Estado de Cuenta: ' . $cliente->razon_social)
 
+@section('styles')
+<style>
+    @media print {
+        @page {
+            size: letter portrait;
+            margin: 10mm 12mm;
+        }
+
+        /* Show print-only header when printing */
+        .print-only-header {
+            display: block !important;
+        }
+
+        /* Make the content wrapper full-width and remove its max-width constraint */
+        .max-w-6xl {
+            max-width: 100% !important;
+            width: 100% !important;
+        }
+
+        /* Remove decorative styles that don't print well */
+        .rounded-3xl, .rounded-2xl, .rounded-xl, .rounded-full {
+            border-radius: 4px !important;
+        }
+
+        .shadow-sm, .shadow {
+            box-shadow: none !important;
+        }
+
+        /* Remove space-y gaps that cause blank pages */
+        .space-y-6 > * + * {
+            margin-top: 12px !important;
+        }
+
+        /* Allow tables to expand fully — no horizontal scroll */
+        .overflow-x-auto {
+            overflow: visible !important;
+        }
+
+        /* Fix progress bar for print */
+        .h-2\.5 {
+            height: 8px !important;
+            border-radius: 4px !important;
+        }
+
+        /* Make cards print-friendly */
+        .bg-white {
+            background-color: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+        }
+
+        .bg-slate-50\/80,
+        .bg-slate-50\/70,
+        .bg-amber-50\/70,
+        .bg-emerald-50\/70,
+        .bg-rose-50 {
+            background-color: #f8fafc !important;
+        }
+
+        /* Metric cards in grid */
+        .grid-cols-4, .lg\\:grid-cols-4 {
+            grid-template-columns: repeat(4, 1fr) !important;
+        }
+
+        /* Table rows clickable styles should be flat in print */
+        tr.hover\\:bg-slate-50\\/70:hover {
+            background-color: transparent !important;
+        }
+
+        /* Footer text on each page */
+        body::after {
+            content: "Estado de Cuenta generado por Sys-POS — " attr(data-empresa);
+            display: block;
+            text-align: center;
+            font-size: 8pt;
+            color: #94a3b8;
+            margin-top: 12px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 4px;
+        }
+    }
+</style>
+@endsection
+
 @section('content')
 <div class="max-w-6xl mx-auto space-y-6">
 
-    <!-- Encabezado & Acciones -->
+    {{-- Encabezado solo visible al imprimir --}}
+    <div class="print-only-header" style="display:none">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; border-bottom:2px solid #1e293b; padding-bottom:8px;">
+            <div>
+                <div style="font-size:18pt; font-weight:900; color:#1e293b;">ESTADO DE CUENTA</div>
+                <div style="font-size:10pt; color:#475569; margin-top:2px;">Crédito &amp; Cartera</div>
+            </div>
+            <div style="text-align:right; font-size:8pt; color:#64748b;">
+                <div>Fecha de emisión: {{ now()->format('d/m/Y H:i') }}</div>
+                <div>Generado por: {{ auth()->user()->name }}</div>
+            </div>
+        </div>
+        <div style="display:flex; gap:24px; margin-bottom:12px; font-size:9pt; color:#334155;">
+            <div>
+                <span style="font-weight:700;">Cliente:</span>
+                {{ $cliente->razon_social }}
+                @if($deudaVencida > 0)
+                    <span style="color:#be123c; font-weight:700; margin-left:6px;">⚠ EN MORA</span>
+                @else
+                    <span style="color:#047857; font-weight:700; margin-left:6px;">✓ AL DÍA</span>
+                @endif
+            </div>
+            <div>
+                <span style="font-weight:700;">{{ $cliente->tipo_documento->value }}:</span>
+                {{ $cliente->numero_documento }}
+            </div>
+        </div>
+    </div>
+
+    {{-- Encabezado & Acciones --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 no-print">
         <div>
             <div class="flex items-center space-x-2 text-xs font-semibold text-slate-500 mb-1">
