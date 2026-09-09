@@ -12,6 +12,7 @@ use App\Http\Controllers\DevolucionController;
 use App\Http\Controllers\DocumentoVentaController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\ImpuestoController;
+use App\Http\Controllers\ImpresionController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\ListaPrecioController;
 use App\Http\Controllers\PosController;
@@ -181,6 +182,14 @@ Route::middleware(['auth'])->group(function () {
     // Fase 18: Documentos Comerciales
     Route::resource('documentos', DocumentoVentaController::class)->only(['index', 'show']);
     Route::post('/documentos/{documento}/anular', [DocumentoVentaController::class, 'anular'])->name('documentos.anular');
+
+    // Fase 19: Servicio Independiente de Impresión
+    Route::prefix('imprimir')->name('imprimir.')->group(function () {
+        Route::get('/documento/{documento}', [ImpresionController::class, 'imprimirDocumento'])->name('documento');
+        Route::get('/venta/{venta}', [ImpresionController::class, 'imprimirVenta'])->name('venta');
+        Route::get('/caja/{sesion}', [ImpresionController::class, 'imprimirCajaSesion'])->name('caja');
+        Route::get('/abono/{abono}', [ImpresionController::class, 'imprimirAbono'])->name('abono');
+    });
 });
 
 
