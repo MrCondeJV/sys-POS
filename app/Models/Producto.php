@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Producto extends Model
 {
@@ -119,5 +120,17 @@ class Producto extends Model
         $factorIva = 1 + ((float) $this->iva / 100);
 
         return round((float) $this->precio_venta * $factorIva, 2);
+    }
+
+    /**
+     * Retorna la URL pública de la imagen o null si no tiene.
+     */
+    public function getImagenUrlAttribute(): ?string
+    {
+        if (! $this->imagen_path) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->imagen_path);
     }
 }

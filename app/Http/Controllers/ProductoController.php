@@ -12,6 +12,7 @@ use App\Support\Tenancy\CompanyContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -100,10 +101,17 @@ class ProductoController extends Controller
             'stock_minimo' => ['nullable', 'numeric', 'min:0'],
             'iva' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'estado' => ['nullable', Rule::enum(EstadoGeneral::class)],
+            'imagen' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
+
+        $imagenPath = null;
+        if ($request->hasFile('imagen') && $request->file('imagen')->isValid()) {
+            $imagenPath = $request->file('imagen')->store("productos/{$empresaId}", 'public');
+        }
 
         Producto::create(array_merge($validated, [
             'empresa_id' => $empresaId,
+            'imagen_path' => $imagenPath,
             'precio_compra' => $validated['precio_compra'] ?? 0,
             'stock' => $validated['stock'] ?? 0,
             'stock_minimo' => $validated['stock_minimo'] ?? 0,
@@ -170,9 +178,26 @@ class ProductoController extends Controller
             'stock_minimo' => ['nullable', 'numeric', 'min:0'],
             'iva' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'estado' => ['nullable', Rule::enum(EstadoGeneral::class)],
+            'imagen' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'eliminar_imagen' => ['nullable', 'boolean'],
         ]);
 
+        $imagenPath = $producto->imagen_path;
+
+        if ($request->boolean('eliminar_imagen') && $imagenPath) {
+            Storage::disk('public')->delete($imagenPath);
+            $imagenPath = null;
+        }
+
+        if ($request->hasFile('imagen') && $request->file('imagen')->isValid()) {
+            if ($producto->imagen_path) {
+                Storage::disk('public')->delete($producto->imagen_path);
+            }
+            $imagenPath = $request->file('imagen')->store("productos/{$empresaId}", 'public');
+        }
+
         $producto->update(array_merge($validated, [
+            'imagen_path' => $imagenPath,
             'precio_compra' => $validated['precio_compra'] ?? 0,
             'stock' => $validated['stock'] ?? 0,
             'stock_minimo' => $validated['stock_minimo'] ?? 0,

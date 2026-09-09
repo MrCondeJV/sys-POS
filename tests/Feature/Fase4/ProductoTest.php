@@ -13,6 +13,8 @@ use App\Models\User;
 use App\Support\Tenancy\CompanyContext;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ProductoTest extends TestCase
@@ -255,5 +257,84 @@ class ProductoTest extends TestCase
         $resEdit = $this->actingAs($this->adminA)->get(route('productos.edit', $producto));
         $resEdit->assertOk();
         $resEdit->assertSee('Llave Inglesa 10 Pulgadas');
+    }
+
+    public function test_admin_empresa_puede_crear_producto_con_imagen(): void
+    {
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->image('producto_demo.jpg', 600, 600);
+
+        $response = $this->actingAs($this->adminA)->post(route('productos.store'), [
+            'nombre' => 'Pintura Blanca 1 Galón',
+            'precio_venta' => 45000,
+            'imagen' => $file,
+        ]);
+
+        $response->assertRedirect(route('productos.index'));
+
+        $producto = Producto::where('nombre', 'Pintura Blanca 1 Galón')->first();
+        $this->assertNotNull($producto);
+        $this->assertNotNull($producto->imagen_path);
+        Storage::disk('public')->assertExists($producto->imagen_path);
+        $this->assertNotNull($producto->imagen_url);
+    }
+
+    public function test_admin_empresa_puede_actualizar_y_eliminar_imagen_de_producto(): void
+    {
+        Storage::fake('public');
+
+        $fileInicial = UploadedFile::fake()->image('inicial.jpg', 400, 400);
+        $pathInicial = $fileInicial->store("productos/{$this->empresaA->id}", 'public');
+
+        $producto = Producto::create([
+            'empresa_id' => $this->empresaA->id,
+            'nombre' => 'Brocha 2 Pulgadas',
+            'precio_venta' => 8500,
+            'imagen_path' => $pathInicial,
+            'estado' => EstadoGeneral::ACTIVO,
+        ]);
+
+        Storage::disk('public')->assertExists($pathInicial);
+
+        // 1. Eliminar imagen existente mediante checkbox/flag
+        $resEliminar = $this->actingAs($this->adminA)->put(route('productos.update', $producto), [
+            'nombre' => 'Brocha 2 Pulgadas',
+            'precio_venta' => 8500,
+            'eliminar_imagen' => 1,
+        ]);
+
+        $resEliminar->assertRedirect(route('productos.index'));
+        $producto->refresh();
+        $this->assertNull($producto->imagen_path);
+        Storage::disk('public')->assertMissing($pathInicial);
+
+        // 2. Reemplazar/Subir nueva imagen
+        $nuevaImagen = UploadedFile::fake()->image('nueva_brocha.png', 500, 500);
+        $resSubir = $this->actingAs($this->adminA)->put(route('productos.update', $producto), [
+            'nombre' => 'Brocha 2 Pulgadas',
+            'precio_venta' => 8500,
+            'imagen' => $nuevaImagen,
+        ]);
+
+        $resSubir->assertRedirect(route('productos.index'));
+        $producto->refresh();
+        $this->assertNotNull($producto->imagen_path);
+        Storage::disk('public')->assertExists($producto->imagen_path);
+    }
+
+    public function test_validacion_rechaza_archivos_no_imagen_o_demasiado_pesados(): void
+    {
+        Storage::fake('public');
+
+        $archivoInvalido = UploadedFile::fake()->create('documento.pdf', 500);
+
+        $response = $this->actingAs($this->adminA)->post(route('productos.store'), [
+            'nombre' => 'Producto Invalido',
+            'precio_venta' => 10000,
+            'imagen' => $archivoInvalido,
+        ]);
+
+        $response->assertSessionHasErrors(['imagen']);
     }
 }

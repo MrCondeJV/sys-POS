@@ -5,8 +5,12 @@ namespace Database\Seeders;
 use App\Enums\EstadoGeneral;
 use App\Enums\RolSistema;
 use App\Enums\TipoDocumentoIdentidad;
+use App\Models\Categoria;
 use App\Models\Empresa;
+use App\Models\Marca;
+use App\Models\Producto;
 use App\Models\Sucursal;
+use App\Models\UnidadMedida;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -107,43 +111,43 @@ class DatabaseSeeder extends Seeder
         }
 
         // 7. Catálogos Base para Empresa Demo
-        $catBebidas = \App\Models\Categoria::firstOrCreate(
+        $catBebidas = Categoria::firstOrCreate(
             ['empresa_id' => $empresa->id, 'nombre' => 'Bebidas y Refrescos'],
             ['descripcion' => 'Gaseosas, jugos y aguas', 'activo' => true]
         );
-        $catAbarrotes = \App\Models\Categoria::firstOrCreate(
+        $catAbarrotes = Categoria::firstOrCreate(
             ['empresa_id' => $empresa->id, 'nombre' => 'Abarrotes y Despensa'],
             ['descripcion' => 'Granos, aceites, lácteos y enlatados', 'activo' => true]
         );
-        $catFerreteria = \App\Models\Categoria::firstOrCreate(
+        $catFerreteria = Categoria::firstOrCreate(
             ['empresa_id' => $empresa->id, 'nombre' => 'Herramientas y Ferretería'],
             ['descripcion' => 'Tornillos, herramientas y fijaciones', 'activo' => true]
         );
 
-        $marcaPostobon = \App\Models\Marca::firstOrCreate(
+        $marcaPostobon = Marca::firstOrCreate(
             ['empresa_id' => $empresa->id, 'nombre' => 'Postobón'],
             ['descripcion' => 'Bebidas nacionales', 'activo' => true]
         );
-        $marcaStanley = \App\Models\Marca::firstOrCreate(
+        $marcaStanley = Marca::firstOrCreate(
             ['empresa_id' => $empresa->id, 'nombre' => 'Stanley'],
             ['descripcion' => 'Herramientas profesionales', 'activo' => true]
         );
-        $marcaDiana = \App\Models\Marca::firstOrCreate(
+        $marcaDiana = Marca::firstOrCreate(
             ['empresa_id' => $empresa->id, 'nombre' => 'Arroz Diana'],
             ['descripcion' => 'Alimentos', 'activo' => true]
         );
 
-        $und = \App\Models\UnidadMedida::firstOrCreate(
+        $und = UnidadMedida::firstOrCreate(
             ['empresa_id' => $empresa->id, 'codigo' => 'UND'],
             ['nombre' => 'Unidad', 'activo' => true]
         );
-        $kg = \App\Models\UnidadMedida::firstOrCreate(
+        $kg = UnidadMedida::firstOrCreate(
             ['empresa_id' => $empresa->id, 'codigo' => 'KG'],
             ['nombre' => 'Kilogramo', 'activo' => true]
         );
 
         // 8. Productos de Prueba
-        \App\Models\Producto::firstOrCreate(
+        Producto::firstOrCreate(
             ['empresa_id' => $empresa->id, 'codigo' => 'BEB-001'],
             [
                 'nombre' => 'Gaseosa Manzana Postobón 1.5L',
@@ -161,7 +165,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        \App\Models\Producto::firstOrCreate(
+        Producto::firstOrCreate(
             ['empresa_id' => $empresa->id, 'codigo' => 'ABA-001'],
             [
                 'nombre' => 'Arroz Blanco Diana 1000g',
@@ -179,7 +183,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        \App\Models\Producto::firstOrCreate(
+        Producto::firstOrCreate(
             ['empresa_id' => $empresa->id, 'codigo' => 'FER-001'],
             [
                 'nombre' => 'Cinta Métrica Stanley PowerLock 5m',

@@ -84,9 +84,10 @@ Este archivo registra el avance fase por fase según las normas estrictas del [R
     - `productos.create`: Formulario estructurado por secciones con calculadora en tiempo real (Alpine.js) de margen de utilidad (%) y precio final con IVA.
     - `productos.edit`: Formulario de edición con recálculo dinámico y eliminación con confirmación.
     - `catalogos.index`: Centro unificado de clasificación con pestañas interactivas (Categorías, Marcas, Unidades) y formularios rápidos de alta.
+  - Soporte de fotografía e imagen de productos con almacenamiento en storage público aislado por empresa, previsualización instantánea en tiempo real con Alpine.js, reemplazo seguro y miniaturas visuales en el catálogo: OK
   - Integración en navegación universal (`layouts/app.blade.php` sidebar de escritorio y drawer móvil): OK
   - Datos de prueba y demostración sembrados en `DatabaseSeeder`: OK
-  - Pruebas automatizadas unitarias y de feature al 100% (43 tests, 135 assertions): OK
+  - Pruebas automatizadas unitarias y de feature al 100% (46 tests, 152 assertions): OK
   - Estandarización de código con Laravel Pint: OK
 
 ---

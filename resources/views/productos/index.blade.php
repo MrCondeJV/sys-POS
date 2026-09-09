@@ -95,8 +95,21 @@
                     @forelse($productos as $p)
                     <tr class="hover:bg-slate-50/80 transition">
                         <td class="px-6 py-4">
-                            <div class="font-bold text-slate-900 text-sm">{{ $p->nombre }}</div>
-                            <div class="text-xs text-slate-400 truncate max-w-xs">{{ $p->descripcion ?? 'Sin descripción' }}</div>
+                            <div class="flex items-center space-x-3.5">
+                                <div class="h-11 w-11 rounded-xl bg-slate-100 border border-slate-200/80 overflow-hidden flex-shrink-0 flex items-center justify-center">
+                                    @if($p->imagen_path)
+                                        <img src="{{ $p->imagen_url }}" alt="{{ $p->nombre }}" class="h-full w-full object-cover">
+                                    @else
+                                        <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                    @endif
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="font-bold text-slate-900 text-sm truncate">{{ $p->nombre }}</div>
+                                    <div class="text-xs text-slate-400 truncate max-w-xs">{{ $p->descripcion ?? 'Sin descripción' }}</div>
+                                </div>
+                            </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-xs font-mono text-slate-600">
                             <div>SKU: {{ $p->codigo ?? '—' }}</div>
@@ -164,11 +177,22 @@
         <div class="lg:hidden divide-y divide-slate-100">
             @forelse($productos as $p)
             <div class="p-5 space-y-3">
-                <div class="flex items-start justify-between gap-2">
-                    <div>
-                        <div class="font-bold text-slate-900 text-base leading-snug">{{ $p->nombre }}</div>
-                        <div class="text-xs text-slate-500 font-mono mt-0.5">
-                            SKU: {{ $p->codigo ?? '—' }} | EAN: {{ $p->codigo_barras ?? '—' }}
+                <div class="flex items-start justify-between gap-3">
+                    <div class="flex items-start space-x-3 min-w-0">
+                        <div class="h-12 w-12 rounded-xl bg-slate-100 border border-slate-200/80 overflow-hidden flex-shrink-0 flex items-center justify-center">
+                            @if($p->imagen_path)
+                                <img src="{{ $p->imagen_url }}" alt="{{ $p->nombre }}" class="h-full w-full object-cover">
+                            @else
+                                <svg class="h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            @endif
+                        </div>
+                        <div class="min-w-0">
+                            <div class="font-bold text-slate-900 text-base leading-snug truncate">{{ $p->nombre }}</div>
+                            <div class="text-xs text-slate-500 font-mono mt-0.5">
+                                SKU: {{ $p->codigo ?? '—' }} | EAN: {{ $p->codigo_barras ?? '—' }}
+                            </div>
                         </div>
                     </div>
                     @if($p->tieneBajoStock())

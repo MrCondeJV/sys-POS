@@ -37,7 +37,7 @@
     </div>
 
     <!-- Formulario Reactivo con Alpine.js para cálculo de márgenes e IVA -->
-    <form action="{{ route('productos.update', $producto) }}" method="POST"
+    <form action="{{ route('productos.update', $producto) }}" method="POST" enctype="multipart/form-data"
           x-data="{
               precioCompra: {{ old('precio_compra', $producto->precio_compra) }},
               precioVenta: {{ old('precio_venta', $producto->precio_venta) }},
@@ -130,6 +130,91 @@
                     <textarea name="descripcion" id="descripcion" rows="2"
                         placeholder="Detalles adicionales, tamaño, presentación o notas para vendedores..."
                         class="block w-full px-4 py-3 border border-slate-300 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">{{ old('descripcion', $producto->descripcion) }}</textarea>
+                </div>
+
+                <!-- Fotografía del Producto con Previsualización y Reemplazo -->
+                <div class="sm:col-span-12" x-data="{
+                    imagePreview: null,
+                    hasExistingImage: {{ $producto->imagen_path ? 'true' : 'false' }},
+                    eliminarImagen: false,
+                    previewFile(event) {
+                        const file = event.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (e) => { this.imagePreview = e.target.result; };
+                            reader.readAsDataURL(file);
+                            this.eliminarImagen = false;
+                        } else {
+                            this.imagePreview = null;
+                        }
+                    },
+                    clearNewImage() {
+                        this.imagePreview = null;
+                        $refs.fileInput.value = '';
+                    }
+                }">
+                    <input type="hidden" name="eliminar_imagen" :value="eliminarImagen ? 1 : 0">
+
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                        Fotografía del Producto
+                    </label>
+
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 border border-dashed border-slate-300 rounded-2xl bg-slate-50/60 hover:bg-slate-50 transition">
+                        <!-- Preview Box -->
+                        <div class="h-24 w-24 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center overflow-hidden flex-shrink-0 relative">
+                            <!-- Si hay nueva imagen seleccionada -->
+                            <template x-if="imagePreview">
+                                <img :src="imagePreview" alt="Nueva foto" class="h-full w-full object-cover">
+                            </template>
+
+                            <!-- Si tiene imagen guardada y no está marcada para eliminar ni reemplazada -->
+                            <template x-if="!imagePreview && hasExistingImage && !eliminarImagen">
+                                <img src="{{ $producto->imagen_url }}" alt="{{ $producto->nombre }}" class="h-full w-full object-cover">
+                            </template>
+
+                            <!-- Si no hay imagen o fue eliminada -->
+                            <template x-if="!imagePreview && (!hasExistingImage || eliminarImagen)">
+                                <div class="text-slate-400 text-center p-2">
+                                    <svg class="h-8 w-8 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <span class="text-[10px] font-semibold block mt-1" x-text="eliminarImagen ? 'Se eliminará' : 'Sin imagen'"></span>
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- Selector y Botones -->
+                        <div class="flex-1 space-y-2">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <label class="inline-flex items-center px-4 py-2.5 rounded-xl bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 text-xs font-bold cursor-pointer transition shadow-sm">
+                                    <svg class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                    </svg>
+                                    <span x-text="hasExistingImage ? 'Cambiar Foto' : 'Subir Foto'"></span>
+                                    <input type="file" name="imagen" x-ref="fileInput" @change="previewFile" accept="image/png, image/jpeg, image/webp" class="hidden">
+                                </label>
+
+                                <button type="button" x-cloak x-show="imagePreview" @click="clearNewImage"
+                                    class="inline-flex items-center px-3.5 py-2.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold transition">
+                                    Cancelar Cambio
+                                </button>
+
+                                <template x-if="hasExistingImage && !imagePreview">
+                                    <button type="button" @click="eliminarImagen = !eliminarImagen"
+                                        :class="eliminarImagen ? 'bg-amber-100 text-amber-800' : 'bg-red-50 text-red-600 hover:bg-red-100'"
+                                        class="inline-flex items-center px-3.5 py-2.5 rounded-xl text-xs font-bold transition">
+                                        <span x-text="eliminarImagen ? 'Deshacer Eliminación' : 'Quitar Imagen Actual'"></span>
+                                    </button>
+                                </template>
+                            </div>
+                            <p class="text-xs text-slate-400">
+                                Formatos: JPG, PNG o WEBP (Máx. 2MB).
+                            </p>
+                            @error('imagen')
+                                <p class="text-xs text-red-600 font-semibold">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
