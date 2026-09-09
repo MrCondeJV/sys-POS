@@ -176,7 +176,7 @@ class InventarioController extends Controller
             $productoSeleccionado = Producto::find($request->input('producto_id'));
         }
 
-        $productos = Producto::activo()->orderBy('nombre')->get();
+        $productos = Producto::activo()->with(['categoria', 'unidadMedida', 'inventarios'])->orderBy('nombre')->get();
         $sucursales = Sucursal::activa()->get();
         $sucursalActivaId = BranchContext::getId() ?: $sucursales->first()?->id;
 
@@ -248,7 +248,7 @@ class InventarioController extends Controller
             $productoSeleccionado = Producto::find($request->input('producto_id'));
         }
 
-        $productos = Producto::activo()->orderBy('nombre')->get();
+        $productos = Producto::activo()->with(['categoria', 'unidadMedida', 'inventarios'])->orderBy('nombre')->get();
         $sucursales = Sucursal::activa()->get();
         $sucursalOrigenId = BranchContext::getId() ?: $sucursales->first()?->id;
 
