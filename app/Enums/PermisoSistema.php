@@ -21,8 +21,11 @@ enum PermisoSistema: string
     case INVENTARIO_AJUSTAR = 'inventario.ajustar';
 
     // Caja
+    case CAJA_VER = 'caja.ver';
+    case CAJA_ADMINISTRAR = 'caja.administrar';
     case CAJA_ABRIR = 'caja.abrir';
     case CAJA_CERRAR = 'caja.cerrar';
+    case CAJA_MOVIMIENTO = 'caja.movimiento';
 
     // Compras
     case COMPRAS_VER = 'compras.ver';

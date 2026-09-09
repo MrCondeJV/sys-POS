@@ -161,8 +161,16 @@
             </a>
 
             <div class="pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
-                Operaciones (Próximo)
+                Operaciones & Caja
             </div>
+
+            <a href="{{ route('cajas.index') }}"
+                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('cajas.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
+                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                Cajas & Turnos
+            </a>
 
             <div class="px-3.5 py-2.5 text-sm font-medium text-slate-500 rounded-xl flex items-center justify-between cursor-not-allowed">
                 <span class="flex items-center">
@@ -255,6 +263,9 @@
                     </a>
                     <a href="{{ route('cartera.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('cartera.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         Crédito & Cartera
+                    </a>
+                    <a href="{{ route('cajas.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('cajas.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
+                        Cajas & Turnos
                     </a>
                 </nav>
 

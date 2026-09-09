@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CajaController;
 use App\Http\Controllers\CarteraController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\ClienteController;
@@ -90,4 +91,17 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/estado-cuenta/{cliente}', [CarteraController::class, 'estadoCuenta'])->name('estado-cuenta');
         Route::get('/estado-cuenta/{cliente}/imprimir', [CarteraController::class, 'printEstadoCuenta'])->name('estado-cuenta.print');
     });
+
+    // Fase 9: Gestión de Cajas y Turnos
+    Route::prefix('cajas')->name('cajas.')->group(function () {
+        Route::get('/', [CajaController::class, 'index'])->name('index');
+        Route::post('/', [CajaController::class, 'store'])->name('store');
+        Route::get('/{caja}', [CajaController::class, 'show'])->name('show');
+        Route::post('/{caja}/abrir', [CajaController::class, 'abrir'])->name('abrir');
+        Route::post('/{caja}/movimiento', [CajaController::class, 'movimiento'])->name('movimiento');
+        Route::get('/{caja}/cierre', [CajaController::class, 'cierre'])->name('cierre');
+        Route::post('/{caja}/cierre', [CajaController::class, 'storeCierre'])->name('cierre.store');
+        Route::get('/comprobantes/{sesion}', [CajaController::class, 'comprobante'])->name('comprobante');
+    });
 });
+
