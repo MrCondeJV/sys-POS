@@ -3,64 +3,70 @@
 @section('title', 'Registrar Nueva Compra')
 
 @section('content')
-<div class="max-w-[1680px] mx-auto space-y-6" x-data="{
-    productosCatalog: @json($productos),
-    descuento: 0,
-    items: [
-        {
-            producto_id: '',
-            cantidad: 1,
-            costo_unitario: 0,
-            porcentaje_iva: 19
+<script>
+function compraForm() {
+    return {
+        productosCatalog: @json($productos),
+        descuento: 0,
+        items: [
+            {
+                producto_id: '',
+                cantidad: 1,
+                costo_unitario: 0,
+                porcentaje_iva: 19
+            }
+        ],
+        addItem() {
+            this.items.push({
+                producto_id: '',
+                cantidad: 1,
+                costo_unitario: 0,
+                porcentaje_iva: 19
+            });
+        },
+        removeItem(index) {
+            if (this.items.length > 1) {
+                this.items.splice(index, 1);
+            } else {
+                alert('La compra debe contener al menos un producto.');
+            }
+        },
+        onProductChange(index) {
+            const pId = this.items[index].producto_id;
+            const prod = this.productosCatalog.find(p => p.id == pId);
+            if (prod) {
+                this.items[index].costo_unitario = parseFloat(prod.precio_compra) || 0;
+            }
+        },
+        itemSubtotal(item) {
+            return (parseFloat(item.cantidad) || 0) * (parseFloat(item.costo_unitario) || 0);
+        },
+        itemIva(item) {
+            return this.itemSubtotal(item) * ((parseFloat(item.porcentaje_iva) || 0) / 100);
+        },
+        itemTotal(item) {
+            return this.itemSubtotal(item) + this.itemIva(item);
+        },
+        totalSubtotal() {
+            return this.items.reduce((acc, item) => acc + this.itemSubtotal(item), 0);
+        },
+        totalIva() {
+            return this.items.reduce((acc, item) => acc + this.itemIva(item), 0);
+        },
+        grandTotal() {
+            const sub = this.totalSubtotal();
+            const iva = this.totalIva();
+            const desc = parseFloat(this.descuento) || 0;
+            return Math.max(0, sub + iva - desc);
+        },
+        formatMoney(val) {
+            return '$' + Number(val || 0).toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
-    ],
-    addItem() {
-        this.items.push({
-            producto_id: '',
-            cantidad: 1,
-            costo_unitario: 0,
-            porcentaje_iva: 19
-        });
-    },
-    removeItem(index) {
-        if (this.items.length > 1) {
-            this.items.splice(index, 1);
-        } else {
-            alert('La compra debe contener al menos un producto.');
-        }
-    },
-    onProductChange(index) {
-        const pId = this.items[index].producto_id;
-        const prod = this.productosCatalog.find(p => p.id == pId);
-        if (prod) {
-            this.items[index].costo_unitario = parseFloat(prod.precio_compra) || 0;
-        }
-    },
-    itemSubtotal(item) {
-        return (parseFloat(item.cantidad) || 0) * (parseFloat(item.costo_unitario) || 0);
-    },
-    itemIva(item) {
-        return this.itemSubtotal(item) * ((parseFloat(item.porcentaje_iva) || 0) / 100);
-    },
-    itemTotal(item) {
-        return this.itemSubtotal(item) + this.itemIva(item);
-    },
-    totalSubtotal() {
-        return this.items.reduce((acc, item) => acc + this.itemSubtotal(item), 0);
-    },
-    totalIva() {
-        return this.items.reduce((acc, item) => acc + this.itemIva(item), 0);
-    },
-    grandTotal() {
-        const sub = this.totalSubtotal();
-        const iva = this.totalIva();
-        const desc = parseFloat(this.descuento) || 0;
-        return Math.max(0, sub + iva - desc);
-    },
-    formatMoney(val) {
-        return '$' + Number(val || 0).toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
-}">
+    };
+}
+</script>
+
+<div class="max-w-[1680px] mx-auto space-y-6" x-data="compraForm()">
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
