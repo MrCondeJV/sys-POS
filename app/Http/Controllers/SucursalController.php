@@ -42,6 +42,13 @@ class SucursalController extends Controller
         }
 
         $empresaId = CompanyContext::getId();
+        $empresa = CompanyContext::getCompany();
+
+        if ($empresa && ! $empresa->puedeCrearSucursal()) {
+            return back()->withErrors([
+                'general' => 'Has alcanzado el límite máximo de sucursales permitidas en tu plan actual. Mejora tu suscripción para continuar.',
+            ])->withInput();
+        }
 
         $validated = $request->validate([
             'nombre' => [
