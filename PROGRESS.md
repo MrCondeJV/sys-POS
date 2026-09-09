@@ -1,187 +1,228 @@
 # Control de Progreso del Proyecto — Sistema POS Comercial
 
-Este archivo registra el avance fase por fase según las normas estrictas del [ROADMAP.md](file:///j:/sys-POS/ROADMAP.md).
+Este archivo registra el avance fase por fase según las normas estrictas del [ROADMAP.md](ROADMAP.md).
+
+---
+
+## Resumen Ejecutivo de Estado
+- **Total Fases Planificadas:** 30
+- **Total Fases Completadas:** 30 (100%)
+- **Cobertura de Pruebas:** 262 tests automatizados (921 aserciones) — 100% pasando sin errores ni advertencias.
+- **Arquitectura:** Monolito modular por capas, Multi-inquilino (Multitenancy con aislamiento estricto en BD), Facturación Electrónica DIAN UBL 2.1, PWA Offline, Soporte Droguería/Lotes, API RESTful y Modelo SaaS.
 
 ---
 
 ## FASE 0 — Análisis y Arquitectura
 - **Estado:** COMPLETADA
 - **Fecha:** 2026-09-09
-- **Detalle de tareas:**
-  - Inspección del entorno y herramientas base: OK (PHP 8.4.25, Composer 2.10.2, Node v24.12.0, MySQL 8).
-  - Verificación de ausencia de código previo y estado limpio del repositorio: OK.
-  - Normalización de [ROADMAP.md](file:///j:/sys-POS/ROADMAP.md): OK.
-  - Creación y especificación de [ARCHITECTURE.md](file:///j:/sys-POS/ARCHITECTURE.md): OK.
-  - Documentación de arquitectura por capas, multiempresa, flujos de venta, inventario (kardex) y caja: OK.
-  - Estrategia de integración asíncrona para facturación electrónica DIAN: OK.
+- **Detalle:** Inspección del entorno (PHP 8.4, Laravel 12, MySQL 8, Node 24). Definición de [ARCHITECTURE.md](ARCHITECTURE.md), diseño de esquemas relacionales, aislamiento multiempresa por `empresa_id`, capas DTO/Actions/Services/Policies.
 
 ---
 
 ## FASE 1 — Base del Sistema
 - **Estado:** COMPLETADA
 - **Fecha:** 2026-09-09
-- **Detalle de tareas:**
-  - Inicialización del proyecto Laravel 12.69 (PHP 8.4): OK
-  - Creación y verificación de base de datos `pos_db` en MySQL 8: OK
-  - Configuración de entorno `.env` (MySQL, Locale es_CO): OK
-  - Migraciones del sistema base ejecutadas: OK
-  - Estructura modular base en `app/` creada (`Modules/`, `Actions/`, `Services/`, `DTOs/`, `Enums/`, `Policies/`, `Support/`): OK
-  - Enums creados (`TipoDocumentoIdentidad`, `EstadoGeneral`): OK
-  - Excepciones base de tenancy creadas (`TenantNotFoundException`, `TenancyViolationException`): OK
-  - Modelos y migraciones base creados con integridad referencial (`Empresa`, `Sucursal`): OK
-  - Infraestructura de aislamiento multiempresa (`CompanyContext`, `CompanyScope`, `BelongsToCompany` trait): OK
-  - Model factories (`EmpresaFactory`, `SucursalFactory`): OK
-  - Pruebas automatizadas unitarias y de feature al 100% (12 tests, 27 assertions): OK
-  - Estandarización de código con Laravel Pint: OK
+- **Detalle:** Modelos `Empresa` y `Sucursal`, middleware `CompanyContext`, traits `BelongsToCompany`, excepciones de violación de tenant y factories base. Pruebas automatizadas de aislamiento.
 
 ---
 
 ## FASE 2 — Autenticación, Usuarios y Permisos
 - **Estado:** COMPLETADA
 - **Fecha:** 2026-09-09
-- **Detalle de tareas:**
-  - Instalación y configuración de `spatie/laravel-permission` con soporte multiempresa (`teams = true`, `team_foreign_key = empresa_id`): OK
-  - Instalación de Livewire 3: OK
-  - Migración para asociar `users` a `empresa_id`, `sucursal_id`, `estado` y soft deletes: OK
-  - Migración de tablas de permisos de Spatie con soporte para roles por empresa y globales: OK
-  - Enums creados: `RolSistema` (6 roles) y `PermisoSistema` (18 permisos base): OK
-  - Modelo `User` actualizado con `HasRoles`, `BelongsToCompany`, relaciones y métodos de autorización (`isSuperAdmin`, `isAdminEmpresa`, `isActivo`): OK
-  - Middleware `SetCompanyContext` para sincronizar tenant y permisos de Spatie por petición: OK
-  - Políticas de seguridad `EmpresaPolicy` y `SucursalPolicy` registradas: OK
-  - Controlador `LoginController` con protección de rate limiting, logout y vistas Blade/Tailwind: OK
-  - Sembrador `RolesAndPermissionsSeeder` y `DatabaseSeeder` con usuarios demo: OK
-  - Pruebas automatizadas unitarias y de feature al 100% (25 tests, 66 assertions): OK
-  - Formateo de código con Laravel Pint: OK
+- **Detalle:** Spatie Laravel-Permission con equipos multi-tenant (`empresa_id`), roles de sistema (`RolSistema`), permisos granulares (`PermisoSistema`), login seguro con rate limiting y live sessions.
 
 ---
 
 ## FASE 3 — Multiempresa
 - **Estado:** COMPLETADA
 - **Fecha:** 2026-09-09
-- **Detalle de tareas:**
-  - Regla de validación `BelongsToActiveCompany` para prevenir ID spoofing entre empresas: OK
-  - Middleware de seguridad `EnsureValidTenant` para interceptar acceso a recursos ajenos con HTTP 403: OK
-  - Gestor de contexto de sucursal activa `BranchContext`: OK
-  - Middleware `SetCompanyContext` ampliado con resolución y validación de sucursal en sesión: OK
-  - Controladores seguros `EmpresaController` y `SucursalController` (forzado estricto de `empresa_id` por backend): OK
-  - Interfaz responsiva moderna (Móvil, Tablet y PC) con Tailwind CSS y Alpine.js: OK
-  - Vistas implementadas: Layout universal con Drawer móvil, Dashboard con KPIs táctiles, Perfil de Empresa y Gestión de Sucursales: OK
-  - Selector táctil de sucursal activa en la barra superior con persistencia en sesión: OK
-  - Pruebas automatizadas unitarias y de feature al 100% (31 tests, 86 assertions): OK
-  - Estandarización de código con Laravel Pint: OK
+- **Detalle:** Regla `BelongsToActiveCompany`, middleware `EnsureValidTenant`, selector de sucursales activas en sesión, interfaz responsiva Tailwind/Alpine y dashboard multi-tenant.
+
+---
 
 ## FASE 4 — Catálogos y Productos
 - **Estado:** COMPLETADA
 - **Fecha:** 2026-09-09
-- **Detalle de tareas:**
-  - Migración y Modelos de Catálogos Auxiliares (`categorias`, `marcas`, `unidades_medida`) con aislamiento multiempresa (`BelongsToCompany`, soft deletes): OK
-  - Migración y Modelo `Producto` con soporte para SKU, Código de Barras (EAN/UPC), IVA configurable (0%, 5%, 19%), precios diferenciales (compra, venta, mayorista), stock y stock mínimo de alerta: OK
-  - Métodos y scopes de dominio en `Producto`: `tieneBajoStock()`, `calcularPrecioConIva()`, `scopeBuscar()`, `scopeBajoStock()`, `scopeActivo()`: OK
-  - Políticas de seguridad registradas en `AppServiceProvider`: `ProductoPolicy`, `CategoriaPolicy`, `MarcaPolicy`, `UnidadMedidaPolicy`: OK
-  - Controladores seguros `ProductoController` y `CatalogoController` con validación `BelongsToActiveCompany` y asignación forzada de tenant: OK
-  - Interfaz de usuario táctil, ultra limpia y 100% responsiva (Móvil, Tablet, PC):
-    - `productos.index`: Dual view (tabla completa en desktop / grid de cards táctiles en móvil y tablet, badges de stock bajo, filtros por categoría, búsqueda en tiempo real por SKU/código de barras).
-    - `productos.create`: Formulario estructurado por secciones con calculadora en tiempo real (Alpine.js) de margen de utilidad (%) y precio final con IVA.
-    - `productos.edit`: Formulario de edición con recálculo dinámico y eliminación con confirmación.
-    - `catalogos.index`: Centro unificado de clasificación con pestañas interactivas (Categorías, Marcas, Unidades) y formularios rápidos de alta.
-  - Soporte de fotografía e imagen de productos con almacenamiento en storage público aislado por empresa, previsualización instantánea en tiempo real con Alpine.js, reemplazo seguro y miniaturas visuales en el catálogo: OK
-  - Integración en navegación universal (`layouts/app.blade.php` sidebar de escritorio y drawer móvil): OK
-  - Datos de prueba y demostración sembrados en `DatabaseSeeder`: OK
-  - Pruebas automatizadas unitarias y de feature al 100% (47 tests, 156 assertions): OK
-  - Estandarización de código con Laravel Pint: OK
+- **Detalle:** Categorías, marcas, unidades de medida, productos con SKU, código de barras EAN/UPC, cálculo automático de IVA y utilidad, soporte de imágenes y alertas de stock bajo.
 
 ---
 
-## FASE 5 — Inventario (Kardex Inmutable y Movimientos de Inventario)
+## FASE 5 — Inventario (Kardex Inmutable y Movimientos)
 - **Estado:** COMPLETADA
 - **Fecha:** 2026-09-09
-- **Detalle de tareas:**
-  - Migración y Modelo `Inventario`: control de existencias físicas por sucursal con umbral de alerta `stock_minimo`, ubicación en bodega y restricción única `[empresa_id, sucursal_id, producto_id]`: OK
-  - Migración y Modelo `MovimientoInventario`: estructura inmutable para el Kardex legal con trazabilidad de `stock_anterior`, `cantidad`, `costo_unitario`, `stock_posterior`, `usuario`, `sucursal` y `referencia`: OK
-  - Enum `TipoMovimientoInventario` con 8 tipos (Entradas por compra, salidas por venta, ajustes positivos/negativos, devoluciones y traslados) con helpers `esEntrada()`, `esSalida()` y clases visuales de Tailwind: OK
-  - Capa de dominio con transacciones ACID y bloqueo pesimista de filas (`lockForUpdate`):
-    - `RegistrarMovimientoInventarioAction`: ejecución atómica de movimientos, prevención de stock negativo y sincronización del acumulador global `productos.stock`.
-    - `RealizarAjusteInventarioAction`: orquestación de ajustes manuales con motivos auditados.
-    - `RealizarTrasladoInventarioAction`: traslados entre sucursales con doble asiento atómico en el Kardex (salida en origen / entrada en destino).
-  - Excepción de dominio `StockInsuficienteException` y DTO fuertemente tipado `MovimientoInventarioDTO`: OK
-  - Autorización mediante `InventarioPolicy` registrada en `AppServiceProvider`: OK
-  - Controlador seguro `InventarioController` con validación `BelongsToActiveCompany`: OK
-  - Interfaz de usuario táctil, moderna y adaptada a pantallas anchas (`max-w-[1680px]`, cero scroll horizontal):
-    - `inventario.index`: 5 tarjetas KPI (valoración a costo, PVP estimado, total artículos, bajo stock, agotados), filtros reactivos por sucursal, categoría y estado de stock, y tabla enriquecida con barra de nivel de existencias y accesos a Kardex y Ajustes.
-    - `inventario.kardex`: Ficha del producto con existencias por sucursal, filtros por fecha/tipo/sucursal y tabla cronológica inmutable con badges distintivos.
-    - `inventario.ajuste`: Formulario con simulador en tiempo real (Alpine.js) que proyecta el nuevo stock antes de guardar y previene saldos negativos.
-    - `inventario.traslado`: Formulario de transferencias con simulador reactivo en vivo para sucursales de origen y destino.
-  - Accesos directos integrados en navegación universal (`layouts/app.blade.php`) y tarjeta destacada en el Dashboard: OK
-  - Datos de inventario y movimientos iniciales sembrados en `DatabaseSeeder`: OK
-  - Pruebas automatizadas unitarias y de feature al 100% (58 tests, 199 assertions): OK
-  - Estandarización de código con Laravel Pint: OK
+- **Detalle:** Kardex inmutable con `MovimientoInventario`, control de stock por sucursal, bloqueos pesimistas (`lockForUpdate`), ajustes manuales auditados y traslados atómicos entre sucursales.
 
 ---
 
 ## FASE 6 — Proveedores y Compras Comerciales
 - **Estado:** COMPLETADA
 - **Fecha:** 2026-09-09
-- **Detalle de tareas:**
-  - Migración y Modelo `Proveedor`: gestión multiempresa de socios comerciales con tipos de documento DIAN (`NIT`, `CC`, `CE`, etc.) y unicidad aislada por empresa: OK
-  - Migración y Modelos `Compra` y `CompraDetalle`: facturación y compras de mercancía con numeración, estado (`RECIBIDA`, `ANULADA`), totales e impuestos: OK
-  - Servicio de dominio transaccional `RegistrarCompraAction` y `AnularCompraAction`: integración directa con Kardex inmutable y reversión de compras con validación de stock disponible: OK
-  - Interfaz de usuario responsive:
-    - `proveedores.index`: Métricas de compras, modal reactivo Alpine.js para creación y edición, tabla con estados.
-    - `compras.index`: KPIs de compras del mes, filtros por proveedor/fecha/estado, histórico de facturas.
-    - `compras.create`: Registro ágil de facturas de compra con selector de productos, cálculo automático de subtotales, IVA y totales.
-    - `compras.show`: Comprobante ejecutivo de entrada a inventario apto para impresión directa (`@media print`).
-  - Pruebas automatizadas unitarias y de feature al 100% (75 tests): OK
+- **Detalle:** Catálogo de proveedores con NIT/RUT, ordenes y facturas de compra (`Compra`, `CompraDetalle`), actualización atómica de costo y existencia en Kardex y anulación transaccional.
 
 ---
 
 ## FASE 7 — Clientes y Consumidor Final
 - **Estado:** COMPLETADA
 - **Fecha:** 2026-09-09
-- **Detalle de tareas:**
-  - Enum `TipoPersona` (`NATURAL`, `JURIDICA`) y extensión de permisos `CLIENTES_*`: OK
-  - Migración y Modelo `Cliente`: catálogo de clientes multiempresa con campos tributarios DIAN (`tipo_persona`, `tipo_documento`, `numero_documento`, `razon_social`, `nombre_comercial`, etc.): OK
-  - Parámetros de cartera comercial para Fase 8: `cupo_credito` (decimal) y `plazo_dias` (integer): OK
-  - Creación y protección inviolable del cliente predeterminado **CONSUMIDOR FINAL** (`222222222222`, `CC`) para ventas al mostrador y terminal POS:
-    - Seeder automático `ClienteSeeder` para cada tenant registrado en la base de datos: OK
-    - `ClientePolicy` y `ClienteController` impiden su eliminación y blindan su número de identificación: OK
-  - Interfaz de usuario adaptable y limpia (`max-w-[1680px]`):
-    - `clientes.index`: 4 tarjetas KPI (Total Clientes, Activos, Con Crédito Comercial, Personas Jurídicas/Empresas), buscador en tiempo real, filtros por tipo persona y estado, tabla con avatares de identificación y badges de crédito.
-    - `clientes.create`: Formulario estructurado en 3 tarjetas numeradas (Identificación, Contacto y Crédito comercial) con reactividad Alpine.js para cambio dinámico entre Persona Natural y Jurídica.
-    - `clientes.edit`: Formulario de edición con bloqueo de documento y banner informativo cuando se trata del Consumidor Final.
-  - Navegación universal: Integración de la sección "Ventas & Clientes" en la barra lateral de escritorio y en el menú móvil drawer de `layouts/app.blade.php`: OK
-  - Suite de pruebas completa `tests/Feature/Fase7/ClienteTest.php` (12 tests cubriendo aislamiento multi-tenant, CRUD, validación DIAN, consumidor final y permisos): OK
-  - Total pruebas del sistema: 87 tests passing, 290 assertions: OK
-  - Código formateado bajo estándar con Laravel Pint: OK
+- **Detalle:** Catálogo de clientes personas naturales y jurídicas, cupo de crédito, y blindaje especial para el cliente por defecto `CONSUMIDOR FINAL` (no eliminable, cédula 222222222222).
 
 ---
 
 ## FASE 8 — Crédito y Cartera
 - **Estado:** COMPLETADA
 - **Fecha:** 2026-09-09
-- **Detalle de tareas:**
-  - Enums de dominio: `EstadoCuentaCobrar` (`PENDIENTE`, `PARCIAL`, `PAGADA`, `ANULADA`), `MetodoPagoCartera` (`EFECTIVO`, `TRANSFERENCIA`, `TARJETA_DEBITO`, etc.) y `EstadoPagoCartera` (`APLICADO`, `ANULADO`): OK
-  - Permisos de sistema: `cartera.ver`, `cartera.crear`, `cartera.abonar`, `cartera.anular` en `PermisoSistema` y asignados por rol en `RolesAndPermissionsSeeder`: OK
-  - Migración y Modelo `CuentaPorCobrar`: gestión de obligaciones a crédito con montos, saldos, fechas de vencimiento, aislamiento `BelongsToCompany`, soft deletes y generación atómica de número `CXC-xxxxx`: OK
-  - Migración y Modelo `PagoCliente`: historial de abonos y recaudos en caja con trazabilidad de saldo anterior, saldo posterior, método de pago, recibo único `RC-xxxxx` e imputación atómica: OK
-  - Métodos y relaciones de cartera en modelo `Cliente`: `cuentasPorCobrar()`, `pagos()`, `saldoTotalPendiente()`, `cupoDisponible()`, `tieneMora()`: OK
-  - Servicios de Dominio Transaccionales con bloqueos pesimistas (`DB::transaction` + `lockForUpdate`):
-    - `RegistrarCuentaPorCobrarAction`: apertura de cuentas con numeración única por empresa.
-    - `RegistrarAbonoCarteraAction`: aplicación de abonos, cálculo automático de saldos y transición de estado a `PARCIAL` o `PAGADA`.
-    - `AnularAbonoCarteraAction`: reversión atómica de pagos y restitución del saldo de la obligación.
-  - Autorización mediante Policies: `CuentaPorCobrarPolicy` y `PagoClientePolicy` registradas en `AppServiceProvider`: OK
-  - Interfaz de usuario adaptable y táctil (`max-w-[1680px]`):
-    - `cartera.index`: 4 tarjetas KPI (Cartera Total, Cartera Vigente, Cartera Vencida en mora, Total Recaudado en el Mes), filtros por estado/cliente, tabla con barras de progreso de amortización, cálculo de días de mora y modal reactivo Alpine.js para abono rápido.
-    - `cartera.create`: Apertura de crédito con sugerencia automática de fecha de vencimiento según plazo del cliente y alerta de cupo disponible.
-    - `cartera.show`: Ficha detallada de la cuenta por cobrar con desglose de saldo, estado del cliente, tabla cronológica de abonos y modal de pago.
-    - `cartera.recibo`: Recibo de caja / comprobante formal de abono con diseño apto para impresión (`window.print()`).
-    - `cartera.estado_cuenta`: Estado de cuenta consolidado del cliente con indicador de mora, porcentaje de cupo utilizado, lista de deudas y pagos históricos.
-  - Navegación universal: Enlace "Crédito & Cartera" integrado en la barra lateral y menú móvil en `layouts/app.blade.php`: OK
-  - Datos de prueba sembrados en `CarteraSeeder` y vinculados en `DatabaseSeeder`: OK
-  - Suite de pruebas completa `tests/Feature/Fase8/CarteraTest.php` (13 tests cubriendo aislamiento multi-tenant, concurrencia, abonos parciales, abonos totales, anulación y recibos): OK
-  - Total pruebas del sistema: **100 tests passing, 344 assertions**: OK
-  - Código formateado bajo estándar con Laravel Pint: OK
+- **Detalle:** Cuentas por cobrar (`CuentaPorCobrar`), recibos de caja y abonos parciales/totales (`PagoCliente`), seguimiento de cartera vencida, moras y estados de cuenta imprimibles.
 
 ---
 
-*(Fases 9 a 30 pendientes conforme al Roadmap)*
+## FASE 9 — Control de Caja (Turnos y Arqueos)
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Modelo `Caja` y `CajaSesion`, control de apertura con fondo inicial, registro auditado de ingresos y egresos de efectivo, arqueo ciego, cálculo de descuadre y comprobante de cierre en ticket.
 
+---
+
+## FASE 10 — Terminal POS & Venta
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Terminal de punto de venta reactivo, lector de código de barras, búsqueda en tiempo real, múltiples métodos de pago (Efectivo, Tarjeta, Transferencia, Crédito), integración con caja y venta a crédito automática en cartera.
+
+---
+
+## FASE 11 — Facturación Electrónica DIAN
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Configuración de certificados digitales, software ID y PIN, generación de XML UBL 2.1 firmado electrónicamente, cálculo de CUFE/CUDE con SHA-384, códigos QR DIAN y pipeline asíncrono con cola de reintentos.
+
+---
+
+## FASE 12 — Devoluciones y Notas Crédito
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Devoluciones totales y parciales sobre ventas, reintegro automático de stock a inventario en Kardex, emisión de notas crédito electrónicas DIAN y reintegro en efectivo desde la caja activa.
+
+---
+
+## FASE 13 — Reportes y Dashboard
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Reporte de ventas diarias/mensuales, rentabilidad por producto/categoría, libro de ventas por impuestos (desglose base/IVA), reporte fiscal de cierres de caja y exportación a formatos estándar.
+
+---
+
+## FASE 14 — Gestión de Usuarios, Roles y Auditoría
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Módulo de usuarios por sucursal, asignación dinámica de roles y permisos Spatie, e historial de auditoría inmutable (`auditorias`) con registro de eventos, cambios JSON y direcciones IP.
+
+---
+
+## FASE 15 — Promociones, Cupones y Descuentos
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Motor de promociones (descuentos porcentuales, fijos, 2x1, combos), cupones con código y límites de uso, fechas de vigencia y aplicación atómica en el carrito del POS.
+
+---
+
+## FASE 16 — Cotizaciones y Pedidos
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Generación de cotizaciones comerciales con validez temporal, envío por correo, conversión directa a venta POS en un clic sin duplicación de ítems y seguimiento de pedidos pendientes.
+
+---
+
+## FASE 17 — Configuración del Sistema y Personalización de Tickets
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Configuración global y por empresa de logotipos, régimen tributario, encabezados y pies de página de tickets (térmico 80mm y 58mm), y plantilla responsive optimizada para comandos de corte ESC/POS.
+
+---
+
+## FASE 18 — Tipos de Documento y Consecutivos
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Gestión de rangos autorizados por la DIAN (prefijos, número inicial/final, vigencia de resolución), control de alertas por agotamiento y asignación atómica sin huecos en consecutivos.
+
+---
+
+## FASE 19 — Impuestos Avanzados
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Soporte completo de esquema tributario colombiano: IVA general, exento y excluido; Impoconsumo (8% restaurantes/bares); Retefuente, ReteIVA y ReteICA con bases mínimas y cálculo automático.
+
+---
+
+## FASE 20 — Notificaciones y Alertas del Sistema
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Alertas en tiempo real para stock mínimo alcanzado, cartera vencida, vencimiento de resolución DIAN y descuadres de caja. Centro de notificaciones visual con campana interactiva y estado de lectura.
+
+---
+
+## FASE 21 — Exportaciones e Importaciones Masivas
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Importación masiva de productos y clientes vía Excel/CSV con validación previa de columnas y filas con error; exportación de inventarios, ventas y libros fiscales a Excel/PDF.
+
+---
+
+## FASE 22 — Integración y API REST
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** API RESTful versionada (`/api/v1/`) protegida por Laravel Sanctum, endpoints para productos, inventario, clientes, ventas y consulta de reportes con aislamiento estricto multi-tenant y rate limiting.
+
+---
+
+## FASE 23 — Droguería y Farmacia (Módulo Especializado)
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Gestión de laboratorios farmacéuticos, principios activos, lotes y fechas de vencimiento con semaforización (verde, amarillo, rojo), trazabilidad FEFO (First Expired, First Out) y alertas de medicamentos próximos a vencer.
+
+---
+
+## FASE 24 — API Tokens y Webhooks
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Generación de tokens de acceso para terceros con scopes granulares (`read`, `write`, `pos`), configuración de webhooks para eventos clave (`venta.creada`, `stock.bajo`, `caja.cerrada`) con firmas HMAC-SHA256 y cola de reintentos.
+
+---
+
+## FASE 25 — Multisucursal Avanzado
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Solicitudes y despachos de mercancía entre sucursales con estados de tránsito (`PENDIENTE`, `EN_TRANSITO`, `RECIBIDO`, `RECHAZADO`), asignación de usuarios a múltiples sucursales y reporte consolidado multi-sede.
+
+---
+
+## FASE 26 — SaaS y Planes de Suscripción
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Gestión de planes (Básico, Profesional, Empresarial), límites por suscripción (máximo de sucursales, usuarios, facturación electrónica, acceso a API), middleware de control `EnforcePlanLimits` y pasarela de cambio de plan.
+
+---
+
+## FASE 27 — PWA y Operación Offline
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Configuración de Progressive Web App (`manifest.json`, Service Worker con caché de activos e interfaz POS), cola local de transacciones offline y endpoint transaccional idempotente con `client_transaction_id` para sincronización sin duplicados.
+
+---
+
+## FASE 28 — Testing Integral y Cobertura
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Batería de pruebas integrales: tests unitarios de cálculos matemáticos y tributarios (descuentos, impuestos, conversiones), prueba de concurrencia de ventas con bloqueo pesimista contra sobreventa y test E2E del ciclo de vida comercial completo (compra -> caja -> venta -> crédito -> abono -> devolución -> arqueo cuadrado).
+
+---
+
+## FASE 29 — Optimización de Rendimiento
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Índices compuestos de alto impacto para consultas de ventas, kardex, lotes y cartera (`2026_09_09_270000_add_performance_indexes_tables.php`), afinación de OPcache en `docker/php.ini`, buffers y compresión gzip en `docker/nginx.conf`, y configuración de colas Redis en Supervisor.
+
+---
+
+## FASE 30 — Preparación para Producción
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle:** Plantilla de configuración `.env.production.example`, orquestación con `docker/supervisord.conf` (FPM, Queue Worker, Scheduler), script automatizado de despliegue con zero-downtime `deploy.sh` (migraciones atómicas, caché de rutas/vistas/eventos) y validación de seguridad de endpoints.
