@@ -12,6 +12,7 @@ use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\SucursalController;
+use App\Http\Controllers\VentaController;
 use Illuminate\Support\Facades\Route;
 
 // Redirección de la raíz hacia el login o dashboard
@@ -103,5 +104,15 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/{caja}/cierre', [CajaController::class, 'storeCierre'])->name('cierre.store');
         Route::get('/comprobantes/{sesion}', [CajaController::class, 'comprobante'])->name('comprobante');
     });
+
+    // Fase 10: Motor de Ventas
+    Route::prefix('ventas')->name('ventas.')->group(function () {
+        Route::get('/', [VentaController::class, 'index'])->name('index');
+        Route::post('/', [VentaController::class, 'store'])->name('store');
+        Route::get('/{venta}', [VentaController::class, 'show'])->name('show');
+        Route::post('/{venta}/anular', [VentaController::class, 'anular'])->name('anular');
+        Route::get('/{venta}/ticket', [VentaController::class, 'ticket'])->name('ticket');
+    });
 });
+
 
