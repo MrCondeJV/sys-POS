@@ -13,6 +13,30 @@
     <!-- Alpine.js es provisto automáticamente por Livewire -->
     <style>
         [x-cloak] { display: none !important; }
+
+        @media print {
+            @page {
+                size: letter portrait;
+                margin: 8mm 10mm;
+            }
+            body {
+                background-color: #ffffff !important;
+                background: #ffffff !important;
+                color: #0f172a !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            aside, header, nav, .print\:hidden, [role="dialog"] {
+                display: none !important;
+            }
+            main {
+                padding: 0 !important;
+                margin: 0 !important;
+                overflow: visible !important;
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+        }
     </style>
     @livewireStyles
 </head>
