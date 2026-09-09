@@ -260,7 +260,7 @@
         <!-- Contenedor con Scroll -->
         <main class="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8">
             <!-- Alertas Flash -->
-            <div class="max-w-7xl mx-auto">
+            <div class="w-full max-w-[1680px] mx-auto">
                 @if(session('success'))
                 <div x-data="{ show: true }" x-show="show" class="mb-6 bg-emerald-50 border border-emerald-200 p-4 rounded-2xl flex items-center justify-between shadow-sm">
                     <div class="flex items-center space-x-3 text-emerald-800 text-sm font-medium">

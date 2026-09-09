@@ -45,8 +45,19 @@ class ProductoController extends Controller
 
         $categorias = Categoria::activa()->get();
         $marcas = Marca::activa()->get();
+        $totalProductos = Producto::count();
+        $totalBajoStock = Producto::bajoStock()->count();
 
-        return view('productos.index', compact('productos', 'categorias', 'marcas', 'term', 'categoriaId', 'bajoStock'));
+        return view('productos.index', compact(
+            'productos',
+            'categorias',
+            'marcas',
+            'term',
+            'categoriaId',
+            'bajoStock',
+            'totalProductos',
+            'totalBajoStock'
+        ));
     }
 
     /**
