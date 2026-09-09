@@ -4,12 +4,15 @@
 
 @section('content')
     <script>
+        let compraItemUidCounter = 1;
+
         function compraForm() {
             return {
                 productosCatalog: @json($productos),
                 descuento: 0,
                 items: [
                     {
+                        uid: compraItemUidCounter++,
                         producto_id: '',
                         cantidad: 1,
                         costo_unitario: 0,
@@ -73,6 +76,7 @@
                 // Añadir una nueva fila vacía
                 addItem() {
                     this.items.push({
+                        uid: compraItemUidCounter++,
                         producto_id: '',
                         cantidad: 1,
                         costo_unitario: 0,
@@ -299,105 +303,100 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 bg-white">
-                            <template x-for="(item, idx) in items" :key="idx">
+                            <template x-for="(item, idx) in items" :key="item.uid">
                                 <tr class="hover:bg-slate-50/60 transition">
                                     <!-- Columna de Producto con Selector Inteligente en la Fila -->
                                     <td class="px-3 py-3 relative">
                                         <!-- Caso 1: Producto seleccionado (Muestra tarjeta fija y oculta completamente el input) -->
-                                        <template x-if="item.producto_id">
-                                            <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200">
-                                                <div class="flex items-center space-x-3 truncate mr-2">
-                                                    <template x-if="getProduct(item.producto_id)?.imagen_url">
-                                                        <img :src="getProduct(item.producto_id)?.imagen_url" class="h-8 w-8 object-cover rounded-lg flex-shrink-0 border border-slate-200">
-                                                    </template>
-                                                    <template x-if="!getProduct(item.producto_id)?.imagen_url">
-                                                        <div class="h-8 w-8 rounded-lg bg-indigo-50 text-indigo-600 font-bold text-xs flex items-center justify-center flex-shrink-0 border border-indigo-100">
-                                                            <span x-text="(getProduct(item.producto_id)?.nombre || 'P').charAt(0).toUpperCase()"></span>
-                                                        </div>
-                                                    </template>
-                                                    <div class="truncate">
-                                                        <div class="font-bold text-sm text-slate-900 truncate"
-                                                            x-text="getProduct(item.producto_id)?.nombre"></div>
-                                                        <div class="text-xs text-slate-500 flex items-center space-x-2 mt-0.5">
-                                                            <span class="font-mono bg-white px-1.5 py-0.5 rounded border border-slate-200 text-[11px] font-bold text-slate-700"
-                                                                x-text="getProduct(item.producto_id)?.codigo || getProduct(item.producto_id)?.sku"></span>
-                                                            <span x-text="'Unidad: ' + (getProduct(item.producto_id)?.unidad_medida?.codigo || 'UND')"></span>
-                                                        </div>
+                                        <div x-show="item.producto_id" class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200">
+                                            <div class="flex items-center space-x-3 truncate mr-2">
+                                                <img x-show="getProduct(item.producto_id)?.imagen_url"
+                                                     :src="getProduct(item.producto_id)?.imagen_url || ''"
+                                                     class="h-8 w-8 object-cover rounded-lg flex-shrink-0 border border-slate-200">
+                                                <div x-show="!getProduct(item.producto_id)?.imagen_url"
+                                                     class="h-8 w-8 rounded-lg bg-indigo-50 text-indigo-600 font-bold text-xs flex items-center justify-center flex-shrink-0 border border-indigo-100">
+                                                    <span x-text="(getProduct(item.producto_id)?.nombre || 'P').charAt(0).toUpperCase()"></span>
+                                                </div>
+                                                <div class="truncate">
+                                                    <div class="font-bold text-sm text-slate-900 truncate"
+                                                        x-text="getProduct(item.producto_id)?.nombre"></div>
+                                                    <div class="text-xs text-slate-500 flex items-center space-x-2 mt-0.5">
+                                                        <span class="font-mono bg-white px-1.5 py-0.5 rounded border border-slate-200 text-[11px] font-bold text-slate-700"
+                                                            x-text="getProduct(item.producto_id)?.codigo || getProduct(item.producto_id)?.sku"></span>
+                                                        <span x-text="'Unidad: ' + (getProduct(item.producto_id)?.unidad_medida?.codigo || 'UND')"></span>
                                                     </div>
                                                 </div>
-                                                <button type="button" @click="clearLineProduct(idx)"
-                                                    class="px-2.5 py-1 text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-white hover:bg-indigo-50 rounded-lg border border-slate-200 transition flex-shrink-0 shadow-sm"
-                                                    title="Cambiar producto seleccionado">
-                                                    Cambiar
-                                                </button>
-                                                <input type="hidden" :name="'items[' + idx + '][producto_id]'"
-                                                    :value="item.producto_id" required>
                                             </div>
-                                        </template>
+                                            <button type="button" @click="clearLineProduct(idx)"
+                                                class="px-2.5 py-1 text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-white hover:bg-indigo-50 rounded-lg border border-slate-200 transition flex-shrink-0 shadow-sm"
+                                                title="Cambiar producto seleccionado">
+                                                Cambiar
+                                            </button>
+                                            <input type="hidden" :name="'items[' + idx + '][producto_id]'"
+                                                :value="item.producto_id">
+                                        </div>
 
                                         <!-- Caso 2: Sin producto seleccionado aún (Buscador interactivo en la fila) -->
-                                        <template x-if="!item.producto_id">
-                                            <div class="relative" @click.away="item.dropdownOpen = false">
-                                                <div class="relative flex items-center">
-                                                    <svg class="h-4 w-4 absolute left-3 text-slate-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                                    </svg>
-                                                    <input type="text" x-model="item.searchQuery"
-                                                        @focus="item.dropdownOpen = true"
-                                                        @input="item.dropdownOpen = true"
-                                                        @keydown.escape="item.dropdownOpen = false"
-                                                        @keydown.enter.prevent="
-                                                            const list = getFilteredRowProducts(item.searchQuery, idx);
-                                                            if (list.length > 0) setLineProduct(idx, list[0]);
-                                                        "
-                                                        placeholder="Escribe nombre, SKU o código de barras..."
-                                                        class="w-full pl-9 pr-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium placeholder:text-slate-400">
-                                                </div>
+                                        <div x-show="!item.producto_id" class="relative" @click.away="item.dropdownOpen = false">
+                                            <div class="relative flex items-center">
+                                                <svg class="h-4 w-4 absolute left-3 text-slate-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                                </svg>
+                                                <input type="text" x-model="item.searchQuery"
+                                                    @focus="item.dropdownOpen = true"
+                                                    @input="item.dropdownOpen = true"
+                                                    @keydown.escape="item.dropdownOpen = false"
+                                                    @keydown.enter.prevent="
+                                                        const list = getFilteredRowProducts(item.searchQuery, idx);
+                                                        if (list.length > 0) setLineProduct(idx, list[0]);
+                                                    "
+                                                    placeholder="Escribe nombre, SKU o código de barras..."
+                                                    class="w-full pl-9 pr-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium placeholder:text-slate-400">
+                                            </div>
 
-                                                <!-- Dropdown flotante con filtro en vivo -->
-                                                <div x-cloak x-show="item.dropdownOpen"
-                                                    class="absolute left-0 right-0 z-40 mt-1 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden max-h-60 overflow-y-auto">
-                                                    <template x-for="p in getFilteredRowProducts(item.searchQuery, idx)"
-                                                        :key="p.id">
-                                                        <button type="button" @click="setLineProduct(idx, p)"
-                                                            class="w-full px-3.5 py-2.5 text-left hover:bg-indigo-50 transition border-b border-slate-50 last:border-0 flex items-center justify-between group">
-                                                            <div class="flex items-center space-x-2.5 truncate mr-2">
-                                                                <template x-if="p.imagen_url">
-                                                                    <img :src="p.imagen_url" class="h-7 w-7 object-cover rounded-lg flex-shrink-0 border border-slate-100">
-                                                                </template>
-                                                                <template x-if="!p.imagen_url">
-                                                                    <div class="h-7 w-7 rounded-lg bg-slate-100 text-slate-500 font-bold text-xs flex items-center justify-center flex-shrink-0">
-                                                                        <span x-text="(p.nombre || 'P').charAt(0).toUpperCase()"></span>
-                                                                    </div>
-                                                                </template>
-                                                                <div class="truncate">
-                                                                    <div class="font-bold text-xs text-slate-800 group-hover:text-indigo-600 truncate"
-                                                                        x-text="p.nombre"></div>
-                                                                    <div class="text-[11px] text-slate-400 font-mono flex items-center space-x-1.5">
-                                                                        <span class="font-bold text-slate-600" x-text="p.codigo || p.sku"></span>
-                                                                        <span x-text="'• ' + (p.unidad_medida ? p.unidad_medida.codigo : 'UND')"></span>
-                                                                        <template x-if="p.codigo_barras">
-                                                                            <span x-text="'• ' + p.codigo_barras"></span>
-                                                                        </template>
-                                                                    </div>
+                                            <!-- Dropdown flotante con filtro en vivo -->
+                                            <div x-cloak x-show="item.dropdownOpen && !item.producto_id"
+                                                class="absolute left-0 right-0 z-40 mt-1 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden max-h-60 overflow-y-auto">
+                                                <template x-for="p in getFilteredRowProducts(item.searchQuery, idx)"
+                                                    :key="p.id">
+                                                    <button type="button" @click.stop="setLineProduct(idx, p)"
+                                                        class="w-full px-3.5 py-2.5 text-left hover:bg-indigo-50 transition border-b border-slate-50 last:border-0 flex items-center justify-between group">
+                                                        <div class="flex items-center space-x-2.5 truncate mr-2">
+                                                            <template x-if="p.imagen_url">
+                                                                <img :src="p.imagen_url" class="h-7 w-7 object-cover rounded-lg flex-shrink-0 border border-slate-100">
+                                                            </template>
+                                                            <template x-if="!p.imagen_url">
+                                                                <div class="h-7 w-7 rounded-lg bg-slate-100 text-slate-500 font-bold text-xs flex items-center justify-center flex-shrink-0">
+                                                                    <span x-text="(p.nombre || 'P').charAt(0).toUpperCase()"></span>
+                                                                </div>
+                                                            </template>
+                                                            <div class="truncate">
+                                                                <div class="font-bold text-xs text-slate-800 group-hover:text-indigo-600 truncate"
+                                                                    x-text="p.nombre"></div>
+                                                                <div class="text-[11px] text-slate-400 font-mono flex items-center space-x-1.5">
+                                                                    <span class="font-bold text-slate-600" x-text="p.codigo || p.sku"></span>
+                                                                    <span x-text="'• ' + (p.unidad_medida ? p.unidad_medida.codigo : 'UND')"></span>
+                                                                    <template x-if="p.codigo_barras">
+                                                                        <span x-text="'• ' + p.codigo_barras"></span>
+                                                                    </template>
                                                                 </div>
                                                             </div>
-                                                            <div class="text-right flex-shrink-0 ml-2">
-                                                                <span class="text-[10px] text-slate-400 block leading-tight">Costo ref.</span>
-                                                                <span class="font-mono text-xs font-bold text-slate-800"
-                                                                    x-text="formatMoney(p.precio_compra)"></span>
-                                                            </div>
-                                                        </button>
-                                                    </template>
-                                                    <template
-                                                        x-if="getFilteredRowProducts(item.searchQuery, idx).length === 0">
-                                                        <div class="px-4 py-3 text-xs text-slate-400 text-center">
-                                                            No se encontraron artículos disponibles
                                                         </div>
-                                                    </template>
-                                                </div>
+                                                        <div class="text-right flex-shrink-0 ml-2">
+                                                            <span class="text-[10px] text-slate-400 block leading-tight">Costo ref.</span>
+                                                            <span class="font-mono text-xs font-bold text-slate-800"
+                                                                x-text="formatMoney(p.precio_compra)"></span>
+                                                        </div>
+                                                    </button>
+                                                </template>
+                                                <template
+                                                    x-if="getFilteredRowProducts(item.searchQuery, idx).length === 0">
+                                                    <div class="px-4 py-3 text-xs text-slate-400 text-center">
+                                                        No se encontraron artículos disponibles
+                                                    </div>
+                                                </template>
                                             </div>
-                                        </template>
+                                        </div>
                                     </td>
 
                                     <!-- Cantidad -->
@@ -463,7 +462,7 @@
 
                 <!-- Vista Móvil de Artículos (Tarjetas reactivas para teléfonos y tablets) -->
                 <div class="block md:hidden space-y-3">
-                    <template x-for="(item, idx) in items" :key="idx">
+                    <template x-for="(item, idx) in items" :key="item.uid">
                         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3">
                             <div class="flex items-center justify-between">
                                 <span class="text-xs font-bold text-slate-500" x-text="'Línea #' + (idx + 1)"></span>
@@ -476,57 +475,54 @@
                             <!-- Selector Móvil -->
                             <div>
                                 <label class="block text-xs font-bold text-slate-600 mb-1">Artículo</label>
-                                <template x-if="item.producto_id">
-                                    <div class="flex items-center justify-between p-2 bg-white rounded-xl border border-slate-200">
-                                        <div class="flex items-center space-x-2.5 truncate mr-2">
-                                            <template x-if="getProduct(item.producto_id)?.imagen_url">
-                                                <img :src="getProduct(item.producto_id)?.imagen_url" class="h-8 w-8 object-cover rounded-lg flex-shrink-0 border border-slate-200">
-                                            </template>
-                                            <div class="truncate">
-                                                <div class="font-bold text-sm text-slate-900 truncate"
-                                                    x-text="getProduct(item.producto_id)?.nombre"></div>
-                                                <div class="text-xs text-slate-400 font-mono"
-                                                    x-text="getProduct(item.producto_id)?.codigo || getProduct(item.producto_id)?.sku">
-                                                </div>
+                                <div x-show="item.producto_id" class="flex items-center justify-between p-2 bg-white rounded-xl border border-slate-200">
+                                    <div class="flex items-center space-x-2.5 truncate mr-2">
+                                        <img x-show="getProduct(item.producto_id)?.imagen_url"
+                                             :src="getProduct(item.producto_id)?.imagen_url || ''"
+                                             class="h-8 w-8 object-cover rounded-lg flex-shrink-0 border border-slate-200">
+                                        <div class="truncate">
+                                            <div class="font-bold text-sm text-slate-900 truncate"
+                                                x-text="getProduct(item.producto_id)?.nombre"></div>
+                                            <div class="text-xs text-slate-400 font-mono"
+                                                x-text="getProduct(item.producto_id)?.codigo || getProduct(item.producto_id)?.sku">
                                             </div>
                                         </div>
-                                        <button type="button" @click="clearLineProduct(idx)"
-                                            class="px-2.5 py-1 text-xs font-bold text-indigo-600 bg-indigo-50 rounded-lg">
-                                            Cambiar
-                                        </button>
-                                        <input type="hidden" :name="'items[' + idx + '][producto_id]'"
-                                            :value="item.producto_id" required>
                                     </div>
-                                </template>
-                                <template x-if="!item.producto_id">
-                                    <div class="relative" @click.away="item.dropdownOpen = false">
-                                        <input type="text" x-model="item.searchQuery" @focus="item.dropdownOpen = true"
-                                            @input="item.dropdownOpen = true" placeholder="🔍 Buscar artículo..."
-                                            class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:border-indigo-500">
-                                        <div x-cloak x-show="item.dropdownOpen"
-                                            class="absolute left-0 right-0 z-30 mt-1 bg-white rounded-xl shadow-lg border border-slate-200 max-h-48 overflow-y-auto">
-                                            <template x-for="p in getFilteredRowProducts(item.searchQuery, idx)"
-                                                :key="p.id">
-                                                <button type="button" @click="setLineProduct(idx, p)"
-                                                    class="w-full px-3 py-2 text-left text-xs hover:bg-indigo-50 border-b border-slate-50 last:border-0 flex items-center justify-between">
-                                                    <div class="truncate mr-2">
-                                                        <div class="font-bold text-slate-800 truncate" x-text="p.nombre"></div>
-                                                        <div class="text-[10px] text-slate-400 font-mono"
-                                                            x-text="p.codigo || p.sku"></div>
-                                                    </div>
-                                                    <span class="font-mono text-xs font-bold text-slate-700"
-                                                        x-text="formatMoney(p.precio_compra)"></span>
-                                                </button>
-                                            </template>
-                                            <template
-                                                x-if="getFilteredRowProducts(item.searchQuery, idx).length === 0">
-                                                <div class="px-3 py-2 text-xs text-slate-400 text-center">
-                                                    No se encontraron artículos disponibles
+                                    <button type="button" @click="clearLineProduct(idx)"
+                                        class="px-2.5 py-1 text-xs font-bold text-indigo-600 bg-indigo-50 rounded-lg">
+                                        Cambiar
+                                    </button>
+                                    <input type="hidden" :name="'items[' + idx + '][producto_id]'"
+                                        :value="item.producto_id">
+                                </div>
+
+                                <div x-show="!item.producto_id" class="relative" @click.away="item.dropdownOpen = false">
+                                    <input type="text" x-model="item.searchQuery" @focus="item.dropdownOpen = true"
+                                        @input="item.dropdownOpen = true" placeholder="🔍 Buscar artículo..."
+                                        class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:border-indigo-500">
+                                    <div x-cloak x-show="item.dropdownOpen && !item.producto_id"
+                                        class="absolute left-0 right-0 z-30 mt-1 bg-white rounded-xl shadow-lg border border-slate-200 max-h-48 overflow-y-auto">
+                                        <template x-for="p in getFilteredRowProducts(item.searchQuery, idx)"
+                                            :key="p.id">
+                                            <button type="button" @click.stop="setLineProduct(idx, p)"
+                                                class="w-full px-3 py-2 text-left text-xs hover:bg-indigo-50 border-b border-slate-50 last:border-0 flex items-center justify-between">
+                                                <div class="truncate mr-2">
+                                                    <div class="font-bold text-slate-800 truncate" x-text="p.nombre"></div>
+                                                    <div class="text-[10px] text-slate-400 font-mono"
+                                                        x-text="p.codigo || p.sku"></div>
                                                 </div>
-                                            </template>
-                                        </div>
+                                                <span class="font-mono text-xs font-bold text-slate-700"
+                                                    x-text="formatMoney(p.precio_compra)"></span>
+                                            </button>
+                                        </template>
+                                        <template
+                                            x-if="getFilteredRowProducts(item.searchQuery, idx).length === 0">
+                                            <div class="px-3 py-2 text-xs text-slate-400 text-center">
+                                                No se encontraron artículos
+                                            </div>
+                                        </template>
                                     </div>
-                                </template>
+                                </div>
                             </div>
 
                             <div class="grid grid-cols-2 gap-2">
