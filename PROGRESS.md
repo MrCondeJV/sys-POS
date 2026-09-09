@@ -118,4 +118,41 @@ Este archivo registra el avance fase por fase según las normas estrictas del [R
 
 ---
 
-*(Fases 6 a 30 pendientes conforme al Roadmap)*
+## FASE 6 — Proveedores y Compras Comerciales
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle de tareas:**
+  - Migración y Modelo `Proveedor`: gestión multiempresa de socios comerciales con tipos de documento DIAN (`NIT`, `CC`, `CE`, etc.) y unicidad aislada por empresa: OK
+  - Migración y Modelos `Compra` y `CompraDetalle`: facturación y compras de mercancía con numeración, estado (`RECIBIDA`, `ANULADA`), totales e impuestos: OK
+  - Servicio de dominio transaccional `RegistrarCompraAction` y `AnularCompraAction`: integración directa con Kardex inmutable y reversión de compras con validación de stock disponible: OK
+  - Interfaz de usuario responsive:
+    - `proveedores.index`: Métricas de compras, modal reactivo Alpine.js para creación y edición, tabla con estados.
+    - `compras.index`: KPIs de compras del mes, filtros por proveedor/fecha/estado, histórico de facturas.
+    - `compras.create`: Registro ágil de facturas de compra con selector de productos, cálculo automático de subtotales, IVA y totales.
+    - `compras.show`: Comprobante ejecutivo de entrada a inventario apto para impresión directa (`@media print`).
+  - Pruebas automatizadas unitarias y de feature al 100% (75 tests): OK
+
+---
+
+## FASE 7 — Clientes y Consumidor Final
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle de tareas:**
+  - Enum `TipoPersona` (`NATURAL`, `JURIDICA`) y extensión de permisos `CLIENTES_*`: OK
+  - Migración y Modelo `Cliente`: catálogo de clientes multiempresa con campos tributarios DIAN (`tipo_persona`, `tipo_documento`, `numero_documento`, `razon_social`, `nombre_comercial`, etc.): OK
+  - Parámetros de cartera comercial para Fase 8: `cupo_credito` (decimal) y `plazo_dias` (integer): OK
+  - Creación y protección inviolable del cliente predeterminado **CONSUMIDOR FINAL** (`222222222222`, `CC`) para ventas al mostrador y terminal POS:
+    - Seeder automático `ClienteSeeder` para cada tenant registrado en la base de datos: OK
+    - `ClientePolicy` y `ClienteController` impiden su eliminación y blindan su número de identificación: OK
+  - Interfaz de usuario adaptable y limpia (`max-w-[1680px]`):
+    - `clientes.index`: 4 tarjetas KPI (Total Clientes, Activos, Con Crédito Comercial, Personas Jurídicas/Empresas), buscador en tiempo real, filtros por tipo persona y estado, tabla con avatares de identificación y badges de crédito.
+    - `clientes.create`: Formulario estructurado en 3 tarjetas numeradas (Identificación, Contacto y Crédito comercial) con reactividad Alpine.js para cambio dinámico entre Persona Natural y Jurídica.
+    - `clientes.edit`: Formulario de edición con bloqueo de documento y banner informativo cuando se trata del Consumidor Final.
+  - Navegación universal: Integración de la sección "Ventas & Clientes" en la barra lateral de escritorio y en el menú móvil drawer de `layouts/app.blade.php`: OK
+  - Suite de pruebas completa `tests/Feature/Fase7/ClienteTest.php` (12 tests cubriendo aislamiento multi-tenant, CRUD, validación DIAN, consumidor final y permisos): OK
+  - Total pruebas del sistema: 87 tests passing, 290 assertions: OK
+  - Código formateado bajo estándar con Laravel Pint: OK
+
+---
+
+*(Fases 8 a 30 pendientes conforme al Roadmap)*

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Categoria;
+use App\Models\Cliente;
 use App\Models\Compra;
 use App\Models\Empresa;
 use App\Models\Inventario;
@@ -12,6 +13,7 @@ use App\Models\Proveedor;
 use App\Models\Sucursal;
 use App\Models\UnidadMedida;
 use App\Policies\CategoriaPolicy;
+use App\Policies\ClientePolicy;
 use App\Policies\CompraPolicy;
 use App\Policies\EmpresaPolicy;
 use App\Policies\InventarioPolicy;
@@ -48,6 +50,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Inventario::class, InventarioPolicy::class);
         Gate::policy(Proveedor::class, ProveedorPolicy::class);
         Gate::policy(Compra::class, CompraPolicy::class);
+        Gate::policy(Cliente::class, ClientePolicy::class);
 
         // Super Admin Bypass global auditado
         Gate::before(function ($user, $ability) {

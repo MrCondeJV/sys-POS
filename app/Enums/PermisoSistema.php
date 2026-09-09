@@ -35,6 +35,12 @@ enum PermisoSistema: string
     case PROVEEDORES_EDITAR = 'proveedores.editar';
     case PROVEEDORES_ELIMINAR = 'proveedores.eliminar';
 
+    // Clientes
+    case CLIENTES_VER = 'clientes.ver';
+    case CLIENTES_CREAR = 'clientes.crear';
+    case CLIENTES_EDITAR = 'clientes.editar';
+    case CLIENTES_ELIMINAR = 'clientes.eliminar';
+
     // Reportes
     case REPORTES_VER = 'reportes.ver';
 

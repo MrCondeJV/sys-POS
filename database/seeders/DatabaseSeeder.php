@@ -271,5 +271,8 @@ class DatabaseSeeder extends Seeder
                 'estado' => EstadoGeneral::ACTIVO,
             ]
         );
+
+        // 11. Clientes Iniciales y Consumidor Final
+        $this->call(ClienteSeeder::class);
     }
 }

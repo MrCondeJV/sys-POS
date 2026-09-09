@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CatalogoController;
+use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CompraController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmpresaController;
@@ -72,4 +73,7 @@ Route::middleware(['auth'])->group(function () {
         ->parameters(['compras' => 'compra'])
         ->except(['edit', 'update', 'destroy']);
     Route::post('/compras/{compra}/anular', [CompraController::class, 'anular'])->name('compras.anular');
+
+    // Fase 7: Clientes y Consumidor Final
+    Route::resource('clientes', ClienteController::class);
 });

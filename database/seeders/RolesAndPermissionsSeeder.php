@@ -75,6 +75,10 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::PROVEEDORES_CREAR->value,
             PermisoSistema::PROVEEDORES_EDITAR->value,
             PermisoSistema::PROVEEDORES_ELIMINAR->value,
+            PermisoSistema::CLIENTES_VER->value,
+            PermisoSistema::CLIENTES_CREAR->value,
+            PermisoSistema::CLIENTES_EDITAR->value,
+            PermisoSistema::CLIENTES_ELIMINAR->value,
             PermisoSistema::REPORTES_VER->value,
             PermisoSistema::EMPRESA_GESTIONAR->value,
             PermisoSistema::SUCURSALES_GESTIONAR->value,
@@ -106,6 +110,9 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::PROVEEDORES_VER->value,
             PermisoSistema::PROVEEDORES_CREAR->value,
             PermisoSistema::PROVEEDORES_EDITAR->value,
+            PermisoSistema::CLIENTES_VER->value,
+            PermisoSistema::CLIENTES_CREAR->value,
+            PermisoSistema::CLIENTES_EDITAR->value,
             PermisoSistema::REPORTES_VER->value,
             PermisoSistema::SUCURSALES_GESTIONAR->value,
         ]);
@@ -123,6 +130,8 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::INVENTARIO_VER->value,
             PermisoSistema::CAJA_ABRIR->value,
             PermisoSistema::CAJA_CERRAR->value,
+            PermisoSistema::CLIENTES_VER->value,
+            PermisoSistema::CLIENTES_CREAR->value,
         ]);
 
         // VENDEDOR
@@ -135,6 +144,8 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::VENTAS_VER->value,
             PermisoSistema::VENTAS_CREAR->value,
             PermisoSistema::PRODUCTOS_VER->value,
+            PermisoSistema::CLIENTES_VER->value,
+            PermisoSistema::CLIENTES_CREAR->value,
         ]);
 
         // CONTADOR
@@ -147,6 +158,7 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::VENTAS_VER->value,
             PermisoSistema::COMPRAS_VER->value,
             PermisoSistema::PROVEEDORES_VER->value,
+            PermisoSistema::CLIENTES_VER->value,
             PermisoSistema::INVENTARIO_VER->value,
             PermisoSistema::REPORTES_VER->value,
         ]);
