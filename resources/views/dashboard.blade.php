@@ -46,6 +46,85 @@
         </div>
     </div>
 
+    <!-- Indicadores Financieros y Comerciales (Fase 15) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <!-- KPI: Ventas Hoy -->
+        <a href="{{ route('reportes.ventas') }}" class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm hover:border-indigo-400 hover:shadow-md transition group">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Ventas de Hoy</span>
+                <span class="p-2 rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </span>
+            </div>
+            <div class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-3">
+                ${{ number_format($ventasHoy ?? 0, 2) }}
+            </div>
+            <div class="text-xs text-slate-500 mt-1 flex items-center justify-between">
+                <span>{{ $cantidadVentasHoy ?? 0 }} ventas realizadas</span>
+                <span class="text-indigo-600 font-semibold group-hover:translate-x-1 transition">&rarr;</span>
+            </div>
+        </a>
+
+        <!-- KPI: Ventas del Mes -->
+        <a href="{{ route('reportes.ventas') }}" class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm hover:border-indigo-400 hover:shadow-md transition group">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Ventas del Mes</span>
+                <span class="p-2 rounded-xl bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                </span>
+            </div>
+            <div class="text-2xl sm:text-3xl font-extrabold text-indigo-600 mt-3">
+                ${{ number_format($ventasMes ?? 0, 2) }}
+            </div>
+            <div class="text-xs text-slate-500 mt-1 flex items-center justify-between">
+                <span>{{ $cantidadVentasMes ?? 0 }} transacciones</span>
+                <span class="text-indigo-600 font-semibold group-hover:translate-x-1 transition">&rarr;</span>
+            </div>
+        </a>
+
+        <!-- KPI: Ticket Promedio y Utilidad -->
+        <a href="{{ route('reportes.utilidad') }}" class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm hover:border-emerald-400 hover:shadow-md transition group">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Utilidad del Mes</span>
+                <span class="p-2 rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                </span>
+            </div>
+            <div class="text-2xl sm:text-3xl font-extrabold text-emerald-600 mt-3">
+                ${{ number_format($utilidadMes ?? 0, 2) }}
+            </div>
+            <div class="text-xs text-slate-500 mt-1 flex items-center justify-between">
+                <span>Ticket Prom: ${{ number_format($ticketPromedio ?? 0, 2) }}</span>
+                <span class="text-emerald-600 font-semibold group-hover:translate-x-1 transition">&rarr;</span>
+            </div>
+        </a>
+
+        <!-- KPI: Cartera Pendiente -->
+        <a href="{{ route('reportes.cartera') }}" class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm hover:border-amber-400 hover:shadow-md transition group">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cartera Pendiente</span>
+                <span class="p-2 rounded-xl bg-amber-50 text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                </span>
+            </div>
+            <div class="text-2xl sm:text-3xl font-extrabold text-amber-600 mt-3">
+                ${{ number_format($carteraPendiente ?? 0, 2) }}
+            </div>
+            <div class="text-xs text-slate-500 mt-1 flex items-center justify-between">
+                <span>Saldo por cobrar a clientes</span>
+                <span class="text-amber-600 font-semibold group-hover:translate-x-1 transition">&rarr;</span>
+            </div>
+        </a>
+    </div>
+
     <!-- Indicadores Clave del Negocio (KPIs de Alto Impacto) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <!-- Tarjeta 1: Catálogo de Productos -->

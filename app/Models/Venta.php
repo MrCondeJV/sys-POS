@@ -121,6 +121,16 @@ class Venta extends Model
         return $this->tipo_pago === TipoPago::CREDITO;
     }
 
+    public function scopeCompletadas($query)
+    {
+        return $query->where('estado', EstadoVenta::COMPLETADA);
+    }
+
+    public function scopeAnuladas($query)
+    {
+        return $query->where('estado', EstadoVenta::ANULADA);
+    }
+
     public function listaPrecio(): BelongsTo
     {
         return $this->belongsTo(ListaPrecio::class, 'lista_precio_id');

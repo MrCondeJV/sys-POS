@@ -58,6 +58,11 @@ class Producto extends Model
         return $this->codigo;
     }
 
+    public function getPrecioCostoAttribute(): float
+    {
+        return (float) ($this->attributes['precio_compra'] ?? 0);
+    }
+
     /**
      * Categoría a la que pertenece el producto.
      */

@@ -14,6 +14,7 @@ use App\Http\Controllers\ListaPrecioController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\SucursalController;
 use App\Http\Controllers\VentaController;
 use Illuminate\Support\Facades\Route;
@@ -143,6 +144,25 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/ventas/{venta}', [DevolucionController::class, 'store'])->name('store');
         Route::get('/{devolucion}', [DevolucionController::class, 'show'])->name('show');
         Route::get('/{devolucion}/comprobante', [DevolucionController::class, 'comprobante'])->name('comprobante');
+    });
+
+    // Fase 15: Reportes y Business Intelligence
+    Route::prefix('reportes')->name('reportes.')->group(function () {
+        Route::get('/', [ReporteController::class, 'index'])->name('index');
+        Route::get('/ventas', [ReporteController::class, 'ventas'])->name('ventas');
+        Route::get('/ventas/imprimir', [ReporteController::class, 'ventasImprimir'])->name('ventas.imprimir');
+        Route::get('/compras', [ReporteController::class, 'compras'])->name('compras');
+        Route::get('/compras/imprimir', [ReporteController::class, 'comprasImprimir'])->name('compras.imprimir');
+        Route::get('/utilidad', [ReporteController::class, 'utilidad'])->name('utilidad');
+        Route::get('/utilidad/imprimir', [ReporteController::class, 'utilidadImprimir'])->name('utilidad.imprimir');
+        Route::get('/inventario', [ReporteController::class, 'inventario'])->name('inventario');
+        Route::get('/inventario/imprimir', [ReporteController::class, 'inventarioImprimir'])->name('inventario.imprimir');
+        Route::get('/cajas', [ReporteController::class, 'cajas'])->name('cajas');
+        Route::get('/cajas/imprimir', [ReporteController::class, 'cajasImprimir'])->name('cajas.imprimir');
+        Route::get('/cartera', [ReporteController::class, 'cartera'])->name('cartera');
+        Route::get('/cartera/imprimir', [ReporteController::class, 'carteraImprimir'])->name('cartera.imprimir');
+        Route::get('/metodos-pago', [ReporteController::class, 'metodosPago'])->name('metodos-pago');
+        Route::get('/impuestos', [ReporteController::class, 'impuestos'])->name('impuestos');
     });
 });
 
