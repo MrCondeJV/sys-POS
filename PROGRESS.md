@@ -70,6 +70,25 @@ Este archivo registra el avance fase por fase según las normas estrictas del [R
   - Pruebas automatizadas unitarias y de feature al 100% (31 tests, 86 assertions): OK
   - Estandarización de código con Laravel Pint: OK
 
+## FASE 4 — Catálogos y Productos
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle de tareas:**
+  - Migración y Modelos de Catálogos Auxiliares (`categorias`, `marcas`, `unidades_medida`) con aislamiento multiempresa (`BelongsToCompany`, soft deletes): OK
+  - Migración y Modelo `Producto` con soporte para SKU, Código de Barras (EAN/UPC), IVA configurable (0%, 5%, 19%), precios diferenciales (compra, venta, mayorista), stock y stock mínimo de alerta: OK
+  - Métodos y scopes de dominio en `Producto`: `tieneBajoStock()`, `calcularPrecioConIva()`, `scopeBuscar()`, `scopeBajoStock()`, `scopeActivo()`: OK
+  - Políticas de seguridad registradas en `AppServiceProvider`: `ProductoPolicy`, `CategoriaPolicy`, `MarcaPolicy`, `UnidadMedidaPolicy`: OK
+  - Controladores seguros `ProductoController` y `CatalogoController` con validación `BelongsToActiveCompany` y asignación forzada de tenant: OK
+  - Interfaz de usuario táctil, ultra limpia y 100% responsiva (Móvil, Tablet, PC):
+    - `productos.index`: Dual view (tabla completa en desktop / grid de cards táctiles en móvil y tablet, badges de stock bajo, filtros por categoría, búsqueda en tiempo real por SKU/código de barras).
+    - `productos.create`: Formulario estructurado por secciones con calculadora en tiempo real (Alpine.js) de margen de utilidad (%) y precio final con IVA.
+    - `productos.edit`: Formulario de edición con recálculo dinámico y eliminación con confirmación.
+    - `catalogos.index`: Centro unificado de clasificación con pestañas interactivas (Categorías, Marcas, Unidades) y formularios rápidos de alta.
+  - Integración en navegación universal (`layouts/app.blade.php` sidebar de escritorio y drawer móvil): OK
+  - Datos de prueba y demostración sembrados en `DatabaseSeeder`: OK
+  - Pruebas automatizadas unitarias y de feature al 100% (43 tests, 135 assertions): OK
+  - Estandarización de código con Laravel Pint: OK
+
 ---
 
-*(Fases 4 a 30 pendientes conforme al Roadmap)*
+*(Fases 5 a 30 pendientes conforme al Roadmap)*

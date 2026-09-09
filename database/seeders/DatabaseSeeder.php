@@ -105,5 +105,96 @@ class DatabaseSeeder extends Seeder
         if (! $cajero->hasRole(RolSistema::CAJERO->value)) {
             $cajero->assignRole(RolSistema::CAJERO->value);
         }
+
+        // 7. Catálogos Base para Empresa Demo
+        $catBebidas = \App\Models\Categoria::firstOrCreate(
+            ['empresa_id' => $empresa->id, 'nombre' => 'Bebidas y Refrescos'],
+            ['descripcion' => 'Gaseosas, jugos y aguas', 'activo' => true]
+        );
+        $catAbarrotes = \App\Models\Categoria::firstOrCreate(
+            ['empresa_id' => $empresa->id, 'nombre' => 'Abarrotes y Despensa'],
+            ['descripcion' => 'Granos, aceites, lácteos y enlatados', 'activo' => true]
+        );
+        $catFerreteria = \App\Models\Categoria::firstOrCreate(
+            ['empresa_id' => $empresa->id, 'nombre' => 'Herramientas y Ferretería'],
+            ['descripcion' => 'Tornillos, herramientas y fijaciones', 'activo' => true]
+        );
+
+        $marcaPostobon = \App\Models\Marca::firstOrCreate(
+            ['empresa_id' => $empresa->id, 'nombre' => 'Postobón'],
+            ['descripcion' => 'Bebidas nacionales', 'activo' => true]
+        );
+        $marcaStanley = \App\Models\Marca::firstOrCreate(
+            ['empresa_id' => $empresa->id, 'nombre' => 'Stanley'],
+            ['descripcion' => 'Herramientas profesionales', 'activo' => true]
+        );
+        $marcaDiana = \App\Models\Marca::firstOrCreate(
+            ['empresa_id' => $empresa->id, 'nombre' => 'Arroz Diana'],
+            ['descripcion' => 'Alimentos', 'activo' => true]
+        );
+
+        $und = \App\Models\UnidadMedida::firstOrCreate(
+            ['empresa_id' => $empresa->id, 'codigo' => 'UND'],
+            ['nombre' => 'Unidad', 'activo' => true]
+        );
+        $kg = \App\Models\UnidadMedida::firstOrCreate(
+            ['empresa_id' => $empresa->id, 'codigo' => 'KG'],
+            ['nombre' => 'Kilogramo', 'activo' => true]
+        );
+
+        // 8. Productos de Prueba
+        \App\Models\Producto::firstOrCreate(
+            ['empresa_id' => $empresa->id, 'codigo' => 'BEB-001'],
+            [
+                'nombre' => 'Gaseosa Manzana Postobón 1.5L',
+                'codigo_barras' => '7702090012345',
+                'categoria_id' => $catBebidas->id,
+                'marca_id' => $marcaPostobon->id,
+                'unidad_medida_id' => $und->id,
+                'precio_compra' => 3200,
+                'precio_venta' => 4800,
+                'precio_mayorista' => 4200,
+                'stock' => 48,
+                'stock_minimo' => 12,
+                'iva' => 19,
+                'estado' => EstadoGeneral::ACTIVO,
+            ]
+        );
+
+        \App\Models\Producto::firstOrCreate(
+            ['empresa_id' => $empresa->id, 'codigo' => 'ABA-001'],
+            [
+                'nombre' => 'Arroz Blanco Diana 1000g',
+                'codigo_barras' => '7702511000012',
+                'categoria_id' => $catAbarrotes->id,
+                'marca_id' => $marcaDiana->id,
+                'unidad_medida_id' => $kg->id,
+                'precio_compra' => 3600,
+                'precio_venta' => 4500,
+                'precio_mayorista' => 4100,
+                'stock' => 5, // Bajo stock para probar alerta
+                'stock_minimo' => 10,
+                'iva' => 0,
+                'estado' => EstadoGeneral::ACTIVO,
+            ]
+        );
+
+        \App\Models\Producto::firstOrCreate(
+            ['empresa_id' => $empresa->id, 'codigo' => 'FER-001'],
+            [
+                'nombre' => 'Cinta Métrica Stanley PowerLock 5m',
+                'codigo_barras' => '076174332156',
+                'categoria_id' => $catFerreteria->id,
+                'marca_id' => $marcaStanley->id,
+                'unidad_medida_id' => $und->id,
+                'precio_compra' => 16000,
+                'precio_venta' => 26000,
+                'precio_mayorista' => 22000,
+                'stock' => 15,
+                'stock_minimo' => 3,
+                'iva' => 19,
+                'estado' => EstadoGeneral::ACTIVO,
+            ]
+        );
     }
 }

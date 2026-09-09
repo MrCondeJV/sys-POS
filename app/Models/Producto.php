@@ -1,0 +1,123 @@
+<?php
+
+namespace App\Models;
+
+use App\Enums\EstadoGeneral;
+use App\Support\Tenancy\BelongsToCompany;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Producto extends Model
+{
+    use BelongsToCompany, HasFactory, SoftDeletes;
+
+    protected $table = 'productos';
+
+    protected $fillable = [
+        'empresa_id',
+        'categoria_id',
+        'marca_id',
+        'unidad_medida_id',
+        'codigo',
+        'codigo_barras',
+        'nombre',
+        'descripcion',
+        'precio_compra',
+        'precio_venta',
+        'precio_mayorista',
+        'precio_distribuidor',
+        'stock',
+        'stock_minimo',
+        'iva',
+        'imagen_path',
+        'estado',
+    ];
+
+    protected $casts = [
+        'precio_compra' => 'decimal:2',
+        'precio_venta' => 'decimal:2',
+        'precio_mayorista' => 'decimal:2',
+        'precio_distribuidor' => 'decimal:2',
+        'stock' => 'decimal:2',
+        'stock_minimo' => 'decimal:2',
+        'iva' => 'decimal:2',
+        'estado' => EstadoGeneral::class,
+    ];
+
+    /**
+     * Categoría a la que pertenece el producto.
+     */
+    public function categoria(): BelongsTo
+    {
+        return $this->belongsTo(Categoria::class, 'categoria_id');
+    }
+
+    /**
+     * Marca del producto.
+     */
+    public function marca(): BelongsTo
+    {
+        return $this->belongsTo(Marca::class, 'marca_id');
+    }
+
+    /**
+     * Unidad de medida comercial.
+     */
+    public function unidadMedida(): BelongsTo
+    {
+        return $this->belongsTo(UnidadMedida::class, 'unidad_medida_id');
+    }
+
+    /**
+     * Scope para productos activos.
+     */
+    public function scopeActivo(Builder $query): Builder
+    {
+        return $query->where('estado', EstadoGeneral::ACTIVO->value);
+    }
+
+    /**
+     * Scope para productos con existencias por debajo o igual al stock mínimo.
+     */
+    public function scopeBajoStock(Builder $query): Builder
+    {
+        return $query->whereColumn('stock', '<=', 'stock_minimo');
+    }
+
+    /**
+     * Scope para búsqueda rápida en el POS (nombre, código interno o código de barras).
+     */
+    public function scopeBuscar(Builder $query, ?string $term): Builder
+    {
+        if (empty($term)) {
+            return $query;
+        }
+
+        return $query->where(function ($q) use ($term) {
+            $q->where('nombre', 'like', "%{$term}%")
+                ->orWhere('codigo', 'like', "%{$term}%")
+                ->orWhere('codigo_barras', 'like', "%{$term}%");
+        });
+    }
+
+    /**
+     * Verifica si el producto está en alerta de stock bajo.
+     */
+    public function tieneBajoStock(): bool
+    {
+        return (float) $this->stock <= (float) $this->stock_minimo;
+    }
+
+    /**
+     * Calcula el precio de venta final con IVA incluido.
+     */
+    public function calcularPrecioConIva(): float
+    {
+        $factorIva = 1 + ((float) $this->iva / 100);
+
+        return round((float) $this->precio_venta * $factorIva, 2);
+    }
+}

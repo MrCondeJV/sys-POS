@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\EmpresaController;
+use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\SucursalController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,4 +36,17 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/sucursales/{sucursal}', [SucursalController::class, 'update'])->name('sucursales.update');
     Route::delete('/sucursales/{sucursal}', [SucursalController::class, 'destroy'])->name('sucursales.destroy');
     Route::post('/sucursales/seleccionar', [SucursalController::class, 'seleccionar'])->name('sucursales.seleccionar');
+
+    // Fase 4: Catálogo de Productos y Clasificación
+    Route::resource('productos', ProductoController::class);
+
+    Route::prefix('catalogos')->name('catalogos.')->group(function () {
+        Route::get('/', [CatalogoController::class, 'index'])->name('index');
+        Route::post('/categorias', [CatalogoController::class, 'storeCategoria'])->name('categorias.store');
+        Route::delete('/categorias/{categoria}', [CatalogoController::class, 'destroyCategoria'])->name('categorias.destroy');
+        Route::post('/marcas', [CatalogoController::class, 'storeMarca'])->name('marcas.store');
+        Route::delete('/marcas/{marca}', [CatalogoController::class, 'destroyMarca'])->name('marcas.destroy');
+        Route::post('/unidades', [CatalogoController::class, 'storeUnidad'])->name('unidades.store');
+        Route::delete('/unidades/{unidad}', [CatalogoController::class, 'destroyUnidad'])->name('unidades.destroy');
+    });
 });
