@@ -67,7 +67,12 @@ class CerrarCajaAction
                 empresaId: $sesionBloqueada->empresa_id
             );
 
-            return $sesionBloqueada->fresh();
+            $sesionFinal = $sesionBloqueada->fresh();
+
+            // Fase 20: Disparar evento de caja cerrada
+            \App\Events\CajaCerradaEvent::dispatch($sesionFinal);
+
+            return $sesionFinal;
         });
     }
 }

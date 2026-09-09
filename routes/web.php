@@ -15,6 +15,7 @@ use App\Http\Controllers\ImpuestoController;
 use App\Http\Controllers\ImpresionController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\ListaPrecioController;
+use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
@@ -189,6 +190,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/venta/{venta}', [ImpresionController::class, 'imprimirVenta'])->name('venta');
         Route::get('/caja/{sesion}', [ImpresionController::class, 'imprimirCajaSesion'])->name('caja');
         Route::get('/abono/{abono}', [ImpresionController::class, 'imprimirAbono'])->name('abono');
+    });
+
+    // Fase 20: Notificaciones y Alertas del Sistema
+    Route::prefix('notificaciones')->name('notificaciones.')->group(function () {
+        Route::get('/', [NotificacionController::class, 'index'])->name('index');
+        Route::post('/{notificacion}/leida', [NotificacionController::class, 'marcarLeida'])->name('marcar-leida');
+        Route::post('/marcar-todas', [NotificacionController::class, 'marcarTodasLeidas'])->name('marcar-todas');
+        Route::get('/conteo', [NotificacionController::class, 'conteoNoLeidas'])->name('conteo');
     });
 });
 

@@ -62,5 +62,19 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(function ($user, $ability) {
             return $user->isSuperAdmin() ? true : null;
         });
+
+        // Fase 20: Eventos & Notificaciones del Sistema
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\StockBajoEvent::class,
+            \App\Listeners\NotificarStockBajoListener::class
+        );
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\CajaCerradaEvent::class,
+            \App\Listeners\NotificarCajaCerradaListener::class
+        );
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\VentaImportanteEvent::class,
+            \App\Listeners\NotificarVentaImportanteListener::class
+        );
     }
 }

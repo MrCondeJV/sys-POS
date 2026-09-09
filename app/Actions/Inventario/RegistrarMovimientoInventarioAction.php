@@ -64,6 +64,19 @@ class RegistrarMovimientoInventarioAction
                 ->where('id', $dto->productoId)
                 ->update(['stock' => $stockConsolidado]);
 
+            // Fase 20: Verificar alerta de Stock Bajo en salida
+            if ($dto->tipo->esSalida()) {
+                $inventario->loadMissing(['producto', 'sucursal']);
+                if ($inventario->producto && $stockPosterior <= (float) $inventario->producto->stock_minimo) {
+                    \App\Events\StockBajoEvent::dispatch(
+                        $inventario->producto,
+                        $inventario->sucursal,
+                        $stockPosterior,
+                        (float) $inventario->producto->stock_minimo
+                    );
+                }
+            }
+
             // 5. Determinar costo unitario histórico si no fue provisto
             $costoUnitario = $dto->costoUnitario !== null
                 ? $dto->costoUnitario
