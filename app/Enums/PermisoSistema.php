@@ -61,6 +61,12 @@ enum PermisoSistema: string
     case USUARIOS_VER = 'usuarios.ver';
     case USUARIOS_GESTIONAR = 'usuarios.gestionar';
 
+    // Listas de Precios
+    case LISTAS_PRECIOS_VER = 'listas_precios.ver';
+    case LISTAS_PRECIOS_CREAR = 'listas_precios.crear';
+    case LISTAS_PRECIOS_EDITAR = 'listas_precios.editar';
+    case LISTAS_PRECIOS_ELIMINAR = 'listas_precios.eliminar';
+
     /**
      * Retorna todos los valores como un array plano de strings.
      *

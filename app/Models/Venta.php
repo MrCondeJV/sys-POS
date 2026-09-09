@@ -22,6 +22,7 @@ class Venta extends Model
         'empresa_id',
         'sucursal_id',
         'cliente_id',
+        'lista_precio_id',
         'user_id',
         'caja_sesion_id',
         'numero_venta',
@@ -109,5 +110,10 @@ class Venta extends Model
     public function isCredito(): bool
     {
         return $this->tipo_pago === TipoPago::CREDITO;
+    }
+
+    public function listaPrecio(): BelongsTo
+    {
+        return $this->belongsTo(ListaPrecio::class, 'lista_precio_id');
     }
 }

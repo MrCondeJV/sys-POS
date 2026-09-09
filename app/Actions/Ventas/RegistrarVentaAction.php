@@ -47,7 +47,8 @@ class RegistrarVentaAction
         ?int $cajaSesionId = null,
         ?float $pagoCon = null,
         ?array $pagos = null,
-        ?string $observaciones = null
+        ?string $observaciones = null,
+        ?int $listaPrecioId = null
     ): Venta {
         if (empty($items)) {
             throw new InvalidArgumentException('La venta debe contener al menos un producto.');
@@ -65,7 +66,8 @@ class RegistrarVentaAction
             $cajaSesionId,
             $pagoCon,
             $pagos,
-            $observaciones
+            $observaciones,
+            $listaPrecioId
         ) {
             // 1. Validar Cliente si la venta es a Crédito
             $cliente = null;
@@ -162,11 +164,16 @@ class RegistrarVentaAction
                 $cambio = round($pagoCon - $totalGeneral, 2);
             }
 
+            if ($listaPrecioId === null && $cliente && $cliente->lista_precio_id) {
+                $listaPrecioId = $cliente->lista_precio_id;
+            }
+
             // 4. Crear Cabecera de Venta
             $venta = Venta::create([
                 'empresa_id' => $empresaId,
                 'sucursal_id' => $sucursalId,
                 'cliente_id' => $clienteId,
+                'lista_precio_id' => $listaPrecioId,
                 'user_id' => $userId,
                 'caja_sesion_id' => $cajaSesionId,
                 'numero_venta' => $numeroVenta,

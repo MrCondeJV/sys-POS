@@ -72,10 +72,21 @@ class PosController extends Controller
             ->with(['producto.categoria', 'producto.unidadMedida'])
             ->get();
 
-        $productos = $inventarios->map(function ($inv) {
+        // Listas de Precios Activas
+        $listasPrecios = \App\Models\ListaPrecio::where('empresa_id', $empresaId)
+            ->where('estado', EstadoGeneral::ACTIVO->value)
+            ->with('detalles')
+            ->get();
+
+        $productos = $inventarios->map(function ($inv) use ($listasPrecios) {
             $p = $inv->producto;
             if (! $p || $p->estado !== EstadoGeneral::ACTIVO) {
                 return null;
+            }
+
+            $preciosListas = [];
+            foreach ($listasPrecios as $lp) {
+                $preciosListas[$lp->id] = $lp->calcularPrecio($p);
             }
 
             return [
@@ -85,6 +96,7 @@ class PosController extends Controller
                 'codigo_barras' => $p->codigo_barras ?? '',
                 'sku' => $p->sku ?? '',
                 'precio_venta' => (float) $p->precio_venta,
+                'precios_listas' => $preciosListas,
                 'stock' => (float) $inv->stock,
                 'categoria_id' => $p->categoria_id,
                 'categoria_nombre' => $p->categoria?->nombre ?? 'General',
@@ -105,6 +117,7 @@ class PosController extends Controller
                     'numero_documento' => $c->numero_documento,
                     'tipo_documento' => $c->tipo_documento->value,
                     'es_consumidor_final' => (bool) $c->es_predeterminado,
+                    'lista_precio_id' => $c->lista_precio_id,
                     'tiene_credito' => $c->tieneCredito(),
                     'cupo_disponible' => (float) $c->cupoDisponible(),
                     'plazo_dias' => $c->plazo_dias,
@@ -121,7 +134,8 @@ class PosController extends Controller
             'sesionCaja',
             'productos',
             'clientes',
-            'categorias'
+            'categorias',
+            'listasPrecios'
         ));
     }
 
@@ -140,6 +154,7 @@ class PosController extends Controller
         $validated = $request->validate([
             'caja_sesion_id' => ['required', 'exists:cajas_sesiones,id'],
             'cliente_id' => ['nullable', 'exists:clientes,id'],
+            'lista_precio_id' => ['nullable', 'exists:listas_precios,id'],
             'tipo_pago' => ['required', 'in:CONTADO,CREDITO'],
             'metodo_pago' => ['required', 'string'],
             'tipo_comprobante' => ['nullable', 'in:TICKET,FACTURA,NOTA_VENTA'],
@@ -175,7 +190,8 @@ class PosController extends Controller
                 cajaSesionId: (int) $validated['caja_sesion_id'],
                 pagoCon: isset($validated['pago_con']) ? (float) $validated['pago_con'] : null,
                 pagos: $validated['pagos'] ?? null,
-                observaciones: $validated['observaciones'] ?? null
+                observaciones: $validated['observaciones'] ?? null,
+                listaPrecioId: isset($validated['lista_precio_id']) ? (int) $validated['lista_precio_id'] : null
             );
 
             return response()->json([

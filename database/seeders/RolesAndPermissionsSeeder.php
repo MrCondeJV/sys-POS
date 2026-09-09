@@ -91,6 +91,10 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::SUCURSALES_GESTIONAR->value,
             PermisoSistema::USUARIOS_VER->value,
             PermisoSistema::USUARIOS_GESTIONAR->value,
+            PermisoSistema::LISTAS_PRECIOS_VER->value,
+            PermisoSistema::LISTAS_PRECIOS_CREAR->value,
+            PermisoSistema::LISTAS_PRECIOS_EDITAR->value,
+            PermisoSistema::LISTAS_PRECIOS_ELIMINAR->value,
         ]);
 
         // ADMIN_SUCURSAL
@@ -150,6 +154,7 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::CLIENTES_CREAR->value,
             PermisoSistema::CARTERA_VER->value,
             PermisoSistema::CARTERA_ABONAR->value,
+            PermisoSistema::LISTAS_PRECIOS_VER->value,
         ]);
 
         // VENDEDOR

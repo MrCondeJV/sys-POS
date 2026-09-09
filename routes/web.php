@@ -9,6 +9,7 @@ use App\Http\Controllers\CompraController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\InventarioController;
+use App\Http\Controllers\ListaPrecioController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
@@ -119,6 +120,19 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('pos')->name('pos.')->group(function () {
         Route::get('/', [PosController::class, 'index'])->name('index');
         Route::post('/procesar', [PosController::class, 'procesar'])->name('procesar');
+    });
+
+    // Fase 13: Listas de Precios
+    Route::prefix('listas-precios')->name('listas-precios.')->group(function () {
+        Route::get('/', [ListaPrecioController::class, 'index'])->name('index');
+        Route::get('/crear', [ListaPrecioController::class, 'create'])->name('create');
+        Route::post('/', [ListaPrecioController::class, 'store'])->name('store');
+        Route::get('/{listaPrecio}', [ListaPrecioController::class, 'show'])->name('show');
+        Route::get('/{listaPrecio}/editar', [ListaPrecioController::class, 'edit'])->name('edit');
+        Route::put('/{listaPrecio}', [ListaPrecioController::class, 'update'])->name('update');
+        Route::delete('/{listaPrecio}', [ListaPrecioController::class, 'destroy'])->name('destroy');
+        Route::post('/{listaPrecio}/precios', [ListaPrecioController::class, 'guardarPrecioProducto'])->name('precios.store');
+        Route::delete('/{listaPrecio}/precios/{detalle}', [ListaPrecioController::class, 'eliminarPrecioProducto'])->name('precios.destroy');
     });
 });
 

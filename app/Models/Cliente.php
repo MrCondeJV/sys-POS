@@ -21,6 +21,7 @@ class Cliente extends Model
 
     protected $fillable = [
         'empresa_id',
+        'lista_precio_id',
         'tipo_persona',
         'tipo_documento',
         'numero_documento',
@@ -148,5 +149,13 @@ class Cliente extends Model
     public function tieneMora(): bool
     {
         return $this->cuentasPorCobrar()->vencidas()->exists();
+    }
+
+    /**
+     * Lista de precios asignada al cliente.
+     */
+    public function listaPrecio(): BelongsTo
+    {
+        return $this->belongsTo(ListaPrecio::class, 'lista_precio_id');
     }
 }
