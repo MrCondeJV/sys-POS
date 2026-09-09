@@ -70,6 +70,12 @@ enum PermisoSistema: string
     case LISTAS_PRECIOS_EDITAR = 'listas_precios.editar';
     case LISTAS_PRECIOS_ELIMINAR = 'listas_precios.eliminar';
 
+    // Impuestos
+    case IMPUESTOS_VER = 'impuestos.ver';
+    case IMPUESTOS_CREAR = 'impuestos.crear';
+    case IMPUESTOS_EDITAR = 'impuestos.editar';
+    case IMPUESTOS_ELIMINAR = 'impuestos.eliminar';
+
     /**
      * Retorna todos los valores como un array plano de strings.
      *

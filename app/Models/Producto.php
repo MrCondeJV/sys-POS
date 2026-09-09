@@ -33,6 +33,7 @@ class Producto extends Model
         'stock',
         'stock_minimo',
         'iva',
+        'impuesto_id',
         'imagen_path',
         'estado',
     ];
@@ -61,6 +62,20 @@ class Producto extends Model
     public function getPrecioCostoAttribute(): float
     {
         return (float) ($this->attributes['precio_compra'] ?? 0);
+    }
+
+    public function impuesto(): BelongsTo
+    {
+        return $this->belongsTo(Impuesto::class, 'impuesto_id');
+    }
+
+    public function getPorcentajeIvaAttribute(): float
+    {
+        if ($this->impuesto) {
+            return (float) $this->impuesto->porcentaje;
+        }
+
+        return (float) ($this->attributes['iva'] ?? 0);
     }
 
     /**

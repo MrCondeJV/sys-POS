@@ -10,6 +10,7 @@ use App\Http\Controllers\CompraController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DevolucionController;
 use App\Http\Controllers\EmpresaController;
+use App\Http\Controllers\ImpuestoController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\ListaPrecioController;
 use App\Http\Controllers\PosController;
@@ -171,6 +172,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [AuditoriaController::class, 'index'])->name('index');
         Route::get('/{auditoria}', [AuditoriaController::class, 'show'])->name('show');
     });
+
+    // Fase 17: Impuestos Configurables
+    Route::resource('impuestos', ImpuestoController::class);
+    Route::post('/impuestos/{impuesto}/por-defecto', [ImpuestoController::class, 'hacerPorDefecto'])->name('impuestos.por-defecto');
 });
 
 

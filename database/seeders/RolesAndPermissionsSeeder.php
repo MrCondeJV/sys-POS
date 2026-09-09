@@ -96,6 +96,10 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::LISTAS_PRECIOS_CREAR->value,
             PermisoSistema::LISTAS_PRECIOS_EDITAR->value,
             PermisoSistema::LISTAS_PRECIOS_ELIMINAR->value,
+            PermisoSistema::IMPUESTOS_VER->value,
+            PermisoSistema::IMPUESTOS_CREAR->value,
+            PermisoSistema::IMPUESTOS_EDITAR->value,
+            PermisoSistema::IMPUESTOS_ELIMINAR->value,
         ]);
 
         // ADMIN_SUCURSAL
