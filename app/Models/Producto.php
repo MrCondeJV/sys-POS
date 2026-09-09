@@ -131,6 +131,6 @@ class Producto extends Model
             return null;
         }
 
-        return Storage::disk('public')->url($this->imagen_path);
+        return asset('storage/' . ltrim($this->imagen_path, '/'));
     }
 }
