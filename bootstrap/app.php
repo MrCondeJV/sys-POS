@@ -28,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => RoleOrPermissionMiddleware::class,
             'company.context' => SetCompanyContext::class,
             'tenant.valid' => EnsureValidTenant::class,
+            'plan.feature' => \App\Http\Middleware\EnforcePlanLimits::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
