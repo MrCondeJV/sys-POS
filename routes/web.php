@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CarteraController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CompraController;
@@ -76,4 +77,16 @@ Route::middleware(['auth'])->group(function () {
 
     // Fase 7: Clientes y Consumidor Final
     Route::resource('clientes', ClienteController::class);
+
+    // Fase 8: Crédito y Cartera
+    Route::prefix('cartera')->name('cartera.')->group(function () {
+        Route::get('/', [CarteraController::class, 'index'])->name('index');
+        Route::get('/nueva', [CarteraController::class, 'create'])->name('create');
+        Route::post('/', [CarteraController::class, 'store'])->name('store');
+        Route::get('/{cuenta}', [CarteraController::class, 'show'])->name('show');
+        Route::post('/{cuenta}/abono', [CarteraController::class, 'storeAbono'])->name('abono.store');
+        Route::get('/recibos/{pago}', [CarteraController::class, 'showRecibo'])->name('recibo');
+        Route::post('/recibos/{pago}/anular', [CarteraController::class, 'anularAbono'])->name('recibo.anular');
+        Route::get('/estado-cuenta/{cliente}', [CarteraController::class, 'estadoCuenta'])->name('estado-cuenta');
+    });
 });

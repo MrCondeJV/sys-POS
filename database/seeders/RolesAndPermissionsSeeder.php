@@ -79,6 +79,10 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::CLIENTES_CREAR->value,
             PermisoSistema::CLIENTES_EDITAR->value,
             PermisoSistema::CLIENTES_ELIMINAR->value,
+            PermisoSistema::CARTERA_VER->value,
+            PermisoSistema::CARTERA_CREAR->value,
+            PermisoSistema::CARTERA_ABONAR->value,
+            PermisoSistema::CARTERA_ANULAR->value,
             PermisoSistema::REPORTES_VER->value,
             PermisoSistema::EMPRESA_GESTIONAR->value,
             PermisoSistema::SUCURSALES_GESTIONAR->value,
@@ -113,6 +117,10 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::CLIENTES_VER->value,
             PermisoSistema::CLIENTES_CREAR->value,
             PermisoSistema::CLIENTES_EDITAR->value,
+            PermisoSistema::CARTERA_VER->value,
+            PermisoSistema::CARTERA_CREAR->value,
+            PermisoSistema::CARTERA_ABONAR->value,
+            PermisoSistema::CARTERA_ANULAR->value,
             PermisoSistema::REPORTES_VER->value,
             PermisoSistema::SUCURSALES_GESTIONAR->value,
         ]);
@@ -132,6 +140,8 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::CAJA_CERRAR->value,
             PermisoSistema::CLIENTES_VER->value,
             PermisoSistema::CLIENTES_CREAR->value,
+            PermisoSistema::CARTERA_VER->value,
+            PermisoSistema::CARTERA_ABONAR->value,
         ]);
 
         // VENDEDOR
@@ -146,6 +156,7 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::PRODUCTOS_VER->value,
             PermisoSistema::CLIENTES_VER->value,
             PermisoSistema::CLIENTES_CREAR->value,
+            PermisoSistema::CARTERA_VER->value,
         ]);
 
         // CONTADOR
@@ -159,6 +170,9 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::COMPRAS_VER->value,
             PermisoSistema::PROVEEDORES_VER->value,
             PermisoSistema::CLIENTES_VER->value,
+            PermisoSistema::CARTERA_VER->value,
+            PermisoSistema::CARTERA_ABONAR->value,
+            PermisoSistema::CARTERA_ANULAR->value,
             PermisoSistema::INVENTARIO_VER->value,
             PermisoSistema::REPORTES_VER->value,
         ]);

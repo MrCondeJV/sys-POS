@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Cliente extends Model
@@ -104,5 +105,48 @@ class Cliente extends Model
     public function tieneCredito(): bool
     {
         return (float) $this->cupo_credito > 0;
+    }
+
+    /**
+     * Cuentas por cobrar del cliente.
+     */
+    public function cuentasPorCobrar(): HasMany
+    {
+        return $this->hasMany(CuentaPorCobrar::class, 'cliente_id')->latest();
+    }
+
+    /**
+     * Historial de pagos realizados por el cliente.
+     */
+    public function pagos(): HasMany
+    {
+        return $this->hasMany(PagoCliente::class, 'cliente_id')->latest();
+    }
+
+    /**
+     * Saldo total adeudado actualmente por el cliente.
+     */
+    public function saldoTotalPendiente(): float
+    {
+        return (float) $this->cuentasPorCobrar()->pendientes()->sum('saldo_pendiente');
+    }
+
+    /**
+     * Cupo de crédito restante disponible.
+     */
+    public function cupoDisponible(): float
+    {
+        $cupo = (float) $this->cupo_credito;
+        $saldo = $this->saldoTotalPendiente();
+
+        return max(0.0, $cupo - $saldo);
+    }
+
+    /**
+     * Determina si el cliente tiene facturas vencidas en mora.
+     */
+    public function tieneMora(): bool
+    {
+        return $this->cuentasPorCobrar()->vencidas()->exists();
     }
 }

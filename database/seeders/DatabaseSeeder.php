@@ -274,5 +274,8 @@ class DatabaseSeeder extends Seeder
 
         // 11. Clientes Iniciales y Consumidor Final
         $this->call(ClienteSeeder::class);
+
+        // 12. Cartera y Cuentas por Cobrar Iniciales
+        $this->call(CarteraSeeder::class);
     }
 }

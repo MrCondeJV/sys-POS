@@ -41,6 +41,12 @@ enum PermisoSistema: string
     case CLIENTES_EDITAR = 'clientes.editar';
     case CLIENTES_ELIMINAR = 'clientes.eliminar';
 
+    // Cartera y Cuentas por Cobrar
+    case CARTERA_VER = 'cartera.ver';
+    case CARTERA_CREAR = 'cartera.crear';
+    case CARTERA_ABONAR = 'cartera.abonar';
+    case CARTERA_ANULAR = 'cartera.anular';
+
     // Reportes
     case REPORTES_VER = 'reportes.ver';
 

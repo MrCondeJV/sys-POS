@@ -155,4 +155,33 @@ Este archivo registra el avance fase por fase según las normas estrictas del [R
 
 ---
 
-*(Fases 8 a 30 pendientes conforme al Roadmap)*
+## FASE 8 — Crédito y Cartera
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle de tareas:**
+  - Enums de dominio: `EstadoCuentaCobrar` (`PENDIENTE`, `PARCIAL`, `PAGADA`, `ANULADA`), `MetodoPagoCartera` (`EFECTIVO`, `TRANSFERENCIA`, `TARJETA_DEBITO`, etc.) y `EstadoPagoCartera` (`APLICADO`, `ANULADO`): OK
+  - Permisos de sistema: `cartera.ver`, `cartera.crear`, `cartera.abonar`, `cartera.anular` en `PermisoSistema` y asignados por rol en `RolesAndPermissionsSeeder`: OK
+  - Migración y Modelo `CuentaPorCobrar`: gestión de obligaciones a crédito con montos, saldos, fechas de vencimiento, aislamiento `BelongsToCompany`, soft deletes y generación atómica de número `CXC-xxxxx`: OK
+  - Migración y Modelo `PagoCliente`: historial de abonos y recaudos en caja con trazabilidad de saldo anterior, saldo posterior, método de pago, recibo único `RC-xxxxx` e imputación atómica: OK
+  - Métodos y relaciones de cartera en modelo `Cliente`: `cuentasPorCobrar()`, `pagos()`, `saldoTotalPendiente()`, `cupoDisponible()`, `tieneMora()`: OK
+  - Servicios de Dominio Transaccionales con bloqueos pesimistas (`DB::transaction` + `lockForUpdate`):
+    - `RegistrarCuentaPorCobrarAction`: apertura de cuentas con numeración única por empresa.
+    - `RegistrarAbonoCarteraAction`: aplicación de abonos, cálculo automático de saldos y transición de estado a `PARCIAL` o `PAGADA`.
+    - `AnularAbonoCarteraAction`: reversión atómica de pagos y restitución del saldo de la obligación.
+  - Autorización mediante Policies: `CuentaPorCobrarPolicy` y `PagoClientePolicy` registradas en `AppServiceProvider`: OK
+  - Interfaz de usuario adaptable y táctil (`max-w-[1680px]`):
+    - `cartera.index`: 4 tarjetas KPI (Cartera Total, Cartera Vigente, Cartera Vencida en mora, Total Recaudado en el Mes), filtros por estado/cliente, tabla con barras de progreso de amortización, cálculo de días de mora y modal reactivo Alpine.js para abono rápido.
+    - `cartera.create`: Apertura de crédito con sugerencia automática de fecha de vencimiento según plazo del cliente y alerta de cupo disponible.
+    - `cartera.show`: Ficha detallada de la cuenta por cobrar con desglose de saldo, estado del cliente, tabla cronológica de abonos y modal de pago.
+    - `cartera.recibo`: Recibo de caja / comprobante formal de abono con diseño apto para impresión (`window.print()`).
+    - `cartera.estado_cuenta`: Estado de cuenta consolidado del cliente con indicador de mora, porcentaje de cupo utilizado, lista de deudas y pagos históricos.
+  - Navegación universal: Enlace "Crédito & Cartera" integrado en la barra lateral y menú móvil en `layouts/app.blade.php`: OK
+  - Datos de prueba sembrados en `CarteraSeeder` y vinculados en `DatabaseSeeder`: OK
+  - Suite de pruebas completa `tests/Feature/Fase8/CarteraTest.php` (13 tests cubriendo aislamiento multi-tenant, concurrencia, abonos parciales, abonos totales, anulación y recibos): OK
+  - Total pruebas del sistema: **100 tests passing, 344 assertions**: OK
+  - Código formateado bajo estándar con Laravel Pint: OK
+
+---
+
+*(Fases 9 a 30 pendientes conforme al Roadmap)*
+

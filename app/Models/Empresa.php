@@ -59,6 +59,14 @@ class Empresa extends Model
     }
 
     /**
+     * Usuarios pertenecientes a la empresa.
+     */
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class, 'empresa_id');
+    }
+
+    /**
      * Scope para filtrar empresas activas.
      */
     public function scopeActiva(Builder $query): Builder
