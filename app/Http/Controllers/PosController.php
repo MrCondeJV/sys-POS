@@ -42,13 +42,13 @@ class PosController extends Controller
             ->where('estado', EstadoSesionCaja::ABIERTA->value)
             ->where(function ($q) {
                 $q->where('user_id', auth()->id())
-                  ->orWhereNull('user_id');
+                    ->orWhereNull('user_id');
             })
             ->latest('fecha_apertura')
             ->first();
 
         // Si no hay sesión propia, buscar cualquier sesión abierta en la sucursal
-        if (! $sesionCaja) {
+        if (!$sesionCaja) {
             $sesionCaja = CajaSesion::where('empresa_id', $empresaId)
                 ->where('sucursal_id', $sucursalId)
                 ->where('estado', EstadoSesionCaja::ABIERTA->value)
@@ -57,7 +57,7 @@ class PosController extends Controller
         }
 
         // Si no hay ninguna caja abierta en la sucursal, mostrar pantalla para apertura rápida
-        if (! $sesionCaja) {
+        if (!$sesionCaja) {
             $cajasDisponibles = Caja::where('empresa_id', $empresaId)
                 ->where('sucursal_id', $sucursalId)
                 ->where('estado', EstadoCaja::ACTIVA->value)
@@ -80,7 +80,7 @@ class PosController extends Controller
 
         $productos = $inventarios->map(function ($inv) use ($listasPrecios) {
             $p = $inv->producto;
-            if (! $p || $p->estado !== EstadoGeneral::ACTIVO) {
+            if (!$p || $p->estado !== EstadoGeneral::ACTIVO) {
                 return null;
             }
 
@@ -126,7 +126,7 @@ class PosController extends Controller
 
         // Categorías para filtrado rápido
         $categorias = Categoria::where('empresa_id', $empresaId)
-            ->where('estado', EstadoGeneral::ACTIVO->value)
+            ->where('activo', true)
             ->orderBy('nombre')
             ->get();
 
