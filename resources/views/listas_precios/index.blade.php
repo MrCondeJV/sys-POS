@@ -35,7 +35,7 @@
                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600">
             </div>
             <div class="flex items-center space-x-2">
-                <select name="estado" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700">
+                <select name="estado" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white hover:border-slate-300 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition shadow-2xs">
                     <option value="">Todos los Estados</option>
                     <option value="ACTIVO" {{ request('estado') === 'ACTIVO' ? 'selected' : '' }}>Activas</option>
                     <option value="INACTIVO" {{ request('estado') === 'INACTIVO' ? 'selected' : '' }}>Inactivas</option>

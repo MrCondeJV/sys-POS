@@ -24,6 +24,72 @@
     <style>
         [x-cloak] { display: none !important; }
 
+        /* ==========================================================================
+           Estilos Modernos para Dropdowns / Select Boxes (Customizable Select)
+           ========================================================================== */
+        select,
+        select::picker(select) {
+            appearance: base-select;
+        }
+
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-color: #ffffff;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+            background-position: right 0.75rem center !important;
+            background-repeat: no-repeat !important;
+            background-size: 1.15em 1.15em !important;
+            padding-right: 2.5rem !important;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.75rem;
+            color: #1e293b;
+            font-size: 0.8125rem;
+            line-height: 1.25rem;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+            cursor: pointer;
+        }
+
+        select:hover {
+            border-color: #94a3b8;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #6366f1 !important;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18) !important;
+            background-color: #ffffff !important;
+        }
+
+        /* Menú flotante (dropdown) en navegadores con soporte Customizable Select */
+        select::picker(select) {
+            border-radius: 0.875rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
+            padding: 0.375rem;
+            background-color: #ffffff;
+            color: #1e293b;
+            font-family: inherit;
+        }
+
+        select option {
+            padding: 0.55rem 0.85rem;
+            font-size: 0.8125rem;
+            color: #334155;
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            margin: 2px 0;
+            cursor: pointer;
+        }
+
+        select option:checked,
+        select option:hover {
+            background-color: #eef2ff !important;
+            color: #4f46e5 !important;
+            font-weight: 600;
+        }
+
         @media print {
             @page {
                 size: letter portrait;
