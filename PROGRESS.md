@@ -18,18 +18,21 @@ Este archivo registra el avance fase por fase según las normas estrictas del [R
 ---
 
 ## FASE 1 — Base del Sistema
-- **Estado:** EN PROGRESO
-- **Tareas completadas:**
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle de tareas:**
   - Inicialización del proyecto Laravel 12.69 (PHP 8.4): OK
   - Creación y verificación de base de datos `pos_db` en MySQL 8: OK
   - Configuración de entorno `.env` (MySQL, Locale es_CO): OK
   - Migraciones del sistema base ejecutadas: OK
   - Estructura modular base en `app/` creada (`Modules/`, `Actions/`, `Services/`, `DTOs/`, `Enums/`, `Policies/`, `Support/`): OK
-- **Siguientes tareas por autorizar/ejecutar en Fase 1:**
-  - Creación de entidades base: `Empresa` y `Sucursal`.
-  - Migraciones con integridad referencial (`empresas`, `sucursales`).
-  - Trait de multiempresa `BelongsToCompany` y Scope de empresa.
-  - Pruebas automatizadas de aislamiento y creación de empresa/sucursal.
+  - Enums creados (`TipoDocumentoIdentidad`, `EstadoGeneral`): OK
+  - Excepciones base de tenancy creadas (`TenantNotFoundException`, `TenancyViolationException`): OK
+  - Modelos y migraciones base creados con integridad referencial (`Empresa`, `Sucursal`): OK
+  - Infraestructura de aislamiento multiempresa (`CompanyContext`, `CompanyScope`, `BelongsToCompany` trait): OK
+  - Model factories (`EmpresaFactory`, `SucursalFactory`): OK
+  - Pruebas automatizadas unitarias y de feature al 100% (12 tests, 27 assertions): OK
+  - Estandarización de código con Laravel Pint: OK
 
 ---
 
