@@ -48,6 +48,15 @@ class Producto extends Model
         'estado' => EstadoGeneral::class,
     ];
 
+    protected $appends = [
+        'sku',
+    ];
+
+    public function getSkuAttribute(): ?string
+    {
+        return $this->codigo;
+    }
+
     /**
      * Categoría a la que pertenece el producto.
      */

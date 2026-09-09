@@ -230,7 +230,7 @@ function compraForm() {
                                         class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition">
                                         <option value="">-- Seleccionar Producto --</option>
                                         <template x-for="p in productosCatalog" :key="p.id">
-                                            <option :value="p.id" x-text="p.sku + ' - ' + p.nombre + ' (' + (p.unidad_medida ? p.unidad_medida.codigo : 'UND') + ')'"></option>
+                                            <option :value="p.id" x-text="((p.codigo || p.sku) ? (p.codigo || p.sku) + ' - ' : '') + p.nombre + ' (' + (p.unidad_medida ? p.unidad_medida.codigo : 'UND') + ')'"></option>
                                         </template>
                                     </select>
                                 </td>
@@ -296,7 +296,7 @@ function compraForm() {
                                 class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:border-indigo-500">
                                 <option value="">-- Seleccionar --</option>
                                 <template x-for="p in productosCatalog" :key="p.id">
-                                    <option :value="p.id" x-text="p.sku + ' - ' + p.nombre"></option>
+                                    <option :value="p.id" x-text="((p.codigo || p.sku) ? (p.codigo || p.sku) + ' - ' : '') + p.nombre"></option>
                                 </template>
                             </select>
                         </div>

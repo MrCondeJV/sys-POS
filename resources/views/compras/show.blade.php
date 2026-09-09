@@ -134,7 +134,7 @@
                     <tr class="hover:bg-slate-50/80 transition">
                         <td class="px-5 py-3.5 text-xs text-slate-400 font-mono">{{ $idx + 1 }}</td>
                         <td class="px-5 py-3.5 whitespace-nowrap text-xs font-mono font-bold text-slate-700">
-                            {{ $d->producto?->sku ?? '—' }}
+                            {{ $d->producto?->codigo ?? $d->producto?->sku ?? '—' }}
                         </td>
                         <td class="px-5 py-3.5">
                             <div class="font-bold text-slate-900 text-sm">{{ $d->producto?->nombre ?? 'Producto Eliminado' }}</div>
