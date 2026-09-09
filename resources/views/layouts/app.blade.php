@@ -26,7 +26,7 @@
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-            aside, header, nav, .print\:hidden, [role="dialog"] {
+            aside, header, nav, .print\:hidden, .no-print, [role="dialog"] {
                 display: none !important;
             }
             main {

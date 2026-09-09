@@ -173,5 +173,14 @@
 
     </div>
 
+    @if(request()->boolean('print'))
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+            setTimeout(function () {
+                window.print();
+            }, 350);
+        });
+    </script>
+    @endif
 </body>
 </html>

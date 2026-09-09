@@ -35,6 +35,15 @@
                 Listado
             </a>
 
+            <button type="button" onclick="window.print()"
+                class="inline-flex items-center px-3.5 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 bg-white hover:bg-slate-50 transition shadow-sm"
+                title="Imprimir ficha de cuenta por cobrar">
+                <svg class="h-4 w-4 mr-1.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                Imprimir Ficha
+            </button>
+
             <a href="{{ route('cartera.estado-cuenta', $cuenta->cliente) }}"
                 class="inline-flex items-center px-3.5 py-2 rounded-xl border border-emerald-300 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition shadow-sm">
                 <svg class="h-4 w-4 mr-1.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -295,12 +304,13 @@
 
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex items-center justify-end space-x-2">
-                                            <a href="{{ route('cartera.recibo', $pago) }}" target="_blank"
-                                                class="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition"
+                                            <a href="{{ route('cartera.recibo', $pago) }}?print=1" target="_blank"
+                                                class="inline-flex items-center px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs rounded-lg transition shadow-sm"
                                                 title="Imprimir comprobante de recibo">
-                                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <svg class="h-3.5 w-3.5 mr-1 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                                                 </svg>
+                                                Imprimir Recibo
                                             </a>
 
                                             @if(!$pago->isAnulado())
@@ -443,4 +453,14 @@
     </div>
 
 </div>
+
+@if(request()->boolean('print'))
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(function () {
+            window.print();
+        }, 400);
+    });
+</script>
+@endif
 @endsection

@@ -18,6 +18,13 @@
             </p>
         </div>
         <div class="flex items-center gap-3">
+            <button type="button" onclick="window.print()"
+                class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-bold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 shadow-sm transition">
+                <svg class="h-5 w-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                Imprimir Listado
+            </button>
             <a href="{{ route('compras.create') }}"
                 class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition">
                 <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -225,10 +232,20 @@
 
                         <!-- Acción -->
                         <td class="px-5 py-4 whitespace-nowrap text-right text-sm">
-                            <a href="{{ route('compras.show', $c) }}"
-                                class="inline-flex items-center px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg text-xs font-bold text-slate-700 transition">
-                                Detalle &rarr;
-                            </a>
+                            <div class="flex items-center justify-end space-x-2">
+                                <a href="{{ route('compras.show', $c) }}?print=1" target="_blank"
+                                    class="inline-flex items-center px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-bold transition shadow-sm"
+                                    title="Imprimir Comprobante Oficial">
+                                    <svg class="h-3.5 w-3.5 mr-1 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                    </svg>
+                                    Imprimir
+                                </a>
+                                <a href="{{ route('compras.show', $c) }}"
+                                    class="inline-flex items-center px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition">
+                                    Detalle &rarr;
+                                </a>
+                            </div>
                         </td>
                     </tr>
                     @empty
@@ -284,10 +301,19 @@
                         <span class="text-xs text-slate-400">Total Factura:</span>
                         <span class="font-black text-slate-900 text-sm ml-1">${{ number_format($c->total, 2) }}</span>
                     </div>
-                    <a href="{{ route('compras.show', $c) }}"
-                        class="text-xs font-bold text-indigo-600 hover:text-indigo-800">
-                        Ver Detalle &rarr;
-                    </a>
+                    <div class="flex items-center space-x-2">
+                        <a href="{{ route('compras.show', $c) }}?print=1" target="_blank"
+                            class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition shadow-sm">
+                            <svg class="h-3.5 w-3.5 mr-1 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                            </svg>
+                            Imprimir
+                        </a>
+                        <a href="{{ route('compras.show', $c) }}"
+                            class="text-xs font-bold text-slate-700 hover:text-indigo-600">
+                            Detalle &rarr;
+                        </a>
+                    </div>
                 </div>
             </div>
             @empty

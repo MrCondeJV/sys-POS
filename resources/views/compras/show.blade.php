@@ -506,4 +506,14 @@
         <span>Impreso el {{ now()->format('d/m/Y H:i:s') }} &bull; Usuario: {{ auth()->user()->name ?? 'Admin' }}</span>
     </div>
 </div>
+
+@if(request()->boolean('print'))
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(function () {
+            window.print();
+        }, 400);
+    });
+</script>
+@endif
 @endsection
