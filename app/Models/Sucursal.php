@@ -72,4 +72,18 @@ class Sucursal extends Model
     {
         return $this->hasMany(Compra::class, 'sucursal_id');
     }
+    public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'sucursal_user', 'sucursal_id', 'user_id')->withTimestamps();
+    }
+
+    public function trasladosEnviados(): HasMany
+    {
+        return $this->hasMany(TrasladoSucursal::class, 'sucursal_origen_id');
+    }
+
+    public function trasladosRecibidos(): HasMany
+    {
+        return $this->hasMany(TrasladoSucursal::class, 'sucursal_destino_id');
+    }
 }

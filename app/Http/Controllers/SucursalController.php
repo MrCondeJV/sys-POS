@@ -144,6 +144,11 @@ class SucursalController extends Controller
             'sucursal_id' => ['required', new BelongsToActiveCompany('sucursales')],
         ]);
 
+        $user = auth()->user();
+        if ($user && ! $user->tieneAccesoASucursal((int) $request->sucursal_id)) {
+            return back()->withErrors(['sucursal_id' => 'No tienes autorización para acceder a esta sucursal.']);
+        }
+
         BranchContext::setId((int) $request->sucursal_id);
 
         $nombreSucursal = BranchContext::getBranch()?->nombre ?? 'Sucursal';
