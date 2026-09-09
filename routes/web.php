@@ -12,13 +12,17 @@ use App\Http\Controllers\DevolucionController;
 use App\Http\Controllers\DocumentoVentaController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\FacturacionElectronicaController;
+use App\Http\Controllers\FarmaciaController;
 use App\Http\Controllers\ImpuestoController;
 use App\Http\Controllers\ImpresionController;
 use App\Http\Controllers\InventarioController;
+use App\Http\Controllers\LaboratorioController;
 use App\Http\Controllers\ListaPrecioController;
 use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\PosController;
+use App\Http\Controllers\PrincipioActivoController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\ProductoLoteController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\ResolucionFacturacionController;
@@ -210,6 +214,14 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/emitir/{documentoVenta}', [FacturacionElectronicaController::class, 'emitir'])->name('emitir');
         Route::post('/{documento}/nota-credito', [FacturacionElectronicaController::class, 'notaCredito'])->name('nota-credito');
         Route::get('/{documento}/descargar-xml', [FacturacionElectronicaController::class, 'descargarXml'])->name('descargar-xml');
+    });
+
+    // Fase 23: Droguerías y Módulo Farmacéutico
+    Route::prefix('farmacia')->group(function () {
+        Route::get('/dashboard', [FarmaciaController::class, 'dashboard'])->name('farmacia.dashboard');
+        Route::resource('laboratorios', LaboratorioController::class);
+        Route::resource('principios-activos', PrincipioActivoController::class);
+        Route::resource('lotes', ProductoLoteController::class)->only(['index', 'create', 'store', 'destroy']);
     });
 });
 

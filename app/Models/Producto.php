@@ -34,11 +34,18 @@ class Producto extends Model
         'stock_minimo',
         'iva',
         'impuesto_id',
+        'laboratorio_id',
+        'principio_activo_id',
+        'registro_sanitario',
+        'requiere_receta',
+        'maneja_lotes',
         'imagen_path',
         'estado',
     ];
 
     protected $casts = [
+        'requiere_receta' => 'boolean',
+        'maneja_lotes' => 'boolean',
         'precio_compra' => 'decimal:2',
         'precio_venta' => 'decimal:2',
         'precio_mayorista' => 'decimal:2',
@@ -100,6 +107,30 @@ class Producto extends Model
     public function unidadMedida(): BelongsTo
     {
         return $this->belongsTo(UnidadMedida::class, 'unidad_medida_id');
+    }
+
+    /**
+     * Laboratorio farmacéutico fabricante.
+     */
+    public function laboratorio(): BelongsTo
+    {
+        return $this->belongsTo(Laboratorio::class, 'laboratorio_id');
+    }
+
+    /**
+     * Principio activo o fármaco base.
+     */
+    public function principioActivo(): BelongsTo
+    {
+        return $this->belongsTo(PrincipioActivo::class, 'principio_activo_id');
+    }
+
+    /**
+     * Lotes registrados del producto.
+     */
+    public function lotes(): HasMany
+    {
+        return $this->hasMany(ProductoLote::class, 'producto_id');
     }
 
     /**

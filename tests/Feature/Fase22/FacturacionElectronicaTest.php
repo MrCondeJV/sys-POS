@@ -111,7 +111,7 @@ class FacturacionElectronicaTest extends TestCase
             'empresa_id' => $this->empresaA->id,
             'sucursal_id' => $this->sucursalA->id,
             'numero_resolucion' => '18764000001',
-            'prefijo' => 'FE',
+            'prefijo' => 'FEA',
             'rango_desde' => 1,
             'rango_hasta' => 5000,
             'consecutivo_actual' => 0,
@@ -215,7 +215,7 @@ class FacturacionElectronicaTest extends TestCase
 
         $response->assertOk();
         $response->assertDontSee('18764000001');
-        $response->assertDontSee('FE');
+        $response->assertDontSee('FEA');
     }
 
     public function test_resolucion_genera_consecutivos_y_detecta_agotamiento(): void
@@ -251,7 +251,7 @@ class FacturacionElectronicaTest extends TestCase
 
         $this->assertInstanceOf(DocumentoElectronico::class, $docElectronico);
         $this->assertEquals(EstadoDian::ACEPTADO, $docElectronico->estado_dian);
-        $this->assertEquals('FE-000001', $docElectronico->consecutivo_completo);
+        $this->assertEquals('FEA-000001', $docElectronico->consecutivo_completo);
         $this->assertNotNull($docElectronico->cufe);
         $this->assertEquals(96, strlen($docElectronico->cufe)); // SHA-384 hex string is 96 chars
         $this->assertStringContainsString('CUFE=', $docElectronico->qr_data);
@@ -261,7 +261,7 @@ class FacturacionElectronicaTest extends TestCase
         $this->assertDatabaseHas('documentos_electronicos', [
             'empresa_id' => $this->empresaA->id,
             'documento_venta_id' => $this->documentoVentaA->id,
-            'consecutivo_completo' => 'FE-000001',
+            'consecutivo_completo' => 'FEA-000001',
             'estado_dian' => EstadoDian::ACEPTADO->value,
         ]);
     }

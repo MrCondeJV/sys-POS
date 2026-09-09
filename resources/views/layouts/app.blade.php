@@ -262,6 +262,16 @@
                 </svg>
                 Resoluciones DIAN
             </a>
+
+            <div class="pt-4 pb-1 px-3">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Verticales Especializadas</span>
+            </div>
+
+            <a href="{{ route('farmacia.dashboard') }}"
+                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('farmacia.*') || request()->routeIs('lotes.*') || request()->routeIs('laboratorios.*') || request()->routeIs('principios-activos.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
+                <span class="text-base mr-3">💊</span>
+                Droguería & Lotes
+            </a>
         </nav>
 
         <!-- User footer -->
@@ -377,6 +387,9 @@
                     </a>
                     <a href="{{ route('resoluciones.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('resoluciones.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         📋 Resoluciones DIAN
+                    </a>
+                    <a href="{{ route('farmacia.dashboard') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('farmacia.*') || request()->routeIs('lotes.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
+                        💊 Droguería & Farmacia
                     </a>
                 </nav>
 
