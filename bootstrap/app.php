@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureValidTenant;
 use App\Http\Middleware\SetCompanyContext;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->web(append: [
             SetCompanyContext::class,
+            EnsureValidTenant::class,
         ]);
 
         $middleware->alias([
@@ -24,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
             'company.context' => SetCompanyContext::class,
+            'tenant.valid' => EnsureValidTenant::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

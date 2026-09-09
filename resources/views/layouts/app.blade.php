@@ -2,17 +2,273 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-50">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'POS Comercial') }} - @yield('title', 'Inicio')</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
     @livewireStyles
 </head>
-<body class="h-full font-sans antialiased text-slate-800">
-    @yield('content')
+<body class="h-full font-sans antialiased text-slate-800 bg-slate-50 flex" x-data="{ mobileMenuOpen: false }">
+
+    @auth
+    <!-- Sidebar para Escritorio / Pantallas medianas y grandes -->
+    <aside class="hidden lg:flex lg:flex-col lg:w-64 bg-slate-900 text-slate-300 flex-shrink-0 border-r border-slate-800">
+        <!-- Brand Header -->
+        <div class="h-16 flex items-center px-6 bg-slate-950 border-b border-slate-800">
+            <div class="h-9 w-9 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-indigo-500/20 mr-3">
+                POS
+            </div>
+            <div class="truncate">
+                <span class="font-bold text-white tracking-wide block truncate text-sm">
+                    {{ auth()->user()->empresa?->nombre_comercial ?? 'POS Comercial' }}
+                </span>
+                <span class="text-xs text-slate-400 block truncate">
+                    NIT: {{ auth()->user()->empresa?->nit ?? 'Global' }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
+            <a href="{{ route('dashboard') }}"
+                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('dashboard') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
+                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                Dashboard
+            </a>
+
+            <div class="pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
+                Gestión Empresarial
+            </div>
+
+            <a href="{{ route('empresa.perfil') }}"
+                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('empresa.perfil') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
+                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+                Perfil de Empresa
+            </a>
+
+            <a href="{{ route('sucursales.index') }}"
+                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('sucursales.index') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
+                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Sucursales
+            </a>
+
+            <div class="pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
+                Operaciones (Próximo)
+            </div>
+
+            <div class="px-3.5 py-2.5 text-sm font-medium text-slate-500 rounded-xl flex items-center justify-between cursor-not-allowed">
+                <span class="flex items-center">
+                    <svg class="h-5 w-5 mr-3 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    Punto de Venta (POS)
+                </span>
+                <span class="text-[10px] bg-slate-800 text-slate-400 font-semibold px-2 py-0.5 rounded-md">Fase 11</span>
+            </div>
+        </nav>
+
+        <!-- User footer -->
+        <div class="p-4 border-t border-slate-800 bg-slate-950/60 flex items-center justify-between">
+            <div class="truncate mr-2">
+                <div class="text-sm font-semibold text-white truncate">{{ auth()->user()->name }}</div>
+                <div class="text-xs text-indigo-400 truncate">{{ auth()->user()->roles->first()?->name ?? 'Usuario' }}</div>
+            </div>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="p-2 text-slate-400 hover:text-red-400 transition rounded-lg hover:bg-slate-800" title="Cerrar sesión">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- Mobile Drawer Menu (Teléfonos y Tablets pequeñas) -->
+    <div x-cloak x-show="mobileMenuOpen" class="relative z-50 lg:hidden" role="dialog" aria-modal="true">
+        <div x-show="mobileMenuOpen"
+             x-transition:enter="transition-opacity ease-linear duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition-opacity ease-linear duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm"
+             @click="mobileMenuOpen = false"></div>
+
+        <div class="fixed inset-0 flex">
+            <div x-show="mobileMenuOpen"
+                 x-transition:enter="transition ease-in-out duration-250 transform"
+                 x-transition:enter-start="-translate-x-full"
+                 x-transition:enter-end="translate-x-0"
+                 x-transition:leave="transition ease-in-out duration-250 transform"
+                 x-transition:leave-start="translate-x-0"
+                 x-transition:leave-end="-translate-x-full"
+                 class="relative mr-16 flex w-full max-w-xs flex-1 flex-col bg-slate-900 pt-5 pb-4">
+                <div class="flex items-center justify-between px-6 pb-4 border-b border-slate-800">
+                    <div class="flex items-center space-x-3">
+                        <div class="h-9 w-9 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold">POS</div>
+                        <span class="font-bold text-white text-sm truncate">{{ auth()->user()->empresa?->nombre_comercial ?? 'POS Comercial' }}</span>
+                    </div>
+                    <button type="button" class="text-slate-400 hover:text-white" @click="mobileMenuOpen = false">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <nav class="mt-4 px-4 space-y-1 overflow-y-auto flex-1">
+                    <a href="{{ route('dashboard') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl text-white hover:bg-slate-800">
+                        Dashboard
+                    </a>
+                    <a href="{{ route('empresa.perfil') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl text-white hover:bg-slate-800">
+                        Perfil de Empresa
+                    </a>
+                    <a href="{{ route('sucursales.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl text-white hover:bg-slate-800">
+                        Sucursales
+                    </a>
+                </nav>
+
+                <div class="p-4 border-t border-slate-800">
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="w-full flex items-center justify-center py-2.5 px-4 rounded-xl bg-red-600/10 text-red-400 hover:bg-red-600 hover:text-white font-semibold text-sm transition">
+                            Cerrar Sesión
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endauth
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        @auth
+        <!-- Header superior universal -->
+        <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-10 flex-shrink-0">
+            <!-- Left: Mobile Menu Button -->
+            <div class="flex items-center space-x-3">
+                <button type="button" @click="mobileMenuOpen = true" class="lg:hidden p-2 text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-100">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <div class="text-sm font-bold text-slate-900 hidden sm:block lg:hidden">
+                    {{ auth()->user()->empresa?->nombre_comercial ?? 'POS' }}
+                </div>
+            </div>
+
+            <!-- Right: Branch Selector & Profile -->
+            <div class="flex items-center space-x-3 sm:space-x-4">
+                <!-- Selector de Sucursal Activa -->
+                @if(auth()->user()->empresa && auth()->user()->empresa->sucursales->count() > 0)
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open" type="button"
+                        class="inline-flex items-center px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 transition">
+                        <svg class="h-4 w-4 mr-1.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5" />
+                        </svg>
+                        <span class="truncate max-w-[120px] sm:max-w-[200px]">
+                            {{ \App\Support\Tenancy\BranchContext::getBranch()?->nombre ?? 'Seleccionar Sucursal' }}
+                        </span>
+                        <svg class="h-3.5 w-3.5 ml-1 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <div x-cloak x-show="open" @click.away="open = false"
+                        class="absolute right-0 mt-2 w-60 rounded-2xl bg-white shadow-xl ring-1 ring-black/5 p-2 z-50 border border-slate-100">
+                        <div class="px-3 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                            Cambiar Sucursal Activa
+                        </div>
+                        <div class="mt-1 space-y-1 max-h-60 overflow-y-auto">
+                            @foreach(auth()->user()->empresa->sucursales as $sucursal)
+                            <form action="{{ route('sucursales.seleccionar') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="sucursal_id" value="{{ $sucursal->id }}">
+                                <button type="submit"
+                                    class="w-full text-left px-3 py-2 text-xs rounded-xl flex items-center justify-between transition {{ \App\Support\Tenancy\BranchContext::getId() === $sucursal->id ? 'bg-indigo-50 text-indigo-700 font-bold' : 'text-slate-700 hover:bg-slate-50' }}">
+                                    <span class="truncate">{{ $sucursal->nombre }}</span>
+                                    @if($sucursal->es_principal)
+                                    <span class="ml-2 text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded">Principal</span>
+                                    @endif
+                                </button>
+                            </form>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <!-- User pill -->
+                <div class="flex items-center pl-2 border-l border-slate-200 space-x-2">
+                    <div class="h-8 w-8 rounded-xl bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-xs">
+                        {{ substr(auth()->user()->name, 0, 2) }}
+                    </div>
+                    <div class="hidden md:block text-left">
+                        <div class="text-xs font-bold text-slate-800 leading-tight">{{ auth()->user()->name }}</div>
+                        <div class="text-[10px] text-slate-500 leading-tight">{{ auth()->user()->cargo ?? auth()->user()->roles->first()?->name }}</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        @endauth
+
+        <!-- Contenedor con Scroll -->
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+            <!-- Alertas Flash -->
+            <div class="max-w-7xl mx-auto">
+                @if(session('success'))
+                <div x-data="{ show: true }" x-show="show" class="mb-6 bg-emerald-50 border border-emerald-200 p-4 rounded-2xl flex items-center justify-between shadow-sm">
+                    <div class="flex items-center space-x-3 text-emerald-800 text-sm font-medium">
+                        <svg class="h-5 w-5 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>{{ session('success') }}</span>
+                    </div>
+                    <button @click="show = false" type="button" class="text-emerald-500 hover:text-emerald-700">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+                @endif
+
+                @if($errors->any())
+                <div class="mb-6 bg-red-50 border border-red-200 p-4 rounded-2xl shadow-sm">
+                    <div class="flex items-start space-x-3 text-red-800 text-sm">
+                        <svg class="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div class="space-y-1">
+                            @foreach($errors->all() as $err)
+                            <div>{{ $err }}</div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                @endif
+            </div>
+
+            @yield('content')
+        </main>
+    </div>
+
     @livewireScripts
 </body>
 </html>
