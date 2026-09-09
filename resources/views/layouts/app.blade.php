@@ -242,6 +242,26 @@
                 </svg>
                 Impuestos & Tarifas
             </a>
+
+            <div class="pt-4 pb-1 px-3">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">DIAN & Fiscal</span>
+            </div>
+
+            <a href="{{ route('facturacion-electronica.index') }}"
+                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('facturacion-electronica.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
+                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Facturación Electrónica
+            </a>
+
+            <a href="{{ route('resoluciones.index') }}"
+                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('resoluciones.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
+                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Resoluciones DIAN
+            </a>
         </nav>
 
         <!-- User footer -->
@@ -351,6 +371,12 @@
                     </a>
                     <a href="{{ route('impuestos.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('impuestos.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         🏷️ Impuestos & Tarifas
+                    </a>
+                    <a href="{{ route('facturacion-electronica.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('facturacion-electronica.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
+                        ⚡ Facturación Electrónica
+                    </a>
+                    <a href="{{ route('resoluciones.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('resoluciones.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
+                        📋 Resoluciones DIAN
                     </a>
                 </nav>
 

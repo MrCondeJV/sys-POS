@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DocumentoVenta extends Model
@@ -71,6 +72,11 @@ class DocumentoVenta extends Model
     public function usuario(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function documentoElectronico(): HasOne
+    {
+        return $this->hasOne(DocumentoElectronico::class, 'documento_venta_id');
     }
 
     public function esEmitido(): bool

@@ -11,6 +11,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DevolucionController;
 use App\Http\Controllers\DocumentoVentaController;
 use App\Http\Controllers\EmpresaController;
+use App\Http\Controllers\FacturacionElectronicaController;
 use App\Http\Controllers\ImpuestoController;
 use App\Http\Controllers\ImpresionController;
 use App\Http\Controllers\InventarioController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\PosController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\ResolucionFacturacionController;
 use App\Http\Controllers\SucursalController;
 use App\Http\Controllers\VentaController;
 use Illuminate\Support\Facades\Route;
@@ -198,6 +200,16 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/{notificacion}/leida', [NotificacionController::class, 'marcarLeida'])->name('marcar-leida');
         Route::post('/marcar-todas', [NotificacionController::class, 'marcarTodasLeidas'])->name('marcar-todas');
         Route::get('/conteo', [NotificacionController::class, 'conteoNoLeidas'])->name('conteo');
+    });
+
+    // Fase 22: Facturación Electrónica DIAN
+    Route::resource('resoluciones', ResolucionFacturacionController::class);
+    Route::prefix('facturacion-electronica')->name('facturacion-electronica.')->group(function () {
+        Route::get('/', [FacturacionElectronicaController::class, 'index'])->name('index');
+        Route::get('/{documento}', [FacturacionElectronicaController::class, 'show'])->name('show');
+        Route::post('/emitir/{documentoVenta}', [FacturacionElectronicaController::class, 'emitir'])->name('emitir');
+        Route::post('/{documento}/nota-credito', [FacturacionElectronicaController::class, 'notaCredito'])->name('nota-credito');
+        Route::get('/{documento}/descargar-xml', [FacturacionElectronicaController::class, 'descargarXml'])->name('descargar-xml');
     });
 });
 

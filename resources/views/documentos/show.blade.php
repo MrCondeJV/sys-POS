@@ -21,6 +21,19 @@
                 Imprimir Documento
             </button>
 
+            @if($documento->documentoElectronico)
+                <a href="{{ route('facturacion-electronica.show', $documento->documentoElectronico) }}" class="inline-flex items-center px-4 py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 text-sm font-semibold rounded-xl border border-indigo-200 shadow-sm transition">
+                    ⚡ Ver Factura Electrónica ({{ $documento->documentoElectronico->consecutivo_completo }})
+                </a>
+            @elseif($documento->esEmitido())
+                <form action="{{ route('facturacion-electronica.emitir', $documento) }}" method="POST" class="inline">
+                    @csrf
+                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow-sm transition" onclick="return confirm('¿Transmitir esta factura electrónicamente a la DIAN?');">
+                        ⚡ Emitir Factura Electrónica DIAN
+                    </button>
+                </form>
+            @endif
+
             @can('anular', $documento)
                 @if($documento->esEmitido())
                     <button type="button" @click="$dispatch('open-modal-anular')" class="inline-flex items-center px-4 py-2 bg-red-50 text-red-700 hover:bg-red-100 text-sm font-semibold rounded-xl border border-red-200 shadow-sm transition">
