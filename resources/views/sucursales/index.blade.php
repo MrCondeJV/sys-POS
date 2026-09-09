@@ -54,9 +54,9 @@
 
     <!-- Lista de Sucursales (Diseño adaptable: Cards en móvil / Tabla en desktop) -->
     <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-        <!-- Vista Desktop / Tablets grandes -->
-        <div class="hidden md:block overflow-x-auto">
-            <table class="min-w-full divide-y divide-slate-200">
+        <!-- Vista Desktop (Optimizada al 100% sin scroll horizontal) -->
+        <div class="hidden lg:block">
+            <table class="w-full divide-y divide-slate-200 table-auto">
                 <thead class="bg-slate-50">
                     <tr>
                         <th class="px-6 py-3.5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Sucursal</th>
@@ -146,8 +146,8 @@
             </table>
         </div>
 
-        <!-- Vista Móvil (Cards responsivas) -->
-        <div class="md:hidden divide-y divide-slate-100">
+        <!-- Vista Móvil y Tablet (Cards responsivas táctiles) -->
+        <div class="lg:hidden divide-y divide-slate-100">
             @forelse($sucursales as $s)
             <div class="p-5 space-y-3">
                 <div class="flex items-start justify-between">

@@ -77,26 +77,25 @@
 
     <!-- Lista de Productos (Dual: Table en Desktop / Cards en Mobile y Tablet) -->
     <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-        <!-- Vista Desktop -->
-        <div class="hidden lg:block overflow-x-auto">
-            <table class="min-w-full divide-y divide-slate-200">
-                <thead class="bg-slate-50">
+        <!-- Vista Desktop (Optimizada al 100% sin scroll horizontal) -->
+        <div class="hidden lg:block">
+            <table class="w-full divide-y divide-slate-200 table-auto">
+                <thead class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                     <tr>
-                        <th class="px-6 py-3.5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Producto</th>
-                        <th class="px-6 py-3.5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Códigos</th>
-                        <th class="px-6 py-3.5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Clasificación</th>
-                        <th class="px-6 py-3.5 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Precio Venta</th>
-                        <th class="px-6 py-3.5 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Precio Mayorista</th>
-                        <th class="px-6 py-3.5 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">Stock</th>
-                        <th class="px-6 py-3.5 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Acciones</th>
+                        <th class="px-5 py-3.5 text-left">Producto</th>
+                        <th class="px-4 py-3.5 text-left">Códigos</th>
+                        <th class="px-4 py-3.5 text-right">Precios (COP)</th>
+                        <th class="px-4 py-3.5 text-center">Stock</th>
+                        <th class="px-5 py-3.5 text-right">Acciones</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 bg-white">
+                <tbody class="divide-y divide-slate-100 bg-white text-sm">
                     @forelse($productos as $p)
-                    <tr class="hover:bg-slate-50/80 transition">
-                        <td class="px-6 py-4">
-                            <div class="flex items-center space-x-3.5">
-                                <div class="h-11 w-11 rounded-xl bg-slate-100 border border-slate-200/80 overflow-hidden flex-shrink-0 flex items-center justify-center">
+                    <tr class="hover:bg-slate-50/70 transition">
+                        <!-- 1. Producto (Foto, Nombre, Categoría y Marca) -->
+                        <td class="px-5 py-3.5">
+                            <div class="flex items-center space-x-3">
+                                <div class="h-10 w-10 rounded-xl bg-slate-100 border border-slate-200/80 overflow-hidden flex-shrink-0 flex items-center justify-center">
                                     @if($p->imagen_path)
                                         <img src="{{ $p->imagen_url }}" alt="{{ $p->nombre }}" class="h-full w-full object-cover">
                                     @else
@@ -105,66 +104,83 @@
                                         </svg>
                                     @endif
                                 </div>
-                                <div class="min-w-0">
-                                    <div class="font-bold text-slate-900 text-sm truncate">{{ $p->nombre }}</div>
-                                    <div class="text-xs text-slate-400 truncate max-w-xs">{{ $p->descripcion ?? 'Sin descripción' }}</div>
+                                <div class="min-w-0 flex-1">
+                                    <div class="font-bold text-slate-900 text-sm truncate leading-snug">{{ $p->nombre }}</div>
+                                    <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                                        @if($p->categoria)
+                                        <span class="inline-block px-1.5 py-0.5 rounded bg-slate-100 text-[10px] font-semibold text-slate-600">
+                                            {{ $p->categoria->nombre }}
+                                        </span>
+                                        @endif
+                                        @if($p->marca)
+                                        <span class="text-[11px] text-slate-400 truncate max-w-[120px]">· {{ $p->marca->nombre }}</span>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-xs font-mono text-slate-600">
-                            <div>SKU: {{ $p->codigo ?? '—' }}</div>
-                            <div class="text-slate-400">EAN: {{ $p->codigo_barras ?? '—' }}</div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-600">
-                            <span class="inline-block px-2 py-0.5 rounded-md bg-slate-100 font-medium">
-                                {{ $p->categoria?->nombre ?? 'Sin categoría' }}
-                            </span>
-                            @if($p->marca)
-                            <span class="inline-block px-2 py-0.5 rounded-md bg-slate-100 font-medium ml-1">
-                                {{ $p->marca->nombre }}
-                            </span>
+
+                        <!-- 2. Códigos (SKU y Código de barras) -->
+                        <td class="px-4 py-3.5 font-mono text-xs text-slate-600">
+                            <div class="font-semibold text-slate-800">{{ $p->codigo ?? '—' }}</div>
+                            @if($p->codigo_barras)
+                            <div class="text-[10px] text-slate-400 tracking-tight">{{ $p->codigo_barras }}</div>
                             @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right">
+
+                        <!-- 3. Precios (PVP, IVA, Mayorista) -->
+                        <td class="px-4 py-3.5 text-right whitespace-nowrap">
                             <div class="font-bold text-slate-900 text-sm">
-                                ${{ number_format($p->precio_venta, 2, ',', '.') }}
+                                ${{ number_format($p->precio_venta, 0, ',', '.') }}
                             </div>
-                            <div class="text-[11px] text-slate-400">
-                                IVA: {{ (float)$p->iva }}% (${{ number_format($p->calcularPrecioConIva(), 2, ',', '.') }})
+                            <div class="text-[10px] text-slate-400 leading-tight">
+                                IVA {{ (float)$p->iva }}% (${{ number_format($p->calcularPrecioConIva(), 0, ',', '.') }})
                             </div>
+                            @if($p->precio_mayorista)
+                            <div class="text-[10px] font-semibold text-indigo-600 leading-tight mt-0.5">
+                                May: ${{ number_format($p->precio_mayorista, 0, ',', '.') }}
+                            </div>
+                            @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-xs text-slate-600">
-                            {{ $p->precio_mayorista ? '$'.number_format($p->precio_mayorista, 2, ',', '.') : '—' }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
+
+                        <!-- 4. Stock -->
+                        <td class="px-4 py-3.5 text-center whitespace-nowrap">
                             @if($p->tieneBajoStock())
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800">
                                 <span class="h-1.5 w-1.5 rounded-full bg-red-500 mr-1.5"></span>
                                 {{ number_format($p->stock, 0) }} {{ $p->unidadMedida?->codigo ?? 'UND' }}
                             </span>
                             @else
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
                                 {{ number_format($p->stock, 0) }} {{ $p->unidadMedida?->codigo ?? 'UND' }}
                             </span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                            <a href="{{ route('productos.edit', $p) }}"
-                                class="inline-block text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1.5 rounded-lg transition">
-                                Editar
-                            </a>
-                            <form action="{{ route('productos.destroy', $p) }}" method="POST" class="inline" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-xs font-semibold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-2.5 py-1.5 rounded-lg transition">
-                                    Eliminar
-                                </button>
-                            </form>
+
+                        <!-- 5. Acciones Rápidas -->
+                        <td class="px-5 py-3.5 text-right whitespace-nowrap">
+                            <div class="inline-flex items-center space-x-1">
+                                <a href="{{ route('productos.edit', $p) }}"
+                                    class="p-1.5 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 rounded-lg transition" title="Editar Producto">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                </a>
+                                <form action="{{ route('productos.destroy', $p) }}" method="POST" class="inline" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition" title="Eliminar Producto">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-12 text-center text-sm text-slate-500">
+                        <td colspan="5" class="px-6 py-12 text-center text-sm text-slate-500">
                             No se encontraron productos registrados con los filtros seleccionados.
                         </td>
                     </tr>
