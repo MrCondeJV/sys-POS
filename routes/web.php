@@ -9,6 +9,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CompraController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DevolucionController;
+use App\Http\Controllers\DocumentoVentaController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\ImpuestoController;
 use App\Http\Controllers\InventarioController;
@@ -176,6 +177,10 @@ Route::middleware(['auth'])->group(function () {
     // Fase 17: Impuestos Configurables
     Route::resource('impuestos', ImpuestoController::class);
     Route::post('/impuestos/{impuesto}/por-defecto', [ImpuestoController::class, 'hacerPorDefecto'])->name('impuestos.por-defecto');
+
+    // Fase 18: Documentos Comerciales
+    Route::resource('documentos', DocumentoVentaController::class)->only(['index', 'show']);
+    Route::post('/documentos/{documento}/anular', [DocumentoVentaController::class, 'anular'])->name('documentos.anular');
 });
 
 

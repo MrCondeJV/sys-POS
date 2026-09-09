@@ -76,6 +76,11 @@ enum PermisoSistema: string
     case IMPUESTOS_EDITAR = 'impuestos.editar';
     case IMPUESTOS_ELIMINAR = 'impuestos.eliminar';
 
+    // Documentos Comerciales
+    case DOCUMENTOS_VER = 'documentos.ver';
+    case DOCUMENTOS_EMITIR = 'documentos.emitir';
+    case DOCUMENTOS_ANULAR = 'documentos.anular';
+
     /**
      * Retorna todos los valores como un array plano de strings.
      *

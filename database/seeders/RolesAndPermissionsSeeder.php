@@ -100,6 +100,9 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::IMPUESTOS_CREAR->value,
             PermisoSistema::IMPUESTOS_EDITAR->value,
             PermisoSistema::IMPUESTOS_ELIMINAR->value,
+            PermisoSistema::DOCUMENTOS_VER->value,
+            PermisoSistema::DOCUMENTOS_EMITIR->value,
+            PermisoSistema::DOCUMENTOS_ANULAR->value,
         ]);
 
         // ADMIN_SUCURSAL
@@ -138,6 +141,9 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::CARTERA_ANULAR->value,
             PermisoSistema::REPORTES_VER->value,
             PermisoSistema::SUCURSALES_GESTIONAR->value,
+            PermisoSistema::DOCUMENTOS_VER->value,
+            PermisoSistema::DOCUMENTOS_EMITIR->value,
+            PermisoSistema::DOCUMENTOS_ANULAR->value,
         ]);
 
         // CAJERO
@@ -160,6 +166,8 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::CARTERA_VER->value,
             PermisoSistema::CARTERA_ABONAR->value,
             PermisoSistema::LISTAS_PRECIOS_VER->value,
+            PermisoSistema::DOCUMENTOS_VER->value,
+            PermisoSistema::DOCUMENTOS_EMITIR->value,
         ]);
 
         // VENDEDOR
@@ -175,6 +183,7 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::CLIENTES_VER->value,
             PermisoSistema::CLIENTES_CREAR->value,
             PermisoSistema::CARTERA_VER->value,
+            PermisoSistema::DOCUMENTOS_VER->value,
         ]);
 
         // CONTADOR
@@ -194,6 +203,7 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::INVENTARIO_VER->value,
             PermisoSistema::REPORTES_VER->value,
             PermisoSistema::AUDITORIA_VER->value,
+            PermisoSistema::DOCUMENTOS_VER->value,
         ]);
     }
 }

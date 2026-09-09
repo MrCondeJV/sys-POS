@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Venta extends Model
@@ -134,5 +135,15 @@ class Venta extends Model
     public function listaPrecio(): BelongsTo
     {
         return $this->belongsTo(ListaPrecio::class, 'lista_precio_id');
+    }
+
+    public function documentoVenta(): HasOne
+    {
+        return $this->hasOne(DocumentoVenta::class, 'venta_id')->latestOfMany();
+    }
+
+    public function documentosVenta(): HasMany
+    {
+        return $this->hasMany(DocumentoVenta::class, 'venta_id');
     }
 }

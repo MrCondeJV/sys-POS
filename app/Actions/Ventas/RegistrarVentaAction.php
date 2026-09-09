@@ -286,7 +286,18 @@ class RegistrarVentaAction
                 );
             }
 
-            return $venta->load(['detalles.producto', 'cliente', 'sucursal', 'usuario', 'pagos']);
+            // 9. Emitir Documento Comercial Formal (Fase 18)
+            $tipoDoc = match ($tipoComprobante) {
+                TipoComprobanteVenta::FACTURA => \App\Enums\TipoDocumentoVenta::FACTURA,
+                default => \App\Enums\TipoDocumentoVenta::TICKET,
+            };
+            app(\App\Actions\Documentos\EmitirDocumentoVentaAction::class)->execute(
+                venta: $venta,
+                tipo: $tipoDoc,
+                observaciones: $observaciones
+            );
+
+            return $venta->load(['detalles.producto', 'cliente', 'sucursal', 'usuario', 'pagos', 'documentoVenta']);
         });
     }
 }

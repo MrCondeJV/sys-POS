@@ -116,6 +116,30 @@ class AnularVentaAction
                 'motivo_anulacion' => $motivo,
             ]);
 
+            // 4.1. Anular Documentos Comerciales Vinculados (Fase 18)
+            $documentos = \App\Models\DocumentoVenta::withoutGlobalScopes()
+                ->where('venta_id', $ventaBloqueada->id)
+                ->where('estado', '!=', \App\Enums\EstadoDocumentoVenta::ANULADO->value)
+                ->get();
+
+            foreach ($documentos as $doc) {
+                $doc->update([
+                    'estado' => \App\Enums\EstadoDocumentoVenta::ANULADO,
+                    'observaciones' => trim(($doc->observaciones ?? '') . " [ANULADO: {$motivo}]"),
+                ]);
+
+                \App\Actions\Auditoria\RegistrarAuditoriaAction::execute(
+                    accion: 'ANULAR_DOCUMENTO_VENTA',
+                    modulo: 'DOCUMENTOS',
+                    model: $doc,
+                    datosAnteriores: ['estado' => \App\Enums\EstadoDocumentoVenta::EMITIDO->value],
+                    datosNuevos: ['estado' => \App\Enums\EstadoDocumentoVenta::ANULADO->value],
+                    descripcion: "Documento {$doc->numero_completo} anulado por cancelación de venta {$ventaBloqueada->numero_venta}",
+                    usuario: $usuarioAnulacion,
+                    empresaId: $ventaBloqueada->empresa_id
+                );
+            }
+
             // 5. Registrar evento de auditoría
             \App\Actions\Auditoria\RegistrarAuditoriaAction::execute(
                 accion: 'ANULAR_VENTA',
