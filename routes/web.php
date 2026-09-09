@@ -227,6 +227,16 @@ Route::middleware(['auth'])->group(function () {
 
     // Fase 24: Ferreterías y Conversión de Unidades / Presentaciones
     Route::resource('productos.presentaciones', ProductoPresentacionController::class)->only(['index', 'store', 'destroy']);
+
+    // FASE 25: Multisucursal y Traslados
+    Route::get('reportes/multisucursal', [\App\Http\Controllers\ReporteMultisucursalController::class, 'index'])->name('reportes.multisucursal');
+    Route::get('traslados', [\App\Http\Controllers\TrasladoSucursalController::class, 'index'])->name('traslados.index');
+    Route::get('traslados/create', [\App\Http\Controllers\TrasladoSucursalController::class, 'create'])->name('traslados.create');
+    Route::post('traslados', [\App\Http\Controllers\TrasladoSucursalController::class, 'store'])->name('traslados.store');
+    Route::get('traslados/{traslado}', [\App\Http\Controllers\TrasladoSucursalController::class, 'show'])->name('traslados.show');
+    Route::post('traslados/{traslado}/recibir', [\App\Http\Controllers\TrasladoSucursalController::class, 'recibir'])->name('traslados.recibir');
+    Route::post('traslados/{traslado}/rechazar', [\App\Http\Controllers\TrasladoSucursalController::class, 'rechazar'])->name('traslados.rechazar');
+
 });
 
 

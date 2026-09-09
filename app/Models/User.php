@@ -99,4 +99,24 @@ class User extends Authenticatable
     {
         return $this->estado === EstadoGeneral::ACTIVO;
     }
+    public function sucursales(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Sucursal::class, 'sucursal_user', 'user_id', 'sucursal_id')->withTimestamps();
+    }
+
+    /**
+     * Verifica si el usuario tiene autorización para operar en una sucursal dada.
+     */
+    public function tieneAccesoASucursal(int $sucursalId): bool
+    {
+        if ($this->isSuperAdmin() || $this->isAdminEmpresa()) {
+            return true;
+        }
+
+        if ($this->sucursal_id === $sucursalId) {
+            return true;
+        }
+
+        return $this->sucursales()->where('sucursales.id', $sucursalId)->exists();
+    }
 }
