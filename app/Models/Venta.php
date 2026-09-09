@@ -34,6 +34,8 @@ class Venta extends Model
         'descuento',
         'impuesto',
         'total',
+        'total_devuelto',
+        'tiene_devolucion',
         'pago_con',
         'cambio',
         'estado',
@@ -50,6 +52,8 @@ class Venta extends Model
         'descuento' => 'decimal:2',
         'impuesto' => 'decimal:2',
         'total' => 'decimal:2',
+        'total_devuelto' => 'decimal:2',
+        'tiene_devolucion' => 'boolean',
         'pago_con' => 'decimal:2',
         'cambio' => 'decimal:2',
         'estado' => EstadoVenta::class,
@@ -95,6 +99,11 @@ class Venta extends Model
     public function pagos(): HasMany
     {
         return $this->hasMany(VentaPago::class, 'venta_id');
+    }
+
+    public function devoluciones(): HasMany
+    {
+        return $this->hasMany(Devolucion::class, 'venta_id');
     }
 
     public function isCompletada(): bool

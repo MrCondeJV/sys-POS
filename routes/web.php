@@ -7,6 +7,7 @@ use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CompraController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DevolucionController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\ListaPrecioController;
@@ -133,6 +134,15 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{listaPrecio}', [ListaPrecioController::class, 'destroy'])->name('destroy');
         Route::post('/{listaPrecio}/precios', [ListaPrecioController::class, 'guardarPrecioProducto'])->name('precios.store');
         Route::delete('/{listaPrecio}/precios/{detalle}', [ListaPrecioController::class, 'eliminarPrecioProducto'])->name('precios.destroy');
+    });
+
+    // Fase 14: Devoluciones
+    Route::prefix('devoluciones')->name('devoluciones.')->group(function () {
+        Route::get('/', [DevolucionController::class, 'index'])->name('index');
+        Route::get('/ventas/{venta}/crear', [DevolucionController::class, 'create'])->name('create');
+        Route::post('/ventas/{venta}', [DevolucionController::class, 'store'])->name('store');
+        Route::get('/{devolucion}', [DevolucionController::class, 'show'])->name('show');
+        Route::get('/{devolucion}/comprobante', [DevolucionController::class, 'comprobante'])->name('comprobante');
     });
 });
 

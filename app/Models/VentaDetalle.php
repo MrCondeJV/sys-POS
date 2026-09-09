@@ -18,6 +18,7 @@ class VentaDetalle extends Model
         'venta_id',
         'producto_id',
         'cantidad',
+        'cantidad_devuelta',
         'precio_unitario',
         'costo_unitario',
         'descuento',
@@ -29,6 +30,7 @@ class VentaDetalle extends Model
 
     protected $casts = [
         'cantidad' => 'decimal:4',
+        'cantidad_devuelta' => 'decimal:4',
         'precio_unitario' => 'decimal:2',
         'costo_unitario' => 'decimal:2',
         'descuento' => 'decimal:2',
@@ -37,6 +39,11 @@ class VentaDetalle extends Model
         'subtotal' => 'decimal:2',
         'total' => 'decimal:2',
     ];
+
+    public function cantidadPendienteDevolucion(): float
+    {
+        return max(0.0, (float) $this->cantidad - (float) $this->cantidad_devuelta);
+    }
 
     public function venta(): BelongsTo
     {
