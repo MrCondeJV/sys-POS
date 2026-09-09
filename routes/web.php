@@ -88,5 +88,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/recibos/{pago}', [CarteraController::class, 'showRecibo'])->name('recibo');
         Route::post('/recibos/{pago}/anular', [CarteraController::class, 'anularAbono'])->name('recibo.anular');
         Route::get('/estado-cuenta/{cliente}', [CarteraController::class, 'estadoCuenta'])->name('estado-cuenta');
+        Route::get('/estado-cuenta/{cliente}/imprimir', [CarteraController::class, 'printEstadoCuenta'])->name('estado-cuenta.print');
     });
 });

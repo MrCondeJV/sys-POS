@@ -263,4 +263,40 @@ class CarteraController extends Controller
             'historialPagos'
         ));
     }
+
+    /**
+     * Vista de impresión standalone del Estado de Cuenta (sin layout principal).
+     */
+    public function printEstadoCuenta(Cliente $cliente, Request $request): View
+    {
+        if (CompanyContext::getId() !== $cliente->empresa_id) {
+            abort(404);
+        }
+
+        if (Gate::denies('viewAny', CuentaPorCobrar::class)) {
+            abort(403, 'No tienes autorización para consultar estados de cuenta.');
+        }
+
+        $cliente->load(['cuentasPorCobrar.pagos', 'pagos.cuentaPorCobrar', 'empresa']);
+
+        $cuentasPendientes = $cliente->cuentasPorCobrar()->pendientes()->get();
+        $totalDeuda = (float) $cuentasPendientes->sum('saldo_pendiente');
+        $deudaVencida = (float) $cuentasPendientes->filter(fn ($c) => $c->estaVencida())->sum('saldo_pendiente');
+        $cupoTotal = (float) $cliente->cupo_credito;
+        $cupoDisponible = max(0.0, $cupoTotal - $totalDeuda);
+        $porcentajeUtilizado = $cupoTotal > 0 ? min(100.0, round(($totalDeuda / $cupoTotal) * 100, 1)) : 0;
+
+        $historialPagos = $cliente->pagos()->with('cuentaPorCobrar')->latest()->take(50)->get();
+
+        return view('cartera.estado_cuenta_print', compact(
+            'cliente',
+            'cuentasPendientes',
+            'totalDeuda',
+            'deudaVencida',
+            'cupoTotal',
+            'cupoDisponible',
+            'porcentajeUtilizado',
+            'historialPagos'
+        ));
+    }
 }
