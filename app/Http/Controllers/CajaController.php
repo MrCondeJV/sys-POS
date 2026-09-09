@@ -157,7 +157,9 @@ class CajaController extends Controller
                 $validated['observaciones'] ?? null
             );
 
-            return redirect()->route('cajas.index')
+            $targetRoute = $request->input('redirect_to') === 'pos' ? 'pos.index' : 'cajas.index';
+
+            return redirect()->route($targetRoute)
                 ->with('success', "Turno abierto exitosamente en {$caja->nombre} con fondo de $" . number_format($validated['monto_apertura'], 2));
         } catch (Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()]);

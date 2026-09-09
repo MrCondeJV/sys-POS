@@ -9,6 +9,7 @@ use App\Http\Controllers\CompraController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\InventarioController;
+use App\Http\Controllers\PosController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\SucursalController;
@@ -113,6 +114,13 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/{venta}/anular', [VentaController::class, 'anular'])->name('anular');
         Route::get('/{venta}/ticket', [VentaController::class, 'ticket'])->name('ticket');
     });
+
+    // Fase 11 & 12: Terminal Punto de Venta (POS) & Métodos de Pago
+    Route::prefix('pos')->name('pos.')->group(function () {
+        Route::get('/', [PosController::class, 'index'])->name('index');
+        Route::post('/procesar', [PosController::class, 'procesar'])->name('procesar');
+    });
 });
+
 
 

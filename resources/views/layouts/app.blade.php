@@ -180,15 +180,16 @@
                 Cajas & Turnos
             </a>
 
-            <div class="px-3.5 py-2.5 text-sm font-medium text-slate-500 rounded-xl flex items-center justify-between cursor-not-allowed">
+            <a href="{{ route('pos.index') }}"
+                class="flex items-center justify-between px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('pos.*') ? 'bg-emerald-600 text-white shadow-sm' : 'text-emerald-400 hover:text-white hover:bg-emerald-800/40' }}">
                 <span class="flex items-center">
-                    <svg class="h-5 w-5 mr-3 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="h-5 w-5 mr-3 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
                     Punto de Venta (POS)
                 </span>
-                <span class="text-[10px] bg-slate-800 text-slate-400 font-semibold px-2 py-0.5 rounded-md">Fase 11</span>
-            </div>
+                <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-1.5 py-0.5 rounded">Rápido</span>
+            </a>
         </nav>
 
         <!-- User footer -->
@@ -277,6 +278,9 @@
                     </a>
                     <a href="{{ route('cajas.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('cajas.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         Cajas & Turnos
+                    </a>
+                    <a href="{{ route('pos.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('pos.*') ? 'bg-emerald-600 text-white' : 'text-emerald-400 hover:bg-slate-800' }}">
+                        ⚡ Terminal POS (Ventas Rápidas)
                     </a>
                 </nav>
 
