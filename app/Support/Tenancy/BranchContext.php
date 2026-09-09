@@ -22,6 +22,11 @@ class BranchContext
         }
     }
 
+    public static function setBranchId(?int $id): void
+    {
+        static::setId($id);
+    }
+
     /**
      * Obtiene el ID de la sucursal activa.
      */
