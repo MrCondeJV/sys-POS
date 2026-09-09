@@ -89,6 +89,14 @@ class Producto extends Model
     }
 
     /**
+     * Líneas de facturas de compra donde ha sido adquirido este producto.
+     */
+    public function compraDetalles(): HasMany
+    {
+        return $this->hasMany(CompraDetalle::class, 'producto_id');
+    }
+
+    /**
      * Retorna las existencias del producto en una sucursal específica.
      */
     public function stockEnSucursal(int $sucursalId): float

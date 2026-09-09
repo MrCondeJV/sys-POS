@@ -12,6 +12,7 @@ use App\Models\Inventario;
 use App\Models\Marca;
 use App\Models\MovimientoInventario;
 use App\Models\Producto;
+use App\Models\Proveedor;
 use App\Models\Sucursal;
 use App\Models\UnidadMedida;
 use App\Models\User;
@@ -239,5 +240,36 @@ class DatabaseSeeder extends Seeder
                 ]
             );
         }
+
+        // 10. Proveedores de Prueba para Empresa Demo
+        Proveedor::firstOrCreate(
+            ['empresa_id' => $empresa->id, 'numero_documento' => '890900123-4'],
+            [
+                'razon_social' => 'Distribuidora Postobón Central S.A.S.',
+                'nombre_contacto' => 'Santiago Ramírez',
+                'tipo_documento' => TipoDocumentoIdentidad::NIT,
+                'telefono' => '3104567890',
+                'email' => 'pedidos@postobon.com',
+                'direccion' => 'Av. Industrial # 45-67',
+                'ciudad' => 'Medellín',
+                'departamento' => 'Antioquia',
+                'estado' => EstadoGeneral::ACTIVO,
+            ]
+        );
+
+        Proveedor::firstOrCreate(
+            ['empresa_id' => $empresa->id, 'numero_documento' => '860001234-5'],
+            [
+                'razon_social' => 'Molinos Diana de Colombia S.A.',
+                'nombre_contacto' => 'Martha Lucía Gómez',
+                'tipo_documento' => TipoDocumentoIdentidad::NIT,
+                'telefono' => '3129876543',
+                'email' => 'ventas@arroidiana.com',
+                'direccion' => 'Zona Franca Bodega 12',
+                'ciudad' => 'Bogotá',
+                'departamento' => 'Cundinamarca',
+                'estado' => EstadoGeneral::ACTIVO,
+            ]
+        );
     }
 }

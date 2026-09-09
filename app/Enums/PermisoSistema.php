@@ -27,6 +27,13 @@ enum PermisoSistema: string
     // Compras
     case COMPRAS_VER = 'compras.ver';
     case COMPRAS_CREAR = 'compras.crear';
+    case COMPRAS_ANULAR = 'compras.anular';
+
+    // Proveedores
+    case PROVEEDORES_VER = 'proveedores.ver';
+    case PROVEEDORES_CREAR = 'proveedores.crear';
+    case PROVEEDORES_EDITAR = 'proveedores.editar';
+    case PROVEEDORES_ELIMINAR = 'proveedores.eliminar';
 
     // Reportes
     case REPORTES_VER = 'reportes.ver';

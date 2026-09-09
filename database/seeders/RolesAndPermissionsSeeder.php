@@ -70,6 +70,11 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::CAJA_CERRAR->value,
             PermisoSistema::COMPRAS_VER->value,
             PermisoSistema::COMPRAS_CREAR->value,
+            PermisoSistema::COMPRAS_ANULAR->value,
+            PermisoSistema::PROVEEDORES_VER->value,
+            PermisoSistema::PROVEEDORES_CREAR->value,
+            PermisoSistema::PROVEEDORES_EDITAR->value,
+            PermisoSistema::PROVEEDORES_ELIMINAR->value,
             PermisoSistema::REPORTES_VER->value,
             PermisoSistema::EMPRESA_GESTIONAR->value,
             PermisoSistema::SUCURSALES_GESTIONAR->value,
@@ -97,6 +102,10 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::CAJA_CERRAR->value,
             PermisoSistema::COMPRAS_VER->value,
             PermisoSistema::COMPRAS_CREAR->value,
+            PermisoSistema::COMPRAS_ANULAR->value,
+            PermisoSistema::PROVEEDORES_VER->value,
+            PermisoSistema::PROVEEDORES_CREAR->value,
+            PermisoSistema::PROVEEDORES_EDITAR->value,
             PermisoSistema::REPORTES_VER->value,
             PermisoSistema::SUCURSALES_GESTIONAR->value,
         ]);
@@ -137,6 +146,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $contador->syncPermissions([
             PermisoSistema::VENTAS_VER->value,
             PermisoSistema::COMPRAS_VER->value,
+            PermisoSistema::PROVEEDORES_VER->value,
             PermisoSistema::INVENTARIO_VER->value,
             PermisoSistema::REPORTES_VER->value,
         ]);

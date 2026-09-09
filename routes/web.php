@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CatalogoController;
+use App\Http\Controllers\CompraController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\SucursalController;
 use Illuminate\Support\Facades\Route;
 
@@ -59,4 +61,15 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/traslado', [InventarioController::class, 'createTraslado'])->name('traslado.create');
         Route::post('/traslado', [InventarioController::class, 'storeTraslado'])->name('traslado.store');
     });
+
+    // Fase 6: Proveedores
+    Route::resource('proveedores', ProveedorController::class)
+        ->parameters(['proveedores' => 'proveedor'])
+        ->except(['create', 'show', 'edit']);
+
+    // Fase 6: Compras Comerciales
+    Route::resource('compras', CompraController::class)
+        ->parameters(['compras' => 'compra'])
+        ->except(['edit', 'update', 'destroy']);
+    Route::post('/compras/{compra}/anular', [CompraController::class, 'anular'])->name('compras.anular');
 });

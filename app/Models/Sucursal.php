@@ -64,4 +64,12 @@ class Sucursal extends Model
     {
         return $this->hasMany(MovimientoInventario::class, 'sucursal_id');
     }
+
+    /**
+     * Facturas de compra recibidas en esta sucursal.
+     */
+    public function compras(): HasMany
+    {
+        return $this->hasMany(Compra::class, 'sucursal_id');
+    }
 }
