@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CatalogoController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\SucursalController;
@@ -22,9 +23,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->
 
 // Rutas Protegidas bajo Autenticación y Aislamiento Multiempresa
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
     // Gestión de Empresa
     Route::get('/empresa/perfil', [EmpresaController::class, 'perfil'])->name('empresa.perfil');

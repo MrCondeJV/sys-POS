@@ -1,162 +1,336 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard')
+@section('title', 'Dashboard Principal')
 
 @section('content')
-<div class="max-w-7xl mx-auto space-y-8">
-    <!-- Banner de Bienvenida -->
+<div class="w-full max-w-[1680px] mx-auto space-y-8">
+    <!-- Banner de Bienvenida y Estado General -->
     <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
-        <div class="relative z-10 max-w-2xl">
-            <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 mb-3">
-                <span class="h-2 w-2 rounded-full bg-emerald-400 mr-2"></span>
-                Contexto Multiempresa Activo
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div class="max-w-2xl">
+                <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 mb-3">
+                    <span class="h-2 w-2 rounded-full bg-emerald-400 mr-2"></span>
+                    Contexto Multiempresa Activo
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                    {{ auth()->user()->empresa?->nombre_comercial ?? 'POS Comercial Global' }}
+                </h1>
+                <p class="mt-2 text-slate-300 text-sm sm:text-base leading-relaxed">
+                    Bienvenido, <span class="font-bold text-white">{{ auth()->user()->name }}</span>. Has iniciado sesión con rol <span class="text-indigo-300 font-semibold">{{ auth()->user()->roles->first()?->name ?? 'Usuario' }}</span> en la sucursal <span class="text-emerald-400 font-semibold">{{ \App\Support\Tenancy\BranchContext::getBranch()?->nombre ?? 'Principal' }}</span>.
+                </p>
             </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
-                {{ auth()->user()->empresa?->nombre_comercial ?? 'POS Comercial Global' }}
-            </h1>
-            <p class="mt-2 text-slate-300 text-sm sm:text-base leading-relaxed">
-                Bienvenido, <span class="font-bold text-white">{{ auth()->user()->name }}</span>. Tienes acceso asignado como <span class="text-indigo-400 font-semibold">{{ auth()->user()->roles->first()?->name ?? 'Usuario' }}</span> en la sucursal <span class="text-emerald-400 font-semibold">{{ \App\Support\Tenancy\BranchContext::getBranch()?->nombre ?? 'Principal' }}</span>.
-            </p>
+
+            <!-- Botones de Acción Directa en el Banner -->
+            <div class="flex flex-wrap items-center gap-3 flex-shrink-0">
+                <a href="{{ route('productos.create') }}"
+                    class="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-bold text-slate-900 bg-white hover:bg-slate-100 shadow-md transition">
+                    <svg class="h-4 w-4 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Nuevo Producto
+                </a>
+                <a href="{{ route('productos.index') }}"
+                    class="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 transition">
+                    <svg class="h-4 w-4 mr-2 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                    </svg>
+                    Ver Catálogo
+                </a>
+            </div>
         </div>
 
-        <div class="absolute right-0 bottom-0 opacity-10 hidden md:block">
-            <svg class="h-64 w-64 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <div class="absolute right-0 bottom-0 opacity-10 hidden lg:block pointer-events-none">
+            <svg class="h-72 w-72 text-white" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
         </div>
     </div>
 
-    <!-- Indicadores Clave del Tenant (KPIs / Métricas Rápidas) -->
+    <!-- Indicadores Clave del Negocio (KPIs de Alto Impacto) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <!-- Tarjeta 1: Empresa -->
-        <div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm hover:border-slate-300 transition">
+        <!-- Tarjeta 1: Catálogo de Productos -->
+        <a href="{{ route('productos.index') }}" class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm hover:border-indigo-300 hover:shadow-md transition group">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Identificación</span>
-                <span class="p-2 rounded-xl bg-indigo-50 text-indigo-600">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Catálogo General</span>
+                <span class="p-2 rounded-xl bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                     </svg>
                 </span>
             </div>
-            <div class="text-lg font-bold text-slate-900 mt-3 truncate">
-                NIT: {{ auth()->user()->empresa?->nit ?? 'N/A' }}
+            <div class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-3">
+                {{ $totalProductos ?? 0 }}
             </div>
-            <div class="text-xs text-slate-500 mt-1 truncate">
-                {{ auth()->user()->empresa?->razon_social ?? 'Empresa Registrada' }}
+            <div class="text-xs text-slate-500 mt-1 flex items-center justify-between">
+                <span>Artículos en catálogo</span>
+                <span class="text-indigo-600 font-semibold group-hover:translate-x-1 transition">Ver todos &rarr;</span>
             </div>
-        </div>
+        </a>
 
-        <!-- Tarjeta 2: Sucursal Activa -->
-        <div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm hover:border-slate-300 transition">
+        <!-- Tarjeta 2: Alertas de Stock Bajo -->
+        <a href="{{ route('productos.index', ['bajo_stock' => 1]) }}" class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm hover:border-red-300 hover:shadow-md transition group">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Sucursal Operativa</span>
-                <span class="p-2 rounded-xl bg-emerald-50 text-emerald-600">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Alertas de Stock</span>
+                <span class="p-2 rounded-xl {{ ($totalBajoStock ?? 0) > 0 ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600' }} transition">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </span>
+            </div>
+            <div class="text-2xl sm:text-3xl font-extrabold {{ ($totalBajoStock ?? 0) > 0 ? 'text-red-600' : 'text-slate-900' }} mt-3 flex items-center gap-2">
+                {{ $totalBajoStock ?? 0 }}
+                @if(($totalBajoStock ?? 0) > 0)
+                <span class="h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse"></span>
+                @endif
+            </div>
+            <div class="text-xs {{ ($totalBajoStock ?? 0) > 0 ? 'text-red-600 font-medium' : 'text-emerald-600 font-medium' }} mt-1 flex items-center justify-between">
+                <span>{{ ($totalBajoStock ?? 0) > 0 ? 'Requieren reposición inmediata' : 'Stock en niveles óptimos' }}</span>
+                <span class="group-hover:translate-x-1 transition">&rarr;</span>
+            </div>
+        </a>
+
+        <!-- Tarjeta 3: Sucursales y Sedes -->
+        <a href="{{ route('sucursales.index') }}" class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm hover:border-emerald-300 hover:shadow-md transition group">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Sedes Comerciales</span>
+                <span class="p-2 rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     </svg>
                 </span>
             </div>
-            <div class="text-lg font-bold text-slate-900 mt-3 truncate">
-                {{ \App\Support\Tenancy\BranchContext::getBranch()?->nombre ?? 'Sin Asignar' }}
+            <div class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-3">
+                {{ $totalSucursales ?? 1 }}
             </div>
-            <div class="text-xs text-emerald-600 font-semibold mt-1 flex items-center">
-                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-1"></span>
-                Punto de Venta Conectado
+            <div class="text-xs text-slate-500 mt-1 flex items-center justify-between">
+                <span class="truncate">Activa: {{ \App\Support\Tenancy\BranchContext::getBranch()?->nombre ?? 'Principal' }}</span>
+                <span class="text-emerald-600 font-semibold group-hover:translate-x-1 transition">&rarr;</span>
             </div>
-        </div>
+        </a>
 
-        <!-- Tarjeta 3: Moneda Operativa -->
-        <div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm hover:border-slate-300 transition">
+        <!-- Tarjeta 4: Clasificación / Categorías -->
+        <a href="{{ route('catalogos.index') }}" class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm hover:border-indigo-300 hover:shadow-md transition group">
             <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Moneda Base</span>
-                <span class="p-2 rounded-xl bg-amber-50 text-amber-600 font-bold">
-                    {{ auth()->user()->empresa?->simbolo_moneda ?? '$' }}
-                </span>
-            </div>
-            <div class="text-lg font-bold text-slate-900 mt-3">
-                {{ auth()->user()->empresa?->moneda ?? 'COP' }}
-            </div>
-            <div class="text-xs text-slate-500 mt-1">
-                Transacciones Comerciales
-            </div>
-        </div>
-
-        <!-- Tarjeta 4: Seguridad -->
-        <div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm hover:border-slate-300 transition">
-            <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Seguridad</span>
-                <span class="p-2 rounded-xl bg-blue-50 text-blue-600">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Clasificación</span>
+                <span class="p-2 rounded-xl bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                     </svg>
                 </span>
             </div>
-            <div class="text-lg font-bold text-slate-900 mt-3">
-                Aislamiento Total
+            <div class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-3">
+                {{ $totalCategorias ?? 0 }}
             </div>
-            <div class="text-xs text-slate-500 mt-1">
-                Protección Global Scope OK
+            <div class="text-xs text-slate-500 mt-1 flex items-center justify-between">
+                <span>Categorías comerciales</span>
+                <span class="text-indigo-600 font-semibold group-hover:translate-x-1 transition">&rarr;</span>
             </div>
-        </div>
+        </a>
     </div>
 
-    <!-- Módulos y Accesos Rápidos Táctiles (Optimizado para Touch / Móvil / Tablet / PC) -->
-    <div>
-        <h2 class="text-lg font-bold text-slate-900 mb-4 tracking-tight">Accesos Rápidos</h2>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            <!-- Acceso: Configuración de Empresa -->
-            <a href="{{ route('empresa.perfil') }}"
-                class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-300 transition group flex flex-col justify-between min-h-[140px]">
-                <div class="flex items-center justify-between">
-                    <div class="h-12 w-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                        </svg>
+    <!-- Sección Principal Dividida (Aprovechamiento Integral de Ancho) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- Columna Izquierda: Tabla Operativa de Inventario (8 cols) -->
+        <div class="lg:col-span-8 space-y-6">
+            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-5 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h2 class="font-bold text-slate-900 text-lg">Estado de Artículos en Catálogo</h2>
+                            @if(($totalBajoStock ?? 0) > 0)
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800">
+                                {{ $totalBajoStock }} con bajo stock
+                            </span>
+                            @endif
+                        </div>
+                        <p class="text-xs text-slate-500 mt-0.5">
+                            Visualización rápida de existencias, precios y alertas preventivas.
+                        </p>
                     </div>
-                    <span class="text-slate-400 group-hover:text-indigo-600 transition">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                    </span>
-                </div>
-                <div>
-                    <h3 class="font-bold text-slate-900 text-base group-hover:text-indigo-600 transition mt-4">Perfil de la Empresa</h3>
-                    <p class="text-xs text-slate-500 mt-1">Configurar datos comerciales, logo, moneda e información tributaria.</p>
-                </div>
-            </a>
 
-            <!-- Acceso: Gestión de Sucursales -->
-            <a href="{{ route('sucursales.index') }}"
-                class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-300 transition group flex flex-col justify-between min-h-[140px]">
-                <div class="flex items-center justify-between">
-                    <div class="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                    </div>
-                    <span class="text-slate-400 group-hover:text-emerald-600 transition">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                    </span>
+                    <a href="{{ route('productos.index') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 transition flex items-center gap-1">
+                        Ver catálogo completo &rarr;
+                    </a>
                 </div>
-                <div>
-                    <h3 class="font-bold text-slate-900 text-base group-hover:text-emerald-600 transition mt-4">Gestión de Sucursales</h3>
-                    <p class="text-xs text-slate-500 mt-1">Crear sedes, puntos de venta y administrar la sede principal.</p>
-                </div>
-            </a>
 
-            <!-- Acceso: Catálogo y Productos (Próxima Fase) -->
-            <div class="bg-slate-50 p-6 rounded-3xl border border-slate-200 opacity-80 flex flex-col justify-between min-h-[140px]">
-                <div class="flex items-center justify-between">
-                    <div class="h-12 w-12 rounded-2xl bg-slate-200 text-slate-500 flex items-center justify-center">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                        </svg>
-                    </div>
-                    <span class="text-xs font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-md">Fase 4</span>
+                <!-- Tabla de Productos Destacados -->
+                @php
+                    $articulosAMostrar = ($productosCriticos->isNotEmpty()) ? $productosCriticos : $ultimosProductos;
+                @endphp
+
+                @if($articulosAMostrar->isNotEmpty())
+                <div class="overflow-x-hidden">
+                    <table class="w-full divide-y divide-slate-100 table-auto text-left text-sm">
+                        <thead class="bg-slate-50/70 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            <tr>
+                                <th class="px-5 py-3.5">Producto</th>
+                                <th class="px-4 py-3.5">SKU</th>
+                                <th class="px-4 py-3.5 text-right">Precio Venta</th>
+                                <th class="px-4 py-3.5 text-center">Stock</th>
+                                <th class="px-5 py-3.5 text-right">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            @foreach($articulosAMostrar as $art)
+                            <tr class="hover:bg-slate-50/70 transition">
+                                <td class="px-5 py-3.5">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="h-10 w-10 rounded-xl bg-slate-100 border border-slate-200/80 overflow-hidden flex-shrink-0 flex items-center justify-center">
+                                            @if($art->imagen_path)
+                                                <img src="{{ $art->imagen_url }}" alt="{{ $art->nombre }}" class="h-full w-full object-cover">
+                                            @else
+                                                <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                            @endif
+                                        </div>
+                                        <div class="min-w-0">
+                                            <div class="font-bold text-slate-900 text-sm truncate leading-snug">{{ $art->nombre }}</div>
+                                            <div class="text-xs text-slate-400 mt-0.5">{{ $art->categoria?->nombre ?? 'Sin categoría' }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3.5 font-mono text-xs text-slate-600">
+                                    <span class="bg-slate-100 px-2 py-0.5 rounded font-semibold">{{ $art->codigo ?? '—' }}</span>
+                                </td>
+                                <td class="px-4 py-3.5 text-right font-bold text-slate-900 text-sm">
+                                    ${{ number_format($art->precio_venta, 0, ',', '.') }}
+                                </td>
+                                <td class="px-4 py-3.5 text-center whitespace-nowrap">
+                                    @if($art->tieneBajoStock())
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800">
+                                        <span class="h-1.5 w-1.5 rounded-full bg-red-500 mr-1.5 animate-pulse"></span>
+                                        {{ number_format($art->stock, 0) }} {{ $art->unidadMedida?->codigo ?? 'UND' }}
+                                    </span>
+                                    @else
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+                                        {{ number_format($art->stock, 0) }} {{ $art->unidadMedida?->codigo ?? 'UND' }}
+                                    </span>
+                                    @endif
+                                </td>
+                                <td class="px-5 py-3.5 text-right">
+                                    <a href="{{ route('productos.edit', $art) }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1.5 rounded-lg transition">
+                                        Editar
+                                    </a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-                <div>
-                    <h3 class="font-bold text-slate-700 text-base mt-4">Catálogos de Productos</h3>
-                    <p class="text-xs text-slate-400 mt-1">Categorías, marcas, unidades de medida y productos.</p>
+                @else
+                <div class="p-10 text-center text-slate-500">
+                    <p class="text-sm">No hay productos registrados en el inventario aún.</p>
+                    <a href="{{ route('productos.create') }}" class="inline-flex items-center mt-3 px-4 py-2 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition">
+                        Registrar primer producto
+                    </a>
+                </div>
+                @endif
+            </div>
+        </div>
+
+        <!-- Columna Derecha: Accesos Rápidos del Sistema & Ficha Tenant (4 cols) -->
+        <div class="lg:col-span-4 space-y-6">
+            <!-- Bloque de Módulos Activos -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                <h3 class="font-bold text-slate-900 text-base">Accesos Directos</h3>
+
+                <div class="space-y-2.5">
+                    <a href="{{ route('productos.index') }}"
+                        class="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 border border-slate-100 hover:border-slate-200 transition group">
+                        <div class="flex items-center space-x-3">
+                            <div class="h-10 w-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-slate-800 group-hover:text-indigo-600 transition">Catálogo de Productos</div>
+                                <div class="text-xs text-slate-400">Listado, precios e imágenes</div>
+                            </div>
+                        </div>
+                        <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">
+                            {{ $totalProductos ?? 0 }}
+                        </span>
+                    </a>
+
+                    <a href="{{ route('catalogos.index') }}"
+                        class="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 border border-slate-100 hover:border-slate-200 transition group">
+                        <div class="flex items-center space-x-3">
+                            <div class="h-10 w-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-slate-800 group-hover:text-indigo-600 transition">Catálogos Auxiliares</div>
+                                <div class="text-xs text-slate-400">Categorías, marcas y unidades</div>
+                            </div>
+                        </div>
+                        <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
+                            {{ $totalCategorias ?? 0 }}
+                        </span>
+                    </a>
+
+                    <a href="{{ route('sucursales.index') }}"
+                        class="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 border border-slate-100 hover:border-slate-200 transition group">
+                        <div class="flex items-center space-x-3">
+                            <div class="h-10 w-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-slate-800 group-hover:text-emerald-600 transition">Sedes y Sucursales</div>
+                                <div class="text-xs text-slate-400">Puntos de venta habilitados</div>
+                            </div>
+                        </div>
+                        <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                            {{ $totalSucursales ?? 1 }}
+                        </span>
+                    </a>
+
+                    <a href="{{ route('empresa.perfil') }}"
+                        class="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 border border-slate-100 hover:border-slate-200 transition group">
+                        <div class="flex items-center space-x-3">
+                            <div class="h-10 w-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center font-bold">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-slate-800 group-hover:text-slate-900 transition">Perfil de la Empresa</div>
+                                <div class="text-xs text-slate-400">Datos fiscales y moneda</div>
+                            </div>
+                        </div>
+                        <span class="text-slate-400 group-hover:text-slate-600 transition">&rarr;</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Ficha Tributaria y de Seguridad -->
+            <div class="bg-gradient-to-br from-slate-50 to-slate-100 p-6 rounded-3xl border border-slate-200 shadow-sm space-y-3">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Identificación del Tenant</span>
+                <div class="space-y-1.5 text-xs text-slate-600">
+                    <div class="flex justify-between py-1 border-b border-slate-200/60">
+                        <span class="text-slate-500">Razón Social:</span>
+                        <span class="font-bold text-slate-800">{{ auth()->user()->empresa?->razon_social ?? 'Empresa Registrada' }}</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-slate-200/60">
+                        <span class="text-slate-500">NIT:</span>
+                        <span class="font-mono font-bold text-slate-800">{{ auth()->user()->empresa?->nit ?? 'N/A' }}</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-slate-200/60">
+                        <span class="text-slate-500">Moneda Base:</span>
+                        <span class="font-bold text-slate-800">{{ auth()->user()->empresa?->moneda ?? 'COP' }} ({{ auth()->user()->empresa?->simbolo_moneda ?? '$' }})</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-500">Seguridad:</span>
+                        <span class="font-semibold text-emerald-600 flex items-center gap-1">
+                            <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Aislamiento OK
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>

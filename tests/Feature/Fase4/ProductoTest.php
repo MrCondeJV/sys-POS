@@ -337,4 +337,34 @@ class ProductoTest extends TestCase
 
         $response->assertSessionHasErrors(['imagen']);
     }
+
+    public function test_dashboard_renderiza_metricas_y_articulos_del_tenant(): void
+    {
+        // Crear producto bajo stock para Empresa A
+        Producto::create([
+            'empresa_id' => $this->empresaA->id,
+            'nombre' => 'Producto Critico A',
+            'precio_venta' => 12000,
+            'stock' => 2,
+            'stock_minimo' => 10,
+            'estado' => EstadoGeneral::ACTIVO,
+        ]);
+
+        // Crear producto para Empresa B
+        Producto::create([
+            'empresa_id' => $this->empresaB->id,
+            'nombre' => 'Producto Exclusivo B',
+            'precio_venta' => 45000,
+            'stock' => 1,
+            'stock_minimo' => 5,
+            'estado' => EstadoGeneral::ACTIVO,
+        ]);
+
+        $response = $this->actingAs($this->adminA)->get(route('dashboard'));
+
+        $response->assertOk();
+        $response->assertSee('Producto Critico A');
+        $response->assertDontSee('Producto Exclusivo B');
+        $response->assertSee('Estado de Artículos en Catálogo');
+    }
 }
