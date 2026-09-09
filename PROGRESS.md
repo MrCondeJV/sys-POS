@@ -87,9 +87,35 @@ Este archivo registra el avance fase por fase según las normas estrictas del [R
   - Soporte de fotografía e imagen de productos con almacenamiento en storage público aislado por empresa, previsualización instantánea en tiempo real con Alpine.js, reemplazo seguro y miniaturas visuales en el catálogo: OK
   - Integración en navegación universal (`layouts/app.blade.php` sidebar de escritorio y drawer móvil): OK
   - Datos de prueba y demostración sembrados en `DatabaseSeeder`: OK
-  - Pruebas automatizadas unitarias y de feature al 100% (46 tests, 152 assertions): OK
+  - Pruebas automatizadas unitarias y de feature al 100% (47 tests, 156 assertions): OK
   - Estandarización de código con Laravel Pint: OK
 
 ---
 
-*(Fases 5 a 30 pendientes conforme al Roadmap)*
+## FASE 5 — Inventario (Kardex Inmutable y Movimientos de Inventario)
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-09-09
+- **Detalle de tareas:**
+  - Migración y Modelo `Inventario`: control de existencias físicas por sucursal con umbral de alerta `stock_minimo`, ubicación en bodega y restricción única `[empresa_id, sucursal_id, producto_id]`: OK
+  - Migración y Modelo `MovimientoInventario`: estructura inmutable para el Kardex legal con trazabilidad de `stock_anterior`, `cantidad`, `costo_unitario`, `stock_posterior`, `usuario`, `sucursal` y `referencia`: OK
+  - Enum `TipoMovimientoInventario` con 8 tipos (Entradas por compra, salidas por venta, ajustes positivos/negativos, devoluciones y traslados) con helpers `esEntrada()`, `esSalida()` y clases visuales de Tailwind: OK
+  - Capa de dominio con transacciones ACID y bloqueo pesimista de filas (`lockForUpdate`):
+    - `RegistrarMovimientoInventarioAction`: ejecución atómica de movimientos, prevención de stock negativo y sincronización del acumulador global `productos.stock`.
+    - `RealizarAjusteInventarioAction`: orquestación de ajustes manuales con motivos auditados.
+    - `RealizarTrasladoInventarioAction`: traslados entre sucursales con doble asiento atómico en el Kardex (salida en origen / entrada en destino).
+  - Excepción de dominio `StockInsuficienteException` y DTO fuertemente tipado `MovimientoInventarioDTO`: OK
+  - Autorización mediante `InventarioPolicy` registrada en `AppServiceProvider`: OK
+  - Controlador seguro `InventarioController` con validación `BelongsToActiveCompany`: OK
+  - Interfaz de usuario táctil, moderna y adaptada a pantallas anchas (`max-w-[1680px]`, cero scroll horizontal):
+    - `inventario.index`: 5 tarjetas KPI (valoración a costo, PVP estimado, total artículos, bajo stock, agotados), filtros reactivos por sucursal, categoría y estado de stock, y tabla enriquecida con barra de nivel de existencias y accesos a Kardex y Ajustes.
+    - `inventario.kardex`: Ficha del producto con existencias por sucursal, filtros por fecha/tipo/sucursal y tabla cronológica inmutable con badges distintivos.
+    - `inventario.ajuste`: Formulario con simulador en tiempo real (Alpine.js) que proyecta el nuevo stock antes de guardar y previene saldos negativos.
+    - `inventario.traslado`: Formulario de transferencias con simulador reactivo en vivo para sucursales de origen y destino.
+  - Accesos directos integrados en navegación universal (`layouts/app.blade.php`) y tarjeta destacada en el Dashboard: OK
+  - Datos de inventario y movimientos iniciales sembrados en `DatabaseSeeder`: OK
+  - Pruebas automatizadas unitarias y de feature al 100% (58 tests, 199 assertions): OK
+  - Estandarización de código con Laravel Pint: OK
+
+---
+
+*(Fases 6 a 30 pendientes conforme al Roadmap)*

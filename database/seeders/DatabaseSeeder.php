@@ -5,9 +5,12 @@ namespace Database\Seeders;
 use App\Enums\EstadoGeneral;
 use App\Enums\RolSistema;
 use App\Enums\TipoDocumentoIdentidad;
+use App\Enums\TipoMovimientoInventario;
 use App\Models\Categoria;
 use App\Models\Empresa;
+use App\Models\Inventario;
 use App\Models\Marca;
+use App\Models\MovimientoInventario;
 use App\Models\Producto;
 use App\Models\Sucursal;
 use App\Models\UnidadMedida;
@@ -200,5 +203,41 @@ class DatabaseSeeder extends Seeder
                 'estado' => EstadoGeneral::ACTIVO,
             ]
         );
+
+        // 9. Inicialización de Inventario y Kardex por Sucursal para Productos Demo
+        $todosLosProductos = Producto::where('empresa_id', $empresa->id)->get();
+        foreach ($todosLosProductos as $p) {
+            $inv = Inventario::firstOrCreate(
+                [
+                    'empresa_id' => $empresa->id,
+                    'sucursal_id' => $sucursal->id,
+                    'producto_id' => $p->id,
+                ],
+                [
+                    'stock' => $p->stock,
+                    'stock_minimo' => $p->stock_minimo,
+                    'ubicacion' => 'Pasillo Principal - Estante 1',
+                ]
+            );
+
+            // Asentar movimiento inicial si no existe en el Kardex
+            MovimientoInventario::firstOrCreate(
+                [
+                    'empresa_id' => $empresa->id,
+                    'sucursal_id' => $sucursal->id,
+                    'producto_id' => $p->id,
+                    'tipo' => TipoMovimientoInventario::ENTRADA_COMPRA->value,
+                ],
+                [
+                    'user_id' => $adminEmpresa->id,
+                    'cantidad' => $p->stock,
+                    'costo_unitario' => $p->precio_compra,
+                    'stock_anterior' => 0,
+                    'stock_posterior' => $p->stock,
+                    'referencia' => 'Carga inicial de inventario / Saldo de apertura',
+                    'notas' => 'Inventario base registrado durante la configuración del sistema.',
+                ]
+            );
+        }
     }
 }

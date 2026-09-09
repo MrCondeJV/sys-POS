@@ -4,12 +4,14 @@ namespace App\Providers;
 
 use App\Models\Categoria;
 use App\Models\Empresa;
+use App\Models\Inventario;
 use App\Models\Marca;
 use App\Models\Producto;
 use App\Models\Sucursal;
 use App\Models\UnidadMedida;
 use App\Policies\CategoriaPolicy;
 use App\Policies\EmpresaPolicy;
+use App\Policies\InventarioPolicy;
 use App\Policies\MarcaPolicy;
 use App\Policies\ProductoPolicy;
 use App\Policies\SucursalPolicy;
@@ -39,6 +41,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Categoria::class, CategoriaPolicy::class);
         Gate::policy(Marca::class, MarcaPolicy::class);
         Gate::policy(UnidadMedida::class, UnidadMedidaPolicy::class);
+        Gate::policy(Inventario::class, InventarioPolicy::class);
 
         // Super Admin Bypass global auditado
         Gate::before(function ($user, $ability) {

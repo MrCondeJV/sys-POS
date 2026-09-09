@@ -7,6 +7,7 @@ use App\Support\Tenancy\BelongsToCompany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Sucursal extends Model
@@ -46,5 +47,21 @@ class Sucursal extends Model
     public function isPrincipal(): bool
     {
         return (bool) $this->es_principal;
+    }
+
+    /**
+     * Existencias de inventario en esta sucursal.
+     */
+    public function inventarios(): HasMany
+    {
+        return $this->hasMany(Inventario::class, 'sucursal_id');
+    }
+
+    /**
+     * Movimientos de inventario generados en esta sucursal.
+     */
+    public function movimientosInventario(): HasMany
+    {
+        return $this->hasMany(MovimientoInventario::class, 'sucursal_id');
     }
 }

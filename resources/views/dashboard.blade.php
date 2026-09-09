@@ -254,6 +254,24 @@
                         </span>
                     </a>
 
+                    <a href="{{ route('inventario.index') }}"
+                        class="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 border border-slate-100 hover:border-slate-200 transition group">
+                        <div class="flex items-center space-x-3">
+                            <div class="h-10 w-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center font-bold">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-slate-800 group-hover:text-teal-600 transition">Inventario & Kardex</div>
+                                <div class="text-xs text-slate-400">Existencias, ajustes y traslados</div>
+                            </div>
+                        </div>
+                        <span class="text-xs font-bold text-teal-600 bg-teal-50 px-2 py-0.5 rounded-md">
+                            Kardex
+                        </span>
+                    </a>
+
                     <a href="{{ route('catalogos.index') }}"
                         class="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 border border-slate-100 hover:border-slate-200 transition group">
                         <div class="flex items-center space-x-3">

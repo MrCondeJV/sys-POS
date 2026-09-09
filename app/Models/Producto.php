@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Storage;
 
 class Producto extends Model
 {
@@ -73,6 +73,32 @@ class Producto extends Model
     }
 
     /**
+     * Registros de existencias por sucursal.
+     */
+    public function inventarios(): HasMany
+    {
+        return $this->hasMany(Inventario::class, 'producto_id');
+    }
+
+    /**
+     * Historial de movimientos de inventario (Kardex).
+     */
+    public function movimientosInventario(): HasMany
+    {
+        return $this->hasMany(MovimientoInventario::class, 'producto_id');
+    }
+
+    /**
+     * Retorna las existencias del producto en una sucursal específica.
+     */
+    public function stockEnSucursal(int $sucursalId): float
+    {
+        $inv = $this->inventarios->firstWhere('sucursal_id', $sucursalId);
+
+        return $inv ? (float) $inv->stock : 0.0;
+    }
+
+    /**
      * Scope para productos activos.
      */
     public function scopeActivo(Builder $query): Builder
@@ -131,6 +157,6 @@ class Producto extends Model
             return null;
         }
 
-        return asset('storage/' . ltrim($this->imagen_path, '/'));
+        return asset('storage/'.ltrim($this->imagen_path, '/'));
     }
 }

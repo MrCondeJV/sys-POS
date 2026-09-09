@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmpresaController;
+use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\SucursalController;
 use Illuminate\Support\Facades\Route;
@@ -47,5 +48,15 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/marcas/{marca}', [CatalogoController::class, 'destroyMarca'])->name('marcas.destroy');
         Route::post('/unidades', [CatalogoController::class, 'storeUnidad'])->name('unidades.store');
         Route::delete('/unidades/{unidad}', [CatalogoController::class, 'destroyUnidad'])->name('unidades.destroy');
+    });
+
+    // Fase 5: Inventario y Kardex Inmutable
+    Route::prefix('inventario')->name('inventario.')->group(function () {
+        Route::get('/', [InventarioController::class, 'index'])->name('index');
+        Route::get('/kardex/{producto}', [InventarioController::class, 'kardex'])->name('kardex');
+        Route::get('/ajuste', [InventarioController::class, 'createAjuste'])->name('ajuste.create');
+        Route::post('/ajuste', [InventarioController::class, 'storeAjuste'])->name('ajuste.store');
+        Route::get('/traslado', [InventarioController::class, 'createTraslado'])->name('traslado.create');
+        Route::post('/traslado', [InventarioController::class, 'storeTraslado'])->name('traslado.store');
     });
 });
