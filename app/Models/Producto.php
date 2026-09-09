@@ -50,6 +50,7 @@ class Producto extends Model
 
     protected $appends = [
         'sku',
+        'imagen_url',
     ];
 
     public function getSkuAttribute(): ?string

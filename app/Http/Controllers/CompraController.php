@@ -133,10 +133,12 @@ class CompraController extends Controller
             'descuento' => ['nullable', 'numeric', 'min:0'],
             'observaciones' => ['nullable', 'string', 'max:1000'],
             'items' => ['required', 'array', 'min:1'],
-            'items.*.producto_id' => ['required', 'integer', new BelongsToActiveCompany('productos')],
+            'items.*.producto_id' => ['required', 'integer', 'distinct', new BelongsToActiveCompany('productos')],
             'items.*.cantidad' => ['required', 'numeric', 'gt:0'],
             'items.*.costo_unitario' => ['required', 'numeric', 'min:0'],
             'items.*.porcentaje_iva' => ['nullable', 'numeric', 'min:0', 'max:100'],
+        ], [
+            'items.*.producto_id.distinct' => 'Cada línea de compra debe ser un artículo único. No puedes repetir el mismo producto en varias filas.',
         ]);
 
         $items = array_map(function ($item) {

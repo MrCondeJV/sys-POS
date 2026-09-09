@@ -426,4 +426,34 @@ class CompraTest extends TestCase
         $compra->refresh();
         $this->assertEquals(EstadoCompra::REGISTRADA, $compra->estado);
     }
+
+    public function test_no_se_puede_registrar_compra_con_productos_duplicados_en_multiples_lineas(): void
+    {
+        $payload = [
+            'sucursal_id' => $this->sucursalA->id,
+            'proveedor_id' => $this->proveedorA->id,
+            'numero_factura' => 'FAC-DUP-01',
+            'fecha_emision' => now()->format('Y-m-d'),
+            'tipo_pago' => 'CONTADO',
+            'items' => [
+                [
+                    'producto_id' => $this->productoA->id,
+                    'cantidad' => 5,
+                    'costo_unitario' => 2000,
+                    'porcentaje_iva' => 0,
+                ],
+                [
+                    'producto_id' => $this->productoA->id, // Mismo producto repetido
+                    'cantidad' => 3,
+                    'costo_unitario' => 2000,
+                    'porcentaje_iva' => 0,
+                ],
+            ],
+        ];
+
+        $response = $this->actingAs($this->adminA)->post(route('compras.store'), $payload);
+
+        $response->assertSessionHasErrors(['items.0.producto_id', 'items.1.producto_id']);
+        $this->assertDatabaseMissing('compras', ['numero_factura' => 'FAC-DUP-01']);
+    }
 }
