@@ -53,6 +53,9 @@ enum PermisoSistema: string
     // Reportes
     case REPORTES_VER = 'reportes.ver';
 
+    // Auditoría
+    case AUDITORIA_VER = 'auditoria.ver';
+
     // Empresas y Sucursales
     case EMPRESA_GESTIONAR = 'empresa.gestionar';
     case SUCURSALES_GESTIONAR = 'sucursales.gestionar';

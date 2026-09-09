@@ -87,6 +87,7 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::CARTERA_ABONAR->value,
             PermisoSistema::CARTERA_ANULAR->value,
             PermisoSistema::REPORTES_VER->value,
+            PermisoSistema::AUDITORIA_VER->value,
             PermisoSistema::EMPRESA_GESTIONAR->value,
             PermisoSistema::SUCURSALES_GESTIONAR->value,
             PermisoSistema::USUARIOS_VER->value,
@@ -188,6 +189,7 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::CARTERA_ANULAR->value,
             PermisoSistema::INVENTARIO_VER->value,
             PermisoSistema::REPORTES_VER->value,
+            PermisoSistema::AUDITORIA_VER->value,
         ]);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\AuditoriaController;
 use App\Http\Controllers\CajaController;
 use App\Http\Controllers\CarteraController;
 use App\Http\Controllers\CatalogoController;
@@ -163,6 +164,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/cartera/imprimir', [ReporteController::class, 'carteraImprimir'])->name('cartera.imprimir');
         Route::get('/metodos-pago', [ReporteController::class, 'metodosPago'])->name('metodos-pago');
         Route::get('/impuestos', [ReporteController::class, 'impuestos'])->name('impuestos');
+    });
+
+    // Fase 16: Auditoría y Trazabilidad
+    Route::prefix('auditoria')->name('auditoria.')->group(function () {
+        Route::get('/', [AuditoriaController::class, 'index'])->name('index');
+        Route::get('/{auditoria}', [AuditoriaController::class, 'show'])->name('show');
     });
 });
 

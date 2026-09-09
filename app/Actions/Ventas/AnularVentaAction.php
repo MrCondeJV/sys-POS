@@ -116,6 +116,22 @@ class AnularVentaAction
                 'motivo_anulacion' => $motivo,
             ]);
 
+            // 5. Registrar evento de auditoría
+            \App\Actions\Auditoria\RegistrarAuditoriaAction::execute(
+                accion: 'ANULAR_VENTA',
+                modulo: 'VENTAS',
+                model: $ventaBloqueada,
+                datosAnteriores: ['estado' => EstadoVenta::COMPLETADA->value],
+                datosNuevos: [
+                    'estado' => EstadoVenta::ANULADA->value,
+                    'motivo_anulacion' => $motivo,
+                    'anulado_por_id' => $usuarioAnulacion->id,
+                ],
+                descripcion: "Venta {$ventaBloqueada->numero_venta} anulada. Motivo: {$motivo}",
+                usuario: $usuarioAnulacion,
+                empresaId: $ventaBloqueada->empresa_id
+            );
+
             return $ventaBloqueada->fresh();
         });
     }

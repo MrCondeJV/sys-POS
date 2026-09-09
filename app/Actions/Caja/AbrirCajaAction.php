@@ -50,7 +50,7 @@ class AbrirCajaAction
                 ));
             }
 
-            return CajaSesion::create([
+            $sesion = CajaSesion::create([
                 'empresa_id' => $cajaBloqueada->empresa_id,
                 'sucursal_id' => $cajaBloqueada->sucursal_id,
                 'caja_id' => $cajaBloqueada->id,
@@ -60,6 +60,24 @@ class AbrirCajaAction
                 'estado' => EstadoSesionCaja::ABIERTA,
                 'observaciones_apertura' => $observaciones,
             ]);
+
+            \App\Actions\Auditoria\RegistrarAuditoriaAction::execute(
+                accion: 'APERTURA_CAJA',
+                modulo: 'CAJA',
+                model: $sesion,
+                datosAnteriores: null,
+                datosNuevos: [
+                    'caja_id' => $cajaBloqueada->id,
+                    'caja_nombre' => $cajaBloqueada->nombre,
+                    'monto_apertura' => $montoApertura,
+                    'cajero_id' => $cajero->id,
+                ],
+                descripcion: "Apertura de turno en {$cajaBloqueada->nombre} con fondo inicial de \${$montoApertura} por {$cajero->name}",
+                usuario: $cajero,
+                empresaId: $cajaBloqueada->empresa_id
+            );
+
+            return $sesion;
         });
     }
 }

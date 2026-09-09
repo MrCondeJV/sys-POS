@@ -36,6 +36,26 @@ class RealizarAjusteInventarioAction
             notas: $notas
         );
 
-        return $this->registrarAction->execute($dto);
+        $movimiento = $this->registrarAction->execute($dto);
+
+        \App\Actions\Auditoria\RegistrarAuditoriaAction::execute(
+            accion: 'AJUSTE_INVENTARIO',
+            modulo: 'INVENTARIO',
+            model: $movimiento,
+            datosAnteriores: [
+                'stock_anterior' => $movimiento->stock_anterior,
+            ],
+            datosNuevos: [
+                'stock_posterior' => $movimiento->stock_posterior,
+                'cantidad' => $movimiento->cantidad,
+                'tipo' => $tipo->value,
+                'motivo' => $motivo,
+            ],
+            descripcion: "Ajuste de inventario ({$tipo->label()}) de {$cantidad} unidades. Motivo: {$motivo}. Nuevo stock: {$movimiento->stock_posterior}",
+            usuario: $userId ? \App\Models\User::find($userId) : null,
+            empresaId: $movimiento->empresa_id
+        );
+
+        return $movimiento;
     }
 }

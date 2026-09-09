@@ -48,6 +48,25 @@ class CerrarCajaAction
                 'observaciones_cierre' => $observaciones,
             ]);
 
+            \App\Actions\Auditoria\RegistrarAuditoriaAction::execute(
+                accion: 'CIERRE_CAJA',
+                modulo: 'CAJA',
+                model: $sesionBloqueada,
+                datosAnteriores: [
+                    'estado' => EstadoSesionCaja::ABIERTA->value,
+                ],
+                datosNuevos: [
+                    'estado' => EstadoSesionCaja::CERRADA->value,
+                    'monto_cierre_esperado' => $saldoEsperado,
+                    'monto_cierre_contado' => $montoContado,
+                    'diferencia' => $diferencia,
+                    'user_cierre_id' => $auditor->id,
+                ],
+                descripcion: "Cierre de turno en caja con saldo esperado de \${$saldoEsperado}, contado \${$montoContado} y diferencia de \${$diferencia} por {$auditor->name}",
+                usuario: $auditor,
+                empresaId: $sesionBloqueada->empresa_id
+            );
+
             return $sesionBloqueada->fresh();
         });
     }

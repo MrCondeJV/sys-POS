@@ -229,6 +229,25 @@ class RegistrarDevolucionAction
                 }
             }
 
+            // 6. Registrar auditoría de devolución
+            \App\Actions\Auditoria\RegistrarAuditoriaAction::execute(
+                accion: 'DEVOLUCION',
+                modulo: 'DEVOLUCIONES',
+                model: $devolucion,
+                datosAnteriores: null,
+                datosNuevos: [
+                    'numero_devolucion' => $devolucion->numero_devolucion,
+                    'venta_id' => $venta->id,
+                    'numero_venta' => $venta->numero_venta,
+                    'total' => $devolucion->total,
+                    'tipo_devolucion' => $tipoDevolucion->value,
+                    'tipo_reintegro' => $tipoReintegro->value,
+                ],
+                descripcion: "Devolución {$devolucion->numero_devolucion} registrada para la venta {$venta->numero_venta} por valor de \${$devolucion->total}",
+                usuario: User::find($userId),
+                empresaId: $empresaId
+            );
+
             return $devolucion;
         });
     }
