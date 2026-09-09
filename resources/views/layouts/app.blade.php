@@ -71,7 +71,7 @@
             </div>
         </div>
 
-        <!-- Navigation Links -->
+                <!-- Navigation Links -->
         <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
             <a href="{{ route('dashboard') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('dashboard') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
@@ -81,10 +81,12 @@
                 Dashboard
             </a>
 
+            @canany(['empresa.gestionar', 'sucursales.gestionar'])
             <div class="pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
                 Gestión Empresarial
             </div>
 
+            @can('empresa.gestionar')
             <a href="{{ route('empresa.perfil') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('empresa.perfil') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
                 <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -92,7 +94,9 @@
                 </svg>
                 Perfil de Empresa
             </a>
+            @endcan
 
+            @can('sucursales.gestionar')
             <a href="{{ route('sucursales.index') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('sucursales.index') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
                 <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -102,10 +106,32 @@
                 Sucursales
             </a>
 
+            <a href="{{ route('traslados.index') }}"
+                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('traslados.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
+                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+                Traslados Sucursal
+            </a>
+            @endcan
+
+            @can('empresa.gestionar')
+            <a href="{{ route('saas.suscripcion') }}"
+                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('saas.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
+                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                </svg>
+                Planes & SaaS
+            </a>
+            @endcan
+            @endcanany
+
+            @canany(['productos.ver', 'listas_precios.ver', 'inventario.ver'])
             <div class="pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
                 Inventario & Productos
             </div>
 
+            @can('productos.ver')
             <a href="{{ route('productos.index') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('productos.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
                 <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -113,7 +139,9 @@
                 </svg>
                 Productos
             </a>
+            @endcan
 
+            @can('listas_precios.ver')
             <a href="{{ route('listas-precios.index') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('listas-precios.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
                 <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -121,7 +149,9 @@
                 </svg>
                 Listas de Precios
             </a>
+            @endcan
 
+            @can('inventario.ver')
             <a href="{{ route('inventario.index') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('inventario.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
                 <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -129,7 +159,9 @@
                 </svg>
                 Inventario & Kardex
             </a>
+            @endcan
 
+            @can('productos.ver')
             <a href="{{ route('catalogos.index') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('catalogos.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
                 <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -137,11 +169,15 @@
                 </svg>
                 Catálogos Auxiliares
             </a>
+            @endcan
+            @endcanany
 
+            @canany(['compras.ver', 'proveedores.ver'])
             <div class="pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
                 Compras & Proveedores
             </div>
 
+            @can('compras.ver')
             <a href="{{ route('compras.index') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('compras.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
                 <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -149,7 +185,9 @@
                 </svg>
                 Compras / Facturas
             </a>
+            @endcan
 
+            @can('proveedores.ver')
             <a href="{{ route('proveedores.index') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('proveedores.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
                 <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -157,11 +195,15 @@
                 </svg>
                 Proveedores
             </a>
+            @endcan
+            @endcanany
 
+            @canany(['ventas.ver', 'ventas.devolver', 'documentos.ver', 'clientes.ver', 'cartera.ver'])
             <div class="pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
                 Ventas & Clientes
             </div>
 
+            @can('ventas.ver')
             <a href="{{ route('ventas.index') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('ventas.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
                 <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -169,7 +211,9 @@
                 </svg>
                 Ventas Realizadas
             </a>
+            @endcan
 
+            @can('ventas.devolver')
             <a href="{{ route('devoluciones.index') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('devoluciones.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
                 <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -177,7 +221,9 @@
                 </svg>
                 Devoluciones
             </a>
+            @endcan
 
+            @can('documentos.ver')
             <a href="{{ route('documentos.index') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('documentos.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
                 <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -185,7 +231,9 @@
                 </svg>
                 Documentos de Venta
             </a>
+            @endcan
 
+            @can('clientes.ver')
             <a href="{{ route('clientes.index') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('clientes.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
                 <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -193,7 +241,9 @@
                 </svg>
                 Clientes
             </a>
+            @endcan
 
+            @can('cartera.ver')
             <a href="{{ route('cartera.index') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('cartera.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
                 <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -201,11 +251,15 @@
                 </svg>
                 Crédito & Cartera
             </a>
+            @endcan
+            @endcanany
 
+            @canany(['caja.ver', 'ventas.crear'])
             <div class="pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
                 Operaciones & Caja
             </div>
 
+            @can('caja.ver')
             <a href="{{ route('cajas.index') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('cajas.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
                 <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -213,7 +267,9 @@
                 </svg>
                 Cajas & Turnos
             </a>
+            @endcan
 
+            @can('ventas.crear')
             <a href="{{ route('pos.index') }}"
                 class="flex items-center justify-between px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('pos.*') ? 'bg-emerald-600 text-white shadow-sm' : 'text-emerald-400 hover:text-white hover:bg-emerald-800/40' }}">
                 <span class="flex items-center">
@@ -224,11 +280,15 @@
                 </span>
                 <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-1.5 py-0.5 rounded">Rápido</span>
             </a>
+            @endcan
+            @endcanany
 
+            @canany(['reportes.ver', 'auditoria.ver', 'impuestos.ver'])
             <div class="pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
                 Analítica & Negocio
             </div>
 
+            @can('reportes.ver')
             <a href="{{ route('reportes.index') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('reportes.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
                 <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -236,7 +296,9 @@
                 </svg>
                 Centro de Reportes
             </a>
+            @endcan
 
+            @can('auditoria.ver')
             <a href="{{ route('auditoria.index') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('auditoria.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
                 <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -244,7 +306,9 @@
                 </svg>
                 Auditoría & Logs
             </a>
+            @endcan
 
+            @can('impuestos.ver')
             <a href="{{ route('impuestos.index') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('impuestos.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
                 <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -252,11 +316,15 @@
                 </svg>
                 Impuestos & Tarifas
             </a>
+            @endcan
+            @endcanany
 
+            @canany(['documentos.ver', 'documentos.emitir'])
             <div class="pt-4 pb-1 px-3">
                 <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">DIAN & Fiscal</span>
             </div>
 
+            @can('documentos.ver')
             <a href="{{ route('facturacion-electronica.index') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('facturacion-electronica.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
                 <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -272,7 +340,10 @@
                 </svg>
                 Resoluciones DIAN
             </a>
+            @endcan
+            @endcanany
 
+            @can('productos.ver')
             <div class="pt-4 pb-1 px-3">
                 <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Verticales Especializadas</span>
             </div>
@@ -282,6 +353,7 @@
                 <span class="text-base mr-3">💊</span>
                 Droguería & Lotes
             </a>
+            @endcan
         </nav>
 
         <!-- User footer -->
@@ -334,73 +406,142 @@
                     </button>
                 </div>
 
-                <nav class="mt-4 px-4 space-y-1 overflow-y-auto flex-1">
+                                <nav class="mt-4 px-4 space-y-1 overflow-y-auto flex-1">
                     <a href="{{ route('dashboard') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl text-white hover:bg-slate-800">
                         Dashboard
                     </a>
+
+                    @can('empresa.gestionar')
                     <a href="{{ route('empresa.perfil') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl text-white hover:bg-slate-800">
                         Perfil de Empresa
                     </a>
+                    @endcan
+
+                    @can('sucursales.gestionar')
                     <a href="{{ route('sucursales.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl text-white hover:bg-slate-800">
                         Sucursales
                     </a>
+                    <a href="{{ route('traslados.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl text-white hover:bg-slate-800">
+                        Traslados Sucursal
+                    </a>
+                    @endcan
+
+                    @can('empresa.gestionar')
+                    <a href="{{ route('saas.suscripcion') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl text-white hover:bg-slate-800">
+                        Suscripción & Plan
+                    </a>
+                    @endcan
+
+                    @can('productos.ver')
                     <a href="{{ route('productos.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('productos.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         Productos
                     </a>
+                    @endcan
+
+                    @can('listas_precios.ver')
                     <a href="{{ route('listas-precios.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('listas-precios.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         Listas de Precios
                     </a>
+                    @endcan
+
+                    @can('inventario.ver')
                     <a href="{{ route('inventario.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('inventario.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         Inventario & Kardex
                     </a>
+                    @endcan
+
+                    @can('productos.ver')
                     <a href="{{ route('catalogos.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('catalogos.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         Catálogos Auxiliares
                     </a>
+                    @endcan
+
+                    @can('compras.ver')
                     <a href="{{ route('compras.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('compras.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         Compras / Facturas
                     </a>
+                    @endcan
+
+                    @can('proveedores.ver')
                     <a href="{{ route('proveedores.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('proveedores.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         Proveedores
                     </a>
+                    @endcan
+
+                    @can('ventas.ver')
                     <a href="{{ route('ventas.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('ventas.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         Ventas Realizadas
                     </a>
+                    @endcan
+
+                    @can('ventas.devolver')
                     <a href="{{ route('devoluciones.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('devoluciones.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         Devoluciones
                     </a>
+                    @endcan
+
+                    @can('documentos.ver')
                     <a href="{{ route('documentos.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('documentos.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         Documentos de Venta
                     </a>
+                    @endcan
+
+                    @can('clientes.ver')
                     <a href="{{ route('clientes.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('clientes.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         Clientes
                     </a>
+                    @endcan
+
+                    @can('cartera.ver')
                     <a href="{{ route('cartera.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('cartera.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         Crédito & Cartera
                     </a>
+                    @endcan
+
+                    @can('caja.ver')
                     <a href="{{ route('cajas.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('cajas.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         Cajas & Turnos
                     </a>
+                    @endcan
+
+                    @can('ventas.crear')
                     <a href="{{ route('pos.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('pos.*') ? 'bg-emerald-600 text-white' : 'text-emerald-400 hover:bg-slate-800' }}">
                         ⚡ Terminal POS (Ventas Rápidas)
                     </a>
+                    @endcan
+
+                    @can('reportes.ver')
                     <a href="{{ route('reportes.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('reportes.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         📊 Centro de Reportes
                     </a>
+                    @endcan
+
+                    @can('auditoria.ver')
                     <a href="{{ route('auditoria.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('auditoria.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         🛡️ Auditoría & Logs
                     </a>
+                    @endcan
+
+                    @can('impuestos.ver')
                     <a href="{{ route('impuestos.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('impuestos.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         🏷️ Impuestos & Tarifas
                     </a>
+                    @endcan
+
+                    @can('documentos.ver')
                     <a href="{{ route('facturacion-electronica.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('facturacion-electronica.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         ⚡ Facturación Electrónica
                     </a>
                     <a href="{{ route('resoluciones.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('resoluciones.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         📋 Resoluciones DIAN
                     </a>
+                    @endcan
+
+                    @can('productos.ver')
                     <a href="{{ route('farmacia.dashboard') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('farmacia.*') || request()->routeIs('lotes.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
                         💊 Droguería & Farmacia
                     </a>
+                    @endcan
                 </nav>
 
                 <div class="p-4 border-t border-slate-800">

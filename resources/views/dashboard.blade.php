@@ -22,6 +22,7 @@
 
             <!-- Botones de Acción Directa en el Banner -->
             <div class="flex flex-wrap items-center gap-3 flex-shrink-0">
+                @can('productos.crear')
                 <a href="{{ route('productos.create') }}"
                     class="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-bold text-slate-900 bg-white hover:bg-slate-100 shadow-md transition">
                     <svg class="h-4 w-4 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -29,6 +30,8 @@
                     </svg>
                     Nuevo Producto
                 </a>
+                @endcan
+                @can('productos.ver')
                 <a href="{{ route('productos.index') }}"
                     class="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 transition">
                     <svg class="h-4 w-4 mr-2 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -36,6 +39,7 @@
                     </svg>
                     Ver Catálogo
                 </a>
+                @endcan
             </div>
         </div>
 
@@ -168,6 +172,7 @@
             </div>
         </a>
 
+        @can('sucursales.gestionar')
         <!-- Tarjeta 3: Sucursales y Sedes -->
         <a href="{{ route('sucursales.index') }}" class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm hover:border-emerald-300 hover:shadow-md transition group">
             <div class="flex items-center justify-between">
@@ -186,6 +191,7 @@
                 <span class="text-emerald-600 font-semibold group-hover:translate-x-1 transition">&rarr;</span>
             </div>
         </a>
+        @endcan
 
         <!-- Tarjeta 4: Clasificación / Categorías -->
         <a href="{{ route('catalogos.index') }}" class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm hover:border-indigo-300 hover:shadow-md transition group">
@@ -315,6 +321,7 @@
                 <h3 class="font-bold text-slate-900 text-base">Accesos Directos</h3>
 
                 <div class="space-y-2.5">
+                    @can('productos.ver')
                     <a href="{{ route('productos.index') }}"
                         class="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 border border-slate-100 hover:border-slate-200 transition group">
                         <div class="flex items-center space-x-3">
@@ -332,7 +339,9 @@
                             {{ $totalProductos ?? 0 }}
                         </span>
                     </a>
+                    @endcan
 
+                    @can('inventario.ver')
                     <a href="{{ route('inventario.index') }}"
                         class="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 border border-slate-100 hover:border-slate-200 transition group">
                         <div class="flex items-center space-x-3">
@@ -350,7 +359,9 @@
                             Kardex
                         </span>
                     </a>
+                    @endcan
 
+                    @can('productos.ver')
                     <a href="{{ route('catalogos.index') }}"
                         class="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 border border-slate-100 hover:border-slate-200 transition group">
                         <div class="flex items-center space-x-3">
@@ -368,7 +379,9 @@
                             {{ $totalCategorias ?? 0 }}
                         </span>
                     </a>
+                    @endcan
 
+                    @can('sucursales.gestionar')
                     <a href="{{ route('sucursales.index') }}"
                         class="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 border border-slate-100 hover:border-slate-200 transition group">
                         <div class="flex items-center space-x-3">
@@ -386,7 +399,9 @@
                             {{ $totalSucursales ?? 1 }}
                         </span>
                     </a>
+                    @endcan
 
+                    @can('empresa.gestionar')
                     <a href="{{ route('empresa.perfil') }}"
                         class="flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 border border-slate-100 hover:border-slate-200 transition group">
                         <div class="flex items-center space-x-3">
@@ -403,6 +418,7 @@
                         </div>
                         <span class="text-slate-400 group-hover:text-slate-600 transition">&rarr;</span>
                     </a>
+                    @endcan
                 </div>
             </div>
 
