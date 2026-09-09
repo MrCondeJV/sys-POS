@@ -72,4 +72,8 @@ Route::prefix('v1')->group(function () {
         // Reportes
         Route::get('/reportes/resumen', [ReporteController::class, 'resumen'])->name('api.v1.reportes.resumen');
     });
+
+        // Sincronización Offline POS
+        Route::post('pos/sync-offline', [\App\Http\Controllers\PosOfflineSyncController::class, 'sync']);
+
 });
