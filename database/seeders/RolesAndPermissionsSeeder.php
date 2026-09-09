@@ -204,6 +204,7 @@ class RolesAndPermissionsSeeder extends Seeder
             PermisoSistema::REPORTES_VER->value,
             PermisoSistema::AUDITORIA_VER->value,
             PermisoSistema::DOCUMENTOS_VER->value,
+            PermisoSistema::IMPUESTOS_VER->value,
         ]);
     }
 }
