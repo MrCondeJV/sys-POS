@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Empresa;
 use App\Models\Sucursal;
 use App\Support\Tenancy\BranchContext;
 use App\Support\Tenancy\CompanyContext;
@@ -29,9 +30,41 @@ class SetCompanyContext
                 ]);
             }
 
-            if ($user->empresa_id) {
+            if ($user->isSuperAdmin()) {
+                // Super Admin: resolver tenant activo desde sesión o primera empresa disponible
+                $sessionEmpresaId = session('superadmin_empresa_id');
+                $empresaActiva = null;
+
+                if ($sessionEmpresaId) {
+                    $empresaActiva = Empresa::withoutGlobalScopes()->find($sessionEmpresaId);
+                }
+
+                if (! $empresaActiva) {
+                    $empresaActiva = $user->empresa_id
+                        ? Empresa::withoutGlobalScopes()->find($user->empresa_id)
+                        : Empresa::withoutGlobalScopes()->first();
+
+                    if ($empresaActiva) {
+                        session(['superadmin_empresa_id' => $empresaActiva->id]);
+                    }
+                }
+
+                if ($empresaActiva) {
+                    CompanyContext::setCompany($empresaActiva);
+                    setPermissionsTeamId($empresaActiva->id);
+                    $user->unsetRelation('roles');
+                    $user->unsetRelation('permissions');
+                    $this->resolveActiveBranch($user);
+                } else {
+                    CompanyContext::clear();
+                    BranchContext::clear();
+                    setPermissionsTeamId(null);
+                }
+            } elseif ($user->empresa_id) {
                 CompanyContext::setCompanyId($user->empresa_id);
                 setPermissionsTeamId($user->empresa_id);
+                $user->unsetRelation('roles');
+                $user->unsetRelation('permissions');
 
                 // Resolver y validar sucursal activa
                 $this->resolveActiveBranch($user);
@@ -55,12 +88,13 @@ class SetCompanyContext
     protected function resolveActiveBranch($user): void
     {
         $sessionBranchId = session('sucursal_activa_id');
+        $empresaId = CompanyContext::getId() ?? $user->empresa_id;
 
         // Validar que la sucursal en sesión pertenezca realmente a la empresa
-        if ($sessionBranchId) {
+        if ($sessionBranchId && $empresaId) {
             $validBranch = Sucursal::withoutGlobalScopes()
                 ->where('id', $sessionBranchId)
-                ->where('empresa_id', $user->empresa_id)
+                ->where('empresa_id', $empresaId)
                 ->first();
 
             if ($validBranch) {
@@ -70,10 +104,12 @@ class SetCompanyContext
             }
         }
 
+        $empresa = CompanyContext::getCompany() ?? $user->empresa;
+
         // Si no hay sucursal en sesión o no es válida, usar la del usuario o la principal
-        $defaultBranchId = $user->sucursal_id
-            ?? $user->empresa?->sucursalPrincipal?->id
-            ?? $user->empresa?->sucursales()->first()?->id;
+        $defaultBranchId = ($user->empresa_id === $empresaId ? $user->sucursal_id : null)
+            ?? $empresa?->sucursalPrincipal?->id
+            ?? $empresa?->sucursales()->first()?->id;
 
         BranchContext::setId($defaultBranchId);
     }

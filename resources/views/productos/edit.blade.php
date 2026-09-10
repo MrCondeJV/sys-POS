@@ -374,10 +374,18 @@
                         IVA / Impuesto (%)
                     </label>
                     <select name="iva" id="iva" x-model="iva"
-                        class="block w-full px-4 py-3 border border-slate-300 rounded-xl text-sm font-medium text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
-                        <option value="0">0% (Exento / Excluido)</option>
-                        <option value="5">5% (Tarifa Reducida)</option>
-                        <option value="19">19% (Tarifa General Colombia)</option>
+                        class="block w-full px-4 py-2.5 border border-slate-300 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                        @if(isset($impuestos) && $impuestos->isNotEmpty())
+                            @foreach($impuestos as $imp)
+                                <option value="{{ (float)$imp->porcentaje }}" {{ (old('iva', $producto->iva) == (float)$imp->porcentaje) ? 'selected' : '' }}>
+                                    {{ (float)$imp->porcentaje }}% ({{ $imp->nombre }})
+                                </option>
+                            @endforeach
+                        @else
+                            <option value="0" {{ old('iva', $producto->iva) == 0 ? 'selected' : '' }}>0% (Exento / Excluido)</option>
+                            <option value="5" {{ old('iva', $producto->iva) == 5 ? 'selected' : '' }}>5% (Tarifa Reducida)</option>
+                            <option value="19" {{ old('iva', $producto->iva) == 19 ? 'selected' : '' }}>19% (Tarifa General Colombia)</option>
+                        @endif
                     </select>
                     @error('iva')
                         <p class="text-xs text-red-600 mt-1 font-semibold">{{ $message }}</p>
@@ -443,14 +451,14 @@
             </div>
         </div>
 
-        <!-- Botones de Acción Táctiles (Fácil clic en Tablet y Móvil) -->
+        <!-- Botones de Acción -->
         <div class="flex flex-col sm:flex-row items-center justify-end gap-3 pt-4">
             <a href="{{ route('productos.index') }}"
-                class="w-full sm:w-auto px-6 py-3.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 text-center hover:bg-slate-100 transition">
+                class="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 text-center hover:bg-slate-50 transition">
                 Cancelar
             </a>
             <button type="submit"
-                class="w-full sm:w-auto px-8 py-3.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-500/20 text-center transition">
+                class="w-full sm:w-auto px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm text-center transition">
                 Actualizar Producto
             </button>
         </div>

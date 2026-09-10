@@ -7,7 +7,7 @@
     <title>{{ config('app.name', 'POS Comercial') }} - @yield('title', 'Inicio')</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700|instrument-sans:400,500,600,700&display=swap" rel="stylesheet" />
     <!-- PWA Manifest & Service Worker -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#4f46e5">
@@ -18,8 +18,8 @@
             });
         }
     </script>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Vite: CSS y JS compilados con Tailwind CSS v4 -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <!-- Alpine.js es provisto automáticamente por Livewire -->
     <style>
         [x-cloak] { display: none !important; }
@@ -129,15 +129,15 @@
             </div>
             <div class="truncate">
                 <span class="font-bold text-white tracking-wide block truncate text-sm">
-                    {{ auth()->user()->empresa?->nombre_comercial ?? 'POS Comercial' }}
+                    {{ \App\Support\Tenancy\CompanyContext::getCompany()?->nombre_comercial ?? auth()->user()->empresa?->nombre_comercial ?? 'POS Comercial' }}
                 </span>
                 <span class="text-xs text-slate-400 block truncate">
-                    NIT: {{ auth()->user()->empresa?->nit ?? 'Global' }}
+                    NIT: {{ \App\Support\Tenancy\CompanyContext::getCompany()?->nit ?? auth()->user()->empresa?->nit ?? 'Global' }}
                 </span>
             </div>
         </div>
 
-                <!-- Navigation Links -->
+        <!-- Navigation Links -->
         <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
             <a href="{{ route('dashboard') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('dashboard') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
@@ -147,7 +147,22 @@
                 Dashboard
             </a>
 
-            @canany(['empresa.gestionar', 'sucursales.gestionar'])
+            @if(auth()->user()->isSuperAdmin())
+            <div class="pt-4 pb-1 text-xs font-semibold text-purple-400 uppercase tracking-wider px-3 flex items-center justify-between">
+                <span>Plataforma SaaS</span>
+                <span class="text-[10px] bg-purple-950 text-purple-300 px-1.5 py-0.5 rounded border border-purple-800">Super Admin</span>
+            </div>
+
+            <a href="{{ route('empresas.index') }}"
+                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('empresas.*') ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
+                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+                Comercios / Empresas
+            </a>
+            @endif
+
+            @canany(['empresa.gestionar', 'sucursales.gestionar', 'usuarios.ver', 'usuarios.gestionar'])
             <div class="pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
                 Gestión Empresarial
             </div>
@@ -161,6 +176,16 @@
                 Perfil de Empresa
             </a>
             @endcan
+
+            @canany(['usuarios.ver', 'usuarios.gestionar'])
+            <a href="{{ route('usuarios.index') }}"
+                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('usuarios.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
+                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                Usuarios y Roles
+            </a>
+            @endcanany
 
             @can('sucursales.gestionar')
             <a href="{{ route('sucursales.index') }}"
@@ -477,11 +502,23 @@
                         Dashboard
                     </a>
 
+                    @if(auth()->user()->isSuperAdmin())
+                    <a href="{{ route('empresas.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl text-purple-300 hover:bg-slate-800">
+                        🏢 Comercios / Empresas
+                    </a>
+                    @endif
+
                     @can('empresa.gestionar')
                     <a href="{{ route('empresa.perfil') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl text-white hover:bg-slate-800">
                         Perfil de Empresa
                     </a>
                     @endcan
+
+                    @canany(['usuarios.ver', 'usuarios.gestionar'])
+                    <a href="{{ route('usuarios.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl text-white hover:bg-slate-800">
+                        👥 Usuarios y Roles
+                    </a>
+                    @endcanany
 
                     @can('sucursales.gestionar')
                     <a href="{{ route('sucursales.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl text-white hover:bg-slate-800">
@@ -640,10 +677,57 @@
                 </div>
             </div>
 
-            <!-- Right: Branch Selector & Profile -->
+            <!-- Right: Tenant Selector (SuperAdmin), Branch Selector & Profile -->
             <div class="flex items-center space-x-3 sm:space-x-4">
+                <!-- Selector de Empresa Activa (Super Admin) -->
+                @if(auth()->user()->isSuperAdmin())
+                @php
+                    $todasEmpresasActivas = \App\Models\Empresa::withoutGlobalScopes()->where('estado', \App\Enums\EstadoGeneral::ACTIVO->value)->get();
+                @endphp
+                @if($todasEmpresasActivas->count() > 0)
+                <div class="relative" x-data="{ openEmpresa: false }">
+                    <button @click="openEmpresa = !openEmpresa" type="button"
+                        class="inline-flex items-center px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl bg-purple-50 text-purple-800 hover:bg-purple-100 border border-purple-200 transition"
+                        title="Alternar empresa activa">
+                        <svg class="h-4 w-4 mr-1.5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                        <span class="truncate max-w-[120px] sm:max-w-[180px]">
+                            {{ \App\Support\Tenancy\CompanyContext::getCompany()?->nombre_comercial ?? 'Cambiar Comercio' }}
+                        </span>
+                        <svg class="h-3.5 w-3.5 ml-1 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <div x-cloak x-show="openEmpresa" @click.away="openEmpresa = false"
+                        class="absolute right-0 mt-2 w-64 rounded-2xl bg-white shadow-xl ring-1 ring-black/5 p-2 z-50 border border-slate-100">
+                        <div class="px-3 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                            Alternar Empresa Activa
+                        </div>
+                        <div class="mt-1 space-y-1 max-h-60 overflow-y-auto">
+                            @foreach($todasEmpresasActivas as $empItem)
+                            <form action="{{ route('empresas.seleccionar') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="empresa_id" value="{{ $empItem->id }}">
+                                <button type="submit"
+                                    class="w-full text-left px-3 py-2 text-xs rounded-xl flex items-center justify-between transition {{ \App\Support\Tenancy\CompanyContext::getId() === $empItem->id ? 'bg-purple-50 text-purple-700 font-bold' : 'text-slate-700 hover:bg-slate-50' }}">
+                                    <span class="truncate">{{ $empItem->nombre_comercial }}</span>
+                                    <span class="text-[10px] text-slate-400 ml-1">{{ $empItem->nit }}</span>
+                                </button>
+                            </form>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                @endif
+                @endif
+
                 <!-- Selector de Sucursal Activa -->
-                @if(auth()->user()->empresa && auth()->user()->empresa->sucursales->count() > 0)
+                @php
+                    $empresaActualHeader = \App\Support\Tenancy\CompanyContext::getCompany() ?? auth()->user()->empresa;
+                @endphp
+                @if($empresaActualHeader && $empresaActualHeader->sucursales->count() > 0)
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open" type="button"
                         class="inline-flex items-center px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 transition">
@@ -664,7 +748,7 @@
                             Cambiar Sucursal Activa
                         </div>
                         <div class="mt-1 space-y-1 max-h-60 overflow-y-auto">
-                            @foreach(auth()->user()->empresa->sucursales as $sucursal)
+                            @foreach($empresaActualHeader->sucursales as $sucursal)
                             <form action="{{ route('sucursales.seleccionar') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="sucursal_id" value="{{ $sucursal->id }}">

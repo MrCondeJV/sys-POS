@@ -19,7 +19,7 @@
         </div>
 
         <a href="{{ route('inventario.index') }}"
-            class="inline-flex items-center px-4 py-2.5 bg-white border border-slate-300 text-slate-700 text-sm font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-400 shadow-2xs transition">
+            class="inline-flex items-center px-4 py-2.5 bg-white border border-slate-300 text-slate-700 text-sm font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-400 shadow-sm transition">
             <svg class="h-4 w-4 mr-2 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
@@ -114,7 +114,7 @@
                         Selecciona el Producto <span class="text-rose-500">*</span>
                     </label>
                     <select name="producto_id" id="producto_id" x-model="productoId" required
-                        class="block w-full py-3 pl-4 pr-10 text-sm border border-slate-300 rounded-xl bg-white shadow-2xs focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium text-slate-800">
+                        class="block w-full py-3 pl-4 pr-10 text-sm border border-slate-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium text-slate-800">
                         <option value="" disabled>Seleccione un producto...</option>
                         @foreach($productos as $p)
                         <option value="{{ $p->id }}" {{ $initialProdId == $p->id ? 'selected' : '' }}>
@@ -172,7 +172,7 @@
                             Sucursal de Origen (Emisora) <span class="text-rose-500">*</span>
                         </label>
                         <select name="sucursal_origen_id" id="sucursal_origen_id" x-model="sucursalOrigenId" required
-                            class="block w-full py-3 pl-4 pr-10 text-sm border border-slate-300 rounded-xl bg-white shadow-2xs focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium text-slate-800">
+                            class="block w-full py-3 pl-4 pr-10 text-sm border border-slate-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium text-slate-800">
                             <option value="" disabled>Seleccione sede de origen...</option>
                             @foreach($sucursales as $s)
                             <option value="{{ $s->id }}" {{ $initialOrigenId == $s->id ? 'selected' : '' }}>
@@ -191,7 +191,7 @@
                             Sucursal de Destino (Receptora) <span class="text-rose-500">*</span>
                         </label>
                         <select name="sucursal_destino_id" id="sucursal_destino_id" x-model="sucursalDestinoId" required
-                            class="block w-full py-3 pl-4 pr-10 text-sm border border-slate-300 rounded-xl bg-white shadow-2xs focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium text-slate-800">
+                            class="block w-full py-3 pl-4 pr-10 text-sm border border-slate-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium text-slate-800">
                             <option value="" disabled>Seleccione sede de destino...</option>
                             @foreach($sucursales as $s)
                             <option value="{{ $s->id }}" {{ $initialDestinoId == $s->id ? 'selected' : '' }}>
@@ -212,7 +212,7 @@
                     </label>
                     <input type="number" step="0.01" min="0.01" name="cantidad" id="cantidad" x-model="cantidad" required
                         placeholder="0.00"
-                        class="block w-full py-3 px-4 text-base border border-slate-300 rounded-xl bg-white shadow-2xs focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-black text-slate-900">
+                        class="block w-full py-3 px-4 text-base border border-slate-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-black text-slate-900">
                     @error('cantidad')
                     <p class="text-xs text-rose-600 mt-1.5 font-semibold">{{ $message }}</p>
                     @enderror
@@ -229,7 +229,7 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <!-- Origen -->
-                        <div class="bg-white p-4 rounded-xl border border-indigo-100 shadow-2xs space-y-2">
+                        <div class="bg-white p-4 rounded-xl border border-indigo-100 shadow-sm space-y-2">
                             <div class="flex items-center justify-between text-xs font-bold">
                                 <span class="text-slate-500 uppercase">Sede de Origen</span>
                                 <span class="text-rose-600 bg-rose-50 px-2 py-0.5 rounded text-[11px]">- Salida</span>
@@ -245,7 +245,7 @@
                         </div>
 
                         <!-- Destino -->
-                        <div class="bg-white p-4 rounded-xl border border-indigo-100 shadow-2xs space-y-2">
+                        <div class="bg-white p-4 rounded-xl border border-indigo-100 shadow-sm space-y-2">
                             <div class="flex items-center justify-between text-xs font-bold">
                                 <span class="text-slate-500 uppercase">Sede de Destino</span>
                                 <span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded text-[11px]">+ Entrada</span>
@@ -296,7 +296,7 @@
                         </label>
                         <input type="text" name="motivo" id="motivo" value="{{ old('motivo') }}" required
                             placeholder="Ej: Surtido por alta demanda en sede norte, Transferencia solicitada por gerencia..."
-                            class="block w-full py-3 px-4 text-sm border border-slate-300 rounded-xl bg-white shadow-2xs focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-slate-800 placeholder-slate-400 font-medium">
+                            class="block w-full py-3 px-4 text-sm border border-slate-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-slate-800 placeholder-slate-400 font-medium">
                         @error('motivo')
                         <p class="text-xs text-rose-600 mt-1.5 font-semibold">{{ $message }}</p>
                         @enderror
@@ -308,14 +308,14 @@
                         </label>
                         <textarea name="notas" id="notas" rows="3"
                             placeholder="Número de remesa, nombre del transportador, placa del vehículo..."
-                            class="block w-full py-3 px-4 text-sm border border-slate-300 rounded-xl bg-white shadow-2xs focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-slate-800 placeholder-slate-400">{{ old('notas') }}</textarea>
+                            class="block w-full py-3 px-4 text-sm border border-slate-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-slate-800 placeholder-slate-400">{{ old('notas') }}</textarea>
                     </div>
                 </div>
             </div>
 
             <!-- Botones de Acción -->
             <div class="p-6 sm:p-8 bg-slate-50/50 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3">
-                <a href="{{ route('inventario.index') }}" class="w-full sm:w-auto px-5 py-3 text-center bg-white border border-slate-300 text-slate-700 font-bold rounded-xl text-sm hover:bg-slate-50 transition shadow-2xs">
+                <a href="{{ route('inventario.index') }}" class="w-full sm:w-auto px-5 py-3 text-center bg-white border border-slate-300 text-slate-700 font-bold rounded-xl text-sm hover:bg-slate-50 transition shadow-sm">
                     Cancelar
                 </a>
                 <button type="submit"

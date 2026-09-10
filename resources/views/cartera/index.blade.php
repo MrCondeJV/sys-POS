@@ -27,12 +27,7 @@
     <!-- Encabezado & Acciones -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <div class="flex items-center space-x-2">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
-                    Fase 8
-                </span>
-                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Crédito y Cartera</h1>
-            </div>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Crédito y Cartera</h1>
             <p class="text-sm text-slate-500 mt-1">
                 Control de cuentas por cobrar, recaudos, abonos parciales, cartera en mora y estados de cuenta.
             </p>
@@ -72,7 +67,7 @@
     <!-- Tarjetas de Métricas Rápidas (KPIs) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Saldo Total Cartera -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <div class="bg-white rounded-3xl border border-slate-200/70 p-5 shadow-sm">
             <div class="flex items-center justify-between">
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cartera Total por Cobrar</div>
                 <div class="p-2 rounded-xl bg-indigo-50 text-indigo-600">
@@ -86,7 +81,7 @@
         </div>
 
         <!-- Cartera Vigente -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <div class="bg-white rounded-3xl border border-slate-200/70 p-5 shadow-sm">
             <div class="flex items-center justify-between">
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cartera Vigente</div>
                 <div class="p-2 rounded-xl bg-emerald-50 text-emerald-600">
@@ -100,7 +95,7 @@
         </div>
 
         <!-- Cartera Vencida (En Mora) -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <div class="bg-white rounded-3xl border border-slate-200/70 p-5 shadow-sm">
             <div class="flex items-center justify-between">
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cartera Vencida (Mora)</div>
                 <div class="p-2 rounded-xl bg-rose-50 text-rose-600">
@@ -116,7 +111,7 @@
         </div>
 
         <!-- Total Recaudado en el Mes -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <div class="bg-white rounded-3xl border border-slate-200/70 p-5 shadow-sm">
             <div class="flex items-center justify-between">
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Recaudo de Cartera (Mes)</div>
                 <div class="p-2 rounded-xl bg-blue-50 text-blue-600">
@@ -131,7 +126,7 @@
     </div>
 
     <!-- Barra de Filtros y Búsqueda -->
-    <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+    <div class="bg-white rounded-3xl border border-slate-200/70 p-4 shadow-sm">
         <form method="GET" action="{{ route('cartera.index') }}" class="grid grid-cols-1 sm:grid-cols-12 gap-3">
             <div class="sm:col-span-4 relative">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -141,11 +136,11 @@
                 </div>
                 <input type="text" name="buscar" value="{{ $term ?? '' }}"
                     placeholder="Buscar por documento, concepto o cliente..."
-                    class="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                    class="block w-full pl-10 pr-3 py-2.5 border border-slate-300 rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
             </div>
 
             <div class="sm:col-span-3">
-                <select name="cliente_id" class="block w-full py-2 px-3 border border-slate-300 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                <select name="cliente_id" class="block w-full py-2.5 px-3 border border-slate-300 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
                     <option value="">Todos los clientes</option>
                     @foreach($clientes as $c)
                         <option value="{{ $c->id }}" @selected(($clienteId ?? '') == $c->id)>
@@ -156,7 +151,7 @@
             </div>
 
             <div class="sm:col-span-3">
-                <select name="estado" class="block w-full py-2 px-3 border border-slate-300 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                <select name="estado" class="block w-full py-2.5 px-3 border border-slate-300 rounded-xl text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
                     <option value="">Todos los estados</option>
                     <option value="PENDIENTES" @selected(($estado ?? '') === 'PENDIENTES')>Todas Pendientes (Con saldo)</option>
                     <option value="VIGENTE" @selected(($estado ?? '') === 'VIGENTE')>Vigentes (Al día)</option>
@@ -167,12 +162,12 @@
 
             <div class="sm:col-span-2 flex items-center gap-2">
                 <button type="submit"
-                    class="flex-1 inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-xl text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 transition">
+                    class="flex-1 inline-flex items-center justify-center px-4 py-2.5 border border-transparent rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition">
                     Filtrar
                 </button>
                 @if(!empty($term) || !empty($estado) || !empty($clienteId))
                     <a href="{{ route('cartera.index') }}"
-                        class="p-2 border border-slate-300 text-slate-600 hover:text-slate-900 rounded-xl hover:bg-slate-50 transition" title="Limpiar filtros">
+                        class="p-2.5 border border-slate-300 text-slate-600 hover:text-slate-900 rounded-xl hover:bg-slate-50 transition" title="Limpiar filtros">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -183,27 +178,27 @@
     </div>
 
     <!-- Tabla Principal de Cuentas por Cobrar -->
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-3xl border border-slate-200/70 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-200">
-                <thead class="bg-slate-50/80">
+                <thead class="bg-slate-50">
                     <tr>
-                        <th scope="col" class="px-6 py-3.5 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                        <th scope="col" class="px-5 py-3.5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">
                             Documento / Concepto
                         </th>
-                        <th scope="col" class="px-6 py-3.5 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                        <th scope="col" class="px-5 py-3.5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">
                             Cliente Deudor
                         </th>
-                        <th scope="col" class="px-6 py-3.5 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                        <th scope="col" class="px-5 py-3.5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">
                             Deuda & Saldo
                         </th>
-                        <th scope="col" class="px-6 py-3.5 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
+                        <th scope="col" class="px-5 py-3.5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">
                             Vencimiento
                         </th>
-                        <th scope="col" class="px-6 py-3.5 text-center text-xs font-bold text-slate-600 uppercase tracking-wider">
+                        <th scope="col" class="px-5 py-3.5 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">
                             Estado
                         </th>
-                        <th scope="col" class="px-6 py-3.5 text-right text-xs font-bold text-slate-600 uppercase tracking-wider">
+                        <th scope="col" class="px-5 py-3.5 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">
                             Acciones
                         </th>
                     </tr>

@@ -28,15 +28,15 @@
 <div class="ticket-wrapper">
     <!-- Header -->
     <div style="text-align: center; border-bottom: 1px dashed #000; padding-bottom: 8px; margin-bottom: 8px;">
-        <div style="font-size: 14px; font-weight: 900; text-transform: uppercase;">{{ $venta->empresa->nombre }}</div>
-        @if($venta->empresa->nit)
+        <div style="font-size: 14px; font-weight: 900; text-transform: uppercase;">{{ $venta->empresa?->nombre_comercial ?? $venta->empresa?->razon_social ?? 'POS Comercial' }}</div>
+        @if($venta->empresa?->nit)
             <div>NIT: {{ $venta->empresa->nit }}</div>
         @endif
-        <div>Sucursal: {{ $venta->sucursal->nombre }}</div>
-        @if($venta->sucursal->direccion)
+        <div>Sucursal: {{ $venta->sucursal?->nombre ?? 'Principal' }}</div>
+        @if($venta->sucursal?->direccion)
             <div>{{ $venta->sucursal->direccion }}</div>
         @endif
-        @if($venta->sucursal->telefono)
+        @if($venta->sucursal?->telefono)
             <div>Tel: {{ $venta->sucursal->telefono }}</div>
         @endif
     </div>

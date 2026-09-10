@@ -14,6 +14,7 @@ use App\Models\Producto;
 use App\Models\Proveedor;
 use App\Models\Sucursal;
 use App\Models\UnidadMedida;
+use App\Models\User;
 use App\Policies\CategoriaPolicy;
 use App\Policies\ClientePolicy;
 use App\Policies\CompraPolicy;
@@ -26,6 +27,7 @@ use App\Policies\ProductoPolicy;
 use App\Policies\ProveedorPolicy;
 use App\Policies\SucursalPolicy;
 use App\Policies\UnidadMedidaPolicy;
+use App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -50,6 +52,7 @@ class AppServiceProvider extends ServiceProvider
         // Registro explícito de Policies para integridad de acceso
         Gate::policy(Empresa::class, EmpresaPolicy::class);
         Gate::policy(Sucursal::class, SucursalPolicy::class);
+        Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Producto::class, ProductoPolicy::class);
         Gate::policy(Categoria::class, CategoriaPolicy::class);
         Gate::policy(Marca::class, MarcaPolicy::class);

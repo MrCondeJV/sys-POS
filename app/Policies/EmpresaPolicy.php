@@ -20,6 +20,22 @@ class EmpresaPolicy
     }
 
     /**
+     * Determina si el usuario puede listar todas las empresas (Super Admin).
+     */
+    public function viewAny(User $user): bool
+    {
+        return $user->isSuperAdmin();
+    }
+
+    /**
+     * Determina si el usuario puede registrar nuevas empresas (Super Admin).
+     */
+    public function create(User $user): bool
+    {
+        return $user->isSuperAdmin();
+    }
+
+    /**
      * Determina si el usuario puede ver la empresa.
      */
     public function view(User $user, Empresa $empresa): bool

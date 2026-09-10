@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\EstadoGeneral;
 use App\Models\Categoria;
+use App\Models\Impuesto;
 use App\Models\Marca;
 use App\Models\Producto;
 use App\Models\UnidadMedida;
@@ -72,8 +73,9 @@ class ProductoController extends Controller
         $categorias = Categoria::activa()->get();
         $marcas = Marca::activa()->get();
         $unidades = UnidadMedida::activa()->get();
+        $impuestos = Impuesto::activo()->orderBy('porcentaje')->get();
 
-        return view('productos.create', compact('categorias', 'marcas', 'unidades'));
+        return view('productos.create', compact('categorias', 'marcas', 'unidades', 'impuestos'));
     }
 
     /**
@@ -146,8 +148,9 @@ class ProductoController extends Controller
         $categorias = Categoria::activa()->get();
         $marcas = Marca::activa()->get();
         $unidades = UnidadMedida::activa()->get();
+        $impuestos = Impuesto::activo()->orderBy('porcentaje')->get();
 
-        return view('productos.edit', compact('producto', 'categorias', 'marcas', 'unidades'));
+        return view('productos.edit', compact('producto', 'categorias', 'marcas', 'unidades', 'impuestos'));
     }
 
     /**

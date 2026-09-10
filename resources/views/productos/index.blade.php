@@ -103,17 +103,17 @@
         <!-- Vista Desktop (Amplia, equilibrada y sin scroll horizontal) -->
         <div class="hidden lg:block">
             <table class="w-full divide-y divide-slate-200 table-auto">
-                <thead class="bg-slate-50/80 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <thead class="bg-slate-50 text-xs font-bold text-slate-500 uppercase tracking-wider">
                     <tr>
-                        <th class="px-5 py-4 text-left">Producto</th>
-                        <th class="px-4 py-4 text-left">Códigos</th>
-                        <th class="px-4 py-4 text-left">Categoría</th>
-                        <th class="px-4 py-4 text-left">Marca</th>
-                        <th class="px-4 py-4 text-right">Precio Venta (COP)</th>
-                        <th class="px-4 py-4 text-right">P. Mayorista</th>
-                        <th class="px-4 py-4 text-center">Stock</th>
-                        <th class="px-4 py-4 text-center">Estado</th>
-                        <th class="px-5 py-4 text-right">Acciones</th>
+                        <th class="px-5 py-3.5 text-left">Producto</th>
+                        <th class="px-4 py-3.5 text-left">Códigos</th>
+                        <th class="px-4 py-3.5 text-left">Categoría</th>
+                        <th class="px-4 py-3.5 text-left">Marca</th>
+                        <th class="px-4 py-3.5 text-right">Precio Venta (COP)</th>
+                        <th class="px-4 py-3.5 text-right">P. Mayorista</th>
+                        <th class="px-4 py-3.5 text-center">Stock</th>
+                        <th class="px-4 py-3.5 text-center">Estado</th>
+                        <th class="px-5 py-3.5 text-right">Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 bg-white text-sm">

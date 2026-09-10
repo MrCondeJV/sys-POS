@@ -18,7 +18,7 @@
         </div>
         <div>
             <a href="{{ route('clientes.index') }}"
-                class="inline-flex items-center px-4 py-2 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 bg-white hover:bg-slate-50 transition shadow-sm">
+                class="inline-flex items-center px-4 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 bg-white hover:bg-slate-50 transition shadow-sm">
                 <svg class="h-4 w-4 mr-1.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
@@ -61,7 +61,7 @@
         @csrf
 
         <!-- Tarjeta 1: Identificación y Tipo de Persona -->
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
+        <div class="bg-white rounded-3xl border border-slate-200/70 shadow-sm p-6 space-y-5">
             <div class="flex items-center space-x-3 pb-4 border-b border-slate-100">
                 <div class="h-8 w-8 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-bold text-sm">
                     1
@@ -158,7 +158,7 @@
         </div>
 
         <!-- Tarjeta 2: Contacto y Ubicación -->
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
+        <div class="bg-white rounded-3xl border border-slate-200/70 shadow-sm p-6 space-y-5">
             <div class="flex items-center space-x-3 pb-4 border-b border-slate-100">
                 <div class="h-8 w-8 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-bold text-sm">
                     2
@@ -225,8 +225,8 @@
             </div>
         </div>
 
-        <!-- Tarjeta 3: Condiciones Comerciales & Línea de Crédito (Fase 8) -->
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
+        <!-- Tarjeta 3: Condiciones Comerciales & Línea de Crédito -->
+        <div class="bg-white rounded-3xl border border-slate-200/70 shadow-sm p-6 space-y-5">
             <div class="flex items-center space-x-3 pb-4 border-b border-slate-100">
                 <div class="h-8 w-8 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-bold text-sm">
                     3

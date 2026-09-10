@@ -14,7 +14,14 @@ class CompanyScope implements Scope
     public function apply(Builder $builder, Model $model): void
     {
         if (CompanyContext::check()) {
-            $builder->where($model->qualifyColumn('empresa_id'), CompanyContext::getId());
+            if ($model instanceof \App\Models\User) {
+                $builder->where(function (Builder $q) use ($model) {
+                    $q->where($model->qualifyColumn('empresa_id'), CompanyContext::getId())
+                        ->orWhereNull($model->qualifyColumn('empresa_id'));
+                });
+            } else {
+                $builder->where($model->qualifyColumn('empresa_id'), CompanyContext::getId());
+            }
         }
     }
 }

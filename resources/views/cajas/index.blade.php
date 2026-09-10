@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Cajas & Turnos')
 
@@ -42,7 +42,7 @@
         @can('create', App\Models\Caja::class)
         <div>
             <button @click="modalCrearCajaOpen = true" type="button"
-                class="inline-flex items-center px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-sm">
+                class="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-sm">
                 <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
@@ -54,7 +54,7 @@
 
     <!-- KPIs del Módulo -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div class="bg-white p-5 rounded-3xl border border-slate-200/70 shadow-sm flex items-center justify-between">
             <div>
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Cajas Registradas</span>
                 <div class="text-2xl font-black text-slate-900 mt-1">{{ $totalCajas }}</div>
@@ -67,7 +67,7 @@
             </div>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div class="bg-white p-5 rounded-3xl border border-slate-200/70 shadow-sm flex items-center justify-between">
             <div>
                 <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider block">Turnos Abiertos</span>
                 <div class="text-2xl font-black text-emerald-600 mt-1">{{ $cajasAbiertas }}</div>
@@ -80,7 +80,7 @@
             </div>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div class="bg-white p-5 rounded-3xl border border-slate-200/70 shadow-sm flex items-center justify-between">
             <div>
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Cajas Cerradas</span>
                 <div class="text-2xl font-black text-slate-600 mt-1">{{ $cajasCerradas }}</div>
@@ -93,7 +93,7 @@
             </div>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div class="bg-white p-5 rounded-3xl border border-slate-200/70 shadow-sm flex items-center justify-between">
             <div>
                 <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider block">Total Efectivo en Cajas</span>
                 <div class="text-2xl font-black text-indigo-600 mt-1">${{ number_format($totalDineroEnCaja, 2) }}</div>
@@ -231,7 +231,7 @@
                 <h3 class="text-base font-bold text-slate-800">No hay cajas registradas</h3>
                 <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Crea una caja física o registradora para que tus cajeros puedan abrir turnos y gestionar ventas.</p>
                 @can('create', App\Models\Caja::class)
-                <button @click="modalCrearCajaOpen = true" type="button" class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-xl font-bold text-xs">
+                <button @click="modalCrearCajaOpen = true" type="button" class="mt-4 inline-flex items-center px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm shadow-sm transition">
                     Crear la primera caja
                 </button>
                 @endcan

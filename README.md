@@ -151,6 +151,12 @@ Pagos · Devoluciones · Listas de Precios · Impuestos
 Documentos · Reportes · Auditoría · Facturación Electrónica DIAN
 ```
 
+### 🏢 Gestión SaaS y Multi-Tenancy
+
+- **Comercios / Empresas (`/empresas`):** Exclusivo para `SUPER_ADMIN`. Incluye métricas globales, onboarding guiado (empresa + sucursal principal + admin inicial + seed de roles) y alternador dinámico de tenant activo en la cabecera.
+- **Usuarios y Roles (`/usuarios`):** Para `ADMIN_EMPRESA` y `SUPER_ADMIN`. Listado con KPIs, asignación de sedes y roles, filtros dinámicos y protección contra auto-eliminación.
+- **Perfil de Empresa (`/empresa/perfil`):** Para administradores de cada empresa, permitiendo actualizar datos fiscales, régimen y parámetros de facturación.
+
 ---
 
 ## ⚙️ Comandos Útiles

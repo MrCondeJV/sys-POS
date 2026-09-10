@@ -131,7 +131,7 @@
             <!-- Sucursal -->
             <div class="w-full sm:w-56">
                 <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Sucursal</label>
-                <select name="sucursal_id" class="block w-full py-2.5 px-3 text-sm border border-slate-300 rounded-xl bg-white shadow-2xs focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-semibold text-slate-700 transition">
+                <select name="sucursal_id" class="block w-full py-2.5 px-3 text-sm border border-slate-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-semibold text-slate-700 transition">
                     <option value="">Todas las Sucursales</option>
                     @foreach($sucursales as $suc)
                     <option value="{{ $suc->id }}" {{ $sucursalId === $suc->id ? 'selected' : '' }}>{{ $suc->nombre }}</option>
@@ -142,7 +142,7 @@
             <!-- Tipo de Movimiento -->
             <div class="w-full sm:w-56">
                 <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Tipo de Movimiento</label>
-                <select name="tipo" class="block w-full py-2.5 px-3 text-sm border border-slate-300 rounded-xl bg-white shadow-2xs focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-semibold text-slate-700 transition">
+                <select name="tipo" class="block w-full py-2.5 px-3 text-sm border border-slate-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-semibold text-slate-700 transition">
                     <option value="">Todos los Tipos</option>
                     @foreach($tiposMovimiento as $t)
                     <option value="{{ $t->value }}" {{ $tipo === $t->value ? 'selected' : '' }}>{{ $t->label() }}</option>
@@ -153,18 +153,18 @@
             <!-- Fecha Desde -->
             <div class="w-full sm:w-40">
                 <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Desde</label>
-                <input type="date" name="desde" value="{{ $desde }}" class="block w-full py-2.5 px-3 text-sm border border-slate-300 rounded-xl bg-white shadow-2xs focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-medium text-slate-800 transition">
+                <input type="date" name="desde" value="{{ $desde }}" class="block w-full py-2.5 px-3 text-sm border border-slate-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-medium text-slate-800 transition">
             </div>
 
             <!-- Fecha Hasta -->
             <div class="w-full sm:w-40">
                 <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Hasta</label>
-                <input type="date" name="hasta" value="{{ $hasta }}" class="block w-full py-2.5 px-3 text-sm border border-slate-300 rounded-xl bg-white shadow-2xs focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-medium text-slate-800 transition">
+                <input type="date" name="hasta" value="{{ $hasta }}" class="block w-full py-2.5 px-3 text-sm border border-slate-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-medium text-slate-800 transition">
             </div>
 
             <!-- Botones -->
             <div class="flex items-center space-x-2">
-                <button type="submit" class="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition shadow-2xs">
+                <button type="submit" class="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition shadow-sm">
                     Filtrar Kardex
                 </button>
                 @if($sucursalId || $tipo || $desde || $hasta)

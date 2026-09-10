@@ -81,7 +81,19 @@ class User extends Authenticatable
      */
     public function isSuperAdmin(): bool
     {
-        return $this->hasRole(RolSistema::SUPER_ADMIN->value);
+        if ($this->empresa_id !== null) {
+            return false;
+        }
+
+        $previousTeamId = getPermissionsTeamId();
+        try {
+            setPermissionsTeamId(null);
+            $this->unsetRelation('roles');
+            return $this->hasRole(RolSistema::SUPER_ADMIN->value);
+        } finally {
+            setPermissionsTeamId($previousTeamId);
+            $this->unsetRelation('roles');
+        }
     }
 
     /**

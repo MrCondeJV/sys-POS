@@ -132,13 +132,13 @@
                     </svg>
                 </div>
                 <input type="text" name="buscar" value="{{ $term }}" placeholder="Buscar por producto, código SKU o código de barras (lector óptico)..."
-                    class="block w-full pl-10 pr-4 py-2.5 text-sm border border-slate-300 rounded-xl bg-white shadow-2xs focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition placeholder-slate-400 font-medium text-slate-900">
+                    class="block w-full pl-10 pr-4 py-2.5 text-sm border border-slate-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition placeholder-slate-400 font-medium text-slate-900">
             </div>
 
             <!-- Filtro Sucursal -->
             <div class="w-full lg:w-56">
                 <select name="sucursal_id" onchange="this.form.submit()"
-                    class="block w-full py-2.5 px-3 text-sm border border-slate-300 rounded-xl bg-white shadow-2xs focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-semibold text-slate-700">
+                    class="block w-full py-2.5 px-3 text-sm border border-slate-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-semibold text-slate-700">
                     <option value="">Todas las Sucursales</option>
                     @foreach($sucursales as $suc)
                     <option value="{{ $suc->id }}" {{ $sucursalId === $suc->id ? 'selected' : '' }}>
@@ -151,7 +151,7 @@
             <!-- Filtro Categoría -->
             <div class="w-full lg:w-48">
                 <select name="categoria_id" onchange="this.form.submit()"
-                    class="block w-full py-2.5 px-3 text-sm border border-slate-300 rounded-xl bg-white shadow-2xs focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-semibold text-slate-700">
+                    class="block w-full py-2.5 px-3 text-sm border border-slate-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-semibold text-slate-700">
                     <option value="">Todas las Categorías</option>
                     @foreach($categorias as $cat)
                     <option value="{{ $cat->id }}" {{ $categoriaId === $cat->id ? 'selected' : '' }}>
@@ -164,7 +164,7 @@
             <!-- Filtro Condición Stock -->
             <div class="w-full lg:w-44">
                 <select name="estado_stock" onchange="this.form.submit()"
-                    class="block w-full py-2.5 px-3 text-sm border border-slate-300 rounded-xl bg-white shadow-2xs focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-semibold text-slate-700">
+                    class="block w-full py-2.5 px-3 text-sm border border-slate-300 rounded-xl bg-white shadow-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-semibold text-slate-700">
                     <option value="todos" {{ $estadoStock === 'todos' ? 'selected' : '' }}>Todo el Stock</option>
                     <option value="disponible" {{ $estadoStock === 'disponible' ? 'selected' : '' }}>Stock Normal</option>
                     <option value="bajo_stock" {{ $estadoStock === 'bajo_stock' ? 'selected' : '' }}>Bajo Stock</option>
@@ -174,7 +174,7 @@
 
             <!-- Botones -->
             <div class="flex items-center space-x-2">
-                <button type="submit" class="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition shadow-2xs">
+                <button type="submit" class="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition shadow-sm">
                     Filtrar
                 </button>
                 @if($term || $sucursalId || $categoriaId || $estadoStock !== 'todos')

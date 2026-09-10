@@ -20,7 +20,7 @@
         </div>
 
         @can('create', App\Models\ListaPrecio::class)
-        <a href="{{ route('listas-precios.create') }}" class="inline-flex items-center space-x-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-2xl shadow-sm transition">
+        <a href="{{ route('listas-precios.create') }}" class="inline-flex items-center space-x-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-sm transition">
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" /></svg>
             <span>Nueva Lista de Precios</span>
         </a>
@@ -32,15 +32,15 @@
         <form method="GET" action="{{ route('listas-precios.index') }}" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div class="sm:col-span-2">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar por nombre, código o descripción..."
-                       class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600">
+                       class="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
             </div>
             <div class="flex items-center space-x-2">
-                <select name="estado" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-white hover:border-slate-300 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition shadow-2xs">
+                <select name="estado" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 bg-white hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm">
                     <option value="">Todos los Estados</option>
                     <option value="ACTIVO" {{ request('estado') === 'ACTIVO' ? 'selected' : '' }}>Activas</option>
                     <option value="INACTIVO" {{ request('estado') === 'INACTIVO' ? 'selected' : '' }}>Inactivas</option>
                 </select>
-                <button type="submit" class="px-4 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition">
+                <button type="submit" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-sm transition">
                     Filtrar
                 </button>
             </div>
@@ -50,16 +50,16 @@
     <!-- Tabla de Listas de Precios -->
     <div class="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-xs">
+            <table class="w-full text-left divide-y divide-slate-200 text-sm">
                 <thead>
-                    <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                        <th class="py-3.5 px-4">Lista / Código</th>
-                        <th class="py-3.5 px-4">Tipo de Ajuste</th>
-                        <th class="py-3.5 px-4 text-center">Ajuste Base</th>
-                        <th class="py-3.5 px-4 text-center">Precios Específicos</th>
-                        <th class="py-3.5 px-4 text-center">Clientes</th>
-                        <th class="py-3.5 px-4 text-center">Estado</th>
-                        <th class="py-3.5 px-4 text-right">Acciones</th>
+                    <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        <th class="py-3.5 px-5">Lista / Código</th>
+                        <th class="py-3.5 px-5">Tipo de Ajuste</th>
+                        <th class="py-3.5 px-5 text-center">Ajuste Base</th>
+                        <th class="py-3.5 px-5 text-center">Precios Específicos</th>
+                        <th class="py-3.5 px-5 text-center">Clientes</th>
+                        <th class="py-3.5 px-5 text-center">Estado</th>
+                        <th class="py-3.5 px-5 text-right">Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">

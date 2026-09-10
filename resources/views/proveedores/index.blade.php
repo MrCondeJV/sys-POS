@@ -64,12 +64,7 @@
     <!-- Encabezado de la página -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <div class="flex items-center space-x-2">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
-                    Fase 6
-                </span>
-                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Proveedores Comerciales</h1>
-            </div>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Proveedores Comerciales</h1>
             <p class="text-sm text-slate-500 mt-1">
                 Administración de socios comerciales, suministradores y acreedores para compras de mercancías.
             </p>
@@ -87,7 +82,7 @@
 
     <!-- Tarjetas de Métricas Rápidas -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <div class="bg-white rounded-3xl border border-slate-200/70 p-5 shadow-sm">
             <div class="flex items-center justify-between">
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Proveedores</div>
                 <div class="p-2 rounded-xl bg-indigo-50 text-indigo-600">
@@ -100,7 +95,7 @@
             <div class="text-xs text-slate-500 mt-1">Registrados en la empresa</div>
         </div>
 
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <div class="bg-white rounded-3xl border border-slate-200/70 p-5 shadow-sm">
             <div class="flex items-center justify-between">
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Proveedores Activos</div>
                 <div class="p-2 rounded-xl bg-emerald-50 text-emerald-600">
@@ -113,7 +108,7 @@
             <div class="text-xs text-slate-500 mt-1">Habilitados para compras</div>
         </div>
 
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <div class="bg-white rounded-3xl border border-slate-200/70 p-5 shadow-sm">
             <div class="flex items-center justify-between">
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Compras Relacionadas</div>
                 <div class="p-2 rounded-xl bg-blue-50 text-blue-600">
@@ -128,7 +123,7 @@
             <div class="text-xs text-slate-500 mt-1">Órdenes y facturas de compra</div>
         </div>
 
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex items-center justify-between">
+        <div class="bg-white rounded-3xl border border-slate-200/70 p-5 shadow-sm flex items-center justify-between">
             <div>
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Acceso Rápido</div>
                 <div class="text-sm font-semibold text-slate-800 mt-1">Registrar Compra</div>
@@ -145,7 +140,7 @@
     </div>
 
     <!-- Barra de Búsqueda y Filtros -->
-    <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+    <div class="bg-white rounded-3xl border border-slate-200/70 p-4 shadow-sm">
         <form action="{{ route('proveedores.index') }}" method="GET" class="flex flex-col md:flex-row gap-3">
             <div class="flex-1 relative">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -155,12 +150,12 @@
                 </div>
                 <input type="text" name="buscar" value="{{ $term }}"
                     placeholder="Buscar por razón social, NIT/documento, contacto, email..."
-                    class="w-full pl-10 pr-4 py-2 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition">
+                    class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
             </div>
 
             <div class="w-full md:w-48">
                 <select name="estado" onchange="this.form.submit()"
-                    class="w-full py-2 px-3 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition">
+                    class="w-full py-2.5 px-3 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
                     <option value="">Todos los Estados</option>
                     <option value="ACTIVO" {{ $estado === 'ACTIVO' ? 'selected' : '' }}>Solo Activos</option>
                     <option value="INACTIVO" {{ $estado === 'INACTIVO' ? 'selected' : '' }}>Solo Inactivos</option>
@@ -169,12 +164,12 @@
 
             <div class="flex gap-2">
                 <button type="submit"
-                    class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-sm font-semibold transition">
+                    class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 shadow-sm text-white rounded-xl text-sm font-bold transition">
                     Filtrar
                 </button>
                 @if($term || $estado)
                     <a href="{{ route('proveedores.index') }}"
-                        class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-semibold transition inline-flex items-center">
+                        class="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-sm font-semibold transition inline-flex items-center">
                         Limpiar
                     </a>
                 @endif
@@ -183,7 +178,7 @@
     </div>
 
     <!-- Contenedor Principal Adaptable (Mobile Cards / Desktop Table) -->
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-3xl border border-slate-200/70 shadow-sm overflow-hidden">
         <!-- Vista Desktop (100% de ancho sin scroll horizontal) -->
         <div class="hidden lg:block">
             <table class="w-full divide-y divide-slate-200 table-auto">

@@ -240,7 +240,9 @@
 
                 <!-- Tabla de Productos Destacados -->
                 @php
-                    $articulosAMostrar = ($productosCriticos->isNotEmpty()) ? $productosCriticos : $ultimosProductos;
+                    $prodCriticos = $productosCriticos ?? collect();
+                    $ultimosProd = $ultimosProductos ?? collect();
+                    $articulosAMostrar = $prodCriticos->isNotEmpty() ? $prodCriticos : $ultimosProd;
                 @endphp
 
                 @if($articulosAMostrar->isNotEmpty())

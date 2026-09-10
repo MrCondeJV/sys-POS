@@ -55,7 +55,7 @@
 
                 @can('anular', $venta)
                 <button @click="modalAnularOpen = true" type="button"
-                    class="inline-flex items-center px-3.5 py-2 rounded-xl text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 hover:bg-rose-100 transition shadow-sm">
+                    class="inline-flex items-center px-4 py-2.5 rounded-xl text-sm font-bold text-red-700 bg-red-50 border border-red-200 hover:bg-red-100 transition shadow-sm">
                     <svg class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
@@ -138,10 +138,10 @@
                         <tr>
                             <td class="px-6 py-3.5">
                                 <div class="font-bold text-slate-900">{{ $det->producto->nombre }}</div>
-                                <div class="text-slate-400 text-[10px] font-mono">{{ $det->producto->codigo_barras ?? $det->producto->sku }}</div>
+                                <div class="text-slate-400 text-[10px] font-mono">{{ $det->producto->codigo_barras ?? $det->producto->codigo }}</div>
                             </td>
                             <td class="px-6 py-3.5 text-center font-bold text-slate-800 whitespace-nowrap">
-                                {{ number_format($det->cantidad, 2) }} {{ $det->producto->unidadMedida?->abreviatura ?? 'UND' }}
+                                {{ number_format($det->cantidad, 2) }} {{ $det->producto->unidadMedida?->codigo ?? 'UND' }}
                             </td>
                             <td class="px-6 py-3.5 text-right text-slate-700 whitespace-nowrap">
                                 ${{ number_format($det->precio_unitario, 2) }}
@@ -169,7 +169,7 @@
                     <span class="font-bold text-slate-800">${{ number_format($venta->subtotal, 2) }}</span>
                 </div>
                 @if($venta->descuento > 0)
-                <div class="flex justify-between text-rose-600 font-semibold">
+                <div class="flex justify-between text-red-600 font-semibold">
                     <span>Descuento aplicado:</span>
                     <span>-${{ number_format($venta->descuento, 2) }}</span>
                 </div>
@@ -198,7 +198,7 @@
                 
                 <div class="flex items-center justify-between border-b border-slate-100 pb-4">
                     <div>
-                        <span class="text-xs font-bold text-rose-600 uppercase tracking-wider block">Anulación de Venta</span>
+                        <span class="text-xs font-bold text-red-600 uppercase tracking-wider block">Anulación de Venta</span>
                         <h3 class="text-lg font-black text-slate-900 mt-0.5">Venta {{ $venta->numero_venta }}</h3>
                     </div>
                     <button @click="modalAnularOpen = false" class="text-slate-400 hover:text-slate-600">
@@ -215,14 +215,14 @@
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Motivo de Anulación *</label>
                         <textarea name="motivo" required rows="3" placeholder="Ej: Error en digitación de producto / Devolución inmediata del cliente..."
-                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:border-rose-600 focus:ring-1 focus:ring-rose-600"></textarea>
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:border-red-600 focus:ring-1 focus:ring-red-600"></textarea>
                     </div>
 
                     <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
                         <button @click="modalAnularOpen = false" type="button" class="px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50">
                             Cancelar
                         </button>
-                        <button type="submit" class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-xs font-bold text-white shadow-sm">
+                        <button type="submit" class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-sm font-bold text-white shadow-sm transition">
                             Confirmar Anulación
                         </button>
                     </div>

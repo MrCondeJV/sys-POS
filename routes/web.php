@@ -28,6 +28,7 @@ use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\ResolucionFacturacionController;
 use App\Http\Controllers\SucursalController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\VentaController;
 use Illuminate\Support\Facades\Route;
 
@@ -48,9 +49,31 @@ Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
-    // Gestión de Empresa
+    // Plataforma SaaS: Gestión de Empresas (Super Admin)
+    Route::prefix('empresas')->name('empresas.')->group(function () {
+        Route::get('/', [EmpresaController::class, 'index'])->name('index');
+        Route::get('/crear', [EmpresaController::class, 'create'])->name('create');
+        Route::post('/', [EmpresaController::class, 'store'])->name('store');
+        Route::get('/{empresa}/editar', [EmpresaController::class, 'edit'])->name('edit');
+        Route::put('/{empresa}', [EmpresaController::class, 'update'])->name('update');
+        Route::post('/{empresa}/toggle-estado', [EmpresaController::class, 'toggleEstado'])->name('toggle-estado');
+        Route::post('/seleccionar', [EmpresaController::class, 'seleccionar'])->name('seleccionar');
+    });
+
+    // Gestión de Empresa Activa
     Route::get('/empresa/perfil', [EmpresaController::class, 'perfil'])->name('empresa.perfil');
     Route::put('/empresa/perfil', [EmpresaController::class, 'updatePerfil'])->name('empresa.perfil.update');
+
+    // Gestión de Usuarios y Colaboradores
+    Route::prefix('usuarios')->name('usuarios.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('/crear', [UserController::class, 'create'])->name('create');
+        Route::post('/', [UserController::class, 'store'])->name('store');
+        Route::get('/{usuario}/editar', [UserController::class, 'edit'])->name('edit');
+        Route::put('/{usuario}', [UserController::class, 'update'])->name('update');
+        Route::delete('/{usuario}', [UserController::class, 'destroy'])->name('destroy');
+        Route::post('/{usuario}/toggle-estado', [UserController::class, 'toggleEstado'])->name('toggle-estado');
+    });
 
     // Gestión de Sucursales
     Route::get('/sucursales', [SucursalController::class, 'index'])->name('sucursales.index');

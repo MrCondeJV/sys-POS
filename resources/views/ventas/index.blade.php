@@ -20,7 +20,7 @@
 
     <!-- KPIs del Módulo -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div class="bg-white p-5 rounded-3xl border border-slate-200/70 shadow-sm flex items-center justify-between">
             <div>
                 <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider block">Ventas de Hoy</span>
                 <div class="text-2xl font-black text-emerald-600 mt-1">${{ number_format($totalVentasHoy, 2) }}</div>
@@ -33,7 +33,7 @@
             </div>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div class="bg-white p-5 rounded-3xl border border-slate-200/70 shadow-sm flex items-center justify-between">
             <div>
                 <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider block">Ventas del Mes</span>
                 <div class="text-2xl font-black text-indigo-600 mt-1">${{ number_format($totalVentasMes, 2) }}</div>
@@ -46,7 +46,7 @@
             </div>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div class="bg-white p-5 rounded-3xl border border-slate-200/70 shadow-sm flex items-center justify-between">
             <div>
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Ticket Promedio Hoy</span>
                 <div class="text-2xl font-black text-slate-800 mt-1">${{ number_format($ticketPromedio, 2) }}</div>
@@ -59,7 +59,7 @@
             </div>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div class="bg-white p-5 rounded-3xl border border-slate-200/70 shadow-sm flex items-center justify-between">
             <div>
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Registros Filtrados</span>
                 <div class="text-2xl font-black text-slate-800 mt-1">{{ $ventas->total() }}</div>
@@ -84,14 +84,14 @@
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                     </span>
                     <input type="text" name="buscar" value="{{ request('buscar') }}" placeholder="N° Venta o Razón Social..."
-                        class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 text-xs focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600">
+                        class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
                 </div>
             </div>
 
             <!-- Estado -->
             <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Estado</label>
-                <select name="estado" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Estado</label>
+                <select name="estado" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
                     <option value="">Todos los estados</option>
                     <option value="COMPLETADA" {{ request('estado') === 'COMPLETADA' ? 'selected' : '' }}>Completadas</option>
                     <option value="ANULADA" {{ request('estado') === 'ANULADA' ? 'selected' : '' }}>Anuladas</option>
@@ -100,8 +100,8 @@
 
             <!-- Tipo Pago -->
             <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tipo de Pago</label>
-                <select name="tipo_pago" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tipo de Pago</label>
+                <select name="tipo_pago" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
                     <option value="">Todos</option>
                     <option value="CONTADO" {{ request('tipo_pago') === 'CONTADO' ? 'selected' : '' }}>Contado</option>
                     <option value="CREDITO" {{ request('tipo_pago') === 'CREDITO' ? 'selected' : '' }}>Crédito</option>
@@ -110,18 +110,18 @@
 
             <!-- Fecha Desde -->
             <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Desde</label>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Desde</label>
                 <input type="date" name="fecha_desde" value="{{ request('fecha_desde') }}"
-                    class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">
+                    class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
             </div>
 
             <!-- Botones -->
             <div class="flex items-center space-x-2">
-                <button type="submit" class="w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition shadow-sm">
+                <button type="submit" class="w-full py-2.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold transition shadow-sm">
                     Filtrar
                 </button>
                 @if(request()->hasAny(['buscar', 'estado', 'tipo_pago', 'fecha_desde', 'fecha_hasta']))
-                    <a href="{{ route('ventas.index') }}" class="p-2 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50" title="Limpiar">
+                    <a href="{{ route('ventas.index') }}" class="p-2.5 rounded-xl border border-slate-300 text-slate-500 hover:bg-slate-50 transition" title="Limpiar">
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                     </a>
                 @endif
@@ -130,19 +130,19 @@
     </div>
 
     <!-- Tabla de Ventas -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-3xl border border-slate-200/70 shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-slate-200 text-xs">
-                <thead class="bg-slate-50/80 font-bold text-slate-700">
+            <table class="min-w-full divide-y divide-slate-200 text-sm">
+                <thead class="bg-slate-50 font-bold text-slate-500 text-xs">
                     <tr>
-                        <th class="px-6 py-3.5 text-left uppercase">N° Venta / Comprobante</th>
-                        <th class="px-6 py-3.5 text-left uppercase">Fecha & Hora</th>
-                        <th class="px-6 py-3.5 text-left uppercase">Cliente</th>
-                        <th class="px-6 py-3.5 text-left uppercase">Vendedor</th>
-                        <th class="px-6 py-3.5 text-center uppercase">Condición / Medio</th>
-                        <th class="px-6 py-3.5 text-right uppercase">Total Venta</th>
-                        <th class="px-6 py-3.5 text-center uppercase">Estado</th>
-                        <th class="px-6 py-3.5 text-right uppercase">Acciones</th>
+                        <th class="px-5 py-3.5 text-left uppercase tracking-wider">N° Venta / Comprobante</th>
+                        <th class="px-5 py-3.5 text-left uppercase tracking-wider">Fecha & Hora</th>
+                        <th class="px-5 py-3.5 text-left uppercase tracking-wider">Cliente</th>
+                        <th class="px-5 py-3.5 text-left uppercase tracking-wider">Vendedor</th>
+                        <th class="px-5 py-3.5 text-center uppercase tracking-wider">Condición / Medio</th>
+                        <th class="px-5 py-3.5 text-right uppercase tracking-wider">Total Venta</th>
+                        <th class="px-5 py-3.5 text-center uppercase tracking-wider">Estado</th>
+                        <th class="px-5 py-3.5 text-right uppercase tracking-wider">Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 bg-white">
