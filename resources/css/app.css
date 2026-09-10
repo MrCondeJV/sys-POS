@@ -10,3 +10,32 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* =============================================================================
+   Cursor Pointer Global — Todos los elementos interactivos/clickeables
+   Garantiza que el cursor de "manito" aparezca en hover sobre cualquier
+   botón, enlace o elemento accionable del sistema POS.
+   ============================================================================= */
+@layer base {
+    button,
+    [type="button"],
+    [type="submit"],
+    [type="reset"],
+    [role="button"],
+    label[for],
+    summary,
+    [onclick],
+    a[href] {
+        cursor: pointer;
+    }
+
+    button:disabled,
+    [type="button"]:disabled,
+    [type="submit"]:disabled,
+    [type="reset"]:disabled,
+    button[disabled],
+    [disabled] {
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+}

@@ -398,7 +398,7 @@ class="max-w-[1720px] mx-auto pb-10">
                         <div class="space-y-2">
                             <template x-for="(pagoItem, pIdx) in pagosMixtos" :key="pIdx">
                                 <div class="flex items-center space-x-2 bg-white p-2 rounded-xl border border-slate-200">
-                                    <select x-model="pagoItem.metodo_pago" class="w-1/3 px-2 py-1.5 rounded-lg border border-slate-200 text-xs font-bold">
+                                    <select x-model="pagoItem.metodo_pago" class="w-1/3 select-compact">
                                         <option value="EFECTIVO">Efectivo</option>
                                         <option value="TARJETA">Tarjeta</option>
                                         <option value="TRANSFERENCIA">Transferencia</option>
@@ -407,10 +407,10 @@ class="max-w-[1720px] mx-auto pb-10">
                                     <div class="relative flex-1">
                                         <span class="absolute inset-y-0 left-0 pl-2 flex items-center font-bold text-slate-400 text-xs">$</span>
                                         <input type="number" step="0.01" min="0" x-model.number="pagoItem.monto"
-                                               class="w-full pl-5 pr-2 py-1 text-xs font-black rounded-lg border border-slate-200">
+                                               class="w-full pl-5 input-compact">
                                     </div>
                                     <input type="text" x-model="pagoItem.referencia" placeholder="Ref/voucher"
-                                           class="w-28 px-2 py-1 text-xs rounded-lg border border-slate-200">
+                                           class="w-28 input-compact">
                                     <button type="button" @click="quitarFilaMixta(pIdx)" class="text-red-500 hover:text-red-700 px-1 font-bold text-xs">
                                         ✕
                                     </button>

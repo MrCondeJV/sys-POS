@@ -25,6 +25,56 @@
         [x-cloak] { display: none !important; }
 
         /* ==========================================================================
+           Scrollbar del Sidebar — Fino y elegante
+           ========================================================================== */
+        aside nav::-webkit-scrollbar {
+            width: 4px;
+        }
+        aside nav::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        aside nav::-webkit-scrollbar-thumb {
+            background-color: #334155; /* slate-700 */
+            border-radius: 9999px;
+        }
+        aside nav::-webkit-scrollbar-thumb:hover {
+            background-color: #475569; /* slate-600 */
+        }
+        aside nav {
+            scrollbar-width: thin;
+            scrollbar-color: #334155 transparent;
+        }
+
+        /* ==========================================================================
+           Cursor Pointer Global — Todos los elementos interactivos/clickeables
+           ========================================================================== */
+        button,
+        [type="button"],
+        [type="submit"],
+        [type="reset"],
+        [role="button"],
+        label[for],
+        label.cursor-pointer,
+        summary,
+        [x-on\:click],
+        [onclick],
+        [wire\:click],
+        [@click],
+        a[href] {
+            cursor: pointer;
+        }
+
+        button:disabled,
+        [type="button"]:disabled,
+        [type="submit"]:disabled,
+        [type="reset"]:disabled,
+        button[disabled],
+        .disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* ==========================================================================
            Estilos Modernos para Dropdowns / Select Boxes (Customizable Select)
            ========================================================================== */
         select,
@@ -33,30 +83,38 @@
         }
 
         select {
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-color: #ffffff;
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            background-color: #ffffff !important;
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
             background-position: right 0.75rem center !important;
             background-repeat: no-repeat !important;
             background-size: 1.15em 1.15em !important;
+            padding-top: 0.55rem !important;
+            padding-bottom: 0.55rem !important;
+            padding-left: 0.875rem !important;
             padding-right: 2.5rem !important;
-            border: 1px solid #cbd5e1;
-            border-radius: 0.75rem;
-            color: #1e293b;
-            font-size: 0.8125rem;
-            line-height: 1.25rem;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 0.75rem !important;
+            color: #1e293b !important;
+            font-size: 0.8125rem !important;
+            line-height: 1.5rem !important;
+            font-weight: 500 !important;
+            min-height: 2.5rem !important;
+            width: 100%;
+            display: block;
             transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
             cursor: pointer;
         }
 
         select:hover {
-            border-color: #94a3b8;
+            border-color: #94a3b8 !important;
         }
 
-        select:focus {
-            outline: none;
+        select:focus,
+        select:focus-visible {
+            outline: none !important;
             border-color: #6366f1 !important;
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18) !important;
             background-color: #ffffff !important;
@@ -90,7 +148,83 @@
             font-weight: 600;
         }
 
+        /* ==========================================================================
+           Inputs y Textareas Globales — Coherentes con los selects
+           ========================================================================== */
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        input[type="search"],
+        input[type="tel"],
+        input[type="url"],
+        input[type="date"],
+        input[type="datetime-local"],
+        input[type="time"],
+        textarea {
+            background-color: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 0.75rem !important;
+            color: #1e293b !important;
+            font-size: 0.8125rem !important;
+            line-height: 1.5rem !important;
+            font-weight: 500 !important;
+            padding-top: 0.55rem !important;
+            padding-bottom: 0.55rem !important;
+            padding-left: 0.875rem !important;
+            padding-right: 0.875rem !important;
+            min-height: 2.5rem !important;
+            width: 100%;
+            display: block;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        input[type="text"]:hover,
+        input[type="email"]:hover,
+        input[type="password"]:hover,
+        input[type="number"]:hover,
+        input[type="search"]:hover,
+        input[type="tel"]:hover,
+        input[type="date"]:hover,
+        input[type="datetime-local"]:hover,
+        input[type="time"]:hover,
+        textarea:hover {
+            border-color: #94a3b8 !important;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="number"]:focus,
+        input[type="search"]:focus,
+        input[type="tel"]:focus,
+        input[type="date"]:focus,
+        input[type="datetime-local"]:focus,
+        input[type="time"]:focus,
+        textarea:focus {
+            outline: none !important;
+            border-color: #6366f1 !important;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18) !important;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 5rem !important;
+        }
+
+        /* Excepción: campos compactos para contextos de espacio reducido (ej: POS fila de pagos) */
+        select.select-compact,
+        input.input-compact {
+            padding-top: 0.3rem !important;
+            padding-bottom: 0.3rem !important;
+            padding-left: 0.5rem !important;
+            min-height: 1.875rem !important;
+            font-size: 0.75rem !important;
+            border-radius: 0.5rem !important;
+        }
+
         @media print {
+
             @page {
                 size: letter portrait;
                 margin: 8mm 10mm;
@@ -121,7 +255,7 @@
 
     @auth
     <!-- Sidebar para Escritorio / Pantallas medianas y grandes -->
-    <aside class="hidden lg:flex lg:flex-col lg:w-64 bg-slate-900 text-slate-300 flex-shrink-0 border-r border-slate-800">
+    <aside class="hidden lg:flex lg:flex-col lg:w-64 bg-slate-900 text-slate-300 flex-shrink-0 border-r border-slate-800 h-screen sticky top-0 overflow-hidden">
         <!-- Brand Header -->
         <div class="h-16 flex items-center px-6 bg-slate-950 border-b border-slate-800">
             <div class="h-9 w-9 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-indigo-500/20 mr-3">
@@ -138,7 +272,7 @@
         </div>
 
         <!-- Navigation Links -->
-        <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
+        <nav class="flex-1 min-h-0 px-4 py-6 space-y-1.5 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
             <a href="{{ route('dashboard') }}"
                 class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('dashboard') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
                 <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -835,5 +969,28 @@
     </div>
 
     @livewireScripts
+
+    {{-- =====================================================================
+         Auto-scroll del Sidebar al ítem activo
+         Cada vez que se carga una página, el nav del sidebar hace scroll
+         para mostrar el link activo (el que tiene bg-indigo-600, bg-emerald-600
+         o bg-purple-600), evitando que el menú vuelva al inicio.
+         ===================================================================== --}}
+    <script>
+        (function () {
+            const nav = document.querySelector('aside nav');
+            if (!nav) return;
+
+            // Buscar el link activo por las clases de fondo que usa el layout
+            const activeLink = nav.querySelector(
+                'a.bg-indigo-600, a.bg-emerald-600, a.bg-purple-600'
+            );
+
+            if (activeLink) {
+                // Centrar el ítem activo en el área visible del nav
+                activeLink.scrollIntoView({ block: 'center', behavior: 'instant' });
+            }
+        })();
+    </script>
 </body>
 </html>
