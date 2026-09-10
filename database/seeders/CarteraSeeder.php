@@ -19,7 +19,7 @@ class CarteraSeeder extends Seeder
         $registrarCuentaAction = app(RegistrarCuentaPorCobrarAction::class);
         $registrarAbonoAction = app(RegistrarAbonoCarteraAction::class);
 
-        foreach (Empresa::all() as $empresa) {
+        foreach (Empresa::withoutGlobalScopes()->get() as $empresa) {
             $sucursal = $empresa->sucursalPrincipal ?? $empresa->sucursales()->first();
             $admin = $empresa->users()->first();
 

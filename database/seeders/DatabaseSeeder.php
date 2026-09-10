@@ -272,10 +272,13 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 11. Clientes Iniciales y Consumidor Final
+        // 11. Empresa Demo Especializada: Ferretería y Construcciones El Maestro
+        $this->call(FerreteriaDemoSeeder::class);
+
+        // 12. Clientes Iniciales y Consumidor Final (para todas las empresas)
         $this->call(ClienteSeeder::class);
 
-        // 12. Cartera y Cuentas por Cobrar Iniciales
+        // 13. Cartera y Cuentas por Cobrar Iniciales
         $this->call(CarteraSeeder::class);
     }
 }

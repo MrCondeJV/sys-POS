@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -316,11 +317,41 @@ class EmpresaController extends Controller
             'departamento' => ['nullable', 'string', 'max:100'],
             'moneda' => ['required', 'string', 'max:10'],
             'simbolo_moneda' => ['required', 'string', 'max:5'],
+            'logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,svg', 'max:2048'],
+            'eliminar_logo' => ['nullable', 'boolean'],
+            'color_primario' => ['nullable', 'string', 'in:indigo,blue,emerald,violet,rose,orange,amber,slate'],
         ]);
 
-        $empresa->update($validated);
+        // Procesar eliminación de logo
+        if ($request->boolean('eliminar_logo')) {
+            if ($empresa->logo_path && Storage::disk('public')->exists($empresa->logo_path)) {
+                Storage::disk('public')->delete($empresa->logo_path);
+            }
+            $empresa->logo_path = null;
+        }
+
+        // Procesar nuevo logo
+        if ($request->hasFile('logo')) {
+            if ($empresa->logo_path && Storage::disk('public')->exists($empresa->logo_path)) {
+                Storage::disk('public')->delete($empresa->logo_path);
+            }
+            $logoPath = $request->file('logo')->store("logos/{$empresa->id}", 'public');
+            $empresa->logo_path = $logoPath;
+        }
+
+        // Procesar configuración de color primario
+        if ($request->filled('color_primario')) {
+            $configuraciones = $empresa->configuraciones ?? [];
+            $configuraciones['color_primario'] = $request->input('color_primario');
+            $empresa->configuraciones = $configuraciones;
+        }
+
+        // Actualizar datos base
+        unset($validated['logo'], $validated['eliminar_logo'], $validated['color_primario']);
+        $empresa->fill($validated);
+        $empresa->save();
 
         return redirect()->route('empresa.perfil')
-            ->with('success', 'Los datos de la empresa han sido actualizados exitosamente.');
+            ->with('success', 'Los datos y la identidad visual de la empresa han sido actualizados exitosamente.');
     }
 }

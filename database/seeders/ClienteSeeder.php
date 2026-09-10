@@ -16,8 +16,9 @@ class ClienteSeeder extends Seeder
      */
     public function run(): void
     {
-        foreach (Empresa::all() as $empresa) {
-            // 1. Cliente Predeterminado Obligatorio: CONSUMIDOR FINAL (Estándar DIAN Colombia)
+        foreach (Empresa::withoutGlobalScopes()->get() as $empresa) {
+            \App\Support\Tenancy\CompanyContext::runInContext($empresa, function () use ($empresa) {
+                // 1. Cliente Predeterminado Obligatorio: CONSUMIDOR FINAL (Estándar DIAN Colombia)
             Cliente::firstOrCreate(
                 [
                     'empresa_id' => $empresa->id,
@@ -106,6 +107,7 @@ class ClienteSeeder extends Seeder
                     'es_predeterminado' => false,
                 ]
             );
+        });
         }
     }
 }

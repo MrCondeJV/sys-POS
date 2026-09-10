@@ -20,8 +20,62 @@
     </script>
     <!-- Vite: CSS y JS compilados con Tailwind CSS v4 -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    @php
+        $empresaActualLayout = \App\Support\Tenancy\CompanyContext::getCompany() ?? (auth()->check() ? auth()->user()->empresa : null);
+        $colorTema = $empresaActualLayout?->configuraciones['color_primario'] ?? 'indigo';
+
+        $mapaColoresTema = [
+            'indigo'  => ['hex' => '#6366f1', 'hover' => '#4f46e5', 'focus' => 'rgba(99, 102, 241, 0.25)'],
+            'blue'    => ['hex' => '#2563eb', 'hover' => '#1d4ed8', 'focus' => 'rgba(37, 99, 235, 0.25)'],
+            'emerald' => ['hex' => '#059669', 'hover' => '#047857', 'focus' => 'rgba(5, 150, 105, 0.25)'],
+            'violet'  => ['hex' => '#7c3aed', 'hover' => '#6d28d9', 'focus' => 'rgba(124, 58, 237, 0.25)'],
+            'rose'    => ['hex' => '#e11d48', 'hover' => '#be123c', 'focus' => 'rgba(225, 29, 72, 0.25)'],
+            'orange'  => ['hex' => '#ea580c', 'hover' => '#c2410c', 'focus' => 'rgba(234, 88, 12, 0.25)'],
+            'amber'   => ['hex' => '#d97706', 'hover' => '#b45309', 'focus' => 'rgba(217, 119, 6, 0.25)'],
+            'slate'   => ['hex' => '#334155', 'hover' => '#1e293b', 'focus' => 'rgba(51, 65, 85, 0.25)'],
+        ];
+
+        $temaConfig = $mapaColoresTema[$colorTema] ?? $mapaColoresTema['indigo'];
+    @endphp
+
     <!-- Alpine.js es provisto automáticamente por Livewire -->
     <style>
+        :root {
+            --theme-primary: {{ $temaConfig['hex'] }};
+            --theme-primary-hover: {{ $temaConfig['hover'] }};
+            --theme-primary-focus: {{ $temaConfig['focus'] }};
+        }
+
+        /* Utilidades temáticas dinámicas */
+        .bg-theme-primary {
+            background-color: var(--theme-primary) !important;
+        }
+        .text-theme-primary {
+            color: var(--theme-primary) !important;
+        }
+        .border-theme-primary {
+            border-color: var(--theme-primary) !important;
+        }
+
+        /* Enlaces activos en Sidebar de escritorio y móvil */
+        aside nav a.bg-indigo-600,
+        div[role="dialog"] nav a.bg-indigo-600 {
+            background-color: var(--theme-primary) !important;
+            color: #ffffff !important;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        /* Botones primarios con acento de la empresa */
+        button.bg-indigo-600,
+        a.bg-indigo-600:not(nav a) {
+            background-color: var(--theme-primary) !important;
+        }
+        button.bg-indigo-600:hover,
+        a.bg-indigo-600:hover:not(nav a) {
+            background-color: var(--theme-primary-hover) !important;
+        }
+
         [x-cloak] { display: none !important; }
 
         /* ==========================================================================
@@ -257,16 +311,22 @@
     <!-- Sidebar para Escritorio / Pantallas medianas y grandes -->
     <aside class="hidden lg:flex lg:flex-col lg:w-64 bg-slate-900 text-slate-300 flex-shrink-0 border-r border-slate-800 h-screen sticky top-0 overflow-hidden">
         <!-- Brand Header -->
-        <div class="h-16 flex items-center px-6 bg-slate-950 border-b border-slate-800">
-            <div class="h-9 w-9 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-indigo-500/20 mr-3">
-                POS
-            </div>
+        <div class="h-16 flex items-center px-5 bg-slate-950 border-b border-slate-800">
+            @if($empresaActualLayout?->logo_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($empresaActualLayout->logo_path))
+                <div class="h-10 w-10 flex-shrink-0 bg-white rounded-xl p-1 shadow-md mr-3 flex items-center justify-center overflow-hidden border border-slate-700">
+                    <img src="{{ \Illuminate\Support\Facades\Storage::url($empresaActualLayout->logo_path) }}" alt="{{ $empresaActualLayout->nombre_comercial }}" class="h-full w-full object-contain">
+                </div>
+            @else
+                <div class="h-10 w-10 flex-shrink-0 bg-theme-primary rounded-xl flex items-center justify-center text-white font-black text-sm tracking-wider shadow-md shadow-slate-950/40 mr-3">
+                    {{ mb_strtoupper(mb_substr($empresaActualLayout?->nombre_comercial ?? 'POS', 0, 2)) }}
+                </div>
+            @endif
             <div class="truncate">
-                <span class="font-bold text-white tracking-wide block truncate text-sm">
-                    {{ \App\Support\Tenancy\CompanyContext::getCompany()?->nombre_comercial ?? auth()->user()->empresa?->nombre_comercial ?? 'POS Comercial' }}
+                <span class="font-bold text-white tracking-wide block truncate text-sm" title="{{ $empresaActualLayout?->nombre_comercial ?? 'POS Comercial' }}">
+                    {{ $empresaActualLayout?->nombre_comercial ?? 'POS Comercial' }}
                 </span>
-                <span class="text-xs text-slate-400 block truncate">
-                    NIT: {{ \App\Support\Tenancy\CompanyContext::getCompany()?->nit ?? auth()->user()->empresa?->nit ?? 'Global' }}
+                <span class="text-xs text-slate-400 block truncate font-mono">
+                    NIT: {{ $empresaActualLayout?->nit ? $empresaActualLayout->nit . ($empresaActualLayout->dv ? '-' . $empresaActualLayout->dv : '') : 'Global' }}
                 </span>
             </div>
         </div>
@@ -620,9 +680,17 @@
                  x-transition:leave-end="-translate-x-full"
                  class="relative mr-16 flex w-full max-w-xs flex-1 flex-col bg-slate-900 pt-5 pb-4">
                 <div class="flex items-center justify-between px-6 pb-4 border-b border-slate-800">
-                    <div class="flex items-center space-x-3">
-                        <div class="h-9 w-9 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold">POS</div>
-                        <span class="font-bold text-white text-sm truncate">{{ auth()->user()->empresa?->nombre_comercial ?? 'POS Comercial' }}</span>
+                    <div class="flex items-center space-x-3 truncate mr-2">
+                        @if($empresaActualLayout?->logo_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($empresaActualLayout->logo_path))
+                            <div class="h-9 w-9 flex-shrink-0 bg-white rounded-xl p-1 shadow-sm flex items-center justify-center overflow-hidden border border-slate-700">
+                                <img src="{{ \Illuminate\Support\Facades\Storage::url($empresaActualLayout->logo_path) }}" alt="{{ $empresaActualLayout->nombre_comercial }}" class="h-full w-full object-contain">
+                            </div>
+                        @else
+                            <div class="h-9 w-9 flex-shrink-0 bg-theme-primary rounded-xl flex items-center justify-center text-white font-bold text-xs">
+                                {{ mb_strtoupper(mb_substr($empresaActualLayout?->nombre_comercial ?? 'POS', 0, 2)) }}
+                            </div>
+                        @endif
+                        <span class="font-bold text-white text-sm truncate">{{ $empresaActualLayout?->nombre_comercial ?? 'POS Comercial' }}</span>
                     </div>
                     <button type="button" class="text-slate-400 hover:text-white" @click="mobileMenuOpen = false">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -799,15 +867,29 @@
         @auth
         <!-- Header superior universal -->
         <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-10 flex-shrink-0">
-            <!-- Left: Mobile Menu Button -->
+            <!-- Left: Mobile Menu Button & Brand Header Indicator -->
             <div class="flex items-center space-x-3">
-                <button type="button" @click="mobileMenuOpen = true" class="lg:hidden p-2 text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-100">
+                <button type="button" @click="mobileMenuOpen = true" class="lg:hidden p-2 text-slate-600 hover:text-slate-900 rounded-xl hover:bg-slate-100 transition">
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
-                <div class="text-sm font-bold text-slate-900 hidden sm:block lg:hidden">
-                    {{ auth()->user()->empresa?->nombre_comercial ?? 'POS' }}
+                <div class="flex items-center space-x-3">
+                    @if($empresaActualLayout?->logo_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($empresaActualLayout->logo_path))
+                        <img src="{{ \Illuminate\Support\Facades\Storage::url($empresaActualLayout->logo_path) }}" 
+                             alt="{{ $empresaActualLayout->nombre_comercial }}" 
+                             class="h-8 sm:h-9 w-auto max-w-[160px] object-contain rounded-lg p-0.5 bg-white border border-slate-200/80 shadow-xs">
+                    @endif
+                    <div class="leading-tight">
+                        <span class="text-sm font-bold text-slate-900 block truncate max-w-[200px] sm:max-w-[320px]">
+                            {{ $empresaActualLayout?->nombre_comercial ?? 'POS Comercial' }}
+                        </span>
+                        @if($empresaActualLayout?->nit)
+                            <span class="text-[11px] text-slate-400 font-mono hidden sm:block">
+                                NIT: {{ $empresaActualLayout->nit }}{{ $empresaActualLayout->dv ? '-' . $empresaActualLayout->dv : '' }}
+                            </span>
+                        @endif
+                    </div>
                 </div>
             </div>
 
