@@ -249,11 +249,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('traslados/{traslado}/rechazar', [\App\Http\Controllers\TrasladoSucursalController::class, 'rechazar'])->name('traslados.rechazar');
 
 
-    // FASE 26: SaaS Planes y Suscripciones
-    Route::get('suscripcion', [\App\Http\Controllers\SuscripcionController::class, 'index'])->name('saas.suscripcion');
-    Route::get('planes', [\App\Http\Controllers\SuscripcionController::class, 'planes'])->name('saas.planes');
-    Route::post('planes/cambiar', [\App\Http\Controllers\SuscripcionController::class, 'cambiarPlan'])->name('saas.cambiar-plan');
-
 
     // FASE 27: PWA y Sincronización Offline POS
     Route::post('pos/sync-offline', [\App\Http\Controllers\PosOfflineSyncController::class, 'sync'])->name('pos.sync-offline');

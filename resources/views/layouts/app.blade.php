@@ -434,16 +434,6 @@
                 Traslados Sucursal
             </a>
             @endcan
-
-            @can('empresa.gestionar')
-            <a href="{{ route('saas.suscripcion') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('saas.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                </svg>
-                Planes & SaaS
-            </a>
-            @endcan
             @endcanany
 
             @canany(['productos.ver', 'listas_precios.ver', 'inventario.ver'])
@@ -754,11 +744,6 @@
                     </a>
                     @endcan
 
-                    @can('empresa.gestionar')
-                    <a href="{{ route('saas.suscripcion') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl text-white hover:bg-slate-800">
-                        Suscripción & Plan
-                    </a>
-                    @endcan
 
                     @can('productos.ver')
                     <a href="{{ route('productos.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('productos.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
