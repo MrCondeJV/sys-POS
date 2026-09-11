@@ -16,7 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withCommands(
-        commands: __DIR__.'/../app/Console/Commands',
+        commands: [__DIR__.'/../app/Console/Commands'],
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->web(append: [
