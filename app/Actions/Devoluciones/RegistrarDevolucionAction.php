@@ -196,7 +196,9 @@ class RegistrarDevolucionAction
 
             // 4. Actualizar Caja si el reintegro es en EFECTIVO y hay caja abierta
             if ($tipoReintegro === TipoReintegroDevolucion::EFECTIVO && $cajaSesionId) {
-                $cajaSesion = CajaSesion::withoutGlobalScopes()->find($cajaSesionId);
+                $cajaSesion = CajaSesion::withoutGlobalScopes()
+                    ->where('empresa_id', $empresaId)
+                    ->find($cajaSesionId);
                 if ($cajaSesion && $cajaSesion->estaAbierta()) {
                     $this->cajaAction->execute(
                         sesion: $cajaSesion,

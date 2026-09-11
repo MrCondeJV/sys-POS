@@ -43,6 +43,10 @@ class RealizarTrasladoInventarioAction
         $sucursalOrigen = Sucursal::findOrFail($sucursalOrigenId);
         $sucursalDestino = Sucursal::findOrFail($sucursalDestinoId);
 
+        if ($sucursalOrigen->empresa_id !== $sucursalDestino->empresa_id) {
+            throw new InvalidArgumentException('No se pueden realizar traslados entre sucursales de diferentes empresas.');
+        }
+
         return DB::transaction(function () use (
             $productoId,
             $sucursalOrigen,

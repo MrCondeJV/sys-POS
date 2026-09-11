@@ -86,6 +86,22 @@ class RegistrarVentaAction
                 }
             }
 
+            // 1.1. Validar Turno de Caja si fue provisto
+            $cajaSesion = null;
+            if ($cajaSesionId) {
+                $cajaSesion = CajaSesion::withoutGlobalScopes()
+                    ->where('empresa_id', $empresaId)
+                    ->find($cajaSesionId);
+
+                if (! $cajaSesion) {
+                    throw new InvalidArgumentException('El turno de caja especificado no existe o no pertenece a la empresa.');
+                }
+
+                if (! $cajaSesion->estaAbierta()) {
+                    throw new InvalidArgumentException('El turno de caja especificado se encuentra cerrado. Debe abrir un nuevo turno de caja para operar.');
+                }
+            }
+
             // 2. Generar Consecutivo de Venta correlativo (VTA-00001)
             $ultimoNumero = Venta::withoutGlobalScopes()
                 ->where('empresa_id', $empresaId)
@@ -117,11 +133,27 @@ class RegistrarVentaAction
                 }
 
                 $descuentoItem = isset($item['descuento']) ? (float) $item['descuento'] : 0.0;
+                if ($descuentoItem < 0) {
+                    throw new InvalidArgumentException('El descuento de un ítem no puede ser negativo.');
+                }
+                $montoBrutoItem = round($cantidad * $precioUnitario, 2);
+                if ($descuentoItem > $montoBrutoItem) {
+                    throw new InvalidArgumentException(sprintf(
+                        'El descuento ($%s) no puede superar el valor total del ítem ($%s).',
+                        number_format($descuentoItem, 2),
+                        number_format($montoBrutoItem, 2)
+                    ));
+                }
+
                 $impuestoPorcentaje = isset($item['impuesto_porcentaje']) ? (float) $item['impuesto_porcentaje'] : 0.0;
 
                 $producto = Producto::withoutGlobalScopes()
                     ->where('empresa_id', $empresaId)
                     ->findOrFail($item['producto_id']);
+
+                if ($producto->estado !== \App\Enums\EstadoGeneral::ACTIVO) {
+                    throw new InvalidArgumentException("El producto '{$producto->nombre}' se encuentra inactivo y no puede ser vendido.");
+                }
 
                 $subtotalLinea = round(($cantidad * $precioUnitario) - $descuentoItem, 2);
                 $impuestoLinea = round($subtotalLinea * ($impuestoPorcentaje / 100), 2);
@@ -294,10 +326,8 @@ class RegistrarVentaAction
             }
 
             // 7. Impactar Caja si hay turno abierto y el pago es al Contado
-            if ($tipoPago === TipoPago::CONTADO && $cajaSesionId) {
-                $cajaSesion = CajaSesion::withoutGlobalScopes()->find($cajaSesionId);
-                if ($cajaSesion && $cajaSesion->estaAbierta()) {
-                    // Si hubo pagos múltiples, registrar los correspondientes
+            if ($tipoPago === TipoPago::CONTADO && $cajaSesion) {
+                // Si hubo pagos múltiples, registrar los correspondientes
                     $montoEfectivo = 0.0;
                     if (! empty($pagos)) {
                         foreach ($pagos as $p) {
@@ -320,7 +350,6 @@ class RegistrarVentaAction
                             origen: $venta
                         );
                     }
-                }
             }
 
             // 8. Impactar Cartera si la venta fue a Crédito

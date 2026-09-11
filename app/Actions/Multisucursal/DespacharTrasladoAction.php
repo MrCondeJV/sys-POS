@@ -37,6 +37,13 @@ class DespacharTrasladoAction
             throw new InvalidArgumentException('La sucursal de origen y destino no pueden ser la misma.');
         }
 
+        $sucursalOrigen = Sucursal::findOrFail($sucursalOrigenId);
+        $sucursalDestino = Sucursal::findOrFail($sucursalDestinoId);
+
+        if ($sucursalOrigen->empresa_id !== $sucursalDestino->empresa_id) {
+            throw new InvalidArgumentException('No se pueden realizar traslados entre sucursales de diferentes empresas.');
+        }
+
         if (empty($items)) {
             throw new InvalidArgumentException('Debe incluir al menos un producto a trasladar.');
         }
