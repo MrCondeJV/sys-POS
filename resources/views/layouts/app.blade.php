@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-50">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-50 overflow-hidden">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -77,6 +77,33 @@
         }
 
         [x-cloak] { display: none !important; }
+
+        /* ==========================================================================
+           Control Estricto de Scrollbar Único — Cero doble barra de desplazamiento
+           ========================================================================== */
+        html, body {
+            height: 100%;
+            overflow: hidden !important;
+        }
+
+        /* Scrollbar de Contenido Principal — Moderno y sutil */
+        main::-webkit-scrollbar {
+            width: 7px;
+        }
+        main::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        main::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1; /* slate-300 */
+            border-radius: 9999px;
+        }
+        main::-webkit-scrollbar-thumb:hover {
+            background-color: #94a3b8; /* slate-400 */
+        }
+        main {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
+        }
 
         /* ==========================================================================
            Scrollbar del Sidebar — Fino y elegante
@@ -340,11 +367,11 @@
     @yield('styles')
     @livewireStyles
 </head>
-<body class="h-full font-sans antialiased text-slate-800 bg-slate-50 flex" x-data="{ mobileMenuOpen: false }">
+<body class="h-full font-sans antialiased text-slate-800 bg-slate-50 flex overflow-hidden" x-data="{ mobileMenuOpen: false }">
 
     @auth
     <!-- Sidebar para Escritorio / Pantallas medianas y grandes -->
-    <aside class="hidden lg:flex lg:flex-col lg:w-64 bg-slate-900 text-slate-300 flex-shrink-0 border-r border-slate-800 h-screen sticky top-0 overflow-hidden">
+    <aside class="hidden lg:flex lg:flex-col lg:w-64 bg-slate-900 text-slate-300 flex-shrink-0 border-r border-slate-800 h-full overflow-hidden">
         <!-- Brand Header -->
         <div class="h-16 flex items-center px-5 bg-slate-950 border-b border-slate-800">
             @if($empresaActualLayout?->logo_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($empresaActualLayout->logo_path))
@@ -865,7 +892,7 @@
     @endauth
 
     <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <div class="flex-1 flex flex-col min-w-0 min-h-0 h-full overflow-hidden">
         @auth
         <!-- Header superior universal -->
         <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-10 flex-shrink-0">
@@ -1015,7 +1042,7 @@
         @endauth
 
         <!-- Contenedor con Scroll -->
-        <main class="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8">
+        <main class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8">
             <!-- Alertas Flash con auto-cierre en 5 segundos y animación fade -->
             <div class="w-full max-w-[1680px] mx-auto">
                 @if(session('success'))
