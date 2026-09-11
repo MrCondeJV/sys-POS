@@ -181,10 +181,31 @@ class RegistrarVentaAction
                 }
             }
 
-            // Calcular cambio si paga con efectivo superior
+            // 3.1. Validar suficiencia de pagos para ventas al contado y calcular cambio
             $cambio = 0.0;
-            if ($pagoCon !== null && $pagoCon >= $totalGeneral) {
-                $cambio = round($pagoCon - $totalGeneral, 2);
+            if ($tipoPago === TipoPago::CONTADO) {
+                if (! empty($pagos)) {
+                    $totalPagado = round((float) collect($pagos)->sum('monto'), 2);
+                    if ($totalPagado < $totalGeneral) {
+                        throw new InvalidArgumentException(sprintf(
+                            'La suma de los pagos ($%s) no cubre el total de la venta ($%s).',
+                            number_format($totalPagado, 2),
+                            number_format($totalGeneral, 2)
+                        ));
+                    }
+                    if ($totalPagado > $totalGeneral) {
+                        $cambio = round($totalPagado - $totalGeneral, 2);
+                    }
+                } elseif ($pagoCon !== null) {
+                    if ($pagoCon < $totalGeneral) {
+                        throw new InvalidArgumentException(sprintf(
+                            'El monto entregado ($%s) es insuficiente para cubrir el total de la venta ($%s).',
+                            number_format($pagoCon, 2),
+                            number_format($totalGeneral, 2)
+                        ));
+                    }
+                    $cambio = round($pagoCon - $totalGeneral, 2);
+                }
             }
 
             if ($listaPrecioId === null && $cliente && $cliente->lista_precio_id) {

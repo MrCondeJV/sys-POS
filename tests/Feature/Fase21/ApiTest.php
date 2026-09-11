@@ -258,7 +258,7 @@ class ApiTest extends TestCase
             'tipo_pago' => TipoPago::CONTADO->value,
             'metodo_pago' => 'EFECTIVO',
             'caja_sesion_id' => $this->sesionA->id,
-            'pago_con' => 3000000.00,
+            'pago_con' => 3570000.00,
             'items' => [
                 [
                     'producto_id' => $this->productoA->id,
