@@ -8,6 +8,7 @@ use App\Enums\TipoDocumentoIdentidad;
 use App\Models\Empresa;
 use App\Models\Sucursal;
 use App\Models\User;
+use App\Support\Monedas;
 use App\Support\Tenancy\BranchContext;
 use App\Support\Tenancy\CompanyContext;
 use Database\Seeders\RolesAndPermissionsSeeder;
@@ -78,8 +79,10 @@ class EmpresaController extends Controller
         }
 
         $tiposDocumento = TipoDocumentoIdentidad::cases();
+        $monedas = Monedas::todas();
+        $simbolos = Monedas::simbolos();
 
-        return view('empresas.create', compact('tiposDocumento'));
+        return view('empresas.create', compact('tiposDocumento', 'monedas', 'simbolos'));
     }
 
     /**
@@ -187,8 +190,10 @@ class EmpresaController extends Controller
         }
 
         $tiposDocumento = TipoDocumentoIdentidad::cases();
+        $monedas = Monedas::todas();
+        $simbolos = Monedas::simbolos();
 
-        return view('empresas.edit', compact('empresa', 'tiposDocumento'));
+        return view('empresas.edit', compact('empresa', 'tiposDocumento', 'monedas', 'simbolos'));
     }
 
     /**
@@ -289,7 +294,10 @@ class EmpresaController extends Controller
             abort(404, 'Empresa no encontrada en el contexto actual.');
         }
 
-        return view('empresa.perfil', compact('empresa'));
+        $monedas = Monedas::todas();
+        $simbolos = Monedas::simbolos();
+
+        return view('empresa.perfil', compact('empresa', 'monedas', 'simbolos'));
     }
 
     /**

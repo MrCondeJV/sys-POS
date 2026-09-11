@@ -33,7 +33,23 @@
     </div>
     @endif
 
-    <form method="POST" action="{{ route('empresas.store') }}" class="space-y-6">
+    @php
+        $monedas = $monedas ?? \App\Support\Monedas::todas();
+        $simbolos = $simbolos ?? \App\Support\Monedas::simbolos();
+        $mapaSimbolos = array_combine(array_keys($monedas), array_column($monedas, 'simbolo'));
+    @endphp
+    <form method="POST" action="{{ route('empresas.store') }}" class="space-y-6"
+        x-data="{
+            monedaSeleccionada: '{{ old('moneda', 'COP') }}',
+            simboloSeleccionado: '{{ old('simbolo_moneda', '$') }}',
+            mapaSimbolos: {{ json_encode($mapaSimbolos) }},
+            onMonedaChange(e) {
+                const cod = e.target.value;
+                if (this.mapaSimbolos[cod]) {
+                    this.simboloSeleccionado = this.mapaSimbolos[cod];
+                }
+            }
+        }">
         @csrf
 
         <!-- Sección 1: Datos de la Empresa -->
@@ -143,19 +159,36 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label for="moneda" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
                         Moneda *
                     </label>
-                    <input type="text" name="moneda" value="{{ old('moneda', 'COP') }}" required
-                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <select name="moneda" id="moneda" required
+                        x-model="monedaSeleccionada"
+                        @change="onMonedaChange($event)"
+                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                        @foreach($monedas as $m)
+                            <option value="{{ $m['codigo'] }}" {{ old('moneda', 'COP') === $m['codigo'] ? 'selected' : '' }}>
+                                {{ $m['codigo'] }} — {{ $m['nombre'] }} ({{ $m['pais'] }})
+                            </option>
+                        @endforeach
+                    </select>
+                    <p class="mt-1 text-[11px] text-slate-400">Moneda principal para transacciones y contabilidad.</p>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label for="simbolo_moneda" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
                         Símbolo Moneda *
                     </label>
-                    <input type="text" name="simbolo_moneda" value="{{ old('simbolo_moneda', '$') }}" required
-                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <select name="simbolo_moneda" id="simbolo_moneda" required
+                        x-model="simboloSeleccionado"
+                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                        @foreach($simbolos as $sym => $label)
+                            <option value="{{ $sym }}" {{ old('simbolo_moneda', '$') === $sym ? 'selected' : '' }}>
+                                {{ $label }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <p class="mt-1 text-[11px] text-slate-400">Símbolo visible en precios y recibos.</p>
                 </div>
             </div>
         </div>

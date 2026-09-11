@@ -22,9 +22,23 @@
 
     <!-- Formulario Principal -->
     <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        @php
+            $monedas = $monedas ?? \App\Support\Monedas::todas();
+            $simbolos = $simbolos ?? \App\Support\Monedas::simbolos();
+            $mapaSimbolos = array_combine(array_keys($monedas), array_column($monedas, 'simbolo'));
+        @endphp
         <form action="{{ route('empresa.perfil.update') }}" method="POST" enctype="multipart/form-data" class="p-6 sm:p-8 space-y-8"
             x-data="{
                 colorSeleccionado: '{{ old('color_primario', $empresa->configuraciones['color_primario'] ?? 'indigo') }}',
+                monedaSeleccionada: '{{ old('moneda', $empresa->moneda ?? 'COP') }}',
+                simboloSeleccionado: '{{ old('simbolo_moneda', $empresa->simbolo_moneda ?? '$') }}',
+                mapaSimbolos: {{ json_encode($mapaSimbolos) }},
+                onMonedaChange(e) {
+                    const cod = e.target.value;
+                    if (this.mapaSimbolos[cod]) {
+                        this.simboloSeleccionado = this.mapaSimbolos[cod];
+                    }
+                },
                 logoPreview: null,
                 eliminarLogo: false,
                 fileChosen(event) {
@@ -155,18 +169,39 @@
                         <label for="moneda" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                             Código Moneda <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="moneda" id="moneda" required
-                            value="{{ old('moneda', $empresa->moneda) }}"
-                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <select name="moneda" id="moneda" required
+                            x-model="monedaSeleccionada"
+                            @change="onMonedaChange($event)"
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                            @if(!isset($monedas[old('moneda', $empresa->moneda)]))
+                                <option value="{{ old('moneda', $empresa->moneda) }}" selected>{{ old('moneda', $empresa->moneda) }} (Personalizada)</option>
+                            @endif
+                            @foreach($monedas as $m)
+                                <option value="{{ $m['codigo'] }}" {{ old('moneda', $empresa->moneda) === $m['codigo'] ? 'selected' : '' }}>
+                                    {{ $m['codigo'] }} — {{ $m['nombre'] }} ({{ $m['pais'] }})
+                                </option>
+                            @endforeach
+                        </select>
+                        <p class="mt-1 text-[11px] text-slate-400">Código ISO internacional de la moneda.</p>
                     </div>
 
                     <div>
                         <label for="simbolo_moneda" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                             Símbolo <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="simbolo_moneda" id="simbolo_moneda" required
-                            value="{{ old('simbolo_moneda', $empresa->simbolo_moneda) }}"
-                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <select name="simbolo_moneda" id="simbolo_moneda" required
+                            x-model="simboloSeleccionado"
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                            @if(!isset($simbolos[old('simbolo_moneda', $empresa->simbolo_moneda)]))
+                                <option value="{{ old('simbolo_moneda', $empresa->simbolo_moneda) }}" selected>{{ old('simbolo_moneda', $empresa->simbolo_moneda) }} (Personalizado)</option>
+                            @endif
+                            @foreach($simbolos as $sym => $label)
+                                <option value="{{ $sym }}" {{ old('simbolo_moneda', $empresa->simbolo_moneda) === $sym ? 'selected' : '' }}>
+                                    {{ $label }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <p class="mt-1 text-[11px] text-slate-400">Símbolo visible en tickets, ventas y reportes.</p>
                     </div>
                 </div>
             </div>

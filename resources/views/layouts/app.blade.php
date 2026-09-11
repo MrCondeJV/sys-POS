@@ -225,12 +225,47 @@
             font-weight: 500 !important;
             padding-top: 0.55rem !important;
             padding-bottom: 0.55rem !important;
-            padding-left: 0.875rem !important;
-            padding-right: 0.875rem !important;
+            padding-left: 0.875rem;
+            padding-right: 0.875rem;
             min-height: 2.5rem !important;
             width: 100%;
             display: block;
             transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        /* ==========================================================================
+           Inputs con Iconos a la Izquierda o Derecha (Buscadores, filtros, etc.)
+           Garantiza separación adecuada para que el texto nunca quede sobre el icono
+           ========================================================================== */
+        .relative:has(> [class*="left-0"]) input,
+        .relative:has(> [class*="left-1"]) input,
+        .relative:has(> [class*="left-2"]) input,
+        .relative:has(> [class*="left-3"]) input,
+        .relative:has(> [class*="left-4"]) input,
+        .relative:has(> .pointer-events-none) input,
+        input.pl-8, input[class*="pl-8"],
+        input.pl-9, input[class*="pl-9"],
+        input.pl-10, input[class*="pl-10"],
+        input.pl-11, input[class*="pl-11"],
+        input.pl-12, input[class*="pl-12"],
+        input.pl-14, input[class*="pl-14"],
+        input[data-icon-left] {
+            padding-left: 2.75rem !important;
+        }
+
+        .relative:has(> [class*="right-0"]) input,
+        input.pr-8, input[class*="pr-8"],
+        input.pr-9, input[class*="pr-9"],
+        input.pr-10, input[class*="pr-10"],
+        input.pr-11, input[class*="pr-11"],
+        input.pr-12, input[class*="pr-12"],
+        input.pr-14, input[class*="pr-14"] {
+            padding-right: 2.75rem !important;
+        }
+
+        input.pr-24, input[class*="pr-24"],
+        input.pr-28, input[class*="pr-28"] {
+            padding-right: 7rem !important;
         }
 
         input[type="text"]:hover,
@@ -1072,6 +1107,143 @@
                 // Centrar el ítem activo en el área visible del nav
                 activeLink.scrollIntoView({ block: 'center', behavior: 'instant' });
             }
+        })();
+
+        /* =====================================================================
+           Búsqueda Dinámica en Tiempo Real (Live Search As-You-Type)
+           Filtra automáticamente a medida que el usuario escribe (debounce 300ms)
+           sin recargar la página y preservando el foco y posición del cursor.
+           ===================================================================== */
+        (function () {
+            let searchDebounceTimer = null;
+            let searchAbortController = null;
+
+            const searchInputSelector = 'input[name="buscar"], input[name="search"], input[name="q"]';
+
+            function esFormularioBusqueda(input) {
+                const form = input.closest('form');
+                return form && form.method.toUpperCase() === 'GET';
+            }
+
+            async function ejecutarBusquedaDinamica(form, inputActual) {
+                const mainContainer = document.querySelector('main');
+                if (!mainContainer) return;
+
+                // Abortar petición previa si el usuario continúa escribiendo
+                if (searchAbortController) {
+                    searchAbortController.abort();
+                }
+                searchAbortController = new AbortController();
+
+                // Recopilar parámetros del formulario
+                const formData = new FormData(form);
+                const params = new URLSearchParams();
+                for (const [key, value] of formData.entries()) {
+                    if (value !== '' && value !== null) {
+                        params.append(key, value);
+                    }
+                }
+
+                const actionUrl = form.getAttribute('action') || window.location.pathname;
+                const targetUrl = actionUrl + (params.toString() ? '?' + params.toString() : '');
+
+                // Indicador visual de búsqueda en curso
+                const iconContainer = inputActual.closest('.relative')?.querySelector('.pointer-events-none');
+                if (iconContainer) {
+                    iconContainer.classList.add('animate-pulse', 'text-indigo-600');
+                }
+
+                try {
+                    const response = await fetch(targetUrl, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        signal: searchAbortController.signal
+                    });
+
+                    if (!response.ok) throw new Error('Respuesta no satisfactoria');
+
+                    const html = await response.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newMain = doc.querySelector('main');
+
+                    if (newMain) {
+                        const inputName = inputActual.getAttribute('name');
+                        const cursorPos = inputActual.selectionStart;
+                        const scrollY = mainContainer.scrollTop;
+
+                        // Reemplazo limpio del contenido de resultados
+                        mainContainer.innerHTML = newMain.innerHTML;
+
+                        // Sincronizar URL del navegador
+                        window.history.replaceState({}, '', targetUrl);
+
+                        // Restaurar foco y cursor en el input de búsqueda
+                        const newInput = mainContainer.querySelector(`input[name="${inputName}"]`);
+                        if (newInput) {
+                            newInput.focus();
+                            if (cursorPos !== null) {
+                                try {
+                                    newInput.setSelectionRange(cursorPos, cursorPos);
+                                } catch (err) {}
+                            }
+                        }
+
+                        // Preservar scroll del área de trabajo
+                        mainContainer.scrollTop = scrollY;
+                    }
+                } catch (error) {
+                    if (error.name !== 'AbortError') {
+                        console.warn('Búsqueda dinámica fallback:', error);
+                    }
+                } finally {
+                    if (iconContainer) {
+                        iconContainer.classList.remove('animate-pulse', 'text-indigo-600');
+                    }
+                }
+            }
+
+            // 1. Detección mientras escribe (evento input con debounce)
+            document.addEventListener('input', function (e) {
+                const target = e.target;
+                if (!target.matches || !target.matches(searchInputSelector)) return;
+                const form = target.closest('form');
+                if (!form || !esFormularioBusqueda(target)) return;
+
+                clearTimeout(searchDebounceTimer);
+                searchDebounceTimer = setTimeout(() => {
+                    ejecutarBusquedaDinamica(form, target);
+                }, 300);
+            });
+
+            // 2. Tecla Enter: buscar inmediatamente sin recargar
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    const target = e.target;
+                    if (!target.matches || !target.matches(searchInputSelector)) return;
+                    const form = target.closest('form');
+                    if (!form || !esFormularioBusqueda(target)) return;
+
+                    e.preventDefault();
+                    clearTimeout(searchDebounceTimer);
+                    ejecutarBusquedaDinamica(form, target);
+                }
+            });
+
+            // 3. Cambios en filtros auxiliares del formulario (selects, checkboxes)
+            document.addEventListener('change', function (e) {
+                const target = e.target;
+                if (!target.matches || !target.matches('form select, form input[type="checkbox"]')) return;
+                const form = target.closest('form');
+                if (!form || form.method.toUpperCase() !== 'GET') return;
+                
+                if (form.querySelector(searchInputSelector)) {
+                    const searchInput = form.querySelector(searchInputSelector);
+                    clearTimeout(searchDebounceTimer);
+                    ejecutarBusquedaDinamica(form, searchInput || target);
+                }
+            });
         })();
     </script>
 </body>
