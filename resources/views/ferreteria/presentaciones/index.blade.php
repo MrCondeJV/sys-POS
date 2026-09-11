@@ -61,12 +61,6 @@
 
     <!-- Listado de Presentaciones -->
     <div class="lg:col-span-2 space-y-4">
-        @if(session('success'))
-            <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-sm font-medium">
-                {{ session('success') }}
-            </div>
-        @endif
-
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm text-slate-600">

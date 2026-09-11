@@ -17,11 +17,6 @@
         </div>
     </div>
 
-    @if(session('success'))
-        <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-sm">
-            {{ session('success') }}
-        </div>
-    @endif
 
     {{-- Filtros --}}
     <div class="bg-white shadow-sm rounded-2xl border border-slate-200 p-4">

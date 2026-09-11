@@ -15,18 +15,6 @@
         <a href="{{ route('traslados.index') }}" class="text-sm text-slate-500 hover:text-slate-800 transition">&larr; Volver al listado</a>
     </div>
 
-    @if(session('success'))
-        <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-sm">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if($errors->any())
-        <div class="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-sm">
-            @foreach($errors->all() as $e)
-                <p>{{ $e }}</p>
-            @endforeach
-        </div>
-    @endif
 
     <div class="bg-white shadow-sm rounded-2xl border border-slate-200 p-6 space-y-6">
         {{-- Cabecera de sedes --}}

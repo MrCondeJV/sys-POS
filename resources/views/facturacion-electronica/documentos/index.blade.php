@@ -20,16 +20,7 @@
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
-            @if(session('success'))
-                <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-sm font-medium">
-                    {{ session('success') }}
-                </div>
-            @endif
-            @if(session('error'))
-                <div class="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-sm font-medium">
-                    {{ session('error') }}
-                </div>
-            @endif
+
 
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-4">
                 <form method="GET" action="{{ route('facturacion-electronica.index') }}" class="flex flex-wrap gap-3 items-center">
