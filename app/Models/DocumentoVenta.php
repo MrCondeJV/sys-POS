@@ -56,7 +56,7 @@ class DocumentoVenta extends Model
 
     public function sucursal(): BelongsTo
     {
-        return $this->belongsTo(Sucursal::class);
+        return $this->belongsTo(Sucursal::class)->withTrashed();
     }
 
     public function venta(): BelongsTo

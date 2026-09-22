@@ -41,7 +41,7 @@ class Inventario extends Model
      */
     public function sucursal(): BelongsTo
     {
-        return $this->belongsTo(Sucursal::class, 'sucursal_id');
+        return $this->belongsTo(Sucursal::class, 'sucursal_id')->withTrashed();
     }
 
     /**
@@ -49,7 +49,7 @@ class Inventario extends Model
      */
     public function producto(): BelongsTo
     {
-        return $this->belongsTo(Producto::class, 'producto_id');
+        return $this->belongsTo(Producto::class, 'producto_id')->withTrashed();
     }
 
     /**

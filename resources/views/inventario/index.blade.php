@@ -211,14 +211,14 @@
                         $stock = (float) $inv->stock;
                         $stockMin = (float) $inv->stock_minimo;
                         $porcentajeStock = $stockMin > 0 ? min(100, round(($stock / ($stockMin * 2)) * 100)) : 100;
-                        $valorTotalItem = $stock * (float) ($prod->precio_compra ?? 0);
+                        $valorTotalItem = $stock * (float) ($prod?->precio_compra ?? 0);
                     @endphp
                     <tr class="hover:bg-slate-50/60 transition">
                         <!-- Producto con Imagen y Códigos -->
                         <td class="py-3 px-4">
                             <div class="flex items-center space-x-3">
                                 <div class="h-11 w-11 flex-shrink-0 rounded-xl bg-slate-100 border border-slate-200/80 overflow-hidden flex items-center justify-center">
-                                    @if($prod->imagen_url)
+                                    @if($prod?->imagen_url)
                                     <img src="{{ $prod->imagen_url }}" alt="{{ $prod->nombre }}" class="h-full w-full object-cover">
                                     @else
                                     <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -227,14 +227,18 @@
                                     @endif
                                 </div>
                                 <div class="min-w-0">
+                                    @if($prod)
                                     <a href="{{ route('inventario.kardex', $prod->id) }}" class="font-bold text-slate-900 hover:text-indigo-600 transition truncate block max-w-xs" title="{{ $prod->nombre }}">
                                         {{ $prod->nombre }}
                                     </a>
+                                    @else
+                                    <span class="font-bold text-slate-400 italic">Producto no disponible</span>
+                                    @endif
                                     <div class="flex items-center space-x-2 text-[11px] text-slate-400 mt-0.5">
-                                        @if($prod->codigo)
+                                        @if($prod?->codigo)
                                         <span>SKU: <span class="font-mono text-slate-600">{{ $prod->codigo }}</span></span>
                                         @endif
-                                        @if($prod->codigo_barras)
+                                        @if($prod?->codigo_barras)
                                         <span>• EAN: <span class="font-mono text-slate-600">{{ $prod->codigo_barras }}</span></span>
                                         @endif
                                     </div>
@@ -245,14 +249,14 @@
                         <!-- Sucursal -->
                         <td class="py-3 px-3 whitespace-nowrap">
                             <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700">
-                                {{ $inv->sucursal->nombre }}
+                                {{ $inv->sucursal?->nombre ?? 'Sin sucursal' }}
                             </span>
                         </td>
 
                         <!-- Categoría / Marca -->
                         <td class="py-3 px-3 text-xs whitespace-nowrap">
-                            <div class="text-slate-700 font-semibold">{{ $prod->categoria?->nombre ?? 'Sin categoría' }}</div>
-                            <div class="text-slate-400 text-[11px]">{{ $prod->marca?->nombre ?? 'Sin marca' }}</div>
+                            <div class="text-slate-700 font-semibold">{{ $prod?->categoria?->nombre ?? 'Sin categoría' }}</div>
+                            <div class="text-slate-400 text-[11px]">{{ $prod?->marca?->nombre ?? 'Sin marca' }}</div>
                         </td>
 
                         <!-- Existencias -->
@@ -260,7 +264,7 @@
                             <span class="text-base font-black {{ $inv->estaAgotado() ? 'text-rose-600' : ($inv->tieneBajoStock() ? 'text-amber-600' : 'text-slate-900') }}">
                                 {{ number_format($stock, 2) }}
                             </span>
-                            <span class="text-xs text-slate-400 ml-1">{{ $prod->unidadMedida?->codigo ?? 'UND' }}</span>
+                            <span class="text-xs text-slate-400 ml-1">{{ $prod?->unidadMedida?->codigo ?? 'UND' }}</span>
                             <div class="text-[11px] text-slate-400">Mín: {{ number_format($stockMin, 2) }}</div>
                         </td>
 
@@ -279,8 +283,8 @@
 
                         <!-- Costo / PVP -->
                         <td class="py-3 px-3 text-right text-xs whitespace-nowrap">
-                            <div class="text-slate-900 font-bold">${{ number_format($prod->precio_venta, 0, ',', '.') }}</div>
-                            <div class="text-slate-400 text-[11px]">Costo: ${{ number_format($prod->precio_compra, 0, ',', '.') }}</div>
+                            <div class="text-slate-900 font-bold">${{ number_format($prod?->precio_venta ?? 0, 0, ',', '.') }}</div>
+                            <div class="text-slate-400 text-[11px]">Costo: ${{ number_format($prod?->precio_compra ?? 0, 0, ',', '.') }}</div>
                         </td>
 
                         <!-- Valor Total en Sucursal -->
@@ -291,6 +295,7 @@
                         <!-- Acciones -->
                         <td class="py-3 px-4 text-center whitespace-nowrap">
                             <div class="flex items-center justify-center space-x-1.5">
+                                @if($prod)
                                 <a href="{{ route('inventario.kardex', $prod->id) }}"
                                     class="inline-flex items-center p-2 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-xl transition"
                                     title="Consultar Kardex Histórico">
@@ -306,6 +311,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                     </svg>
                                 </a>
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -326,7 +332,7 @@
                 <div class="flex items-start justify-between gap-3">
                     <div class="flex items-center space-x-3 min-w-0">
                         <div class="h-12 w-12 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden flex-shrink-0 flex items-center justify-center">
-                            @if($prod->imagen_url)
+                            @if($prod?->imagen_url)
                             <img src="{{ $prod->imagen_url }}" alt="{{ $prod->nombre }}" class="h-full w-full object-cover">
                             @else
                             <svg class="h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -335,10 +341,10 @@
                             @endif
                         </div>
                         <div class="min-w-0">
-                            <h4 class="font-bold text-slate-900 text-sm truncate">{{ $prod->nombre }}</h4>
+                            <h4 class="font-bold text-slate-900 text-sm truncate">{{ $prod?->nombre ?? 'Producto no disponible' }}</h4>
                             <div class="flex items-center space-x-2 text-xs text-slate-400 mt-0.5">
-                                <span class="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[10px] font-semibold">{{ $inv->sucursal->nombre }}</span>
-                                <span>{{ $prod->categoria?->nombre }}</span>
+                                <span class="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[10px] font-semibold">{{ $inv->sucursal?->nombre ?? 'Sin sucursal' }}</span>
+                                <span>{{ $prod?->categoria?->nombre }}</span>
                             </div>
                         </div>
                     </div>
@@ -354,9 +360,10 @@
                 <div class="flex items-center justify-between pt-2 border-t border-slate-50 text-xs">
                     <div>
                         <span class="text-slate-400">PVP:</span>
-                        <span class="font-bold text-slate-800">${{ number_format($prod->precio_venta, 0, ',', '.') }}</span>
+                        <span class="font-bold text-slate-800">${{ number_format($prod?->precio_venta ?? 0, 0, ',', '.') }}</span>
                     </div>
 
+                    @if($prod)
                     <div class="flex items-center space-x-2">
                         <a href="{{ route('inventario.kardex', $prod->id) }}" class="px-3 py-1.5 bg-indigo-50 text-indigo-700 font-semibold rounded-xl text-xs hover:bg-indigo-100 transition">
                             Kardex
@@ -365,6 +372,7 @@
                             Ajustar
                         </a>
                     </div>
+                    @endif
                 </div>
             </div>
             @endforeach

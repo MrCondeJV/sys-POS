@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -57,7 +57,7 @@
                 @if($sesion->empresa->nit)
                     <div>NIT: {{ $sesion->empresa->nit }}</div>
                 @endif
-                <div>Sucursal: {{ $sesion->sucursal->nombre }}</div>
+                <div>Sucursal: {{ $sesion->sucursal?->nombre ?? 'Sin sucursal' }}</div>
             </div>
         </div>
     </div>

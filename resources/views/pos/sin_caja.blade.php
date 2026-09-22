@@ -31,7 +31,7 @@
                                 </div>
                                 <div>
                                     <div class="font-bold text-slate-900 text-sm">{{ $caja->nombre }}</div>
-                                    <div class="text-[11px] text-slate-400">Sucursal: {{ $caja->sucursal->nombre }}</div>
+                                    <div class="text-[11px] text-slate-400">Sucursal: {{ $caja->sucursal?->nombre ?? 'Sin sucursal' }}</div>
                                 </div>
                             </div>
                             <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-xl">

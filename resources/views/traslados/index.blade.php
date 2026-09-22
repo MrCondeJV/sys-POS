@@ -74,7 +74,7 @@
                     <tr class="hover:bg-slate-50 transition">
                         <td class="px-6 py-4 font-semibold text-slate-900">{{ $t->consecutivo }}</td>
                         <td class="px-6 py-4 text-slate-700">
-                            {{ $t->sucursalOrigen->nombre }} &rarr; {{ $t->sucursalDestino->nombre }}
+                            {{ $t->sucursalOrigen?->nombre ?? 'Sin sucursal' }} &rarr; {{ $t->sucursalDestino?->nombre ?? 'Sin sucursal' }}
                         </td>
                         <td class="px-6 py-4 text-slate-500">{{ Str::limit($t->motivo, 30) }}</td>
                         <td class="px-6 py-4">

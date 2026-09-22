@@ -49,7 +49,7 @@ class Devolucion extends Model
 
     public function sucursal(): BelongsTo
     {
-        return $this->belongsTo(Sucursal::class, 'sucursal_id');
+        return $this->belongsTo(Sucursal::class, 'sucursal_id')->withTrashed();
     }
 
     public function usuario(): BelongsTo

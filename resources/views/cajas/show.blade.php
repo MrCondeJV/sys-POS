@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Caja: ' . $caja->nombre)
 
@@ -27,7 +27,7 @@
                     </span>
                 @endif
             </div>
-            <p class="text-sm text-slate-500">Sucursal: <span class="font-semibold text-slate-700">{{ $caja->sucursal->nombre }}</span> &bull; Registro cronológico de aperturas, cierres y auditorías.</p>
+            <p class="text-sm text-slate-500">Sucursal: <span class="font-semibold text-slate-700">{{ $caja->sucursal?->nombre ?? 'Sin sucursal' }}</span> &bull; Registro cronológico de aperturas, cierres y auditorías.</p>
         </div>
 
         <div>

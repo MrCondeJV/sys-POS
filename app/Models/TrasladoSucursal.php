@@ -38,12 +38,12 @@ class TrasladoSucursal extends Model
 
     public function sucursalOrigen(): BelongsTo
     {
-        return $this->belongsTo(Sucursal::class, 'sucursal_origen_id');
+        return $this->belongsTo(Sucursal::class, 'sucursal_origen_id')->withTrashed();
     }
 
     public function sucursalDestino(): BelongsTo
     {
-        return $this->belongsTo(Sucursal::class, 'sucursal_destino_id');
+        return $this->belongsTo(Sucursal::class, 'sucursal_destino_id')->withTrashed();
     }
 
     public function usuarioDespacho(): BelongsTo

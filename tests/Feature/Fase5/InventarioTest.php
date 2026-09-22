@@ -348,4 +348,16 @@ class InventarioTest extends TestCase
         $resTraslado->assertStatus(200);
         $resTraslado->assertSee('Traslado de Existencias entre Sucursales');
     }
+
+    public function test_panel_inventario_y_kardex_soportan_sucursal_eliminada_o_nula(): void
+    {
+        // Soft delete de una sucursal con inventario existente
+        $this->sucursalA2->delete();
+
+        $resIndex = $this->actingAs($this->adminA)->get(route('inventario.index'));
+        $resIndex->assertStatus(200);
+
+        $resKardex = $this->actingAs($this->adminA)->get(route('inventario.kardex', $this->productoA->id));
+        $resKardex->assertStatus(200);
+    }
 }

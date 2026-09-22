@@ -114,7 +114,7 @@
             <div class="flex flex-wrap gap-2.5">
                 @forelse($existenciasPorSucursal as $inv)
                 <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-xl border {{ $inv->tieneBajoStock() ? 'bg-amber-50 border-amber-200 text-amber-900' : 'bg-slate-50 border-slate-200 text-slate-800' }}">
-                    <span class="text-xs font-semibold">{{ $inv->sucursal->nombre }}:</span>
+                    <span class="text-xs font-semibold">{{ $inv->sucursal?->nombre ?? 'Sin sucursal' }}:</span>
                     <span class="text-xs font-black">{{ number_format($inv->stock, 2) }}</span>
                     <span class="text-[10px] text-slate-400">/ Mín {{ number_format($inv->stock_minimo, 2) }}</span>
                 </div>
@@ -208,10 +208,10 @@
 
                         <!-- Sucursal -->
                         <td class="py-3 px-3 whitespace-nowrap text-xs">
-                            <span class="font-bold text-slate-800">{{ $mov->sucursal->nombre }}</span>
+                            <span class="font-bold text-slate-800">{{ $mov->sucursal?->nombre ?? 'Sin sucursal' }}</span>
                             @if($mov->sucursalDestino)
                             <div class="text-[10px] text-indigo-600 font-semibold">
-                                {{ $mov->tipo === \App\Enums\TipoMovimientoInventario::TRASLADO_SALIDA ? 'Hacia: ' : 'Desde: ' }} {{ $mov->sucursalDestino->nombre }}
+                                {{ $mov->tipo === \App\Enums\TipoMovimientoInventario::TRASLADO_SALIDA ? 'Hacia: ' : 'Desde: ' }} {{ $mov->sucursalDestino?->nombre ?? 'Sucursal no disponible' }}
                             </div>
                             @endif
                         </td>

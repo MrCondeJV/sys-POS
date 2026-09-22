@@ -25,10 +25,10 @@
     </div>
 
     <div class="text-center">
-        <div class="bold" style="font-size: 13px;">{{ $devolucion->sucursal->empresa->nombre_comercial }}</div>
-        <div>NIT: {{ $devolucion->sucursal->empresa->nit }}</div>
-        <div>{{ $devolucion->sucursal->nombre }}</div>
-        <div>{{ $devolucion->sucursal->direccion }}</div>
+        <div class="bold" style="font-size: 13px;">{{ $devolucion->sucursal?->empresa?->nombre_comercial ?? $devolucion->empresa?->nombre_comercial }}</div>
+        <div>NIT: {{ $devolucion->sucursal?->empresa?->nit ?? $devolucion->empresa?->nit }}</div>
+        <div>{{ $devolucion->sucursal?->nombre ?? 'Sin sucursal' }}</div>
+        <div>{{ $devolucion->sucursal?->direccion ?? '' }}</div>
     </div>
 
     <div class="line"></div>

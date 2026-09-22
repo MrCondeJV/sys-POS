@@ -22,7 +22,7 @@
                     {{ $venta->tipo_pago->label() }}
                 </span>
             </div>
-            <p class="text-sm text-slate-500">Emitida el {{ $venta->fecha->format('d/m/Y \a \l\a\s H:i') }} &bull; Sucursal: {{ $venta->sucursal->nombre }}</p>
+            <p class="text-sm text-slate-500">Emitida el {{ $venta->fecha->format('d/m/Y \a \l\a\s H:i') }} &bull; Sucursal: {{ $venta->sucursal?->nombre ?? 'Sin sucursal' }}</p>
         </div>
 
         <div class="flex items-center space-x-2">

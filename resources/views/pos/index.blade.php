@@ -33,7 +33,7 @@ class="max-w-[1720px] mx-auto pb-10">
                 <div class="text-xs text-slate-500 flex flex-wrap items-center gap-x-4 gap-y-1 mt-0.5">
                     <span><strong>Caja:</strong> {{ $sesionCaja->caja->nombre }} ({{ $sesionCaja->caja->codigo }})</span>
                     <span>&bull;</span>
-                    <span><strong>Sucursal:</strong> {{ $sesionCaja->sucursal->nombre }}</span>
+                    <span><strong>Sucursal:</strong> {{ $sesionCaja->sucursal?->nombre ?? 'Sin sucursal' }}</span>
                     <span>&bull;</span>
                     <span><strong>Cajero:</strong> {{ auth()->user()->name }}</span>
                 </div>

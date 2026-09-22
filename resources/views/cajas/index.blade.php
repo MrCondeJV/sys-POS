@@ -130,7 +130,7 @@
                                 <div class="flex items-center space-x-2 text-xs text-slate-500 mt-0.5">
                                     <span class="font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-semibold text-[10px]">{{ $caja->codigo }}</span>
                                     <span>&bull;</span>
-                                    <span>{{ $caja->sucursal->nombre }}</span>
+                                    <span>{{ $caja->sucursal?->nombre ?? 'Sin sucursal' }}</span>
                                 </div>
                             </div>
                         </div>

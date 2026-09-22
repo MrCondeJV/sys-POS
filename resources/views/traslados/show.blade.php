@@ -21,13 +21,13 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-b border-slate-100 pb-5">
             <div class="space-y-1">
                 <p class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Sucursal Origen</p>
-                <p class="text-base font-bold text-slate-900">{{ $traslado->sucursalOrigen->nombre }}</p>
+                <p class="text-base font-bold text-slate-900">{{ $traslado->sucursalOrigen?->nombre ?? 'Sin sucursal' }}</p>
                 <p class="text-xs text-slate-500">Despachado por: {{ $traslado->usuarioDespacho->name ?? 'Sistema' }}</p>
                 <p class="text-xs text-slate-500">Fecha envío: {{ $traslado->fecha_envio?->format('d/m/Y H:i') ?? '-' }}</p>
             </div>
             <div class="space-y-1">
                 <p class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Sucursal Destino</p>
-                <p class="text-base font-bold text-slate-900">{{ $traslado->sucursalDestino->nombre }}</p>
+                <p class="text-base font-bold text-slate-900">{{ $traslado->sucursalDestino?->nombre ?? 'Sin sucursal' }}</p>
                 <p class="text-xs text-slate-500">Receptor: {{ $traslado->usuarioReceptor->name ?? 'Pendiente de entrega' }}</p>
                 <p class="text-xs text-slate-500">Fecha recepción: {{ $traslado->fecha_recepcion?->format('d/m/Y H:i') ?? '-' }}</p>
             </div>

@@ -60,9 +60,9 @@
                 </p>
                 <div class="text-xs text-slate-500 mt-2 space-y-0.5">
                     <p><span class="font-medium text-slate-700">NIT:</span> {{ $documento->empresa->nit ?? '900.000.000-1' }}</p>
-                    <p><span class="font-medium text-slate-700">Sede:</span> {{ $documento->sucursal->nombre ?? 'Principal' }}</p>
-                    <p>{{ $documento->sucursal->direccion ?? $documento->empresa->direccion }}</p>
-                    <p>{{ $documento->sucursal->telefono ?? $documento->empresa->telefono }}</p>
+                    <p><span class="font-medium text-slate-700">Sede:</span> {{ $documento->sucursal?->nombre ?? 'Principal' }}</p>
+                    <p>{{ $documento->sucursal?->direccion ?? $documento->empresa?->direccion }}</p>
+                    <p>{{ $documento->sucursal?->telefono ?? $documento->empresa?->telefono }}</p>
                 </div>
             </div>
 

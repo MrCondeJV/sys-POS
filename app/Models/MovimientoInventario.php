@@ -51,7 +51,7 @@ class MovimientoInventario extends Model
      */
     public function sucursal(): BelongsTo
     {
-        return $this->belongsTo(Sucursal::class, 'sucursal_id');
+        return $this->belongsTo(Sucursal::class, 'sucursal_id')->withTrashed();
     }
 
     /**
@@ -59,7 +59,7 @@ class MovimientoInventario extends Model
      */
     public function sucursalDestino(): BelongsTo
     {
-        return $this->belongsTo(Sucursal::class, 'sucursal_destino_id');
+        return $this->belongsTo(Sucursal::class, 'sucursal_destino_id')->withTrashed();
     }
 
     /**
@@ -67,7 +67,7 @@ class MovimientoInventario extends Model
      */
     public function producto(): BelongsTo
     {
-        return $this->belongsTo(Producto::class, 'producto_id');
+        return $this->belongsTo(Producto::class, 'producto_id')->withTrashed();
     }
 
     /**
