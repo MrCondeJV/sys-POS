@@ -363,333 +363,449 @@
                 width: 100% !important;
             }
         }
+
+        /* ==========================================================================
+           Sidebar Colapsable / Minimizable (Desktop)
+           ========================================================================== */
+        aside.sidebar-collapsed {
+            width: 4.75rem !important;
+        }
+        aside.sidebar-collapsed .sidebar-text,
+        aside.sidebar-collapsed .sidebar-brand-text,
+        aside.sidebar-collapsed .sidebar-user-info,
+        aside.sidebar-collapsed .sidebar-badge {
+            display: none !important;
+        }
+        aside.sidebar-collapsed .sidebar-section-header {
+            display: none !important;
+        }
+        aside.sidebar-collapsed .sidebar-section-divider {
+            display: block !important;
+        }
+        aside.sidebar-collapsed .sidebar-brand-container {
+            justify-content: center !important;
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+        }
+        aside.sidebar-collapsed .sidebar-logo {
+            margin-right: 0 !important;
+        }
+        aside.sidebar-collapsed a.sidebar-link {
+            justify-content: center !important;
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+        }
+        aside.sidebar-collapsed a.sidebar-link svg {
+            margin-right: 0 !important;
+        }
+        aside.sidebar-collapsed .sidebar-footer {
+            justify-content: center !important;
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+        }
+        /* Tooltip flotante en hover cuando el sidebar está minimizado */
+        aside.sidebar-collapsed a.sidebar-link {
+            position: relative;
+        }
+        aside.sidebar-collapsed a.sidebar-link:hover::after {
+            content: attr(data-title);
+            position: absolute;
+            left: calc(100% + 0.6rem);
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #020617;
+            color: #f8fafc;
+            padding: 0.35rem 0.65rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            white-space: nowrap;
+            z-index: 100;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
+            border: 1px solid #334155;
+            pointer-events: none;
+        }
     </style>
     @yield('styles')
     @livewireStyles
 </head>
-<body class="h-full font-sans antialiased text-slate-800 bg-slate-50 flex overflow-hidden" x-data="{ mobileMenuOpen: false }">
+<body class="h-full font-sans antialiased text-slate-800 bg-slate-50 flex overflow-hidden" 
+      x-data="{ 
+          mobileMenuOpen: false,
+          sidebarCollapsed: {{ request()->routeIs('pos.*') ? 'true' : 'false' }},
+          toggleSidebar() {
+              if (window.innerWidth < 1024) {
+                  this.mobileMenuOpen = !this.mobileMenuOpen;
+              } else {
+                  this.sidebarCollapsed = !this.sidebarCollapsed;
+              }
+          }
+      }">
 
     @auth
     <!-- Sidebar para Escritorio / Pantallas medianas y grandes -->
-    <aside class="hidden lg:flex lg:flex-col lg:w-64 bg-slate-900 text-slate-300 flex-shrink-0 border-r border-slate-800 h-full overflow-hidden">
+    <aside :class="{ 'sidebar-collapsed lg:w-20': sidebarCollapsed, 'lg:w-64': !sidebarCollapsed }"
+           class="hidden lg:flex lg:flex-col bg-slate-900 text-slate-300 flex-shrink-0 border-r border-slate-800 h-full overflow-hidden transition-[width] duration-300 ease-in-out">
         <!-- Brand Header -->
-        <div class="h-16 flex items-center px-5 bg-slate-950 border-b border-slate-800">
-            @if($empresaActualLayout?->logo_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($empresaActualLayout->logo_path))
-                <div class="h-10 w-10 flex-shrink-0 bg-white rounded-xl p-1 shadow-md mr-3 flex items-center justify-center overflow-hidden border border-slate-700">
-                    <img src="{{ \Illuminate\Support\Facades\Storage::url($empresaActualLayout->logo_path) }}" alt="{{ $empresaActualLayout->nombre_comercial }}" class="h-full w-full object-contain">
+        <div class="h-16 flex items-center px-4 bg-slate-950 border-b border-slate-800 sidebar-brand-container justify-between">
+            <div class="flex items-center min-w-0">
+                @if($empresaActualLayout?->logo_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($empresaActualLayout->logo_path))
+                    <div class="h-10 w-10 flex-shrink-0 bg-white rounded-xl p-1 shadow-md mr-3 sidebar-logo flex items-center justify-center overflow-hidden border border-slate-700">
+                        <img src="{{ \Illuminate\Support\Facades\Storage::url($empresaActualLayout->logo_path) }}" alt="{{ $empresaActualLayout->nombre_comercial }}" class="h-full w-full object-contain">
+                    </div>
+                @else
+                    <div class="h-10 w-10 flex-shrink-0 bg-theme-primary rounded-xl flex items-center justify-center text-white font-black text-sm tracking-wider shadow-md shadow-slate-950/40 mr-3 sidebar-logo">
+                        {{ mb_strtoupper(mb_substr($empresaActualLayout?->nombre_comercial ?? 'POS', 0, 2)) }}
+                    </div>
+                @endif
+                <div class="truncate sidebar-brand-text">
+                    <span class="font-bold text-white tracking-wide block truncate text-sm" title="{{ $empresaActualLayout?->nombre_comercial ?? 'POS Comercial' }}">
+                        {{ $empresaActualLayout?->nombre_comercial ?? 'POS Comercial' }}
+                    </span>
+                    <span class="text-xs text-slate-400 block truncate font-mono">
+                        NIT: {{ $empresaActualLayout?->nit ? $empresaActualLayout->nit . ($empresaActualLayout->dv ? '-' . $empresaActualLayout->dv : '') : 'Global' }}
+                    </span>
                 </div>
-            @else
-                <div class="h-10 w-10 flex-shrink-0 bg-theme-primary rounded-xl flex items-center justify-center text-white font-black text-sm tracking-wider shadow-md shadow-slate-950/40 mr-3">
-                    {{ mb_strtoupper(mb_substr($empresaActualLayout?->nombre_comercial ?? 'POS', 0, 2)) }}
-                </div>
-            @endif
-            <div class="truncate">
-                <span class="font-bold text-white tracking-wide block truncate text-sm" title="{{ $empresaActualLayout?->nombre_comercial ?? 'POS Comercial' }}">
-                    {{ $empresaActualLayout?->nombre_comercial ?? 'POS Comercial' }}
-                </span>
-                <span class="text-xs text-slate-400 block truncate font-mono">
-                    NIT: {{ $empresaActualLayout?->nit ? $empresaActualLayout->nit . ($empresaActualLayout->dv ? '-' . $empresaActualLayout->dv : '') : 'Global' }}
-                </span>
             </div>
+            <!-- Botón de colapso rápido dentro del sidebar -->
+            <button type="button" @click="sidebarCollapsed = !sidebarCollapsed"
+                    class="hidden lg:flex sidebar-brand-text p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition cursor-pointer"
+                    title="Minimizar menú lateral">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                </svg>
+            </button>
         </div>
 
         <!-- Navigation Links -->
-        <nav class="flex-1 min-h-0 px-4 py-6 space-y-1.5 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+        <nav class="flex-1 min-h-0 px-3 py-6 space-y-1.5 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
             <a href="{{ route('dashboard') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('dashboard') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('dashboard') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Dashboard">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
-                Dashboard
+                <span class="sidebar-text truncate">Dashboard</span>
             </a>
 
             @if(auth()->user()->isSuperAdmin())
-            <div class="pt-4 pb-1 text-xs font-semibold text-purple-400 uppercase tracking-wider px-3 flex items-center justify-between">
+            <div class="sidebar-section-header pt-4 pb-1 text-xs font-semibold text-purple-400 uppercase tracking-wider px-3 flex items-center justify-between">
                 <span>Plataforma SaaS</span>
-                <span class="text-[10px] bg-purple-950 text-purple-300 px-1.5 py-0.5 rounded border border-purple-800">Super Admin</span>
+                <span class="text-[10px] bg-purple-950 text-purple-300 px-1.5 py-0.5 rounded border border-purple-800 sidebar-badge">Super Admin</span>
             </div>
+            <div class="sidebar-section-divider hidden my-2 border-t border-slate-800/80 mx-2" title="Plataforma SaaS"></div>
 
             <a href="{{ route('empresas.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('empresas.*') ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('empresas.*') ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Comercios / Empresas">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
-                Comercios / Empresas
+                <span class="sidebar-text truncate">Comercios / Empresas</span>
             </a>
             @endif
 
             @canany(['empresa.gestionar', 'sucursales.gestionar', 'usuarios.ver', 'usuarios.gestionar'])
-            <div class="pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
+            <div class="sidebar-section-header pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
                 Gestión Empresarial
             </div>
+            <div class="sidebar-section-divider hidden my-2 border-t border-slate-800/80 mx-2" title="Gestión Empresarial"></div>
 
             @can('empresa.gestionar')
             <a href="{{ route('empresa.perfil') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('empresa.perfil') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('empresa.perfil') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Perfil de Empresa">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
-                Perfil de Empresa
+                <span class="sidebar-text truncate">Perfil de Empresa</span>
             </a>
             @endcan
 
             @canany(['usuarios.ver', 'usuarios.gestionar'])
             <a href="{{ route('usuarios.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('usuarios.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('usuarios.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Usuarios y Roles">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
-                Usuarios y Roles
+                <span class="sidebar-text truncate">Usuarios y Roles</span>
             </a>
             @endcanany
 
             @can('sucursales.gestionar')
             <a href="{{ route('sucursales.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('sucursales.index') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('sucursales.index') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Sucursales">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                Sucursales
+                <span class="sidebar-text truncate">Sucursales</span>
             </a>
 
             <a href="{{ route('traslados.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('traslados.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('traslados.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Traslados Sucursal">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                 </svg>
-                Traslados Sucursal
+                <span class="sidebar-text truncate">Traslados Sucursal</span>
             </a>
             @endcan
             @endcanany
 
             @canany(['productos.ver', 'listas_precios.ver', 'inventario.ver'])
-            <div class="pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
+            <div class="sidebar-section-header pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
                 Inventario & Productos
             </div>
+            <div class="sidebar-section-divider hidden my-2 border-t border-slate-800/80 mx-2" title="Inventario & Productos"></div>
 
             @can('productos.ver')
             <a href="{{ route('productos.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('productos.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('productos.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Productos">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
-                Productos
+                <span class="sidebar-text truncate">Productos</span>
             </a>
             @endcan
 
             @can('listas_precios.ver')
             <a href="{{ route('listas-precios.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('listas-precios.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('listas-precios.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Listas de Precios">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                 </svg>
-                Listas de Precios
+                <span class="sidebar-text truncate">Listas de Precios</span>
             </a>
             @endcan
 
             @can('inventario.ver')
             <a href="{{ route('inventario.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('inventario.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('inventario.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Inventario & Kardex">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                 </svg>
-                Inventario & Kardex
+                <span class="sidebar-text truncate">Inventario & Kardex</span>
             </a>
             @endcan
 
             @can('productos.ver')
             <a href="{{ route('catalogos.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('catalogos.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('catalogos.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Catálogos Auxiliares">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                 </svg>
-                Catálogos Auxiliares
+                <span class="sidebar-text truncate">Catálogos Auxiliares</span>
             </a>
             @endcan
             @endcanany
 
             @canany(['compras.ver', 'proveedores.ver'])
-            <div class="pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
+            <div class="sidebar-section-header pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
                 Compras & Proveedores
             </div>
+            <div class="sidebar-section-divider hidden my-2 border-t border-slate-800/80 mx-2" title="Compras & Proveedores"></div>
 
             @can('compras.ver')
             <a href="{{ route('compras.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('compras.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('compras.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Compras / Facturas">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
-                Compras / Facturas
+                <span class="sidebar-text truncate">Compras / Facturas</span>
             </a>
             @endcan
 
             @can('proveedores.ver')
             <a href="{{ route('proveedores.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('proveedores.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('proveedores.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Proveedores">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
-                Proveedores
+                <span class="sidebar-text truncate">Proveedores</span>
             </a>
             @endcan
             @endcanany
 
             @canany(['ventas.ver', 'ventas.devolver', 'documentos.ver', 'clientes.ver', 'cartera.ver'])
-            <div class="pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
+            <div class="sidebar-section-header pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
                 Ventas & Clientes
             </div>
+            <div class="sidebar-section-divider hidden my-2 border-t border-slate-800/80 mx-2" title="Ventas & Clientes"></div>
 
             @can('ventas.ver')
             <a href="{{ route('ventas.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('ventas.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('ventas.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Ventas Realizadas">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
-                Ventas Realizadas
+                <span class="sidebar-text truncate">Ventas Realizadas</span>
             </a>
             @endcan
 
             @can('ventas.devolver')
             <a href="{{ route('devoluciones.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('devoluciones.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('devoluciones.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Devoluciones">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z" />
                 </svg>
-                Devoluciones
+                <span class="sidebar-text truncate">Devoluciones</span>
             </a>
             @endcan
 
             @can('documentos.ver')
             <a href="{{ route('documentos.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('documentos.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('documentos.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Documentos de Venta">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                Documentos de Venta
+                <span class="sidebar-text truncate">Documentos de Venta</span>
             </a>
             @endcan
 
             @can('clientes.ver')
             <a href="{{ route('clientes.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('clientes.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('clientes.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Clientes">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
-                Clientes
+                <span class="sidebar-text truncate">Clientes</span>
             </a>
             @endcan
 
             @can('cartera.ver')
             <a href="{{ route('cartera.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('cartera.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('cartera.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Crédito & Cartera">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                 </svg>
-                Crédito & Cartera
+                <span class="sidebar-text truncate">Crédito & Cartera</span>
             </a>
             @endcan
             @endcanany
 
             @canany(['caja.ver', 'ventas.crear'])
-            <div class="pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
+            <div class="sidebar-section-header pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
                 Operaciones & Caja
             </div>
+            <div class="sidebar-section-divider hidden my-2 border-t border-slate-800/80 mx-2" title="Operaciones & Caja"></div>
 
             @can('caja.ver')
             <a href="{{ route('cajas.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('cajas.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('cajas.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Cajas & Turnos">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
-                Cajas & Turnos
+                <span class="sidebar-text truncate">Cajas & Turnos</span>
             </a>
             @endcan
 
             @can('ventas.crear')
             <a href="{{ route('pos.index') }}"
-                class="flex items-center justify-between px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('pos.*') ? 'bg-emerald-600 text-white shadow-sm' : 'text-emerald-400 hover:text-white hover:bg-emerald-800/40' }}">
-                <span class="flex items-center">
-                    <svg class="h-5 w-5 mr-3 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center justify-between px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('pos.*') ? 'bg-emerald-600 text-white shadow-sm' : 'text-emerald-400 hover:text-white hover:bg-emerald-800/40' }}"
+                data-title="Punto de Venta (POS)">
+                <span class="flex items-center min-w-0">
+                    <svg class="h-5 w-5 mr-3 flex-shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
-                    Punto de Venta (POS)
+                    <span class="sidebar-text truncate">Punto de Venta (POS)</span>
                 </span>
-                <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-1.5 py-0.5 rounded">Rápido</span>
+                <span class="sidebar-badge text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-1.5 py-0.5 rounded">Rápido</span>
             </a>
             @endcan
             @endcanany
 
             @canany(['reportes.ver', 'auditoria.ver', 'impuestos.ver'])
-            <div class="pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
+            <div class="sidebar-section-header pt-4 pb-1 text-xs font-semibold text-slate-500 uppercase tracking-wider px-3">
                 Analítica & Negocio
             </div>
+            <div class="sidebar-section-divider hidden my-2 border-t border-slate-800/80 mx-2" title="Analítica & Negocio"></div>
 
             @can('reportes.ver')
             <a href="{{ route('reportes.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('reportes.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('reportes.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Centro de Reportes">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
-                Centro de Reportes
+                <span class="sidebar-text truncate">Centro de Reportes</span>
             </a>
             @endcan
 
             @can('auditoria.ver')
             <a href="{{ route('auditoria.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('auditoria.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('auditoria.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Auditoría & Logs">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
-                Auditoría & Logs
+                <span class="sidebar-text truncate">Auditoría & Logs</span>
             </a>
             @endcan
 
             @can('impuestos.ver')
             <a href="{{ route('impuestos.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('impuestos.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('impuestos.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Impuestos & Tarifas">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z" />
                 </svg>
-                Impuestos & Tarifas
+                <span class="sidebar-text truncate">Impuestos & Tarifas</span>
             </a>
             @endcan
             @endcanany
 
             @canany(['documentos.ver', 'documentos.emitir'])
-            <div class="pt-4 pb-1 px-3">
+            <div class="sidebar-section-header pt-4 pb-1 px-3">
                 <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">DIAN & Fiscal</span>
             </div>
+            <div class="sidebar-section-divider hidden my-2 border-t border-slate-800/80 mx-2" title="DIAN & Fiscal"></div>
 
             @can('documentos.ver')
             <a href="{{ route('facturacion-electronica.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('facturacion-electronica.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('facturacion-electronica.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Facturación Electrónica">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
-                Facturación Electrónica
+                <span class="sidebar-text truncate">Facturación Electrónica</span>
             </a>
 
             <a href="{{ route('resoluciones.index') }}"
-                class="flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('resoluciones.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="sidebar-link flex items-center px-3.5 py-2.5 text-sm font-medium rounded-xl transition {{ request()->routeIs('resoluciones.*') ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}"
+                data-title="Resoluciones DIAN">
+                <svg class="h-5 w-5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                Resoluciones DIAN
+                <span class="sidebar-text truncate">Resoluciones DIAN</span>
             </a>
             @endcan
             @endcanany
         </nav>
 
         <!-- User footer -->
-        <div class="p-4 border-t border-slate-800 bg-slate-950/60 flex items-center justify-between">
-            <div class="truncate mr-2">
+        <div class="p-3 border-t border-slate-800 bg-slate-950/60 flex items-center justify-between sidebar-footer">
+            <div class="truncate mr-2 sidebar-user-info">
                 <div class="text-sm font-semibold text-white truncate">{{ auth()->user()->name }}</div>
                 <div class="text-xs text-indigo-400 truncate">{{ auth()->user()->roles->first()?->name ?? 'Usuario' }}</div>
             </div>
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
-                <button type="submit" class="p-2 text-slate-400 hover:text-red-400 transition rounded-lg hover:bg-slate-800" title="Cerrar sesión">
+                <button type="submit" class="p-2 text-slate-400 hover:text-red-400 transition rounded-lg hover:bg-slate-800 cursor-pointer" title="Cerrar sesión">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
@@ -896,9 +1012,14 @@
         @auth
         <!-- Header superior universal -->
         <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-10 flex-shrink-0">
-            <!-- Left: Mobile Menu Button & Brand Header Indicator -->
+            <!-- Left: Botón Hamburguesa Universal (Móvil abre drawer, Desktop minimiza/maximiza) & Brand Header Indicator -->
             <div class="flex items-center space-x-3">
-                <button type="button" @click="mobileMenuOpen = true" class="lg:hidden p-2 text-slate-600 hover:text-slate-900 rounded-xl hover:bg-slate-100 transition">
+                <button type="button" 
+                        @click="toggleSidebar()" 
+                        class="p-2 text-slate-600 hover:text-slate-900 rounded-xl hover:bg-slate-100 transition flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-indigo-500/20 cursor-pointer"
+                        :title="sidebarCollapsed ? 'Maximizar menú lateral' : 'Minimizar menú lateral'"
+                        id="btn-toggle-sidebar"
+                        aria-label="Alternar menú lateral">
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>

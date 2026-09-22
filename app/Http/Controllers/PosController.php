@@ -102,6 +102,7 @@ class PosController extends Controller
                 'categoria_nombre' => $p->categoria?->nombre ?? 'General',
                 'unidad' => $p->unidadMedida?->abreviatura ?? 'UND',
                 'iva_porcentaje' => (float) ($p->impuesto_porcentaje ?? 0),
+                'imagen_url' => $p->imagen_url,
             ];
         })->filter()->values();
 

@@ -117,13 +117,34 @@ class="max-w-[1720px] mx-auto pb-10">
                 <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 max-h-[580px] overflow-y-auto pr-1">
                     <template x-for="p in filteredProducts" :key="p.id">
                         <div @click="addToCart(p)"
-                             class="group p-3 rounded-2xl border border-slate-200 hover:border-indigo-500 hover:shadow-md transition cursor-pointer flex flex-col justify-between bg-slate-50/50 hover:bg-white relative">
+                             class="group p-3 rounded-2xl border border-slate-200 hover:border-indigo-500 hover:shadow-lg transition-all duration-200 cursor-pointer flex flex-col justify-between bg-white relative overflow-hidden">
                             
-                            <!-- Badges -->
-                            <div class="flex items-center justify-between mb-1.5">
-                                <span class="text-[10px] font-bold text-slate-500 uppercase truncate max-w-[90px]" x-text="p.categoria_nombre"></span>
-                                <span :class="p.stock > 5 ? 'bg-emerald-100 text-emerald-800' : (p.stock > 0 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800')"
-                                      class="text-[10px] font-black px-1.5 py-0.5 rounded-md">
+                            <!-- Contenedor de Imagen de Producto con Badges flotantes -->
+                            <div class="relative w-full h-28 sm:h-32 mb-2 rounded-xl overflow-hidden bg-slate-100 border border-slate-200/60 flex items-center justify-center flex-shrink-0">
+                                <!-- Si tiene imagen -->
+                                <template x-if="p.imagen_url">
+                                    <img :src="p.imagen_url" 
+                                         :alt="p.nombre" 
+                                         loading="lazy"
+                                         class="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-300">
+                                </template>
+                                <!-- Si no tiene imagen (Placeholder elegante) -->
+                                <template x-if="!p.imagen_url">
+                                    <div class="h-full w-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100/80 text-slate-300 group-hover:text-indigo-400 transition-colors">
+                                        <svg class="h-8 w-8 mb-0.5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        <span class="text-[9px] font-semibold text-slate-400 tracking-wider uppercase">Sin foto</span>
+                                    </div>
+                                </template>
+
+                                <!-- Badge de Categoría (flotante superior izquierda) -->
+                                <span class="absolute top-1.5 left-1.5 text-[9px] font-bold text-slate-800 bg-white/90 backdrop-blur-xs px-2 py-0.5 rounded-md shadow-xs uppercase truncate max-w-[90px]"
+                                      x-text="p.categoria_nombre"></span>
+
+                                <!-- Badge de Stock (flotante superior derecha) -->
+                                <span :class="p.stock > 5 ? 'bg-emerald-600/90 text-white' : (p.stock > 0 ? 'bg-amber-600/90 text-white' : 'bg-red-600/90 text-white')"
+                                      class="absolute top-1.5 right-1.5 text-[10px] font-black px-1.5 py-0.5 rounded-md shadow-xs backdrop-blur-xs">
                                     <span x-text="p.stock"></span> <span x-text="p.unidad"></span>
                                 </span>
                             </div>
@@ -135,11 +156,11 @@ class="max-w-[1720px] mx-auto pb-10">
                             </div>
 
                             <!-- Price -->
-                            <div class="flex items-center justify-between pt-2 border-t border-slate-200/60 mt-auto">
+                            <div class="flex items-center justify-between pt-2 border-t border-slate-100 mt-auto">
                                 <span class="text-xs sm:text-sm font-black text-slate-900">
                                     $<span x-text="formatCurrency(p.precio_venta)"></span>
                                 </span>
-                                <div class="h-6 w-6 rounded-lg bg-indigo-50 group-hover:bg-indigo-600 group-hover:text-white text-indigo-600 flex items-center justify-center transition">
+                                <div class="h-6 w-6 rounded-lg bg-indigo-50 group-hover:bg-indigo-600 group-hover:text-white text-indigo-600 flex items-center justify-center transition shadow-xs">
                                     <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" /></svg>
                                 </div>
                             </div>
@@ -191,7 +212,19 @@ class="max-w-[1720px] mx-auto pb-10">
 
                     <div class="max-h-[320px] overflow-y-auto divide-y divide-slate-100">
                         <template x-for="(item, idx) in cart" :key="item.id">
-                            <div class="p-3 hover:bg-slate-50/70 transition flex items-center justify-between gap-2">
+                            <div class="p-3 hover:bg-slate-50/70 transition flex items-center justify-between gap-2.5">
+                                <!-- Mini Thumbnail -->
+                                <div class="h-10 w-10 rounded-xl bg-slate-100 border border-slate-200/80 overflow-hidden flex-shrink-0 flex items-center justify-center">
+                                    <template x-if="item.imagen_url">
+                                        <img :src="item.imagen_url" :alt="item.nombre" class="h-full w-full object-cover">
+                                    </template>
+                                    <template x-if="!item.imagen_url">
+                                        <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                    </template>
+                                </div>
+
                                 <div class="flex-1 min-w-0">
                                     <h5 class="text-xs font-bold text-slate-900 truncate" x-text="item.nombre"></h5>
                                     <div class="text-[11px] text-slate-500">
@@ -637,7 +670,8 @@ function posTerminal(config) {
                     impuesto_porcentaje: parseFloat(product.iva_porcentaje || 0),
                     descuento: 0,
                     stock: product.stock,
-                    unidad: product.unidad
+                    unidad: product.unidad,
+                    imagen_url: product.imagen_url || null
                 });
             }
         },
