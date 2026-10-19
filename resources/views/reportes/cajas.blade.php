@@ -3,37 +3,38 @@
 @section('title', 'Reporte de Cajas')
 
 @section('content')
-<div class="w-full max-w-[1680px] mx-auto space-y-6">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-            <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
-                <a href="{{ route('reportes.index') }}" class="hover:text-indigo-600 transition">Reportes</a>
-                <span>&rsaquo;</span>
-                <span class="text-indigo-600">Cajas</span>
-            </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Reporte de Turnos y Arqueos de Caja</h1>
-        </div>
-        <div>
-            <a href="{{ route('reportes.cajas.imprimir', request()->all()) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-sm font-bold transition shadow-sm">
+<div class="space-y-6">
+    <x-page-header
+        title="Reporte de Turnos y Arqueos de Caja"
+        subtitle="Auditoría de aperturas, cierres de turno, control de efectivo y diferencias de arqueo."
+        :breadcrumbs="[
+            ['label' => 'Reportes', 'url' => route('reportes.index')],
+            ['label' => 'Cajas']
+        ]">
+        <x-slot:actions>
+            <a href="{{ route('reportes.cajas.imprimir', request()->all()) }}" target="_blank" class="btn-secondary">
+                <svg class="h-4 w-4 mr-1.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
                 Imprimir / PDF
             </a>
-        </div>
-    </div>
+        </x-slot:actions>
+    </x-page-header>
 
     <!-- Filtros -->
-    <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
-        <form method="GET" action="{{ route('reportes.cajas') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+    <div class="card p-4">
+        <form method="GET" action="{{ route('reportes.cajas') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             <div>
-                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Desde</label>
-                <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200">
+                <label class="label-base">Desde</label>
+                <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="input-base text-xs">
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Hasta</label>
-                <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200">
+                <label class="label-base">Hasta</label>
+                <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="input-base text-xs">
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Caja</label>
-                <select name="caja_id" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200">
+                <label class="label-base">Caja</label>
+                <select name="caja_id" class="input-select text-xs">
                     <option value="">Todas</option>
                     @foreach($cajas as $c)
                         <option value="{{ $c->id }}" {{ $cajaId == $c->id ? 'selected' : '' }}>{{ $c->nombre }}</option>
@@ -41,92 +42,110 @@
                 </select>
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Estado</label>
-                <select name="estado" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200">
+                <label class="label-base">Estado</label>
+                <select name="estado" class="input-select text-xs">
                     <option value="">Todos</option>
                     <option value="ABIERTA" {{ $estado === 'ABIERTA' ? 'selected' : '' }}>Abierta</option>
                     <option value="CERRADA" {{ $estado === 'CERRADA' ? 'selected' : '' }}>Cerrada</option>
                 </select>
             </div>
             <div class="flex items-end gap-2">
-                <button type="submit" class="w-full px-4 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition shadow-sm">Filtrar</button>
-                <a href="{{ route('reportes.cajas') }}" class="px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-xl border border-slate-200 transition">Limpiar</a>
+                <button type="submit" class="btn-primary flex-1">Filtrar</button>
+                <a href="{{ route('reportes.cajas') }}" class="btn-secondary">Limpiar</a>
             </div>
         </form>
     </div>
 
     <!-- KPIs -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Ventas en Efectivo</span>
-            <div class="text-2xl font-extrabold text-emerald-600 mt-1">${{ number_format($totalVentasEfectivo, 2) }}</div>
-            <span class="text-xs text-slate-500">Cobrado en ventanilla</span>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Ingresos Extra</span>
-            <div class="text-2xl font-extrabold text-slate-900 mt-1">${{ number_format($totalIngresos, 2) }}</div>
-            <span class="text-xs text-slate-500">Inyecciones a caja</span>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Egresos / Gastos</span>
-            <div class="text-2xl font-extrabold text-rose-600 mt-1">${{ number_format($totalEgresos, 2) }}</div>
-            <span class="text-xs text-slate-500">Salidas de dinero</span>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Diferencias Arqueo</span>
-            <div class="text-2xl font-extrabold {{ $totalDiferencias < 0 ? 'text-rose-600' : 'text-slate-900' }} mt-1">${{ number_format($totalDiferencias, 2) }}</div>
-            <span class="text-xs text-slate-500">Sobrantes (+) / Faltantes (-)</span>
-        </div>
+        <x-kpi-card
+            label="Ventas en Efectivo"
+            value="${{ number_format($totalVentasEfectivo, 2) }}"
+            context="Cobrado en ventanilla"
+            variant="success"
+            icon="currency-dollar"
+        />
+
+        <x-kpi-card
+            label="Ingresos Extra"
+            value="${{ number_format($totalIngresos, 2) }}"
+            context="Inyecciones a caja"
+            icon="check"
+        />
+
+        <x-kpi-card
+            label="Egresos / Gastos"
+            value="${{ number_format($totalEgresos, 2) }}"
+            context="Salidas de dinero"
+            variant="danger"
+            icon="alert"
+        />
+
+        <x-kpi-card
+            label="Diferencias Arqueo"
+            value="${{ number_format($totalDiferencias, 2) }}"
+            context="Sobrantes (+) / Faltantes (-)"
+            variant="{{ $totalDiferencias < 0 ? 'danger' : 'default' }}"
+            icon="credit-card"
+        />
     </div>
 
     <!-- Tabla -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="card p-0 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-slate-100 text-left text-sm text-slate-600">
-                <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-xs tracking-wider">
+            <table class="table-corporate">
+                <thead>
                     <tr>
-                        <th class="py-3.5 px-4">Caja / Sede</th>
-                        <th class="py-3.5 px-4">Cajero</th>
-                        <th class="py-3.5 px-4">Apertura</th>
-                        <th class="py-3.5 px-4">Cierre</th>
-                        <th class="py-3.5 px-4 text-right">Inicial</th>
-                        <th class="py-3.5 px-4 text-right">Esperado</th>
-                        <th class="py-3.5 px-4 text-right">Contado</th>
-                        <th class="py-3.5 px-4 text-right">Diferencia</th>
-                        <th class="py-3.5 px-4 text-center">Estado</th>
+                        <th>Caja / Sede</th>
+                        <th>Cajero</th>
+                        <th>Apertura</th>
+                        <th>Cierre</th>
+                        <th class="text-right">Inicial</th>
+                        <th class="text-right">Esperado</th>
+                        <th class="text-right">Contado</th>
+                        <th class="text-right">Diferencia</th>
+                        <th class="text-center">Estado</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
+                <tbody>
                     @forelse($sesiones as $s)
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="py-3 px-4">
-                            <div class="font-bold text-slate-900">{{ $s->caja?->nombre }}</div>
-                            <div class="text-xs text-slate-400">{{ $s->sucursal?->nombre }}</div>
+                    <tr>
+                        <td>
+                            <div class="font-semibold text-slate-900 text-xs">{{ $s->caja?->nombre }}</div>
+                            <div class="text-[11px] text-slate-400">{{ $s->sucursal?->nombre }}</div>
                         </td>
-                        <td class="py-3 px-4">{{ $s->cajero?->name }}</td>
-                        <td class="py-3 px-4 text-xs text-slate-500">{{ $s->fecha_apertura->format('d/m/Y H:i') }}</td>
-                        <td class="py-3 px-4 text-xs text-slate-500">{{ $s->fecha_cierre ? $s->fecha_cierre->format('d/m/Y H:i') : '--' }}</td>
-                        <td class="py-3 px-4 text-right">${{ number_format($s->monto_apertura, 2) }}</td>
-                        <td class="py-3 px-4 text-right font-medium">${{ number_format($s->monto_cierre_esperado ?? 0, 2) }}</td>
-                        <td class="py-3 px-4 text-right font-bold text-slate-900">${{ number_format($s->monto_cierre_contado ?? 0, 2) }}</td>
-                        <td class="py-3 px-4 text-right font-extrabold {{ (float)$s->diferencia < 0 ? 'text-rose-600' : ((float)$s->diferencia > 0 ? 'text-emerald-600' : 'text-slate-700') }}">
+                        <td class="text-xs text-slate-700">{{ $s->cajero?->name }}</td>
+                        <td class="text-xs text-slate-500 font-mono">{{ $s->fecha_apertura->format('d/m/Y H:i') }}</td>
+                        <td class="text-xs text-slate-500 font-mono">{{ $s->fecha_cierre ? $s->fecha_cierre->format('d/m/Y H:i') : '--' }}</td>
+                        <td class="text-right font-mono text-xs text-slate-700 tabular-nums">${{ number_format($s->monto_apertura, 2) }}</td>
+                        <td class="text-right font-mono text-xs text-slate-700 tabular-nums">${{ number_format($s->monto_cierre_esperado ?? 0, 2) }}</td>
+                        <td class="text-right font-mono font-semibold text-xs text-slate-900 tabular-nums">${{ number_format($s->monto_cierre_contado ?? 0, 2) }}</td>
+                        <td class="text-right font-mono font-semibold text-xs tabular-nums {{ (float)$s->diferencia < 0 ? 'text-red-600' : ((float)$s->diferencia > 0 ? 'text-emerald-600' : 'text-slate-700') }}">
                             ${{ number_format($s->diferencia ?? 0, 2) }}
                         </td>
-                        <td class="py-3 px-4 text-center">
-                            <span class="px-2 py-0.5 rounded-full text-xs font-bold {{ $s->estado->value === 'ABIERTA' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-800' }}">
+                        <td class="text-center">
+                            <span class="badge {{ $s->estado->value === 'ABIERTA' ? 'badge-warning' : 'badge-neutral' }}">
                                 {{ $s->estado->value }}
                             </span>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="9" class="py-8 text-center text-slate-400">No hay sesiones de caja registradas.</td>
+                        <td colspan="9" class="text-center py-12">
+                            <div class="empty-state">
+                                <svg class="empty-state-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                                <p class="empty-state-title">No hay sesiones de caja</p>
+                                <p class="empty-state-desc">No se encontraron turnos de caja para los filtros seleccionados.</p>
+                            </div>
+                        </td>
                     </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        <div class="p-4 border-t border-slate-100">
+        <div class="p-4 border-t border-slate-200">
             {{ $sesiones->links() }}
         </div>
     </div>

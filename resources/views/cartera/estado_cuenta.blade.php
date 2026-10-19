@@ -153,14 +153,14 @@
 @endsection
 
 @section('content')
-<div class="max-w-[1680px] mx-auto space-y-6">
+<div class="space-y-6">
 
     {{-- Membrete exclusivo para impresión (Oculto en pantalla) --}}
     <div class="print-only-header hidden border-b-2 border-slate-900 pb-3 mb-2">
         <div class="flex justify-between items-start">
             <div>
                 <span class="text-[9px] font-bold tracking-wider text-slate-500 uppercase">Crédito & Cartera</span>
-                <h1 class="text-xl font-black text-slate-900 tracking-tight leading-none">ESTADO DE CUENTA</h1>
+                <h1 class="text-xl font-bold text-slate-900 tracking-tight leading-none">ESTADO DE CUENTA</h1>
                 <p class="text-xs font-semibold text-slate-600 mt-1">Consolidado general de obligaciones y recaudos</p>
             </div>
             <div class="text-right text-[10px] text-slate-600 leading-tight">
@@ -175,70 +175,47 @@
     </div>
 
     {{-- Encabezado & Acciones en Pantalla --}}
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 no-print">
-        <div>
-            <div class="flex items-center space-x-2 text-xs font-semibold text-slate-500 mb-1">
-                <a href="{{ route('cartera.index') }}" class="hover:text-indigo-600 transition">Crédito & Cartera</a>
-                <span>/</span>
-                <span class="text-slate-800">Estado de Cuenta</span>
-            </div>
-            <div class="flex items-center gap-3">
-                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">
-                    Estado de Cuenta: {{ $cliente->razon_social }}
-                </h1>
-                @if($deudaVencida > 0)
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300">
-                        CLIENTE EN MORA
-                    </span>
-                @else
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                        AL DÍA
-                    </span>
-                @endif
-            </div>
-            <p class="text-sm text-slate-500">Resumen integral de facturas a crédito, pagos aplicados y cupo comercial.</p>
-        </div>
-
-        <div class="flex items-center gap-2">
-            <a href="{{ route('cartera.index') }}"
-                class="inline-flex items-center px-3.5 py-2 rounded-xl border border-slate-300 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 transition shadow-sm">
+    <x-page-header
+        title="Estado de Cuenta: {{ $cliente->razon_social }}"
+        description="Resumen integral de facturas a crédito, pagos aplicados y cupo comercial."
+        :breadcrumbs="[
+            ['label' => 'Crédito & Cartera', 'url' => route('cartera.index')],
+            ['label' => 'Estado de Cuenta']
+        ]">
+        <x-slot:actions>
+            <x-button variant="secondary" href="{{ route('cartera.index') }}">
                 <svg class="h-4 w-4 mr-1.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
                 Volver a Cartera
-            </a>
+            </x-button>
 
-            <button type="button" onclick="window.print()"
-                class="inline-flex items-center px-4 py-2 rounded-xl text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 transition shadow-sm cursor-pointer">
+            <x-button variant="primary" type="button" onclick="window.print()">
                 <svg class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                 </svg>
                 Imprimir Estado de Cuenta
-            </button>
-        </div>
-    </div>
+            </x-button>
+        </x-slot:actions>
+    </x-page-header>
 
     <!-- Banner de Resumen de Cartera y Cupo -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
-        <div class="flex flex-col sm:flex-row justify-between items-start pb-6 border-b border-slate-100 gap-4 print:pb-2 print:border-slate-200">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start pb-5 border-b border-slate-100 gap-4 print:pb-2 print:border-slate-200">
             <div class="flex items-center space-x-4">
-                <div class="h-14 w-14 rounded-2xl flex items-center justify-center font-black text-lg client-avatar-box {{ $cliente->tipo_persona->value === 'JURIDICA' ? 'bg-blue-100 text-blue-700' : 'bg-indigo-100 text-indigo-700' }}">
+                <div class="h-12 w-12 rounded-xl flex items-center justify-center font-bold text-base client-avatar-box {{ $cliente->tipo_persona->value === 'JURIDICA' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-slate-100 text-slate-700 border border-slate-200' }}">
                     {{ strtoupper(substr($cliente->razon_social, 0, 2)) }}
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
-                        <h2 class="text-xl font-black text-slate-900 print:text-base">{{ $cliente->razon_social }}</h2>
+                        <h2 class="text-lg font-bold text-slate-900 print:text-base">{{ $cliente->razon_social }}</h2>
                         @if($deudaVencida > 0)
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-200">
-                                MORA
-                            </span>
+                            <x-badge color="danger">MORA</x-badge>
                         @else
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
-                                AL DÍA
-                            </span>
+                            <x-badge color="success">AL DÍA</x-badge>
                         @endif
                     </div>
-                    <p class="text-xs text-slate-500 font-semibold mt-0.5 print:text-[9.5px]">
+                    <p class="text-xs text-slate-500 font-mono mt-0.5 print:text-[9.5px]">
                         {{ $cliente->tipo_documento->value }}: {{ $cliente->numero_documento }}
                         @if($cliente->nombre_comercial) • Comercial: {{ $cliente->nombre_comercial }} @endif
                     </p>
@@ -249,39 +226,39 @@
             </div>
 
             <div class="text-right print:hidden">
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Fecha de Emisión:</span>
-                <span class="text-sm font-bold text-slate-800">{{ now()->translatedFormat('d \d\e F \d\e Y') }}</span>
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Fecha de Emisión:</span>
+                <span class="text-sm font-semibold text-slate-800">{{ now()->translatedFormat('d \d\e F \d\e Y') }}</span>
             </div>
         </div>
 
         <!-- 4 Tarjetas de Métricas del Cliente -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 kpi-container">
-            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 kpi-card-item">
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block print:text-[8pt]">Cupo de Crédito</span>
-                <div class="text-xl font-black text-slate-900 mt-1">${{ number_format($cupoTotal, 2) }}</div>
-                <div class="text-[11px] text-slate-500 mt-0.5 print:text-[7.5pt]">Plazo: {{ $cliente->plazo_dias }} días</div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 kpi-card-item">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider block print:text-[8pt]">Cupo de Crédito</span>
+                <div class="text-xl font-bold font-mono tabular-nums text-slate-900 mt-1">${{ number_format($cupoTotal, 2) }}</div>
+                <div class="text-xs text-slate-500 mt-0.5 print:text-[7.5pt]">Plazo: {{ $cliente->plazo_dias }} días</div>
             </div>
 
-            <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-100 kpi-card-item">
-                <span class="text-xs font-bold text-amber-700 uppercase tracking-wider block print:text-[8pt]">Deuda Total Pendiente</span>
-                <div class="text-xl font-black text-amber-900 mt-1">${{ number_format($totalDeuda, 2) }}</div>
-                <div class="text-[11px] text-amber-700 mt-0.5 print:text-[7.5pt]">{{ $cuentasPendientes->count() }} facturas activas</div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 kpi-card-item">
+                <span class="text-xs font-semibold text-amber-700 uppercase tracking-wider block print:text-[8pt]">Deuda Total Pendiente</span>
+                <div class="text-xl font-bold font-mono tabular-nums text-amber-800 mt-1">${{ number_format($totalDeuda, 2) }}</div>
+                <div class="text-xs text-amber-700 mt-0.5 print:text-[7.5pt]">{{ $cuentasPendientes->count() }} facturas activas</div>
             </div>
 
-            <div class="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100 kpi-card-item">
-                <span class="text-xs font-bold text-emerald-700 uppercase tracking-wider block print:text-[8pt]">Cupo Disponible</span>
-                <div class="text-xl font-black text-emerald-600 mt-1">${{ number_format($cupoDisponible, 2) }}</div>
-                <div class="text-[11px] text-emerald-700 mt-0.5 print:text-[7.5pt]">{{ 100 - $porcentajeUtilizado }}% libre</div>
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 kpi-card-item">
+                <span class="text-xs font-semibold text-emerald-700 uppercase tracking-wider block print:text-[8pt]">Cupo Disponible</span>
+                <div class="text-xl font-bold font-mono tabular-nums text-emerald-700 mt-1">${{ number_format($cupoDisponible, 2) }}</div>
+                <div class="text-xs text-emerald-700 mt-0.5 print:text-[7.5pt]">{{ 100 - $porcentajeUtilizado }}% libre</div>
             </div>
 
-            <div class="p-4 rounded-2xl {{ $deudaVencida > 0 ? 'bg-rose-50 border border-rose-200' : 'bg-slate-50 border border-slate-100' }} kpi-card-item">
-                <span class="text-xs font-bold {{ $deudaVencida > 0 ? 'text-rose-700' : 'text-slate-400' }} uppercase tracking-wider block print:text-[8pt]">
+            <div class="p-4 rounded-xl {{ $deudaVencida > 0 ? 'bg-rose-50 border border-rose-200' : 'bg-slate-50 border border-slate-200/80' }} kpi-card-item">
+                <span class="text-xs font-semibold {{ $deudaVencida > 0 ? 'text-rose-700' : 'text-slate-500' }} uppercase tracking-wider block print:text-[8pt]">
                     Saldo Vencido (Mora)
                 </span>
-                <div class="text-xl font-black mt-1 {{ $deudaVencida > 0 ? 'text-rose-600' : 'text-slate-400' }}">
+                <div class="text-xl font-bold font-mono tabular-nums mt-1 {{ $deudaVencida > 0 ? 'text-rose-600' : 'text-slate-400' }}">
                     ${{ number_format($deudaVencida, 2) }}
                 </div>
-                <div class="text-[11px] {{ $deudaVencida > 0 ? 'text-rose-600 font-semibold' : 'text-slate-400' }} mt-0.5 print:text-[7.5pt]">
+                <div class="text-xs {{ $deudaVencida > 0 ? 'text-rose-600 font-medium' : 'text-slate-400' }} mt-0.5 print:text-[7.5pt]">
                     {{ $deudaVencida > 0 ? 'Exige recaudo prioritario' : 'Sin morosidad' }}
                 </div>
             </div>
@@ -289,73 +266,73 @@
 
         <!-- Barra de uso de cupo -->
         <div class="print:mt-1">
-            <div class="flex justify-between text-xs font-bold text-slate-600 mb-1.5 print:text-[8pt] print:mb-0.5">
+            <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1.5 print:text-[8pt] print:mb-0.5">
                 <span>Cupo Utilizado</span>
                 <span>{{ $porcentajeUtilizado }}%</span>
             </div>
-            <div class="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden print:h-1.5">
-                <div class="h-full rounded-full {{ $porcentajeUtilizado > 90 ? 'bg-rose-500' : ($porcentajeUtilizado > 70 ? 'bg-amber-500' : 'bg-indigo-600') }}"
+            <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden print:h-1.5">
+                <div class="h-full rounded-full {{ $porcentajeUtilizado > 90 ? 'bg-rose-500' : ($porcentajeUtilizado > 70 ? 'bg-amber-500' : 'bg-brand-600') }}"
                      style="width: {{ $porcentajeUtilizado }}%"></div>
             </div>
         </div>
     </div>
 
     <!-- Sección 1: Cuentas Pendientes por Cobrar -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="p-6 border-b border-slate-100 flex items-center justify-between print:p-2.5 print:bg-slate-50">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between print:p-2.5 print:bg-slate-50 bg-slate-50/50">
             <div>
-                <h2 class="text-base font-bold text-slate-900 print:text-xs">Obligaciones Pendientes de Pago</h2>
+                <h2 class="text-sm font-bold text-slate-900 print:text-xs">Obligaciones Pendientes de Pago</h2>
                 <p class="text-xs text-slate-500 mt-0.5 print:hidden">Facturas y pagarés a crédito con saldo por cancelar.</p>
             </div>
-            <span class="text-xs font-bold text-slate-500 print:text-[8pt]">{{ $cuentasPendientes->count() }} registros</span>
+            <span class="text-xs font-semibold text-slate-500 print:text-[8pt]">{{ $cuentasPendientes->count() }} registros</span>
         </div>
 
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-200 text-xs table-pendientes">
-                <thead class="bg-slate-50/80 font-bold text-slate-700">
+                <thead class="bg-slate-50 font-semibold text-slate-600">
                     <tr>
-                        <th class="px-6 py-3.5 text-left uppercase">Documento / Concepto</th>
-                        <th class="px-6 py-3.5 text-left uppercase">Emisión</th>
-                        <th class="px-6 py-3.5 text-left uppercase">Vencimiento</th>
-                        <th class="px-6 py-3.5 text-right uppercase">Total</th>
-                        <th class="px-6 py-3.5 text-right uppercase">Abonado</th>
-                        <th class="px-6 py-3.5 text-right uppercase">Saldo Pendiente</th>
-                        <th class="px-6 py-3.5 text-center uppercase">Condición</th>
-                        <th class="px-6 py-3.5 text-right uppercase no-print">Acción</th>
+                        <th class="px-4 py-3 text-left uppercase">Documento / Concepto</th>
+                        <th class="px-4 py-3 text-left uppercase">Emisión</th>
+                        <th class="px-4 py-3 text-left uppercase">Vencimiento</th>
+                        <th class="px-4 py-3 text-right uppercase">Total</th>
+                        <th class="px-4 py-3 text-right uppercase">Abonado</th>
+                        <th class="px-4 py-3 text-right uppercase">Saldo Pendiente</th>
+                        <th class="px-4 py-3 text-center uppercase">Condición</th>
+                        <th class="px-4 py-3 text-right uppercase no-print">Acción</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 bg-white">
                     @forelse($cuentasPendientes as $c)
-                        <tr class="hover:bg-slate-50/70 transition">
-                            <td class="px-6 py-3.5">
-                                <div class="font-bold text-slate-900 font-mono">{{ $c->numero_documento }}</div>
+                        <tr class="hover:bg-slate-50/60 transition">
+                            <td class="px-4 py-3">
+                                <div class="font-semibold text-slate-900 font-mono">{{ $c->numero_documento }}</div>
                                 <div class="text-slate-500 truncate max-w-xs print:max-w-none print:text-[7pt]">{{ $c->concepto }}</div>
                             </td>
-                            <td class="px-6 py-3.5 text-slate-700 whitespace-nowrap">{{ $c->fecha_emision->format('d/m/Y') }}</td>
-                            <td class="px-6 py-3.5 text-slate-700 whitespace-nowrap">{{ $c->fecha_vencimiento->format('d/m/Y') }}</td>
-                            <td class="px-6 py-3.5 text-right font-medium text-slate-800 whitespace-nowrap">${{ number_format($c->monto_total, 2) }}</td>
-                            <td class="px-6 py-3.5 text-right font-bold text-emerald-600 whitespace-nowrap">${{ number_format($c->monto_pagado, 2) }}</td>
-                            <td class="px-6 py-3.5 text-right font-black text-slate-900 whitespace-nowrap">${{ number_format($c->saldo_pendiente, 2) }}</td>
-                            <td class="px-6 py-3.5 text-center whitespace-nowrap">
+                            <td class="px-4 py-3 text-slate-700 whitespace-nowrap">{{ $c->fecha_emision->format('d/m/Y') }}</td>
+                            <td class="px-4 py-3 text-slate-700 whitespace-nowrap">{{ $c->fecha_vencimiento->format('d/m/Y') }}</td>
+                            <td class="px-4 py-3 text-right font-mono text-slate-800 whitespace-nowrap">${{ number_format($c->monto_total, 2) }}</td>
+                            <td class="px-4 py-3 text-right font-mono font-semibold text-emerald-600 whitespace-nowrap">${{ number_format($c->monto_pagado, 2) }}</td>
+                            <td class="px-4 py-3 text-right font-mono font-bold text-slate-900 whitespace-nowrap">${{ number_format($c->saldo_pendiente, 2) }}</td>
+                            <td class="px-4 py-3 text-center whitespace-nowrap">
                                 @if($c->estaVencida())
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 print:text-[7pt] print:px-1.5">
+                                    <x-badge color="danger">
                                         {{ abs($c->diasDiferenciaVencimiento()) }} días mora
-                                    </span>
+                                    </x-badge>
                                 @else
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 print:text-[7pt] print:px-1.5">
+                                    <x-badge color="neutral">
                                         {{ $c->diasDiferenciaVencimiento() }} días restantes
-                                    </span>
+                                    </x-badge>
                                 @endif
                             </td>
-                            <td class="px-6 py-3.5 text-right whitespace-nowrap no-print">
-                                <a href="{{ route('cartera.show', $c) }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">
+                            <td class="px-4 py-3 text-right whitespace-nowrap no-print">
+                                <a href="{{ route('cartera.show', $c) }}" class="text-xs font-semibold text-brand-600 hover:text-brand-800">
                                     Ver Ficha &rarr;
                                 </a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-6 py-8 text-center text-slate-400">
+                            <td colspan="8" class="px-4 py-8 text-center text-slate-400">
                                 ¡Excelente! Este cliente se encuentra totalmente a paz y salvo sin deudas pendientes.
                             </td>
                         </tr>
@@ -366,54 +343,56 @@
     </div>
 
     <!-- Sección 2: Historial Reciente de Abonos -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="p-6 border-b border-slate-100 flex items-center justify-between print:p-2.5 print:bg-slate-50">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between print:p-2.5 print:bg-slate-50 bg-slate-50/50">
             <div>
-                <h2 class="text-base font-bold text-slate-900 print:text-xs">Historial de Pagos & Recaudos</h2>
+                <h2 class="text-sm font-bold text-slate-900 print:text-xs">Historial de Pagos & Recaudos</h2>
                 <p class="text-xs text-slate-500 mt-0.5 print:hidden">Últimos abonos registrados en caja aplicados a la cuenta del cliente.</p>
             </div>
-            <span class="text-xs font-bold text-slate-500 print:text-[8pt]">{{ $historialPagos->count() }} pagos</span>
+            <span class="text-xs font-semibold text-slate-500 print:text-[8pt]">{{ $historialPagos->count() }} pagos</span>
         </div>
 
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-200 text-xs table-historial">
-                <thead class="bg-slate-50/80 font-bold text-slate-700">
+                <thead class="bg-slate-50 font-semibold text-slate-600">
                     <tr>
-                        <th class="px-6 py-3.5 text-left uppercase">N° Recibo</th>
-                        <th class="px-6 py-3.5 text-left uppercase">Fecha</th>
-                        <th class="px-6 py-3.5 text-left uppercase">Obligación / Cuenta</th>
-                        <th class="px-6 py-3.5 text-left uppercase">Medio de Pago</th>
-                        <th class="px-6 py-3.5 text-right uppercase">Monto Abonado</th>
-                        <th class="px-6 py-3.5 text-right uppercase">Saldo Resultante</th>
-                        <th class="px-6 py-3.5 text-center uppercase">Estado</th>
-                        <th class="px-6 py-3.5 text-right uppercase no-print">Recibo</th>
+                        <th class="px-4 py-3 text-left uppercase">N° Recibo</th>
+                        <th class="px-4 py-3 text-left uppercase">Fecha</th>
+                        <th class="px-4 py-3 text-left uppercase">Obligación / Cuenta</th>
+                        <th class="px-4 py-3 text-left uppercase">Medio de Pago</th>
+                        <th class="px-4 py-3 text-right uppercase">Monto Abonado</th>
+                        <th class="px-4 py-3 text-right uppercase">Saldo Resultante</th>
+                        <th class="px-4 py-3 text-center uppercase">Estado</th>
+                        <th class="px-4 py-3 text-right uppercase no-print">Recibo</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 bg-white">
                     @forelse($historialPagos as $p)
-                        <tr class="hover:bg-slate-50/70 transition {{ $p->isAnulado() ? 'opacity-50' : '' }}">
-                            <td class="px-6 py-3.5 font-bold text-slate-900 whitespace-nowrap font-mono">{{ $p->numero_recibo }}</td>
-                            <td class="px-6 py-3.5 text-slate-700 whitespace-nowrap">{{ $p->fecha_pago->format('d/m/Y') }}</td>
-                            <td class="px-6 py-3.5 text-slate-700 whitespace-nowrap font-mono">{{ $p->cuentaPorCobrar->numero_documento }}</td>
-                            <td class="px-6 py-3.5 text-slate-700 whitespace-nowrap">
-                                <span class="px-2 py-0.5 bg-slate-100 rounded text-[11px] font-medium print:text-[7pt] print:bg-transparent print:p-0">{{ $p->metodo_pago->label() }}</span>
+                        <tr class="hover:bg-slate-50/60 transition {{ $p->isAnulado() ? 'opacity-50' : '' }}">
+                            <td class="px-4 py-3 font-semibold text-slate-900 whitespace-nowrap font-mono">{{ $p->numero_recibo }}</td>
+                            <td class="px-4 py-3 text-slate-700 whitespace-nowrap">{{ $p->fecha_pago->format('d/m/Y') }}</td>
+                            <td class="px-4 py-3 text-slate-700 whitespace-nowrap font-mono">{{ $p->cuentaPorCobrar->numero_documento }}</td>
+                            <td class="px-4 py-3 text-slate-700 whitespace-nowrap">
+                                <x-badge color="neutral">{{ $p->metodo_pago->label() }}</x-badge>
                             </td>
-                            <td class="px-6 py-3.5 text-right font-black text-emerald-600 whitespace-nowrap">${{ number_format($p->monto, 2) }}</td>
-                            <td class="px-6 py-3.5 text-right font-bold text-slate-800 whitespace-nowrap">${{ number_format($p->saldo_posterior, 2) }}</td>
-                            <td class="px-6 py-3.5 text-center whitespace-nowrap">
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $p->isAnulado() ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800' }} print:text-[7pt] print:px-1.5">
-                                    {{ $p->estado->label() }}
-                                </span>
+                            <td class="px-4 py-3 text-right font-mono font-semibold text-emerald-600 whitespace-nowrap">${{ number_format($p->monto, 2) }}</td>
+                            <td class="px-4 py-3 text-right font-mono font-semibold text-slate-800 whitespace-nowrap">${{ number_format($p->saldo_posterior, 2) }}</td>
+                            <td class="px-4 py-3 text-center whitespace-nowrap">
+                                @if($p->isAnulado())
+                                    <x-badge color="danger">Anulado</x-badge>
+                                @else
+                                    <x-badge color="success">Aplicado</x-badge>
+                                @endif
                             </td>
-                            <td class="px-6 py-3.5 text-right whitespace-nowrap no-print">
-                                <a href="{{ route('cartera.recibo', $p) }}" target="_blank" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">
+                            <td class="px-4 py-3 text-right whitespace-nowrap no-print">
+                                <a href="{{ route('cartera.recibo', $p) }}" target="_blank" class="text-xs font-semibold text-brand-600 hover:text-brand-800">
                                     Imprimir &rarr;
                                 </a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-6 py-8 text-center text-slate-400">
+                            <td colspan="8" class="px-4 py-8 text-center text-slate-400">
                                 No se registran pagos en el historial de este cliente.
                             </td>
                         </tr>

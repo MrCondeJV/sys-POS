@@ -3,69 +3,60 @@
 @section('title', 'Historial de Devoluciones')
 
 @section('content')
-<div class="max-w-[1680px] mx-auto space-y-6">
+<div class="space-y-6">
 
     <!-- Header Section -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
-        <div class="flex items-center space-x-4">
-            <div class="h-12 w-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center font-black shadow-md shadow-amber-500/20">
-                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z" />
+    <x-page-header
+        title="Devoluciones de Ventas"
+        subtitle="Control de garantías, devoluciones totales y parciales con reingreso automático al kardex.">
+        <x-slot:actions>
+            <a href="{{ route('ventas.index') }}" class="btn-secondary">
+                <svg class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-            </div>
-            <div>
-                <h1 class="text-xl font-black text-slate-900 tracking-tight">Devoluciones de Ventas</h1>
-                <p class="text-xs text-slate-500 mt-0.5">Control de garantías, devoluciones totales y parciales con reingreso automático al kardex.</p>
-            </div>
-        </div>
-
-        <a href="{{ route('ventas.index') }}" class="inline-flex items-center space-x-2 px-4 py-2.5 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-sm font-semibold rounded-xl shadow-sm transition">
-            <span>&larr; Ver Ventas para Devolver</span>
-        </a>
-    </div>
+                Ver Ventas para Devolver
+            </a>
+        </x-slot:actions>
+    </x-page-header>
 
     <!-- KPIs -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm flex items-center justify-between">
-            <div>
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Devuelto Hoy</span>
-                <span class="text-2xl font-black text-slate-900 mt-1 block">${{ number_format($totalDevueltoHoy, 2) }}</span>
-            </div>
-            <div class="h-10 w-10 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
-                $
-            </div>
-        </div>
-        <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm flex items-center justify-between">
-            <div>
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Total Devoluciones Registradas</span>
-                <span class="text-2xl font-black text-slate-900 mt-1 block">{{ $conteoTotal }}</span>
-            </div>
-            <div class="h-10 w-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
-                #
-            </div>
-        </div>
+        <x-kpi-card
+            label="Devuelto Hoy"
+            value="${{ number_format($totalDevueltoHoy, 2) }}"
+            context="Monto reembolsado en el día"
+            variant="warning"
+            icon="currency-dollar"
+        />
+
+        <x-kpi-card
+            label="Total Devoluciones Registradas"
+            value="{{ number_format($conteoTotal) }}"
+            context="Operaciones históricas de devolución"
+            icon="check"
+        />
     </div>
 
     <!-- Filtros -->
-    <div class="bg-white border border-slate-200 rounded-3xl p-4 shadow-sm">
+    <div class="card p-4">
         <form method="GET" action="{{ route('devoluciones.index') }}" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
             <div class="sm:col-span-2 relative">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </div>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar por número de devolución o número de venta..."
-                       class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar por número de devolución o venta..."
+                       class="input-base pl-9 text-xs">
             </div>
             <div>
                 <input type="date" name="fecha_desde" value="{{ request('fecha_desde') }}"
-                       class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                       class="input-base text-xs">
             </div>
             <div class="flex items-center space-x-2">
                 <input type="date" name="fecha_hasta" value="{{ request('fecha_hasta') }}"
-                       class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
-                <button type="submit" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-sm transition">
+                       class="input-base text-xs">
+                <button type="submit" class="btn-primary">
                     Filtrar
                 </button>
             </div>
@@ -73,64 +64,74 @@
     </div>
 
     <!-- Tabla de Devoluciones -->
-    <div class="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+    <div class="card p-0 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-left divide-y divide-slate-200 text-sm">
+            <table class="table-corporate">
                 <thead>
-                    <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                        <th class="py-3.5 px-5">Comprobante / Venta</th>
-                        <th class="py-3.5 px-5">Fecha</th>
-                        <th class="py-3.5 px-5">Cliente</th>
-                        <th class="py-3.5 px-5">Tipo Devolución</th>
-                        <th class="py-3.5 px-5">Reintegro</th>
-                        <th class="py-3.5 px-5 text-right">Total Devuelto</th>
-                        <th class="py-3.5 px-5 text-right">Acciones</th>
+                    <tr>
+                        <th>Comprobante / Venta</th>
+                        <th>Fecha</th>
+                        <th>Cliente</th>
+                        <th>Tipo Devolución</th>
+                        <th>Reintegro</th>
+                        <th class="text-right">Total Devuelto</th>
+                        <th class="text-right">Acciones</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
+                <tbody>
                     @forelse($devoluciones as $dev)
-                    <tr class="hover:bg-slate-50/70 transition">
-                        <td class="py-3.5 px-4">
-                            <span class="font-black text-slate-900 text-sm block">{{ $dev->numero_devolucion }}</span>
-                            <a href="{{ route('ventas.show', $dev->venta) }}" class="text-[11px] text-indigo-600 hover:underline font-mono">
+                    <tr>
+                        <td>
+                            <span class="font-mono font-semibold text-slate-900 text-xs block">{{ $dev->numero_devolucion }}</span>
+                            <a href="{{ route('ventas.show', $dev->venta) }}" class="text-[11px] text-brand-600 hover:text-brand-800 font-mono">
                                 Venta #{{ $dev->venta->numero_venta }}
                             </a>
                         </td>
-                        <td class="py-3.5 px-4 text-slate-600">
-                            {{ $dev->created_at->format('d/m/Y H:i') }}
+                        <td class="text-xs text-slate-600">
+                            <span class="font-mono">{{ $dev->created_at->format('d/m/Y H:i') }}</span>
                             <div class="text-[10px] text-slate-400">Por: {{ $dev->usuario->name }}</div>
                         </td>
-                        <td class="py-3.5 px-4 font-bold text-slate-800">
+                        <td class="text-xs font-semibold text-slate-800">
                             {{ $dev->venta->cliente?->razon_social ?? 'Consumidor Final' }}
                         </td>
-                        <td class="py-3.5 px-4">
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-black {{ $dev->tipo_devolucion === App\Enums\TipoDevolucion::TOTAL ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800' }}">
+                        <td>
+                            <span class="badge {{ $dev->tipo_devolucion === App\Enums\TipoDevolucion::TOTAL ? 'badge-danger' : 'badge-warning' }}">
                                 {{ $dev->tipo_devolucion->label() }}
                             </span>
                         </td>
-                        <td class="py-3.5 px-4">
-                            <span class="px-2 py-0.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700">
+                        <td>
+                            <span class="badge badge-neutral">
                                 {{ $dev->tipo_reintegro->label() }}
                             </span>
                         </td>
-                        <td class="py-3.5 px-4 text-right font-black text-slate-900 text-sm">
+                        <td class="text-right font-mono font-semibold text-slate-900 text-xs tabular-nums">
                             ${{ number_format($dev->total, 2) }}
                         </td>
-                        <td class="py-3.5 px-4 text-right">
-                            <div class="flex items-center justify-end space-x-2">
-                                <a href="{{ route('devoluciones.show', $dev) }}" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition text-[11px]">
-                                    Ver Detalle
+                        <td class="text-right">
+                            <div class="flex items-center justify-end space-x-1.5">
+                                <a href="{{ route('devoluciones.show', $dev) }}" class="btn-secondary py-1 px-2.5 text-xs">
+                                    Detalle
                                 </a>
-                                <a href="{{ route('devoluciones.comprobante', $dev) }}" target="_blank" class="p-1.5 text-indigo-600 hover:text-indigo-800 transition">
-                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                                <a href="{{ route('devoluciones.comprobante', $dev) }}" target="_blank"
+                                   class="p-1.5 text-slate-500 hover:text-brand-600 hover:bg-slate-100 rounded transition"
+                                   title="Imprimir Comprobante">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                    </svg>
                                 </a>
                             </div>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="py-12 text-center text-slate-400">
-                            No se han registrado devoluciones en el período seleccionado.
+                        <td colspan="7" class="text-center py-12">
+                            <div class="empty-state">
+                                <svg class="empty-state-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z" />
+                                </svg>
+                                <p class="empty-state-title">No se han registrado devoluciones</p>
+                                <p class="empty-state-desc">Las operaciones de garantía o cancelación de ítems aparecerán en este historial.</p>
+                            </div>
                         </td>
                     </tr>
                     @endforelse
@@ -139,7 +140,7 @@
         </div>
 
         @if($devoluciones->hasPages())
-        <div class="p-4 border-t border-slate-100">
+        <div class="p-4 border-t border-slate-200">
             {{ $devoluciones->links() }}
         </div>
         @endif

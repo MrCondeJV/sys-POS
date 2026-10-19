@@ -30,7 +30,7 @@
     </a>
     <button onclick="window.print()"
             style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#fff;padding:7px 18px;border:none;border-radius:6px;background:#0f172a;cursor:pointer;">
-        🖨 Imprimir Reporte Z
+        Imprimir Reporte Z
     </button>
 </div>
 
@@ -123,7 +123,7 @@
                 </div>
                 <div style="font-size: 14px; font-weight: 900; margin-top: 2px;">
                     @if($sesion->diferencia == 0)
-                        ✓ Cuadre Exacto ($0.00)
+                        Cuadre Exacto ($0.00)
                     @elseif($sesion->diferencia > 0)
                         +${{ number_format($sesion->diferencia, 2) }} (Sobrante en Efectivo)
                     @else

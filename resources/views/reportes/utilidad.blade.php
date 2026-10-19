@@ -3,37 +3,38 @@
 @section('title', 'Reporte de Utilidad y Rentabilidad')
 
 @section('content')
-<div class="w-full max-w-[1680px] mx-auto space-y-6">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-            <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
-                <a href="{{ route('reportes.index') }}" class="hover:text-indigo-600 transition">Reportes</a>
-                <span>&rsaquo;</span>
-                <span class="text-indigo-600">Utilidad y Rentabilidad</span>
-            </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Margen Bruto y Rentabilidad</h1>
-        </div>
-        <div>
-            <a href="{{ route('reportes.utilidad.imprimir', request()->all()) }}" target="_blank" class="inline-flex items-center px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-sm font-bold transition shadow-sm">
+<div class="space-y-6">
+    <x-page-header
+        title="Margen Bruto y Rentabilidad"
+        subtitle="Cálculo de ganancia neta, costo histórico de reposición y margen porcentual por artículo."
+        :breadcrumbs="[
+            ['label' => 'Reportes', 'url' => route('reportes.index')],
+            ['label' => 'Utilidad y Rentabilidad']
+        ]">
+        <x-slot:actions>
+            <a href="{{ route('reportes.utilidad.imprimir', request()->all()) }}" target="_blank" class="btn-secondary">
+                <svg class="h-4 w-4 mr-1.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
                 Imprimir / PDF
             </a>
-        </div>
-    </div>
+        </x-slot:actions>
+    </x-page-header>
 
     <!-- Filtros -->
-    <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
-        <form method="GET" action="{{ route('reportes.utilidad') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+    <div class="card p-4">
+        <form method="GET" action="{{ route('reportes.utilidad') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             <div>
-                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Desde</label>
-                <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200">
+                <label class="label-base">Desde</label>
+                <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="input-base text-xs">
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Hasta</label>
-                <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200">
+                <label class="label-base">Hasta</label>
+                <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="input-base text-xs">
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Sucursal</label>
-                <select name="sucursal_id" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200">
+                <label class="label-base">Sucursal</label>
+                <select name="sucursal_id" class="input-select text-xs">
                     <option value="">Todas</option>
                     @foreach($sucursales as $s)
                         <option value="{{ $s->id }}" {{ $sucursalId == $s->id ? 'selected' : '' }}>{{ $s->nombre }}</option>
@@ -41,8 +42,8 @@
                 </select>
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Categoría</label>
-                <select name="categoria_id" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200">
+                <label class="label-base">Categoría</label>
+                <select name="categoria_id" class="input-select text-xs">
                     <option value="">Todas</option>
                     @foreach($categorias as $cat)
                         <option value="{{ $cat->id }}" {{ $categoriaId == $cat->id ? 'selected' : '' }}>{{ $cat->nombre }}</option>
@@ -50,82 +51,99 @@
                 </select>
             </div>
             <div class="flex items-end gap-2">
-                <button type="submit" class="w-full px-4 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition shadow-sm">Filtrar</button>
-                <a href="{{ route('reportes.utilidad') }}" class="px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-xl border border-slate-200 transition">Limpiar</a>
+                <button type="submit" class="btn-primary flex-1">Filtrar</button>
+                <a href="{{ route('reportes.utilidad') }}" class="btn-secondary">Limpiar</a>
             </div>
         </form>
     </div>
 
     <!-- KPIs -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Ingresos Netos Ventas</span>
-            <div class="text-2xl font-extrabold text-slate-900 mt-1">${{ number_format($totalIngreso, 2) }}</div>
-            <span class="text-xs text-slate-500">{{ number_format($totalUnidades, 0) }} artículos vendidos</span>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Costo Mercancía Vendida</span>
-            <div class="text-2xl font-extrabold text-rose-600 mt-1">${{ number_format($totalCosto, 2) }}</div>
-            <span class="text-xs text-slate-500">Costo histórico registrado</span>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Utilidad Bruta</span>
-            <div class="text-2xl font-extrabold text-emerald-600 mt-1">${{ number_format($totalUtilidad, 2) }}</div>
-            <span class="text-xs text-emerald-600 font-semibold">Ganancia neta sobre costo</span>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">% Margen de Rentabilidad</span>
-            <div class="text-2xl font-extrabold text-indigo-600 mt-1">{{ number_format($porcentajeMargen, 1) }}%</div>
-            <span class="text-xs text-slate-500">Sobre el total de ventas</span>
-        </div>
+        <x-kpi-card
+            label="Ingresos Netos Ventas"
+            value="${{ number_format($totalIngreso, 2) }}"
+            context="{{ number_format($totalUnidades, 0) }} artículos vendidos"
+            icon="currency-dollar"
+        />
+
+        <x-kpi-card
+            label="Costo Mercancía Vendida"
+            value="${{ number_format($totalCosto, 2) }}"
+            context="Costo histórico registrado"
+            variant="danger"
+            icon="alert"
+        />
+
+        <x-kpi-card
+            label="Utilidad Bruta"
+            value="${{ number_format($totalUtilidad, 2) }}"
+            context="Ganancia neta sobre costo"
+            variant="success"
+            icon="check"
+        />
+
+        <x-kpi-card
+            label="% Margen de Rentabilidad"
+            value="{{ number_format($porcentajeMargen, 1) }}%"
+            context="Sobre el total de ventas"
+            icon="credit-card"
+        />
     </div>
 
     <!-- Tabla Rentabilidad por Producto -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="p-5 border-b border-slate-100">
-            <h3 class="font-extrabold text-slate-900 text-base">Rentabilidad por Artículo</h3>
+    <div class="card p-0 overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-200 bg-slate-50/50">
+            <h3 class="font-semibold text-slate-900 text-sm">Rentabilidad por Artículo</h3>
         </div>
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-slate-100 text-left text-sm text-slate-600">
-                <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-xs tracking-wider">
+            <table class="table-corporate">
+                <thead>
                     <tr>
-                        <th class="py-3.5 px-4">Producto</th>
-                        <th class="py-3.5 px-4 text-center">Unidades</th>
-                        <th class="py-3.5 px-4 text-right">Ingreso Neto</th>
-                        <th class="py-3.5 px-4 text-right">Costo Total</th>
-                        <th class="py-3.5 px-4 text-right">Utilidad Bruta</th>
-                        <th class="py-3.5 px-4 text-center">% Margen</th>
+                        <th>Producto</th>
+                        <th class="text-center">Unidades</th>
+                        <th class="text-right">Ingreso Neto</th>
+                        <th class="text-right">Costo Total</th>
+                        <th class="text-right">Utilidad Bruta</th>
+                        <th class="text-center">% Margen</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
+                <tbody>
                     @forelse($rentabilidadProductos as $r)
                     @php
                         $pctProd = $r->ingreso_neto > 0 ? round(($r->utilidad_bruta / $r->ingreso_neto) * 100, 1) : 0;
                     @endphp
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="py-3 px-4">
-                            <div class="font-bold text-slate-900">{{ $r->producto_nombre }}</div>
-                            <div class="text-xs text-slate-400">SKU: {{ $r->producto_codigo }}</div>
+                    <tr>
+                        <td>
+                            <div class="font-semibold text-slate-900 text-xs">{{ $r->producto_nombre }}</div>
+                            <div class="text-[11px] text-slate-400 font-mono">SKU: {{ $r->producto_codigo }}</div>
                         </td>
-                        <td class="py-3 px-4 text-center font-bold">{{ number_format($r->unidades_vendidas, 0) }}</td>
-                        <td class="py-3 px-4 text-right font-medium">${{ number_format($r->ingreso_neto, 2) }}</td>
-                        <td class="py-3 px-4 text-right text-rose-600">${{ number_format($r->costo_total, 2) }}</td>
-                        <td class="py-3 px-4 text-right font-extrabold text-emerald-600">${{ number_format($r->utilidad_bruta, 2) }}</td>
-                        <td class="py-3 px-4 text-center">
-                            <span class="px-2.5 py-1 rounded-full text-xs font-extrabold {{ $pctProd >= 20 ? 'bg-emerald-50 text-emerald-700' : ($pctProd > 0 ? 'bg-amber-50 text-amber-700' : 'bg-rose-50 text-rose-700') }}">
+                        <td class="text-center font-mono text-xs text-slate-800 tabular-nums">{{ number_format($r->unidades_vendidas, 0) }}</td>
+                        <td class="text-right font-mono text-xs text-slate-700 tabular-nums">${{ number_format($r->ingreso_neto, 2) }}</td>
+                        <td class="text-right font-mono text-xs text-red-600 tabular-nums">${{ number_format($r->costo_total, 2) }}</td>
+                        <td class="text-right font-mono font-semibold text-xs text-emerald-700 tabular-nums">${{ number_format($r->utilidad_bruta, 2) }}</td>
+                        <td class="text-center">
+                            <span class="badge {{ $pctProd >= 20 ? 'badge-success' : ($pctProd > 0 ? 'badge-warning' : 'badge-danger') }} font-mono">
                                 {{ $pctProd }}%
                             </span>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="py-8 text-center text-slate-400">No hay ventas registradas en el periodo.</td>
+                        <td colspan="6" class="text-center py-12">
+                            <div class="empty-state">
+                                <svg class="empty-state-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                </svg>
+                                <p class="empty-state-title">No hay ventas registradas</p>
+                                <p class="empty-state-desc">No se encontraron movimientos comerciales en el periodo seleccionado.</p>
+                            </div>
+                        </td>
                     </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        <div class="p-4 border-t border-slate-100">
+        <div class="p-4 border-t border-slate-200">
             {{ $rentabilidadProductos->links() }}
         </div>
     </div>

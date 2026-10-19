@@ -1,89 +1,98 @@
 @extends('layouts.app')
 
+@section('title', 'Resoluciones DIAN')
+
 @section('content')
-<div class=\"mb-6\">
-<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-                <h1 class="text-2xl font-black text-slate-800 tracking-tight">Resoluciones de Facturación DIAN</h1>
-                <p class="text-sm text-slate-500 font-medium">Rangos de numeración, prefijos y vigencias autorizadas</p>
-            </div>
-            <div class="flex gap-2">
-                <a href="{{ route('facturacion-electronica.index') }}" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-xl transition">
-                    Ver Facturas Electrónicas
-                </a>
-                <a href="{{ route('resoluciones.create') }}" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-sm transition">
-                    + Nueva Resolución
-                </a>
-            </div>
+<div class="space-y-6">
+    <x-page-header
+        title="Resoluciones de Facturación DIAN"
+        subtitle="Rangos de numeración, prefijos y vigencias autorizadas">
+        <x-slot:actions>
+            <a href="{{ route('facturacion-electronica.index') }}" class="btn-secondary">
+                Ver Facturas Electrónicas
+            </a>
+            <a href="{{ route('resoluciones.create') }}" class="btn-primary">
+                <svg class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Nueva Resolución
+            </a>
+        </x-slot:actions>
+    </x-page-header>
+
+    <div class="card p-0 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="table-corporate">
+                <thead>
+                    <tr>
+                        <th>Resolución</th>
+                        <th>Prefijo</th>
+                        <th>Rango Autorizado</th>
+                        <th class="text-right">Actual</th>
+                        <th>Vigencia</th>
+                        <th class="text-center">Estado</th>
+                        <th class="text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($resoluciones as $res)
+                        <tr>
+                            <td class="font-semibold text-slate-800 text-xs">
+                                {{ $res->numero_resolucion }}
+                                @if($res->es_predeterminada)
+                                    <span class="badge badge-brand ml-1">Predeterminada</span>
+                                @endif
+                            </td>
+                            <td class="font-mono font-bold text-xs text-brand-700">{{ $res->prefijo }}</td>
+                            <td class="font-mono text-xs tabular-nums">{{ number_format($res->rango_desde) }} - {{ number_format($res->rango_hasta) }}</td>
+                            <td class="text-right font-mono font-semibold text-xs text-slate-900 tabular-nums">{{ number_format($res->consecutivo_actual) }}</td>
+                            <td class="text-xs text-slate-600 font-mono">
+                                <div>Desde: {{ $res->fecha_inicio->format('d/m/Y') }}</div>
+                                <div class="text-[11px] text-slate-400">Hasta: {{ $res->fecha_vigencia->format('d/m/Y') }}</div>
+                            </td>
+                            <td class="text-center">
+                                @if($res->estaVigente())
+                                    <span class="badge badge-success">Activa y Vigente</span>
+                                @else
+                                    <span class="badge badge-danger">{{ $res->estado->label() }}</span>
+                                @endif
+                            </td>
+                            <td class="text-right">
+                                <div class="flex items-center justify-end space-x-2">
+                                    <a href="{{ route('resoluciones.edit', $res) }}" class="btn-secondary py-1 px-2.5 text-xs">
+                                        Editar
+                                    </a>
+                                    <form action="{{ route('resoluciones.destroy', $res) }}" method="POST" class="inline" onsubmit="return confirm('¿Seguro de eliminar esta resolución?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn-danger py-1 px-2 text-xs">
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="text-center py-12">
+                                <div class="empty-state">
+                                    <svg class="empty-state-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    <p class="empty-state-title">No hay resoluciones configuradas</p>
+                                    <p class="empty-state-desc">Registra los rangos autorizados por la DIAN para facturar electrónicamente.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
-</div>
-
-    <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
-
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm text-slate-600">
-                        <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-500 border-b border-slate-200">
-                            <tr>
-                                <th class="px-6 py-4">Resolución</th>
-                                <th class="px-6 py-4">Prefijo</th>
-                                <th class="px-6 py-4">Rango Autorizado</th>
-                                <th class="px-6 py-4">Actual</th>
-                                <th class="px-6 py-4">Vigencia</th>
-                                <th class="px-6 py-4">Estado</th>
-                                <th class="px-6 py-4 text-right">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            @forelse($resoluciones as $res)
-                                <tr class="hover:bg-slate-50/60 transition">
-                                    <td class="px-6 py-4 font-semibold text-slate-800">
-                                        {{ $res->numero_resolucion }}
-                                        @if($res->es_predeterminada)
-                                            <span class="ml-2 px-2 py-0.5 text-xs bg-indigo-50 text-indigo-700 font-bold rounded-md border border-indigo-200">Predeterminada</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4 font-mono font-bold text-indigo-600">{{ $res->prefijo }}</td>
-                                    <td class="px-6 py-4 font-mono">{{ number_format($res->rango_desde) }} - {{ number_format($res->rango_hasta) }}</td>
-                                    <td class="px-6 py-4 font-mono font-bold text-slate-700">{{ number_format($res->consecutivo_actual) }}</td>
-                                    <td class="px-6 py-4 text-xs">
-                                        <div>Desde: {{ $res->fecha_inicio->format('d/m/Y') }}</div>
-                                        <div>Hasta: {{ $res->fecha_vigencia->format('d/m/Y') }}</div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        @if($res->estaVigente())
-                                            <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Activa y Vigente</span>
-                                        @else
-                                            <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-rose-50 text-rose-700 border border-rose-200">{{ $res->estado->label() }}</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4 text-right space-x-2">
-                                        <a href="{{ route('resoluciones.edit', $res) }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">Editar</a>
-                                        <form action="{{ route('resoluciones.destroy', $res) }}" method="POST" class="inline" onsubmit="return confirm('¿Seguro de eliminar esta resolución?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-xs font-bold text-rose-600 hover:text-rose-800">Eliminar</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="7" class="px-6 py-8 text-center text-slate-400">
-                                        No hay resoluciones de facturación configuradas para esta empresa.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-                @if($resoluciones->hasPages())
-                    <div class="p-4 border-t border-slate-100">
-                        {{ $resoluciones->links() }}
-                    </div>
-                @endif
+        @if($resoluciones->hasPages())
+            <div class="p-4 border-t border-slate-200">
+                {{ $resoluciones->links() }}
             </div>
-        </div>
+        @endif
     </div>
+</div>
 @endsection

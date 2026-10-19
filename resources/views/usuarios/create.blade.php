@@ -6,26 +6,24 @@
 <div class="max-w-3xl mx-auto space-y-6">
 
     <!-- Header -->
-    <div class="flex items-center justify-between">
-        <div>
-            <div class="flex items-center gap-2 text-sm text-slate-500 mb-1">
-                <a href="{{ route('usuarios.index') }}" class="hover:text-indigo-600 transition">Usuarios</a>
-                <span>/</span>
-                <span>Crear</span>
-            </div>
-            <h1 class="text-2xl font-bold text-slate-900">Registrar Nuevo Colaborador</h1>
-            <p class="text-sm text-slate-500">Crea credenciales de acceso y asigna rol operativo y sede de trabajo.</p>
-        </div>
-        <a href="{{ route('usuarios.index') }}"
-            class="inline-flex items-center px-4 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
-            Volver
-        </a>
-    </div>
+    <x-page-header
+        title="Registrar Nuevo Colaborador"
+        subtitle="Crea credenciales de acceso y asigna rol operativo y sede de trabajo."
+        :breadcrumbs="[
+            ['label' => 'Usuarios', 'url' => route('usuarios.index')],
+            ['label' => 'Crear']
+        ]">
+        <x-slot:actions>
+            <a href="{{ route('usuarios.index') }}" class="btn-secondary">
+                Volver
+            </a>
+        </x-slot:actions>
+    </x-page-header>
 
     @if ($errors->any())
-    <div class="rounded-2xl bg-red-50 p-4 border border-red-200 text-sm text-red-700">
-        <div class="font-bold mb-1">Por favor corrige los siguientes errores:</div>
-        <ul class="list-disc list-inside space-y-1">
+    <div class="rounded-lg bg-red-50 p-4 border border-red-200 text-xs text-red-700">
+        <div class="font-semibold mb-1">Por favor corrige los siguientes errores:</div>
+        <ul class="list-disc list-inside space-y-0.5">
             @foreach ($errors->all() as $error)
             <li>{{ $error }}</li>
             @endforeach
@@ -36,17 +34,16 @@
     <form method="POST" action="{{ route('usuarios.store') }}" class="space-y-6">
         @csrf
 
-        <div class="bg-white rounded-3xl border border-slate-200/70 p-6 sm:p-8 shadow-sm space-y-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div class="card p-6 sm:p-8 space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
                 <!-- Si es Super Admin, puede elegir la empresa -->
                 @if(auth()->user()->isSuperAdmin() && $empresas->isNotEmpty())
                 <div class="sm:col-span-2">
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
-                        Empresa / Tenant *
+                    <label class="label-base">
+                        Empresa / Tenant <span class="text-red-500">*</span>
                     </label>
-                    <select name="empresa_id"
-                        class="w-full py-2.5 px-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <select name="empresa_id" class="input-select text-xs">
                         @foreach($empresas as $emp)
                         <option value="{{ $emp->id }}" {{ old('empresa_id', $empresaId) == $emp->id ? 'selected' : '' }}>
                             {{ $emp->nombre_comercial }} ({{ $emp->nit }})
@@ -57,47 +54,46 @@
                 @endif
 
                 <div class="sm:col-span-2">
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
-                        Nombre Completo *
+                    <label class="label-base">
+                        Nombre Completo <span class="text-red-500">*</span>
                     </label>
                     <input type="text" name="name" value="{{ old('name') }}" required
-                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        class="input-base text-xs"
                         placeholder="Ej: Carlos Gómez Restrepo">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
-                        Correo Electrónico (Login) *
+                    <label class="label-base">
+                        Correo Electrónico (Login) <span class="text-red-500">*</span>
                     </label>
                     <input type="email" name="email" value="{{ old('email') }}" required
-                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        class="input-base text-xs"
                         placeholder="colaborador@comercio.com">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label class="label-base">
                         Teléfono / Móvil
                     </label>
                     <input type="text" name="telefono" value="{{ old('telefono') }}"
-                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        class="input-base text-xs font-mono"
                         placeholder="Ej: 312 345 6789">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label class="label-base">
                         Cargo Desempeñado
                     </label>
                     <input type="text" name="cargo" value="{{ old('cargo') }}"
-                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        class="input-base text-xs"
                         placeholder="Ej: Cajero Principal, Vendedor Mostrador">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label class="label-base">
                         Sede / Sucursal de Operación
                     </label>
-                    <select name="sucursal_id"
-                        class="w-full py-2.5 px-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <select name="sucursal_id" class="input-select text-xs">
                         <option value="">Todas las Sedes / Sin sede fija</option>
                         @foreach($sucursales as $suc)
                         <option value="{{ $suc->id }}" {{ old('sucursal_id') == $suc->id ? 'selected' : '' }}>
@@ -108,11 +104,10 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
-                        Rol del Sistema *
+                    <label class="label-base">
+                        Rol del Sistema <span class="text-red-500">*</span>
                     </label>
-                    <select name="rol" required
-                        class="w-full py-2.5 px-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <select name="rol" required class="input-select text-xs">
                         @foreach($roles as $r)
                         <option value="{{ $r->value }}" {{ old('rol', \App\Enums\RolSistema::CAJERO->value) === $r->value ? 'selected' : '' }}>
                             {{ str_replace('_', ' ', $r->value) }}
@@ -123,35 +118,34 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
-                        Estado Inicial *
+                    <label class="label-base">
+                        Estado Inicial <span class="text-red-500">*</span>
                     </label>
-                    <select name="estado" required
-                        class="w-full py-2.5 px-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <select name="estado" required class="input-select text-xs">
                         <option value="ACTIVO" {{ old('estado', 'ACTIVO') === 'ACTIVO' ? 'selected' : '' }}>ACTIVO (Puede ingresar)</option>
                         <option value="INACTIVO" {{ old('estado') === 'INACTIVO' ? 'selected' : '' }}>INACTIVO (Acceso bloqueado)</option>
                     </select>
                 </div>
 
-                <div class="sm:col-span-2 pt-2 border-t border-slate-100">
-                    <p class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">Seguridad de la Cuenta</p>
+                <div class="sm:col-span-2 pt-2 border-t border-slate-200">
+                    <p class="text-xs font-semibold text-slate-800 uppercase tracking-wider mb-3">Seguridad de la Cuenta</p>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
-                        Contraseña * (mínimo 8 caracteres)
+                    <label class="label-base">
+                        Contraseña <span class="text-red-500">*</span> (mínimo 8 caracteres)
                     </label>
                     <input type="password" name="password" required
-                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        class="input-base text-xs"
                         placeholder="••••••••">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
-                        Confirmar Contraseña *
+                    <label class="label-base">
+                        Confirmar Contraseña <span class="text-red-500">*</span>
                     </label>
                     <input type="password" name="password_confirmation" required
-                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        class="input-base text-xs"
                         placeholder="••••••••">
                 </div>
 
@@ -160,12 +154,10 @@
 
         <!-- Botones de Acción -->
         <div class="flex items-center justify-end gap-3">
-            <a href="{{ route('usuarios.index') }}"
-                class="px-4 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+            <a href="{{ route('usuarios.index') }}" class="btn-secondary">
                 Cancelar
             </a>
-            <button type="submit"
-                class="inline-flex items-center px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition">
+            <button type="submit" class="btn-primary">
                 Guardar y Crear Usuario
             </button>
         </div>

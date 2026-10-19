@@ -3,41 +3,37 @@
 @section('title', 'Bitácora de Auditoría')
 
 @section('content')
-<div class="w-full max-w-[1680px] mx-auto space-y-6">
-    <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-            <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
-                <span>Seguridad & Trazabilidad</span>
-                <span>&rsaquo;</span>
-                <span class="text-indigo-600">Auditoría</span>
-            </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
-                <span class="p-2.5 rounded-2xl bg-slate-900 text-white shadow-md">
-                    <svg class="h-6 w-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+<div class="space-y-6">
+    <x-page-header
+        title="Bitácora de Auditoría"
+        description="Registro inmutable de operaciones críticas: anulaciones, devoluciones, arqueos y ajustes del sistema."
+    >
+        <x-slot:actions>
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                    <svg class="h-3.5 w-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
+                    Trazabilidad Inmutable
                 </span>
-                Bitácora de Auditoría del Sistema
-            </h1>
-            <p class="text-sm text-slate-500 mt-1">Registro inmutable de operaciones críticas: anulaciones, devoluciones, arqueos de caja y ajustes.</p>
-        </div>
-    </div>
+            </div>
+        </x-slot:actions>
+    </x-page-header>
 
-    <!-- Filtros -->
-    <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
-        <form method="GET" action="{{ route('auditoria.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+    {{-- Filtros --}}
+    <div class="card p-4">
+        <form method="GET" action="{{ route('auditoria.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
             <div>
-                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Desde</label>
-                <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200">
+                <label class="label-base">Desde</label>
+                <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="input-base">
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Hasta</label>
-                <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200">
+                <label class="label-base">Hasta</label>
+                <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="input-base">
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Módulo</label>
-                <select name="modulo" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200">
+                <label class="label-base">Módulo</label>
+                <select name="modulo" class="input-base">
                     <option value="">Todos los Módulos</option>
                     @foreach($modulos as $mod)
                         <option value="{{ $mod }}" {{ $modulo === $mod ? 'selected' : '' }}>{{ $mod }}</option>
@@ -45,8 +41,8 @@
                 </select>
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Acción</label>
-                <select name="accion" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200">
+                <label class="label-base">Acción</label>
+                <select name="accion" class="input-base">
                     <option value="">Todas las Acciones</option>
                     @foreach($acciones as $acc)
                         <option value="{{ $acc }}" {{ $accion === $acc ? 'selected' : '' }}>{{ $acc }}</option>
@@ -54,8 +50,8 @@
                 </select>
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Usuario</label>
-                <select name="user_id" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200">
+                <label class="label-base">Usuario</label>
+                <select name="user_id" class="input-base">
                     <option value="">Todos los Usuarios</option>
                     @foreach($usuarios as $u)
                         <option value="{{ $u->id }}" {{ $userId == $u->id ? 'selected' : '' }}>{{ $u->name }}</option>
@@ -63,75 +59,90 @@
                 </select>
             </div>
             <div class="flex items-end gap-2">
-                <button type="submit" class="w-full px-4 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition shadow-sm">Filtrar</button>
-                <a href="{{ route('auditoria.index') }}" class="px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-xl border border-slate-200 transition">Limpiar</a>
+                <button type="submit" class="btn-primary w-full justify-center">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                    </svg>
+                    Filtrar
+                </button>
+                <a href="{{ route('auditoria.index') }}" class="btn-secondary whitespace-nowrap">Limpiar</a>
             </div>
         </form>
     </div>
 
-    <!-- Tabla de Auditoría -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-slate-100 text-left text-sm text-slate-600">
-                <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-xs tracking-wider">
+    {{-- Tabla de Auditoría --}}
+    <div class="card overflow-hidden">
+        <div class="table-container">
+            <table class="table-corporate">
+                <thead>
                     <tr>
-                        <th class="py-3.5 px-4">Fecha / Hora</th>
-                        <th class="py-3.5 px-4">Usuario</th>
-                        <th class="py-3.5 px-4">Módulo</th>
-                        <th class="py-3.5 px-4">Acción</th>
-                        <th class="py-3.5 px-4">Descripción / Registro</th>
-                        <th class="py-3.5 px-4">IP</th>
-                        <th class="py-3.5 px-4 text-center">Acciones</th>
+                        <th>Fecha / Hora</th>
+                        <th>Usuario</th>
+                        <th>Módulo</th>
+                        <th>Acción</th>
+                        <th>Descripción / Registro</th>
+                        <th>IP</th>
+                        <th class="text-right">Acciones</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
+                <tbody>
                     @forelse($auditorias as $aud)
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="py-3 px-4 text-xs font-semibold text-slate-900 whitespace-nowrap">
+                    <tr>
+                        <td class="tabular-nums font-mono text-xs whitespace-nowrap text-slate-600">
                             {{ $aud->created_at->format('d/m/Y H:i:s') }}
                         </td>
-                        <td class="py-3 px-4">
-                            <div class="font-bold text-slate-900">{{ $aud->usuario?->name ?? 'Sistema' }}</div>
-                            <div class="text-[10px] text-slate-400">{{ $aud->usuario?->email }}</div>
+                        <td>
+                            <div class="font-semibold text-slate-900">{{ $aud->usuario?->name ?? 'Sistema' }}</div>
+                            <div class="text-xs text-slate-500">{{ $aud->usuario?->email }}</div>
                         </td>
-                        <td class="py-3 px-4 text-xs">
-                            <span class="px-2 py-0.5 rounded-md font-bold bg-slate-100 text-slate-700">
+                        <td>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">
                                 {{ $aud->modulo }}
                             </span>
                         </td>
-                        <td class="py-3 px-4">
-                            <span class="px-2.5 py-1 rounded-full text-xs font-extrabold border {{ $aud->badgeClasses() }}">
+                        <td>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border {{ $aud->badgeClasses() }}">
                                 {{ $aud->accion }}
                             </span>
                         </td>
-                        <td class="py-3 px-4">
+                        <td>
                             <div class="text-xs text-slate-900 font-medium line-clamp-2 max-w-md">
                                 {{ $aud->descripcion ?? 'Sin descripción adicional' }}
                             </div>
                             @if($aud->auditable_type)
-                            <div class="text-[10px] text-slate-400 mt-0.5">
+                            <div class="text-[11px] text-slate-500 font-mono mt-0.5">
                                 {{ class_basename($aud->auditable_type) }} #{{ $aud->auditable_id }}
                             </div>
                             @endif
                         </td>
-                        <td class="py-3 px-4 text-xs font-mono text-slate-500">{{ $aud->ip ?? '127.0.0.1' }}</td>
-                        <td class="py-3 px-4 text-center">
-                            <a href="{{ route('auditoria.show', $aud) }}" class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition">
-                                Ver Detalle &rarr;
+                        <td class="text-xs font-mono tabular-nums text-slate-600">{{ $aud->ip ?? '127.0.0.1' }}</td>
+                        <td class="text-right">
+                            <a href="{{ route('auditoria.show', $aud) }}" class="inline-flex items-center gap-1 text-xs font-semibold text-brand-600 hover:text-brand-700">
+                                Ver Detalle
+                                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                </svg>
                             </a>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="py-8 text-center text-slate-400">No hay registros de auditoría que coincidan con los filtros.</td>
+                        <td colspan="7">
+                            <x-empty-state
+                                title="Sin registros de auditoría"
+                                description="No hay eventos que coincidan con los filtros seleccionados."
+                            />
+                        </td>
                     </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        <div class="p-4 border-t border-slate-100">
+        @if($auditorias->hasPages())
+        <div class="p-4 border-t border-slate-200 bg-slate-50/50">
             {{ $auditorias->links() }}
         </div>
+        @endif
     </div>
 </div>
 @endsection

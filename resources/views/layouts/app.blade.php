@@ -23,20 +23,20 @@
 
     @php
         $empresaActualLayout = \App\Support\Tenancy\CompanyContext::getCompany() ?? (auth()->check() ? auth()->user()->empresa : null);
-        $colorTema = $empresaActualLayout?->configuraciones['color_primario'] ?? 'indigo';
+        $colorTema = $empresaActualLayout?->configuraciones['color_primario'] ?? 'blue';
 
         $mapaColoresTema = [
-            'indigo'  => ['hex' => '#6366f1', 'hover' => '#4f46e5', 'focus' => 'rgba(99, 102, 241, 0.25)'],
+            'indigo'  => ['hex' => '#2563eb', 'hover' => '#1d4ed8', 'focus' => 'rgba(37, 99, 235, 0.25)'],
             'blue'    => ['hex' => '#2563eb', 'hover' => '#1d4ed8', 'focus' => 'rgba(37, 99, 235, 0.25)'],
             'emerald' => ['hex' => '#059669', 'hover' => '#047857', 'focus' => 'rgba(5, 150, 105, 0.25)'],
-            'violet'  => ['hex' => '#7c3aed', 'hover' => '#6d28d9', 'focus' => 'rgba(124, 58, 237, 0.25)'],
+            'violet'  => ['hex' => '#2563eb', 'hover' => '#1d4ed8', 'focus' => 'rgba(37, 99, 235, 0.25)'],
             'rose'    => ['hex' => '#e11d48', 'hover' => '#be123c', 'focus' => 'rgba(225, 29, 72, 0.25)'],
             'orange'  => ['hex' => '#ea580c', 'hover' => '#c2410c', 'focus' => 'rgba(234, 88, 12, 0.25)'],
             'amber'   => ['hex' => '#d97706', 'hover' => '#b45309', 'focus' => 'rgba(217, 119, 6, 0.25)'],
             'slate'   => ['hex' => '#334155', 'hover' => '#1e293b', 'focus' => 'rgba(51, 65, 85, 0.25)'],
         ];
 
-        $temaConfig = $mapaColoresTema[$colorTema] ?? $mapaColoresTema['indigo'];
+        $temaConfig = $mapaColoresTema[$colorTema] ?? $mapaColoresTema['blue'];
     @endphp
 
     <!-- Alpine.js es provisto automáticamente por Livewire -->
@@ -1105,107 +1105,107 @@
 
 
                     @can('productos.ver')
-                    <a href="{{ route('productos.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('productos.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
+                    <a href="{{ route('productos.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('productos.*') ? 'bg-brand-600 text-white font-semibold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-slate-800/70' }}">
                         Productos
                     </a>
                     @endcan
 
                     @can('listas_precios.ver')
-                    <a href="{{ route('listas-precios.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('listas-precios.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
+                    <a href="{{ route('listas-precios.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('listas-precios.*') ? 'bg-brand-600 text-white font-semibold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-slate-800/70' }}">
                         Listas de Precios
                     </a>
                     @endcan
 
                     @can('inventario.ver')
-                    <a href="{{ route('inventario.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('inventario.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
+                    <a href="{{ route('inventario.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('inventario.*') ? 'bg-brand-600 text-white font-semibold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-slate-800/70' }}">
                         Inventario & Kardex
                     </a>
                     @endcan
 
                     @can('productos.ver')
-                    <a href="{{ route('catalogos.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('catalogos.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
+                    <a href="{{ route('catalogos.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('catalogos.*') ? 'bg-brand-600 text-white font-semibold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-slate-800/70' }}">
                         Catálogos Auxiliares
                     </a>
                     @endcan
 
                     @can('compras.ver')
-                    <a href="{{ route('compras.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('compras.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
+                    <a href="{{ route('compras.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('compras.*') ? 'bg-brand-600 text-white font-semibold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-slate-800/70' }}">
                         Compras / Facturas
                     </a>
                     @endcan
 
                     @can('proveedores.ver')
-                    <a href="{{ route('proveedores.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('proveedores.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
+                    <a href="{{ route('proveedores.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('proveedores.*') ? 'bg-brand-600 text-white font-semibold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-slate-800/70' }}">
                         Proveedores
                     </a>
                     @endcan
 
                     @can('ventas.ver')
-                    <a href="{{ route('ventas.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('ventas.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
+                    <a href="{{ route('ventas.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('ventas.*') ? 'bg-brand-600 text-white font-semibold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-slate-800/70' }}">
                         Ventas Realizadas
                     </a>
                     @endcan
 
                     @can('ventas.devolver')
-                    <a href="{{ route('devoluciones.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('devoluciones.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
+                    <a href="{{ route('devoluciones.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('devoluciones.*') ? 'bg-brand-600 text-white font-semibold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-slate-800/70' }}">
                         Devoluciones
                     </a>
                     @endcan
 
                     @can('documentos.ver')
-                    <a href="{{ route('documentos.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('documentos.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
+                    <a href="{{ route('documentos.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('documentos.*') ? 'bg-brand-600 text-white font-semibold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-slate-800/70' }}">
                         Documentos de Venta
                     </a>
                     @endcan
 
                     @can('clientes.ver')
-                    <a href="{{ route('clientes.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('clientes.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
+                    <a href="{{ route('clientes.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('clientes.*') ? 'bg-brand-600 text-white font-semibold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-slate-800/70' }}">
                         Clientes
                     </a>
                     @endcan
 
                     @can('cartera.ver')
-                    <a href="{{ route('cartera.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('cartera.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
+                    <a href="{{ route('cartera.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('cartera.*') ? 'bg-brand-600 text-white font-semibold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-slate-800/70' }}">
                         Crédito & Cartera
                     </a>
                     @endcan
 
                     @can('caja.ver')
-                    <a href="{{ route('cajas.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('cajas.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
+                    <a href="{{ route('cajas.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('cajas.*') ? 'bg-brand-600 text-white font-semibold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-slate-800/70' }}">
                         Cajas & Turnos
                     </a>
                     @endcan
 
                     @can('ventas.crear')
-                    <a href="{{ route('pos.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('pos.*') ? 'bg-emerald-600 text-white' : 'text-emerald-400 hover:bg-slate-800' }}">
-                        ⚡ Terminal POS (Ventas Rápidas)
+                    <a href="{{ route('pos.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('pos.*') ? 'bg-emerald-600 text-white font-semibold' : 'text-emerald-400 hover:bg-slate-800' }}">
+                        Terminal POS (Ventas Rápidas)
                     </a>
                     @endcan
 
                     @can('reportes.ver')
-                    <a href="{{ route('reportes.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('reportes.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
-                        📊 Centro de Reportes
+                    <a href="{{ route('reportes.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('reportes.*') ? 'bg-brand-600 text-white font-semibold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-slate-800/70' }}">
+                        Centro de Reportes
                     </a>
                     @endcan
 
                     @can('auditoria.ver')
-                    <a href="{{ route('auditoria.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('auditoria.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
-                        🛡️ Auditoría & Logs
+                    <a href="{{ route('auditoria.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('auditoria.*') ? 'bg-brand-600 text-white font-semibold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-slate-800/70' }}">
+                        Auditoría & Logs
                     </a>
                     @endcan
 
                     @can('impuestos.ver')
-                    <a href="{{ route('impuestos.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('impuestos.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
-                        🏷️ Impuestos & Tarifas
+                    <a href="{{ route('impuestos.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('impuestos.*') ? 'bg-brand-600 text-white font-semibold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-slate-800/70' }}">
+                        Impuestos & Tarifas
                     </a>
                     @endcan
 
                     @can('documentos.ver')
-                    <a href="{{ route('facturacion-electronica.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('facturacion-electronica.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
-                        ⚡ Facturación Electrónica
+                    <a href="{{ route('facturacion-electronica.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('facturacion-electronica.*') ? 'bg-brand-600 text-white font-semibold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-slate-800/70' }}">
+                        Facturación Electrónica
                     </a>
-                    <a href="{{ route('resoluciones.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('resoluciones.*') ? 'bg-indigo-600 text-white' : 'text-white hover:bg-slate-800' }}">
-                        📋 Resoluciones DIAN
+                    <a href="{{ route('resoluciones.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('resoluciones.*') ? 'bg-brand-600 text-white font-semibold shadow-xs' : 'text-slate-300 hover:text-white hover:bg-slate-800/70' }}">
+                        Resoluciones DIAN
                     </a>
                     @endcan
                     @endif
@@ -1604,7 +1604,7 @@
 
             // Buscar el link activo por las clases de fondo o borde que usa el layout
             const activeLink = nav.querySelector(
-                'a.bg-indigo-600, a.bg-emerald-600, a.bg-purple-600, a[class*="border-[#2563EB]"]'
+                'a.bg-brand-600, a.bg-indigo-600, a.bg-emerald-600, a.bg-purple-600, a[class*="border-[#2563EB]"], a[class*="border-brand"]'
             );
 
             if (activeLink) {
@@ -1654,7 +1654,7 @@
                 // Indicador visual de búsqueda en curso
                 const iconContainer = inputActual.closest('.relative')?.querySelector('.pointer-events-none');
                 if (iconContainer) {
-                    iconContainer.classList.add('animate-pulse', 'text-indigo-600');
+                    iconContainer.classList.add('animate-pulse', 'text-brand-600');
                 }
 
                 try {
@@ -1703,7 +1703,7 @@
                     }
                 } finally {
                     if (iconContainer) {
-                        iconContainer.classList.remove('animate-pulse', 'text-indigo-600');
+                        iconContainer.classList.remove('animate-pulse', 'text-brand-600');
                     }
                 }
             }

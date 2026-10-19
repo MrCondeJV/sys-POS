@@ -22,7 +22,7 @@
 
 <div class="no-print" style="max-width:80mm;margin:16px auto 0;display:flex;justify-content:space-between;">
     <a href="{{ route('ventas.show', $venta) }}" style="font-size:11px;color:#475569;text-decoration:none;font-weight:bold;">&larr; Volver</a>
-    <button onclick="window.print()" style="font-size:11px;font-weight:bold;background:#0f172a;color:white;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;">🖨 Imprimir</button>
+    <button onclick="window.print()" style="font-size:11px;font-weight:bold;background:#0f172a;color:white;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;">Imprimir</button>
 </div>
 
 <div class="ticket-wrapper">

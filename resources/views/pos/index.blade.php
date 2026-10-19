@@ -15,22 +15,22 @@ x-init="initTerminal()"
 class="max-w-[1720px] mx-auto pb-10">
 
     <!-- Header Terminal POS -->
-    <div class="bg-white border border-slate-200 rounded-3xl p-4 sm:p-5 mb-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div class="flex items-center space-x-4">
-            <div class="h-12 w-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-black shadow-md shadow-indigo-500/20">
-                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div class="card p-4 sm:p-5 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex items-center gap-3.5">
+            <div class="h-11 w-11 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold shadow-sm">
+                <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
             </div>
             <div>
-                <div class="flex items-center space-x-2">
-                    <h1 class="text-xl font-black text-slate-900 tracking-tight">Terminal de Venta</h1>
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                <div class="flex items-center gap-2">
+                    <h1 class="text-lg font-bold text-slate-900 tracking-tight">Terminal de Venta</h1>
+                    <span class="badge badge-success">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
                         Caja Abierta
                     </span>
                 </div>
-                <div class="text-xs text-slate-500 flex flex-wrap items-center gap-x-4 gap-y-1 mt-0.5">
+                <div class="text-xs text-slate-500 flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5">
                     <span><strong>Caja:</strong> {{ $sesionCaja->caja->nombre }} ({{ $sesionCaja->caja->codigo }})</span>
                     <span>&bull;</span>
                     <span><strong>Sucursal:</strong> {{ $sesionCaja->sucursal?->nombre ?? 'Sin sucursal' }}</span>
@@ -40,17 +40,17 @@ class="max-w-[1720px] mx-auto pb-10">
             </div>
         </div>
 
-        <div class="flex items-center space-x-3 text-xs">
-            <div class="hidden lg:flex items-center space-x-2 bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-slate-600">
-                <span class="font-bold text-slate-700">Teclas rápidas:</span>
-                <span class="bg-white border px-1.5 py-0.5 rounded shadow-xs font-mono font-bold text-slate-800">F2</span> Buscar
-                <span class="bg-white border px-1.5 py-0.5 rounded shadow-xs font-mono font-bold text-slate-800">F4</span> Cobrar
-                <span class="bg-white border px-1.5 py-0.5 rounded shadow-xs font-mono font-bold text-slate-800">F8</span> Cancelar
+        <div class="flex items-center gap-2.5 text-xs">
+            <div class="hidden lg:flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg text-slate-600">
+                <span class="font-semibold text-slate-700">Teclas rápidas:</span>
+                <span class="bg-white border border-slate-200 px-1.5 py-0.5 rounded shadow-xs font-mono font-bold text-slate-800">F2</span> Buscar
+                <span class="bg-white border border-slate-200 px-1.5 py-0.5 rounded shadow-xs font-mono font-bold text-slate-800">F4</span> Cobrar
+                <span class="bg-white border border-slate-200 px-1.5 py-0.5 rounded shadow-xs font-mono font-bold text-slate-800">F8</span> Cancelar
             </div>
-            <a href="{{ route('cajas.show', $sesionCaja->caja) }}" class="px-3.5 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold transition">
+            <a href="{{ route('cajas.show', $sesionCaja->caja) }}" class="btn-secondary text-xs">
                 Ver Caja
             </a>
-            <a href="{{ route('cajas.cierre', $sesionCaja->caja) }}" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold transition shadow-sm">
+            <a href="{{ route('cajas.cierre', $sesionCaja->caja) }}" class="inline-flex items-center px-3.5 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs shadow-sm transition">
                 Cerrar Turno
             </a>
         </div>
@@ -63,10 +63,10 @@ class="max-w-[1720px] mx-auto pb-10">
         <div class="lg:col-span-7 space-y-4">
             
             <!-- Barra de Búsqueda Omnibox con lector de código de barras -->
-            <div class="bg-white border border-slate-200 rounded-3xl p-4 shadow-sm">
+            <div class="card p-4">
                 <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                     </div>
@@ -75,30 +75,30 @@ class="max-w-[1720px] mx-auto pb-10">
                            x-model="searchQuery"
                            @keydown.enter.prevent="onSearchEnter()"
                            placeholder="Escanear código de barras o buscar por nombre / SKU (F2)..."
-                           class="w-full pl-12 pr-28 py-3.5 rounded-2xl border border-slate-200 text-slate-900 placeholder-slate-400 font-medium focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600/20 text-base shadow-inner">
-                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center space-x-1">
+                           class="input-base pl-11 pr-24 py-3 text-sm">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center gap-1">
                         <template x-if="searchQuery">
                             <button @click="searchQuery = ''; focusSearch()" class="p-1 text-slate-400 hover:text-slate-600">
-                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                         </template>
-                        <span class="bg-slate-100 text-slate-500 font-mono text-xs px-2 py-1 rounded-lg border border-slate-200">F2</span>
+                        <span class="bg-slate-100 text-slate-600 font-mono text-[11px] px-1.5 py-0.5 rounded border border-slate-200">F2</span>
                     </div>
                 </div>
 
                 <!-- Filtro por Categorías -->
-                <div class="flex items-center space-x-2 overflow-x-auto pt-3 mt-3 border-t border-slate-100 no-scrollbar">
+                <div class="flex items-center gap-1.5 overflow-x-auto pt-3 mt-3 border-t border-slate-100 no-scrollbar">
                     <button type="button"
                             @click="selectedCategory = null"
-                            :class="selectedCategory === null ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
-                            class="px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition">
+                            :class="selectedCategory === null ? 'bg-slate-900 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                            class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition">
                         Todos
                     </button>
                     @foreach($categorias as $cat)
                         <button type="button"
                                 @click="selectedCategory = {{ $cat->id }}"
-                                :class="selectedCategory === {{ $cat->id }} ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
-                                class="px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition">
+                                :class="selectedCategory === {{ $cat->id }} ? 'bg-slate-900 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                                class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition">
                             {{ $cat->nombre }}
                         </button>
                     @endforeach
@@ -106,7 +106,7 @@ class="max-w-[1720px] mx-auto pb-10">
             </div>
 
             <!-- Grilla de Productos -->
-            <div class="bg-white border border-slate-200 rounded-3xl p-4 shadow-sm min-h-[500px]">
+            <div class="card p-4 min-h-[500px]">
                 <div class="flex items-center justify-between mb-3 px-1">
                     <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">
                         Productos disponibles (<span x-text="filteredProducts.length"></span>)
@@ -117,50 +117,50 @@ class="max-w-[1720px] mx-auto pb-10">
                 <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 max-h-[580px] overflow-y-auto pr-1">
                     <template x-for="p in filteredProducts" :key="p.id">
                         <div @click="addToCart(p)"
-                             class="group p-3 rounded-2xl border border-slate-200 hover:border-indigo-500 hover:shadow-lg transition-all duration-200 cursor-pointer flex flex-col justify-between bg-white relative overflow-hidden">
+                             class="group p-3 rounded-lg border border-slate-200 hover:border-brand-500 hover:shadow-md transition-all duration-150 cursor-pointer flex flex-col justify-between bg-white relative overflow-hidden">
                             
                             <!-- Contenedor de Imagen de Producto con Badges flotantes -->
-                            <div class="relative w-full h-28 sm:h-32 mb-2 rounded-xl overflow-hidden bg-slate-100 border border-slate-200/60 flex items-center justify-center flex-shrink-0">
+                            <div class="relative w-full h-28 sm:h-32 mb-2 rounded-md overflow-hidden bg-slate-100 border border-slate-200/60 flex items-center justify-center flex-shrink-0">
                                 <!-- Si tiene imagen -->
                                 <template x-if="p.imagen_url">
                                     <img :src="p.imagen_url" 
                                          :alt="p.nombre" 
                                          loading="lazy"
-                                         class="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-300">
+                                         class="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-200">
                                 </template>
-                                <!-- Si no tiene imagen (Placeholder elegante) -->
+                                <!-- Si no tiene imagen -->
                                 <template x-if="!p.imagen_url">
-                                    <div class="h-full w-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100/80 text-slate-300 group-hover:text-indigo-400 transition-colors">
-                                        <svg class="h-8 w-8 mb-0.5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <div class="h-full w-full flex flex-col items-center justify-center bg-slate-50 text-slate-400">
+                                        <svg class="h-7 w-7 mb-0.5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
-                                        <span class="text-[9px] font-semibold text-slate-400 tracking-wider uppercase">Sin foto</span>
+                                        <span class="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Sin foto</span>
                                     </div>
                                 </template>
 
                                 <!-- Badge de Categoría (flotante superior izquierda) -->
-                                <span class="absolute top-1.5 left-1.5 text-[9px] font-bold text-slate-800 bg-white/90 backdrop-blur-xs px-2 py-0.5 rounded-md shadow-xs uppercase truncate max-w-[90px]"
+                                <span class="absolute top-1.5 left-1.5 text-[9px] font-semibold text-slate-700 bg-white/95 border border-slate-200/80 px-1.5 py-0.5 rounded shadow-xs uppercase truncate max-w-[85px]"
                                       x-text="p.categoria_nombre"></span>
 
                                 <!-- Badge de Stock (flotante superior derecha) -->
-                                <span :class="p.stock > 5 ? 'bg-emerald-600/90 text-white' : (p.stock > 0 ? 'bg-amber-600/90 text-white' : 'bg-red-600/90 text-white')"
-                                      class="absolute top-1.5 right-1.5 text-[10px] font-black px-1.5 py-0.5 rounded-md shadow-xs backdrop-blur-xs">
+                                <span :class="p.stock > 5 ? 'bg-emerald-600 text-white' : (p.stock > 0 ? 'bg-amber-600 text-white' : 'bg-rose-600 text-white')"
+                                      class="absolute top-1.5 right-1.5 text-[10px] font-bold font-mono px-1.5 py-0.5 rounded shadow-xs">
                                     <span x-text="p.stock"></span> <span x-text="p.unidad"></span>
                                 </span>
                             </div>
 
                             <!-- Title & SKU -->
                             <div class="mb-2">
-                                <h4 class="font-bold text-slate-900 text-xs sm:text-sm line-clamp-2 leading-snug group-hover:text-indigo-600 transition" x-text="p.nombre"></h4>
+                                <h4 class="font-semibold text-slate-900 text-xs sm:text-sm line-clamp-2 leading-snug group-hover:text-brand-600 transition" x-text="p.nombre"></h4>
                                 <div class="text-[11px] font-mono text-slate-400 mt-0.5 truncate" x-text="p.codigo_barras || p.sku || p.codigo"></div>
                             </div>
 
                             <!-- Price -->
                             <div class="flex items-center justify-between pt-2 border-t border-slate-100 mt-auto">
-                                <span class="text-xs sm:text-sm font-black text-slate-900">
+                                <span class="text-xs sm:text-sm font-bold font-mono tabular-nums text-slate-900">
                                     $<span x-text="formatCurrency(p.precio_venta)"></span>
                                 </span>
-                                <div class="h-6 w-6 rounded-lg bg-indigo-50 group-hover:bg-indigo-600 group-hover:text-white text-indigo-600 flex items-center justify-center transition shadow-xs">
+                                <div class="h-6 w-6 rounded-md bg-slate-100 group-hover:bg-brand-600 group-hover:text-white text-slate-600 flex items-center justify-center transition shadow-xs">
                                     <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" /></svg>
                                 </div>
                             </div>
@@ -170,10 +170,10 @@ class="max-w-[1720px] mx-auto pb-10">
 
                 <!-- Empty state -->
                 <div x-show="filteredProducts.length === 0" class="py-16 text-center text-slate-400 space-y-2">
-                    <svg class="h-12 w-12 mx-auto text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="h-10 w-10 mx-auto text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                     </svg>
-                    <p class="text-sm font-medium">No se encontraron productos coincidentes con tu búsqueda.</p>
+                    <p class="text-xs font-medium text-slate-500">No se encontraron productos coincidentes con tu búsqueda.</p>
                 </div>
             </div>
         </div>
@@ -181,20 +181,20 @@ class="max-w-[1720px] mx-auto pb-10">
         <!-- Columna Derecha: Carrito, Cliente y Cobro (5 cols) -->
         <div class="lg:col-span-5 space-y-4">
             
-            <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-4 flex flex-col justify-between">
+            <div class="card p-5 space-y-4 flex flex-col justify-between">
                 
                 <!-- Selector de Cliente -->
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
-                        <label class="block text-xs font-bold text-slate-700 uppercase">Cliente</label>
+                        <label class="label-base">Cliente</label>
                         <template x-if="selectedCliente && selectedCliente.tiene_credito">
-                            <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold font-mono text-emerald-800 bg-emerald-50 border border-emerald-200">
                                 Cupo Crédito: $<span x-text="formatCurrency(selectedCliente.cupo_disponible)"></span>
                             </span>
                         </template>
                     </div>
                     <select x-model="selectedClienteId"
-                            class="w-full px-3.5 py-2.5 rounded-2xl border border-slate-200 font-bold text-xs sm:text-sm text-slate-800 bg-slate-50 focus:bg-white focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600">
+                            class="input-base text-xs sm:text-sm font-medium">
                         <template x-for="c in clientes" :key="c.id">
                             <option :value="c.id" x-text="c.razon_social + (c.es_consumidor_final ? ' (Consumidor Final)' : ' - ' + c.numero_documento)"></option>
                         </template>
@@ -202,10 +202,10 @@ class="max-w-[1720px] mx-auto pb-10">
                 </div>
 
                 <!-- Tabla de Items en Carrito -->
-                <div class="border border-slate-200 rounded-2xl overflow-hidden">
+                <div class="border border-slate-200 rounded-lg overflow-hidden">
                     <div class="bg-slate-50 px-3 py-2 border-b border-slate-200 flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                         <span>Detalle de Venta (<span x-text="cart.length"></span>)</span>
-                        <button @click="clearCart()" x-show="cart.length > 0" class="text-red-500 hover:text-red-700 text-[11px] font-bold">
+                        <button @click="clearCart()" x-show="cart.length > 0" class="text-rose-600 hover:text-rose-700 text-[11px] font-semibold">
                             Vaciar (F8)
                         </button>
                     </div>
@@ -214,7 +214,7 @@ class="max-w-[1720px] mx-auto pb-10">
                         <template x-for="(item, idx) in cart" :key="item.id">
                             <div class="p-3 hover:bg-slate-50/70 transition flex items-center justify-between gap-2.5">
                                 <!-- Mini Thumbnail -->
-                                <div class="h-10 w-10 rounded-xl bg-slate-100 border border-slate-200/80 overflow-hidden flex-shrink-0 flex items-center justify-center">
+                                <div class="h-10 w-10 rounded-md bg-slate-100 border border-slate-200/80 overflow-hidden flex-shrink-0 flex items-center justify-center">
                                     <template x-if="item.imagen_url">
                                         <img :src="item.imagen_url" :alt="item.nombre" class="h-full w-full object-cover">
                                     </template>
@@ -226,8 +226,8 @@ class="max-w-[1720px] mx-auto pb-10">
                                 </div>
 
                                 <div class="flex-1 min-w-0">
-                                    <h5 class="text-xs font-bold text-slate-900 truncate" x-text="item.nombre"></h5>
-                                    <div class="text-[11px] text-slate-500">
+                                    <h5 class="text-xs font-semibold text-slate-900 truncate" x-text="item.nombre"></h5>
+                                    <div class="text-[11px] text-slate-500 tabular-nums">
                                         $<span x-text="formatCurrency(item.precio)"></span> x <span x-text="item.unidad"></span>
                                         <template x-if="item.impuesto_porcentaje > 0">
                                             <span class="text-slate-400 font-mono">(IVA <span x-text="item.impuesto_porcentaje"></span>%)</span>
@@ -236,23 +236,23 @@ class="max-w-[1720px] mx-auto pb-10">
                                 </div>
 
                                 <!-- Cantidad Controls -->
-                                <div class="flex items-center space-x-1.5">
-                                    <button @click="updateQty(idx, -1)" class="h-6 w-6 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs">
+                                <div class="flex items-center gap-1">
+                                    <button @click="updateQty(idx, -1)" class="h-6 w-6 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs">
                                         -
                                     </button>
                                     <input type="number" step="1" min="1" x-model.number="item.cantidad" @change="if(item.cantidad < 1) item.cantidad = 1"
-                                           class="w-12 text-center text-xs font-black py-1 px-1 border border-slate-200 rounded-lg">
-                                    <button @click="updateQty(idx, 1)" class="h-6 w-6 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs">
+                                           class="w-12 text-center text-xs font-semibold font-mono tabular-nums py-1 px-1 border border-slate-200 rounded">
+                                    <button @click="updateQty(idx, 1)" class="h-6 w-6 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs">
                                         +
                                     </button>
                                 </div>
 
                                 <!-- Subtotal Line -->
                                 <div class="text-right w-20">
-                                    <div class="text-xs font-black text-slate-900">
+                                    <div class="text-xs font-bold font-mono tabular-nums text-slate-900">
                                         $<span x-text="formatCurrency(item.cantidad * item.precio)"></span>
                                     </div>
-                                    <button @click="removeItem(idx)" class="text-[10px] text-red-500 hover:underline">
+                                    <button @click="removeItem(idx)" class="text-[10px] text-rose-600 hover:underline">
                                         Quitar
                                     </button>
                                 </div>
@@ -266,24 +266,24 @@ class="max-w-[1720px] mx-auto pb-10">
                 </div>
 
                 <!-- Resumen Financiero -->
-                <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-2">
+                <div class="bg-slate-50 rounded-lg p-4 border border-slate-200 space-y-2">
                     <div class="flex justify-between text-xs text-slate-600 font-medium">
                         <span>Subtotal:</span>
-                        <span class="font-bold text-slate-800">$<span x-text="formatCurrency(subtotal)"></span></span>
+                        <span class="font-bold font-mono tabular-nums text-slate-800">$<span x-text="formatCurrency(subtotal)"></span></span>
                     </div>
                     <div class="flex justify-between text-xs text-slate-600 font-medium">
                         <span>Impuestos (IVA):</span>
-                        <span class="font-bold text-slate-800">$<span x-text="formatCurrency(impuestosTotal)"></span></span>
+                        <span class="font-bold font-mono tabular-nums text-slate-800">$<span x-text="formatCurrency(impuestosTotal)"></span></span>
                     </div>
                     <template x-if="descuentoTotal > 0">
-                        <div class="flex justify-between text-xs text-emerald-600 font-medium">
+                        <div class="flex justify-between text-xs text-emerald-700 font-medium">
                             <span>Descuento:</span>
-                            <span class="font-bold">-$<span x-text="formatCurrency(descuentoTotal)"></span></span>
+                            <span class="font-bold font-mono tabular-nums">-$<span x-text="formatCurrency(descuentoTotal)"></span></span>
                         </div>
                     </template>
                     <div class="border-t border-slate-200 pt-3 flex justify-between items-baseline">
-                        <span class="text-sm font-black text-slate-900 uppercase">Total a Pagar:</span>
-                        <span class="text-2xl font-black text-indigo-600">
+                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Total a Pagar:</span>
+                        <span class="text-2xl font-bold font-mono tabular-nums text-slate-900">
                             $<span x-text="formatCurrency(total)"></span>
                         </span>
                     </div>
@@ -294,15 +294,15 @@ class="max-w-[1720px] mx-auto pb-10">
                     <button type="button"
                             @click="clearCart()"
                             :disabled="cart.length === 0"
-                            class="py-3 px-4 rounded-2xl border border-slate-300 font-bold text-xs text-slate-600 hover:bg-slate-100 transition disabled:opacity-50">
+                            class="btn-secondary text-xs justify-center py-2.5 disabled:opacity-50">
                         Cancelar (F8)
                     </button>
                     <button type="button"
                             @click="openPaymentModal()"
                             :disabled="cart.length === 0"
-                            class="py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm shadow-md shadow-emerald-600/20 transition disabled:opacity-50 flex items-center justify-center space-x-2">
+                            class="btn-primary text-xs justify-center py-2.5 disabled:opacity-50">
                         <span>COBRAR (F4)</span>
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                        <svg class="h-4 w-4 ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                     </button>
                 </div>
 
@@ -314,43 +314,43 @@ class="max-w-[1720px] mx-auto pb-10">
     <!-- MODAL DE COBRO Y MÉTODOS DE PAGO (FASE 12) -->
     <div x-cloak x-show="modalPago" class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4 p-6">
-            <div x-show="modalPago" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
+            <div x-show="modalPago" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" @click="modalPago = false"></div>
             
-            <div x-show="modalPago" @click.away="modalPago = false"
-                 class="relative bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-100 z-10 space-y-6">
+            <div x-show="modalPago"
+                 class="relative bg-white rounded-xl max-w-2xl w-full p-6 sm:p-8 shadow-xl border border-slate-200 z-10 space-y-5">
                 
                 <!-- Encabezado Modal -->
-                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                     <div>
-                        <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider block">Finalizar Venta</span>
-                        <h3 class="text-xl font-black text-slate-900">Total a Cobrar: $<span x-text="formatCurrency(total)"></span></h3>
+                        <span class="text-[10px] font-bold text-brand-600 uppercase tracking-wider block">Finalizar Venta</span>
+                        <h3 class="text-xl font-bold font-mono tabular-nums text-slate-900">Total a Cobrar: $<span x-text="formatCurrency(total)"></span></h3>
                     </div>
-                    <button @click="modalPago = false" class="text-slate-400 hover:text-slate-600">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    <button @click="modalPago = false" class="text-slate-400 hover:text-slate-600 p-1">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
 
                 <!-- Opciones de Factura & Tipo de Pago -->
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Comprobante</label>
-                        <select x-model="tipoComprobante" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-800">
+                        <label class="label-base">Comprobante</label>
+                        <select x-model="tipoComprobante" class="input-base text-xs">
                             <option value="TICKET">Ticket POS</option>
                             <option value="FACTURA">Factura Comercial</option>
                             <option value="NOTA_VENTA">Nota de Venta</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Condición</label>
+                        <label class="label-base">Condición</label>
                         <div class="grid grid-cols-2 gap-2">
                             <button type="button" @click="tipoPago = 'CONTADO'"
-                                    :class="tipoPago === 'CONTADO' ? 'bg-indigo-600 text-white font-bold' : 'bg-slate-100 text-slate-700 font-medium'"
-                                    class="py-2 text-xs rounded-xl transition">
+                                    :class="tipoPago === 'CONTADO' ? 'bg-slate-900 text-white font-semibold shadow-xs' : 'bg-slate-100 text-slate-700 font-medium'"
+                                    class="py-2 text-xs rounded-lg transition">
                                 Contado
                             </button>
                             <button type="button" @click="selectCredito()"
-                                    :class="tipoPago === 'CREDITO' ? 'bg-indigo-600 text-white font-bold' : 'bg-slate-100 text-slate-700 font-medium'"
-                                    class="py-2 text-xs rounded-xl transition">
+                                    :class="tipoPago === 'CREDITO' ? 'bg-slate-900 text-white font-semibold shadow-xs' : 'bg-slate-100 text-slate-700 font-medium'"
+                                    class="py-2 text-xs rounded-lg transition">
                                 Crédito
                             </button>
                         </div>
@@ -359,46 +359,46 @@ class="max-w-[1720px] mx-auto pb-10">
 
                 <!-- Selector de Método de Pago (Cuando es Contado) -->
                 <div x-show="tipoPago === 'CONTADO'" class="space-y-4">
-                    <label class="block text-xs font-bold text-slate-700 uppercase">Método de Pago</label>
+                    <label class="label-base">Método de Pago</label>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         <button type="button" @click="metodoPago = 'EFECTIVO'; autoCalcularEfectivo()"
-                                :class="metodoPago === 'EFECTIVO' ? 'border-indigo-600 bg-indigo-50/50 text-indigo-700 font-black' : 'border-slate-200 text-slate-600'"
-                                class="p-3 rounded-2xl border text-xs font-bold flex flex-col items-center justify-center space-y-1 transition">
-                            <span>💵 Efectivo</span>
+                                :class="metodoPago === 'EFECTIVO' ? 'border-brand-600 bg-brand-50/40 text-brand-800 font-semibold ring-1 ring-brand-500' : 'border-slate-200 text-slate-700 hover:border-slate-300'"
+                                class="p-3 rounded-lg border text-xs flex flex-col items-center justify-center space-y-1 transition">
+                            <span>Efectivo</span>
                         </button>
                         <button type="button" @click="metodoPago = 'TARJETA'; pagoCon = total"
-                                :class="metodoPago === 'TARJETA' ? 'border-indigo-600 bg-indigo-50/50 text-indigo-700 font-black' : 'border-slate-200 text-slate-600'"
-                                class="p-3 rounded-2xl border text-xs font-bold flex flex-col items-center justify-center space-y-1 transition">
-                            <span>💳 Tarjeta</span>
+                                :class="metodoPago === 'TARJETA' ? 'border-brand-600 bg-brand-50/40 text-brand-800 font-semibold ring-1 ring-brand-500' : 'border-slate-200 text-slate-700 hover:border-slate-300'"
+                                class="p-3 rounded-lg border text-xs flex flex-col items-center justify-center space-y-1 transition">
+                            <span>Tarjeta</span>
                         </button>
                         <button type="button" @click="metodoPago = 'TRANSFERENCIA'; pagoCon = total"
-                                :class="metodoPago === 'TRANSFERENCIA' ? 'border-indigo-600 bg-indigo-50/50 text-indigo-700 font-black' : 'border-slate-200 text-slate-600'"
-                                class="p-3 rounded-2xl border text-xs font-bold flex flex-col items-center justify-center space-y-1 transition">
-                            <span>📱 Transferencia</span>
+                                :class="metodoPago === 'TRANSFERENCIA' ? 'border-brand-600 bg-brand-50/40 text-brand-800 font-semibold ring-1 ring-brand-500' : 'border-slate-200 text-slate-700 hover:border-slate-300'"
+                                class="p-3 rounded-lg border text-xs flex flex-col items-center justify-center space-y-1 transition">
+                            <span>Transferencia</span>
                         </button>
                         <button type="button" @click="metodoPago = 'MIXTO'; prepararPagoMixto()"
-                                :class="metodoPago === 'MIXTO' ? 'border-indigo-600 bg-indigo-50/50 text-indigo-700 font-black' : 'border-slate-200 text-slate-600'"
-                                class="p-3 rounded-2xl border text-xs font-bold flex flex-col items-center justify-center space-y-1 transition">
-                            <span>🔄 Pago Mixto</span>
+                                :class="metodoPago === 'MIXTO' ? 'border-brand-600 bg-brand-50/40 text-brand-800 font-semibold ring-1 ring-brand-500' : 'border-slate-200 text-slate-700 hover:border-slate-300'"
+                                class="p-3 rounded-lg border text-xs flex flex-col items-center justify-center space-y-1 transition">
+                            <span>Pago Mixto</span>
                         </button>
                     </div>
 
                     <!-- Panel de Efectivo: Pago con y Vueltos -->
-                    <div x-show="metodoPago === 'EFECTIVO'" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                    <div x-show="metodoPago === 'EFECTIVO'" class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-3">
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Paga con *</label>
+                                <label class="label-base">Paga con *</label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center font-bold text-slate-400">$</span>
                                     <input type="number" step="100" min="0" x-model.number="pagoCon"
                                            x-ref="pagoConInput"
-                                           class="w-full pl-7 pr-3 py-2 text-lg font-black text-slate-900 rounded-xl border border-slate-200 focus:border-indigo-600">
+                                           class="input-base pl-7 pr-3 py-2 text-lg font-bold font-mono tabular-nums text-slate-900">
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Cambio / Vueltos</label>
-                                <div :class="cambio >= 0 ? 'text-emerald-600' : 'text-red-500'"
-                                     class="px-3 py-2 text-xl font-black bg-white rounded-xl border border-slate-200">
+                                <label class="label-base">Cambio / Vueltos</label>
+                                <div :class="cambio >= 0 ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : 'text-rose-700 bg-rose-50 border-rose-200'"
+                                     class="px-3 py-2 text-xl font-bold font-mono tabular-nums rounded-lg border">
                                     $<span x-text="formatCurrency(Math.max(0, cambio))"></span>
                                 </div>
                             </div>
@@ -406,31 +406,31 @@ class="max-w-[1720px] mx-auto pb-10">
 
                         <!-- Botones de Billetes Rápidos -->
                         <div class="pt-2">
-                            <span class="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">Billetes sugeridos:</span>
+                            <span class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Billetes sugeridos:</span>
                             <div class="flex flex-wrap gap-2">
-                                <button type="button" @click="pagoCon = total" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-xs font-bold hover:bg-slate-100">
+                                <button type="button" @click="pagoCon = total" class="px-2.5 py-1 rounded bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50">
                                     Exacto ($<span x-text="formatCurrency(total)"></span>)
                                 </button>
-                                <button type="button" @click="pagoCon = 10000" x-show="total <= 10000" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-xs font-bold hover:bg-slate-100">$10.000</button>
-                                <button type="button" @click="pagoCon = 20000" x-show="total <= 20000" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-xs font-bold hover:bg-slate-100">$20.000</button>
-                                <button type="button" @click="pagoCon = 50000" x-show="total <= 50000" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-xs font-bold hover:bg-slate-100">$50.000</button>
-                                <button type="button" @click="pagoCon = 100000" class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-xs font-bold hover:bg-slate-100">$100.000</button>
+                                <button type="button" @click="pagoCon = 10000" x-show="total <= 10000" class="px-2.5 py-1 rounded bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50">$10.000</button>
+                                <button type="button" @click="pagoCon = 20000" x-show="total <= 20000" class="px-2.5 py-1 rounded bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50">$20.000</button>
+                                <button type="button" @click="pagoCon = 50000" x-show="total <= 50000" class="px-2.5 py-1 rounded bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50">$50.000</button>
+                                <button type="button" @click="pagoCon = 100000" class="px-2.5 py-1 rounded bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50">$100.000</button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Panel de Pago Mixto (Fase 12) -->
-                    <div x-show="metodoPago === 'MIXTO'" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                    <div x-show="metodoPago === 'MIXTO'" class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-3">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-slate-700 uppercase">Detalle de pagos combinados</span>
-                            <button type="button" @click="agregarFilaMixta()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">
+                            <span class="label-base">Detalle de pagos combinados</span>
+                            <button type="button" @click="agregarFilaMixta()" class="text-xs font-semibold text-brand-600 hover:text-brand-700">
                                 + Agregar método
                             </button>
                         </div>
                         
                         <div class="space-y-2">
                             <template x-for="(pagoItem, pIdx) in pagosMixtos" :key="pIdx">
-                                <div class="flex items-center space-x-2 bg-white p-2 rounded-xl border border-slate-200">
+                                <div class="flex items-center gap-2 bg-white p-2 rounded-lg border border-slate-200">
                                     <select x-model="pagoItem.metodo_pago" class="w-1/3 select-compact">
                                         <option value="EFECTIVO">Efectivo</option>
                                         <option value="TARJETA">Tarjeta</option>
@@ -440,11 +440,11 @@ class="max-w-[1720px] mx-auto pb-10">
                                     <div class="relative flex-1">
                                         <span class="absolute inset-y-0 left-0 pl-2 flex items-center font-bold text-slate-400 text-xs">$</span>
                                         <input type="number" step="0.01" min="0" x-model.number="pagoItem.monto"
-                                               class="w-full pl-5 input-compact">
+                                               class="w-full pl-5 input-compact font-mono">
                                     </div>
                                     <input type="text" x-model="pagoItem.referencia" placeholder="Ref/voucher"
                                            class="w-28 input-compact">
-                                    <button type="button" @click="quitarFilaMixta(pIdx)" class="text-red-500 hover:text-red-700 px-1 font-bold text-xs">
+                                    <button type="button" @click="quitarFilaMixta(pIdx)" class="text-rose-600 hover:text-rose-700 px-1 font-bold text-xs">
                                         ✕
                                     </button>
                                 </div>
@@ -452,8 +452,8 @@ class="max-w-[1720px] mx-auto pb-10">
                         </div>
 
                         <div class="flex justify-between items-center text-xs pt-1">
-                            <span class="font-bold text-slate-600">Suma ingresada: $<span x-text="formatCurrency(sumaPagosMixtos)"></span></span>
-                            <span :class="sumaPagosMixtos >= total ? 'text-emerald-600 font-bold' : 'text-red-500 font-bold'">
+                            <span class="font-semibold text-slate-700 font-mono tabular-nums">Suma ingresada: $<span x-text="formatCurrency(sumaPagosMixtos)"></span></span>
+                            <span :class="sumaPagosMixtos >= total ? 'text-emerald-700 font-semibold' : 'text-rose-700 font-semibold'">
                                 <span x-text="sumaPagosMixtos >= total ? '¡Monto cubierto!' : 'Faltan $' + formatCurrency(total - sumaPagosMixtos)"></span>
                             </span>
                         </div>
@@ -461,39 +461,39 @@ class="max-w-[1720px] mx-auto pb-10">
                 </div>
 
                 <!-- Panel Crédito Comercial -->
-                <div x-show="tipoPago === 'CREDITO'" class="bg-amber-50 p-4 rounded-2xl border border-amber-200 space-y-2">
-                    <h5 class="text-xs font-black text-amber-900 uppercase">Venta a Crédito</h5>
-                    <p class="text-xs text-amber-800">
+                <div x-show="tipoPago === 'CREDITO'" class="bg-amber-50 p-4 rounded-lg border border-amber-200 space-y-1.5">
+                    <h5 class="text-xs font-bold text-amber-900 uppercase tracking-wider">Venta a Crédito</h5>
+                    <p class="text-xs text-amber-800 leading-relaxed">
                         Se generará una cuenta por cobrar en el módulo de Cartera para el cliente
                         <strong x-text="selectedCliente ? selectedCliente.razon_social : ''"></strong>.
                     </p>
-                    <div class="text-xs font-bold text-amber-900 pt-1">
+                    <div class="text-xs font-semibold text-amber-900 pt-1">
                         Plazo acordado: <span x-text="selectedCliente ? selectedCliente.plazo_dias : 30"></span> días.
                     </div>
                 </div>
 
                 <!-- Observaciones -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Observaciones (Opcional)</label>
+                    <label class="label-base">Observaciones (Opcional)</label>
                     <input type="text" x-model="observaciones" placeholder="Ej: Pago con billete de $100.000 / Cliente frecuente"
-                           class="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-200">
+                           class="input-base text-xs">
                 </div>
 
                 <!-- Error alert in modal -->
-                <div x-show="errorMsg" class="p-3 bg-red-50 text-red-700 rounded-xl text-xs font-bold flex items-center space-x-2">
+                <div x-show="errorMsg" class="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-lg text-xs font-semibold flex items-center gap-2">
                     <svg class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span x-text="errorMsg"></span>
                 </div>
 
                 <!-- Footer Modal -->
-                <div class="flex items-center justify-end space-x-3 pt-3 border-t border-slate-100">
-                    <button type="button" @click="modalPago = false" class="px-4 py-2.5 text-xs font-bold text-slate-500 hover:bg-slate-50 rounded-xl">
+                <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-200">
+                    <button type="button" @click="modalPago = false" class="btn-secondary text-xs">
                         Regresar
                     </button>
                     <button type="button"
                             @click="enviarVenta()"
                             :disabled="loading || (tipoPago === 'CONTADO' && metodoPago === 'EFECTIVO' && cambio < 0) || (tipoPago === 'CONTADO' && metodoPago === 'MIXTO' && sumaPagosMixtos < total)"
-                            class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm rounded-xl shadow-md transition disabled:opacity-50 flex items-center space-x-2">
+                            class="btn-primary text-xs sm:text-sm py-2 px-5 disabled:opacity-50">
                         <template x-if="loading">
                             <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -511,45 +511,45 @@ class="max-w-[1720px] mx-auto pb-10">
     <!-- MODAL DE ÉXITO Y TICKET -->
     <div x-cloak x-show="modalExito" class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4 p-6">
-            <div x-show="modalExito" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+            <div x-show="modalExito" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
             
             <div x-show="modalExito"
-                 class="relative bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-slate-100 z-10 text-center space-y-5">
+                 class="relative bg-white rounded-xl max-w-md w-full p-6 sm:p-8 shadow-xl border border-slate-200 z-10 text-center space-y-5">
                 
-                <div class="h-16 w-16 bg-emerald-100 text-emerald-600 rounded-3xl mx-auto flex items-center justify-center">
-                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="h-14 w-14 bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-xl mx-auto flex items-center justify-center">
+                    <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
                     </svg>
                 </div>
 
                 <div>
-                    <h3 class="text-xl font-black text-slate-900">¡Venta Exitosa!</h3>
+                    <h3 class="text-xl font-bold text-slate-900 tracking-tight">¡Venta Exitosa!</h3>
                     <p class="text-xs text-slate-500 mt-1">
-                        Comprobante <strong x-text="ventaExitosa.numero_venta"></strong> generado correctamente.
+                        Comprobante <strong class="font-mono text-slate-900" x-text="ventaExitosa.numero_venta"></strong> generado correctamente.
                     </p>
                 </div>
 
-                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2 text-left">
+                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-2 text-left">
                     <div class="flex justify-between text-xs">
                         <span class="text-slate-500">Total Venta:</span>
-                        <span class="font-black text-slate-900">$<span x-text="formatCurrency(ventaExitosa.total)"></span></span>
+                        <span class="font-bold font-mono tabular-nums text-slate-900">$<span x-text="formatCurrency(ventaExitosa.total)"></span></span>
                     </div>
                     <template x-if="ventaExitosa.cambio > 0">
                         <div class="flex justify-between text-xs pt-1 border-t border-slate-200">
-                            <span class="text-emerald-700 font-bold">Cambio a Entregar:</span>
-                            <span class="font-black text-emerald-700 text-sm">$<span x-text="formatCurrency(ventaExitosa.cambio)"></span></span>
+                            <span class="text-emerald-700 font-semibold">Cambio a Entregar:</span>
+                            <span class="font-bold font-mono tabular-nums text-emerald-700 text-sm">$<span x-text="formatCurrency(ventaExitosa.cambio)"></span></span>
                         </div>
                     </template>
                 </div>
 
                 <div class="space-y-2 pt-2">
                     <a :href="ventaExitosa.ticket_url" target="_blank"
-                       class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs flex items-center justify-center space-x-2 shadow-sm">
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                       class="btn-primary w-full py-2.5 justify-center text-xs">
+                        <svg class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
                         <span>Imprimir Ticket</span>
                     </a>
                     <button type="button" @click="nuevaVenta()"
-                            class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl font-bold text-xs">
+                            class="btn-secondary w-full py-2.5 justify-center text-xs">
                         Nueva Venta (Enter)
                     </button>
                 </div>

@@ -3,29 +3,30 @@
 @section('title', 'Reporte de Cartera y Envejecimiento')
 
 @section('content')
-<div class="w-full max-w-[1680px] mx-auto space-y-6">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-            <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
-                <a href="{{ route('reportes.index') }}" class="hover:text-indigo-600 transition">Reportes</a>
-                <span>&rsaquo;</span>
-                <span class="text-indigo-600">Cartera</span>
-            </div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Reporte de Cartera y Antigüedad de Saldos</h1>
-        </div>
-        <div>
-            <a href="{{ route('reportes.cartera.imprimir') }}" target="_blank" class="inline-flex items-center px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-sm font-bold transition shadow-sm">
+<div class="space-y-6">
+    <x-page-header
+        title="Reporte de Cartera y Antigüedad de Saldos"
+        subtitle="Monitoreo de cuentas por cobrar, vencimientos y clasificación de riesgo por mora."
+        :breadcrumbs="[
+            ['label' => 'Reportes', 'url' => route('reportes.index')],
+            ['label' => 'Cartera']
+        ]">
+        <x-slot:actions>
+            <a href="{{ route('reportes.cartera.imprimir') }}" target="_blank" class="btn-secondary">
+                <svg class="h-4 w-4 mr-1.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
                 Imprimir / PDF
             </a>
-        </div>
-    </div>
+        </x-slot:actions>
+    </x-page-header>
 
     <!-- Filtros -->
-    <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
-        <form method="GET" action="{{ route('reportes.cartera') }}" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="card p-4">
+        <form method="GET" action="{{ route('reportes.cartera') }}" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Cliente</label>
-                <select name="cliente_id" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200">
+                <label class="label-base">Cliente</label>
+                <select name="cliente_id" class="input-select text-xs">
                     <option value="">Todos los Clientes</option>
                     @foreach($clientes as $cl)
                         <option value="{{ $cl->id }}" {{ $clienteId == $cl->id ? 'selected' : '' }}>{{ $cl->razon_social }}</option>
@@ -33,8 +34,8 @@
                 </select>
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Sucursal</label>
-                <select name="sucursal_id" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200">
+                <label class="label-base">Sucursal</label>
+                <select name="sucursal_id" class="input-select text-xs">
                     <option value="">Todas</option>
                     @foreach($sucursales as $s)
                         <option value="{{ $s->id }}" {{ $sucursalId == $s->id ? 'selected' : '' }}>{{ $s->nombre }}</option>
@@ -42,87 +43,108 @@
                 </select>
             </div>
             <div class="flex items-end gap-2">
-                <button type="submit" class="w-full px-4 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition shadow-sm">Filtrar</button>
-                <a href="{{ route('reportes.cartera') }}" class="px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-xl border border-slate-200 transition">Limpiar</a>
+                <button type="submit" class="btn-primary flex-1">Filtrar</button>
+                <a href="{{ route('reportes.cartera') }}" class="btn-secondary">Limpiar</a>
             </div>
         </form>
     </div>
 
     <!-- KPIs Antigüedad -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Saldo Total Pendiente</span>
-            <div class="text-2xl font-extrabold text-slate-900 mt-1">${{ number_format($saldoTotalPendiente, 2) }}</div>
-            <span class="text-xs text-slate-500">Deuda global activa</span>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Corriente (Al día)</span>
-            <div class="text-2xl font-extrabold text-emerald-600 mt-1">${{ number_format($corriente, 2) }}</div>
-            <span class="text-xs text-slate-500">No vencida</span>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Mora 1 - 30 Días</span>
-            <div class="text-2xl font-extrabold text-amber-600 mt-1">${{ number_format($mora1a30, 2) }}</div>
-            <span class="text-xs text-slate-500">Vencimiento reciente</span>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Mora 31 - 60 Días</span>
-            <div class="text-2xl font-extrabold text-orange-600 mt-1">${{ number_format($mora31a60, 2) }}</div>
-            <span class="text-xs text-slate-500">Mora intermedia</span>
-        </div>
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Mora > 60 Días</span>
-            <div class="text-2xl font-extrabold text-rose-600 mt-1">${{ number_format($moraMas60, 2) }}</div>
-            <span class="text-xs text-slate-500">Cartera de alto riesgo</span>
-        </div>
+        <x-kpi-card
+            label="Saldo Pendiente"
+            value="${{ number_format($saldoTotalPendiente, 2) }}"
+            context="Deuda global activa"
+            icon="currency-dollar"
+        />
+
+        <x-kpi-card
+            label="Corriente (Al día)"
+            value="${{ number_format($corriente, 2) }}"
+            context="No vencida"
+            variant="success"
+            icon="check"
+        />
+
+        <x-kpi-card
+            label="Mora 1 - 30 Días"
+            value="${{ number_format($mora1a30, 2) }}"
+            context="Vencimiento reciente"
+            variant="warning"
+            icon="alert"
+        />
+
+        <x-kpi-card
+            label="Mora 31 - 60 Días"
+            value="${{ number_format($mora31a60, 2) }}"
+            context="Mora intermedia"
+            variant="warning"
+            icon="alert"
+        />
+
+        <x-kpi-card
+            label="Mora > 60 Días"
+            value="${{ number_format($moraMas60, 2) }}"
+            context="Cartera de alto riesgo"
+            variant="danger"
+            icon="alert"
+        />
     </div>
 
     <!-- Tabla -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="card p-0 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-slate-100 text-left text-sm text-slate-600">
-                <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-xs tracking-wider">
+            <table class="table-corporate">
+                <thead>
                     <tr>
-                        <th class="py-3.5 px-4">Documento</th>
-                        <th class="py-3.5 px-4">Cliente</th>
-                        <th class="py-3.5 px-4">Emisión</th>
-                        <th class="py-3.5 px-4">Vencimiento</th>
-                        <th class="py-3.5 px-4 text-right">Monto Original</th>
-                        <th class="py-3.5 px-4 text-right">Abonado</th>
-                        <th class="py-3.5 px-4 text-right">Saldo Pendiente</th>
-                        <th class="py-3.5 px-4 text-center">Estado</th>
+                        <th>Documento</th>
+                        <th>Cliente</th>
+                        <th>Emisión</th>
+                        <th>Vencimiento</th>
+                        <th class="text-right">Monto Original</th>
+                        <th class="text-right">Abonado</th>
+                        <th class="text-right">Saldo Pendiente</th>
+                        <th class="text-center">Estado</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
+                <tbody>
                     @forelse($cuentasPaginadas as $cp)
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="py-3 px-4 font-bold text-slate-900">{{ $cp->numero_documento }}</td>
-                        <td class="py-3 px-4">{{ $cp->cliente?->razon_social }}</td>
-                        <td class="py-3 px-4 text-xs text-slate-500">{{ $cp->fecha_emision->format('d/m/Y') }}</td>
-                        <td class="py-3 px-4 text-xs font-semibold {{ $cp->estaVencida() ? 'text-rose-600' : 'text-slate-600' }}">
+                    <tr>
+                        <td class="font-mono font-semibold text-slate-900 text-xs">{{ $cp->numero_documento }}</td>
+                        <td class="text-xs font-medium text-slate-800">{{ $cp->cliente?->razon_social }}</td>
+                        <td class="text-xs text-slate-500 font-mono">{{ $cp->fecha_emision->format('d/m/Y') }}</td>
+                        <td class="text-xs font-mono {{ $cp->estaVencida() ? 'text-red-600 font-semibold' : 'text-slate-600' }}">
                             {{ $cp->fecha_vencimiento->format('d/m/Y') }}
                             @if($cp->estaVencida())
-                                <span class="text-[10px] text-rose-500">({{ abs($cp->diasDiferenciaVencimiento()) }} días mora)</span>
+                                <span class="text-[10px] text-red-500">({{ abs($cp->diasDiferenciaVencimiento()) }} d mora)</span>
                             @endif
                         </td>
-                        <td class="py-3 px-4 text-right">${{ number_format($cp->monto_total, 2) }}</td>
-                        <td class="py-3 px-4 text-right text-emerald-600 font-medium">${{ number_format($cp->monto_pagado, 2) }}</td>
-                        <td class="py-3 px-4 text-right font-extrabold text-slate-900">${{ number_format($cp->saldo_pendiente, 2) }}</td>
-                        <td class="py-3 px-4 text-center">
-                            <span class="px-2 py-0.5 rounded-full text-xs font-bold {{ $cp->estado->value === 'PAGADA' ? 'bg-emerald-100 text-emerald-800' : ($cp->estaVencida() ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800') }}">
+                        <td class="text-right font-mono text-xs text-slate-700 tabular-nums">${{ number_format($cp->monto_total, 2) }}</td>
+                        <td class="text-right font-mono text-xs text-emerald-700 tabular-nums">${{ number_format($cp->monto_pagado, 2) }}</td>
+                        <td class="text-right font-mono font-semibold text-xs text-slate-900 tabular-nums">${{ number_format($cp->saldo_pendiente, 2) }}</td>
+                        <td class="text-center">
+                            <span class="badge {{ $cp->estado->value === 'PAGADA' ? 'badge-success' : ($cp->estaVencida() ? 'badge-danger' : 'badge-warning') }}">
                                 {{ $cp->estado->value }}
                             </span>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="py-8 text-center text-slate-400">No hay cuentas por cobrar registradas.</td>
+                        <td colspan="8" class="text-center py-12">
+                            <div class="empty-state">
+                                <svg class="empty-state-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <p class="empty-state-title">No hay cuentas por cobrar</p>
+                                <p class="empty-state-desc">No se encontraron créditos registrados con saldos pendientes para los filtros aplicados.</p>
+                            </div>
+                        </td>
                     </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        <div class="p-4 border-t border-slate-100">
+        <div class="p-4 border-t border-slate-200">
             {{ $cuentasPaginadas->links() }}
         </div>
     </div>

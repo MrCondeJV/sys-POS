@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -77,7 +77,7 @@
         .pill-pending { background: #f1f5f9; color: #475569; }
         .pill-applied { background: #dcfce7; color: #166534; }
         .pill-anulado { background: #fee2e2; color: #991b1b; }
-        .pill-medio   { background: #e0e7ff; color: #3730a3; }
+        .pill-medio   { background: #eff6ff; color: #1e40af; }
 
         .doc-footer { margin-top: 18px; border-top: 1px solid #e2e8f0; padding-top: 6px; font-size: 7.5px; color: #94a3b8; display: flex; justify-content: space-between; }
         .empty-row td { text-align: center; padding: 12px; color: #94a3b8; font-style: italic; }
@@ -168,7 +168,7 @@
     {{-- Barra cupo --}}
     <div class="progress-row"><span>Cupo Utilizado</span><span>{{ $porcentajeUtilizado }}%</span></div>
     <div class="progress-track">
-        <div class="progress-fill" style="width:{{ $porcentajeUtilizado }}%;background:{{ $porcentajeUtilizado > 90 ? '#ef4444' : ($porcentajeUtilizado > 70 ? '#f59e0b' : '#6366f1') }};"></div>
+        <div class="progress-fill" style="width:{{ $porcentajeUtilizado }}%;background:{{ $porcentajeUtilizado > 90 ? '#ef4444' : ($porcentajeUtilizado > 70 ? '#f59e0b' : '#0284c7') }};"></div>
     </div>
 
     {{-- Tabla 1 --}}

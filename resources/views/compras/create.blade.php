@@ -136,44 +136,40 @@
         }
     </script>
 
-    <div class="max-w-[1680px] mx-auto space-y-6" x-data="compraForm()">
+    <div class="space-y-6" x-data="compraForm()">
         <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-                <div class="flex items-center space-x-2">
-                    <a href="{{ route('compras.index') }}"
-                        class="text-sm font-semibold text-indigo-600 hover:text-indigo-800 flex items-center">
-                        &larr; Volver al Historial
-                    </a>
-                </div>
-                <h1 class="text-2xl font-bold text-slate-900 tracking-tight mt-1">Registrar Factura de Compra</h1>
-                <p class="text-sm text-slate-500">
-                    Ingresa los artículos adquiridos al inventario de la sede y actualiza automáticamente los costos de
-                    reposición.
-                </p>
-            </div>
-        </div>
+        <x-page-header
+            title="Registrar Factura de Compra"
+            subtitle="Ingresa los artículos adquiridos al inventario de la sede y actualiza automáticamente los costos de reposición."
+            :breadcrumbs="[
+                ['label' => 'Historial de Compras', 'url' => route('compras.index')],
+                ['label' => 'Nueva Factura']
+            ]">
+            <x-slot:actions>
+                <a href="{{ route('compras.index') }}" class="btn-secondary">
+                    Cancelar
+                </a>
+            </x-slot:actions>
+        </x-page-header>
 
         <!-- Formulario Principal -->
         <form action="{{ route('compras.store') }}" method="POST" @submit="validateBeforeSubmit($event)" class="space-y-6">
             @csrf
 
             <!-- 1. Cabecera de la Factura -->
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-4">
-                <h2 class="text-base font-bold text-slate-800 border-b border-slate-100 pb-3 flex items-center">
-                    <span
-                        class="h-6 w-6 rounded-lg bg-indigo-50 text-indigo-600 font-bold flex items-center justify-center mr-2 text-xs">1</span>
-                    Datos del Comprobante y Proveedor
-                </h2>
+            <div class="card p-5 sm:p-6 space-y-4">
+                <div class="border-b border-slate-200 pb-3 flex items-center">
+                    <span class="h-5 w-5 rounded bg-brand-50 text-brand-700 font-semibold flex items-center justify-center mr-2.5 text-xs">1</span>
+                    <h2 class="text-sm font-semibold text-slate-900">Datos del Comprobante y Proveedor</h2>
+                </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <!-- Sucursal Receptora -->
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                        <label class="label-base">
                             Sede de Recepción <span class="text-red-500">*</span>
                         </label>
-                        <select name="sucursal_id" required
-                            class="w-full px-3.5 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition">
+                        <select name="sucursal_id" required class="input-select">
                             <option value="">Seleccionar Sede</option>
                             @foreach($sucursales as $s)
                                 <option value="{{ $s->id }}" {{ (old('sucursal_id', \App\Support\Tenancy\BranchContext::getId()) == $s->id) ? 'selected' : '' }}>
@@ -182,17 +178,16 @@
                             @endforeach
                         </select>
                         @error('sucursal_id')
-                            <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                            <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Proveedor Emisor -->
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                        <label class="label-base">
                             Proveedor <span class="text-red-500">*</span>
                         </label>
-                        <select name="proveedor_id" required
-                            class="w-full px-3.5 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition">
+                        <select name="proveedor_id" required class="input-select">
                             <option value="">Seleccionar Proveedor</option>
                             @foreach($proveedores as $p)
                                 <option value="{{ $p->id }}" {{ old('proveedor_id') == $p->id ? 'selected' : '' }}>
@@ -201,43 +196,42 @@
                             @endforeach
                         </select>
                         @error('proveedor_id')
-                            <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                            <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Número de Factura -->
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                        <label class="label-base">
                             Número de Factura <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="numero_factura" value="{{ old('numero_factura') }}" required
                             placeholder="Ej: FE-10492"
-                            class="w-full px-3.5 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-mono">
+                            class="input-base font-mono">
                         @error('numero_factura')
-                            <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                            <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Fecha de Emisión -->
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                        <label class="label-base">
                             Fecha de Emisión <span class="text-red-500">*</span>
                         </label>
                         <input type="date" name="fecha_emision" value="{{ old('fecha_emision', date('Y-m-d')) }}" required
                             max="{{ date('Y-m-d') }}"
-                            class="w-full px-3.5 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition">
+                            class="input-base">
                         @error('fecha_emision')
-                            <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                            <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Forma de Pago -->
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                        <label class="label-base">
                             Forma de Pago <span class="text-red-500">*</span>
                         </label>
-                        <select name="tipo_pago" required
-                            class="w-full px-3.5 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition">
+                        <select name="tipo_pago" required class="input-select">
                             <option value="CONTADO" {{ old('tipo_pago') === 'CONTADO' ? 'selected' : '' }}>Contado</option>
                             <option value="CREDITO" {{ old('tipo_pago') === 'CREDITO' ? 'selected' : '' }}>Crédito Comercial</option>
                         </select>
@@ -245,90 +239,83 @@
 
                     <!-- Descuento Global -->
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                        <label class="label-base">
                             Descuento Global ($)
                         </label>
                         <input type="number" name="descuento" x-model.number="descuento" min="0" step="0.01"
                             placeholder="0.00"
-                            class="w-full px-3.5 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition">
+                            class="input-base font-mono">
                     </div>
 
                     <!-- Observaciones -->
                     <div class="sm:col-span-2">
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                        <label class="label-base">
                             Notas u Observaciones
                         </label>
                         <input type="text" name="observaciones" value="{{ old('observaciones') }}"
                             placeholder="Opcional: Términos de entrega, guía de transporte..."
-                            class="w-full px-3.5 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition">
+                            class="input-base">
                     </div>
                 </div>
             </div>
 
             <!-- 2. Detalle de Artículos -->
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-4">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-3">
-                    <div>
-                        <h2 class="text-base font-bold text-slate-800 flex items-center">
-                            <span class="h-6 w-6 rounded-lg bg-indigo-50 text-indigo-600 font-bold flex items-center justify-center mr-2 text-xs">2</span>
-                            Líneas de Compra y Artículos
-                        </h2>
-                        <p class="text-xs text-slate-400 mt-0.5">Cada línea corresponde a un artículo único. Busca el producto en la fila por su nombre o código.</p>
+            <div class="card p-5 sm:p-6 space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-200 pb-3">
+                    <div class="flex items-center">
+                        <span class="h-5 w-5 rounded bg-brand-50 text-brand-700 font-semibold flex items-center justify-center mr-2.5 text-xs">2</span>
+                        <div>
+                            <h2 class="text-sm font-semibold text-slate-900">Líneas de Compra y Artículos</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">Cada línea corresponde a un artículo único. Busca el producto en la fila por su nombre o código.</p>
+                        </div>
                     </div>
-                    <button type="button" @click="addItem()"
-                        class="inline-flex items-center px-3.5 py-1.5 rounded-xl text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition self-start sm:self-auto shadow-sm">
+                    <button type="button" @click="addItem()" class="btn-secondary text-xs self-start sm:self-auto">
                         <svg class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
-                        + Añadir Fila
+                        Añadir Fila
                     </button>
                 </div>
 
                 <!-- Tabla de Artículos Desktop -->
                 <div class="hidden md:block overflow-visible">
-                    <table class="w-full divide-y divide-slate-200">
-                        <thead class="bg-slate-50">
+                    <table class="table-corporate">
+                        <thead>
                             <tr>
-                                <th class="px-3 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-5/12">
-                                    Artículo</th>
-                                <th class="px-3 py-3 text-right text-xs font-bold text-slate-500 uppercase tracking-wider w-2/12">
-                                    Cantidad</th>
-                                <th class="px-3 py-3 text-right text-xs font-bold text-slate-500 uppercase tracking-wider w-2/12">
-                                    Costo Unitario ($)</th>
-                                <th class="px-3 py-3 text-right text-xs font-bold text-slate-500 uppercase tracking-wider w-1/12">
-                                    % IVA</th>
-                                <th class="px-3 py-3 text-right text-xs font-bold text-slate-500 uppercase tracking-wider w-2/12">
-                                    Total Línea</th>
-                                <th class="px-2 py-3 text-center w-10"></th>
+                                <th class="w-5/12">Artículo</th>
+                                <th class="w-2/12 text-right">Cantidad</th>
+                                <th class="w-2/12 text-right">Costo Unitario ($)</th>
+                                <th class="w-1/12 text-right">% IVA</th>
+                                <th class="w-2/12 text-right">Total Línea</th>
+                                <th class="w-10 text-center"></th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 bg-white">
+                        <tbody>
                             <template x-for="(item, idx) in items" :key="item.uid">
-                                <tr class="hover:bg-slate-50/60 transition">
-                                    <!-- Columna de Producto con Selector Inteligente en la Fila -->
-                                    <td class="px-3 py-3 relative">
-                                        <!-- Caso 1: Producto seleccionado (Muestra tarjeta fija y oculta completamente el input) -->
-                                        <div x-show="item.producto_id" class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200">
-                                            <div class="flex items-center space-x-3 truncate mr-2">
+                                <tr>
+                                    <!-- Selector de Producto -->
+                                    <td class="relative">
+                                        <!-- Producto seleccionado -->
+                                        <div x-show="item.producto_id" class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200">
+                                            <div class="flex items-center space-x-2.5 truncate mr-2">
                                                 <img x-show="getProduct(item.producto_id)?.imagen_url"
                                                      :src="getProduct(item.producto_id)?.imagen_url || ''"
-                                                     class="h-8 w-8 object-cover rounded-lg flex-shrink-0 border border-slate-200">
+                                                     class="h-7 w-7 object-cover rounded flex-shrink-0 border border-slate-200">
                                                 <div x-show="!getProduct(item.producto_id)?.imagen_url"
-                                                     class="h-8 w-8 rounded-lg bg-indigo-50 text-indigo-600 font-bold text-xs flex items-center justify-center flex-shrink-0 border border-indigo-100">
+                                                     class="h-7 w-7 rounded bg-brand-50 text-brand-700 font-semibold text-xs flex items-center justify-center flex-shrink-0 border border-brand-100">
                                                     <span x-text="(getProduct(item.producto_id)?.nombre || 'P').charAt(0).toUpperCase()"></span>
                                                 </div>
                                                 <div class="truncate">
-                                                    <div class="font-bold text-sm text-slate-900 truncate"
+                                                    <div class="font-semibold text-xs text-slate-900 truncate"
                                                         x-text="getProduct(item.producto_id)?.nombre"></div>
-                                                    <div class="text-xs text-slate-500 flex items-center space-x-2 mt-0.5">
-                                                        <span class="font-mono bg-white px-1.5 py-0.5 rounded border border-slate-200 text-[11px] font-bold text-slate-700"
-                                                            x-text="getProduct(item.producto_id)?.codigo || getProduct(item.producto_id)?.sku"></span>
-                                                        <span x-text="'Unidad: ' + (getProduct(item.producto_id)?.unidad_medida?.codigo || 'UND')"></span>
+                                                    <div class="text-[11px] text-slate-500 flex items-center space-x-1.5 font-mono">
+                                                        <span x-text="getProduct(item.producto_id)?.codigo || getProduct(item.producto_id)?.sku"></span>
+                                                        <span x-text="'• ' + (getProduct(item.producto_id)?.unidad_medida?.codigo || 'UND')"></span>
                                                     </div>
                                                 </div>
                                             </div>
                                             <button type="button" @click="clearLineProduct(idx)"
-                                                class="px-2.5 py-1 text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-white hover:bg-indigo-50 rounded-lg border border-slate-200 transition flex-shrink-0 shadow-sm"
+                                                class="btn-secondary py-0.5 px-2 text-xs flex-shrink-0"
                                                 title="Cambiar producto seleccionado">
                                                 Cambiar
                                             </button>
@@ -336,7 +323,7 @@
                                                 :value="item.producto_id">
                                         </div>
 
-                                        <!-- Caso 2: Sin producto seleccionado aún (Buscador interactivo en la fila) -->
+                                        <!-- Buscador en la fila -->
                                         <div x-show="!item.producto_id" class="relative" @click.away="item.dropdownOpen = false">
                                             <div class="relative flex items-center">
                                                 <svg class="h-4 w-4 absolute left-3 text-slate-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -350,48 +337,44 @@
                                                         const list = getFilteredRowProducts(item.searchQuery, idx);
                                                         if (list.length > 0) setLineProduct(idx, list[0]);
                                                     "
-                                                    placeholder="Escribe nombre, SKU o código de barras..."
-                                                    class="w-full pl-9 pr-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition font-medium placeholder:text-slate-400">
+                                                    placeholder="Buscar por nombre, SKU o código..."
+                                                    class="input-base pl-9 text-xs">
                                             </div>
 
-                                            <!-- Dropdown flotante con filtro en vivo -->
+                                            <!-- Dropdown flotante -->
                                             <div x-cloak x-show="item.dropdownOpen && !item.producto_id"
-                                                class="absolute left-0 right-0 z-40 mt-1 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden max-h-60 overflow-y-auto">
+                                                class="absolute left-0 right-0 z-40 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 overflow-hidden max-h-56 overflow-y-auto">
                                                 <template x-for="p in getFilteredRowProducts(item.searchQuery, idx)"
                                                     :key="p.id">
                                                     <button type="button" @click.stop="setLineProduct(idx, p)"
-                                                        class="w-full px-3.5 py-2.5 text-left hover:bg-indigo-50 transition border-b border-slate-50 last:border-0 flex items-center justify-between group">
-                                                        <div class="flex items-center space-x-2.5 truncate mr-2">
+                                                        class="w-full px-3 py-2 text-left hover:bg-slate-50 transition border-b border-slate-100 last:border-0 flex items-center justify-between group">
+                                                        <div class="flex items-center space-x-2 truncate mr-2">
                                                             <template x-if="p.imagen_url">
-                                                                <img :src="p.imagen_url" class="h-7 w-7 object-cover rounded-lg flex-shrink-0 border border-slate-100">
+                                                                <img :src="p.imagen_url" class="h-6 w-6 object-cover rounded flex-shrink-0 border border-slate-200">
                                                             </template>
                                                             <template x-if="!p.imagen_url">
-                                                                <div class="h-7 w-7 rounded-lg bg-slate-100 text-slate-500 font-bold text-xs flex items-center justify-center flex-shrink-0">
+                                                                <div class="h-6 w-6 rounded bg-slate-100 text-slate-600 font-semibold text-[10px] flex items-center justify-center flex-shrink-0">
                                                                     <span x-text="(p.nombre || 'P').charAt(0).toUpperCase()"></span>
                                                                 </div>
                                                             </template>
                                                             <div class="truncate">
-                                                                <div class="font-bold text-xs text-slate-800 group-hover:text-indigo-600 truncate"
+                                                                <div class="font-medium text-xs text-slate-800 group-hover:text-brand-700 truncate"
                                                                     x-text="p.nombre"></div>
-                                                                <div class="text-[11px] text-slate-400 font-mono flex items-center space-x-1.5">
-                                                                    <span class="font-bold text-slate-600" x-text="p.codigo || p.sku"></span>
+                                                                <div class="text-[11px] text-slate-400 font-mono flex items-center space-x-1">
+                                                                    <span class="text-slate-600" x-text="p.codigo || p.sku"></span>
                                                                     <span x-text="'• ' + (p.unidad_medida ? p.unidad_medida.codigo : 'UND')"></span>
-                                                                    <template x-if="p.codigo_barras">
-                                                                        <span x-text="'• ' + p.codigo_barras"></span>
-                                                                    </template>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="text-right flex-shrink-0 ml-2">
-                                                            <span class="text-[10px] text-slate-400 block leading-tight">Costo ref.</span>
-                                                            <span class="font-mono text-xs font-bold text-slate-800"
+                                                            <span class="text-[10px] text-slate-400 block">Costo ref.</span>
+                                                            <span class="font-mono text-xs font-semibold text-slate-800"
                                                                 x-text="formatMoney(p.precio_compra)"></span>
                                                         </div>
                                                     </button>
                                                 </template>
-                                                <template
-                                                    x-if="getFilteredRowProducts(item.searchQuery, idx).length === 0">
-                                                    <div class="px-4 py-3 text-xs text-slate-400 text-center">
+                                                <template x-if="getFilteredRowProducts(item.searchQuery, idx).length === 0">
+                                                    <div class="px-3 py-2.5 text-xs text-slate-500 text-center">
                                                         No se encontraron artículos disponibles
                                                     </div>
                                                 </template>
@@ -400,24 +383,24 @@
                                     </td>
 
                                     <!-- Cantidad -->
-                                    <td class="px-3 py-3">
+                                    <td>
                                         <input type="number" :name="'items[' + idx + '][cantidad]'"
                                             x-model.number="item.cantidad" min="0.01" step="any" required
-                                            class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl text-right font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition">
+                                            class="input-base text-right font-mono text-xs tabular-nums">
                                     </td>
 
                                     <!-- Costo Unitario -->
-                                    <td class="px-3 py-3">
+                                    <td>
                                         <input type="number" :name="'items[' + idx + '][costo_unitario]'"
                                             x-model.number="item.costo_unitario" min="0" step="0.01" required
-                                            class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl text-right font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition">
+                                            class="input-base text-right font-mono text-xs tabular-nums">
                                     </td>
 
                                     <!-- % IVA -->
-                                    <td class="px-3 py-3">
+                                    <td>
                                         <select :name="'items[' + idx + '][porcentaje_iva]'"
                                             x-model.number="item.porcentaje_iva"
-                                            class="w-full px-2 py-2 text-sm bg-white border border-slate-300 rounded-xl text-right font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition">
+                                            class="input-select text-right font-mono text-xs">
                                             <option value="0">0%</option>
                                             <option value="5">5%</option>
                                             <option value="19">19%</option>
@@ -425,17 +408,17 @@
                                     </td>
 
                                     <!-- Total Línea -->
-                                    <td class="px-3 py-3 text-right whitespace-nowrap">
-                                        <div class="font-bold text-sm text-slate-900 font-mono"
+                                    <td class="text-right whitespace-nowrap">
+                                        <div class="font-semibold text-xs text-slate-900 font-mono tabular-nums"
                                             x-text="formatMoney(itemTotal(item))"></div>
-                                        <div class="text-[11px] text-slate-400 font-mono"
+                                        <div class="text-[10px] text-slate-400 font-mono tabular-nums"
                                             x-text="'IVA: ' + formatMoney(itemIva(item))"></div>
                                     </td>
 
                                     <!-- Eliminar Fila -->
-                                    <td class="px-2 py-3 text-center">
+                                    <td class="text-center">
                                         <button type="button" @click="removeItem(idx)"
-                                            class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition"
+                                            class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition"
                                             title="Eliminar fila">
                                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -451,45 +434,44 @@
 
                 <!-- Botón Añadir Fila Inferior (Desktop) -->
                 <div class="pt-2 hidden md:block">
-                    <button type="button" @click="addItem()"
-                        class="inline-flex items-center px-3.5 py-1.5 rounded-xl text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition shadow-sm">
-                        <svg class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <button type="button" @click="addItem()" class="btn-secondary text-xs">
+                        <svg class="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
-                        + Añadir Fila
+                        Añadir Fila
                     </button>
                 </div>
 
-                <!-- Vista Móvil de Artículos (Tarjetas reactivas para teléfonos y tablets) -->
+                <!-- Vista Móvil de Artículos (Cards) -->
                 <div class="block md:hidden space-y-3">
                     <template x-for="(item, idx) in items" :key="item.uid">
-                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3">
+                        <div class="p-3.5 rounded-lg border border-slate-200 bg-slate-50/50 space-y-2.5">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-slate-500" x-text="'Línea #' + (idx + 1)"></span>
+                                <span class="text-xs font-semibold text-slate-600" x-text="'Línea #' + (idx + 1)"></span>
                                 <button type="button" @click="removeItem(idx)"
-                                    class="text-xs font-semibold text-red-500 hover:text-red-700">
+                                    class="text-xs font-semibold text-red-600 hover:text-red-800">
                                     Quitar
                                 </button>
                             </div>
 
                             <!-- Selector Móvil -->
                             <div>
-                                <label class="block text-xs font-bold text-slate-600 mb-1">Artículo</label>
-                                <div x-show="item.producto_id" class="flex items-center justify-between p-2 bg-white rounded-xl border border-slate-200">
-                                    <div class="flex items-center space-x-2.5 truncate mr-2">
+                                <label class="label-base">Artículo</label>
+                                <div x-show="item.producto_id" class="flex items-center justify-between p-2 bg-white rounded-lg border border-slate-200">
+                                    <div class="flex items-center space-x-2 truncate mr-2">
                                         <img x-show="getProduct(item.producto_id)?.imagen_url"
                                              :src="getProduct(item.producto_id)?.imagen_url || ''"
-                                             class="h-8 w-8 object-cover rounded-lg flex-shrink-0 border border-slate-200">
+                                             class="h-7 w-7 object-cover rounded flex-shrink-0 border border-slate-200">
                                         <div class="truncate">
-                                            <div class="font-bold text-sm text-slate-900 truncate"
+                                            <div class="font-semibold text-xs text-slate-900 truncate"
                                                 x-text="getProduct(item.producto_id)?.nombre"></div>
-                                            <div class="text-xs text-slate-400 font-mono"
+                                            <div class="text-[10px] text-slate-400 font-mono"
                                                 x-text="getProduct(item.producto_id)?.codigo || getProduct(item.producto_id)?.sku">
                                             </div>
                                         </div>
                                     </div>
                                     <button type="button" @click="clearLineProduct(idx)"
-                                        class="px-2.5 py-1 text-xs font-bold text-indigo-600 bg-indigo-50 rounded-lg">
+                                        class="btn-secondary py-0.5 px-2 text-xs">
                                         Cambiar
                                     </button>
                                     <input type="hidden" :name="'items[' + idx + '][producto_id]'"
@@ -498,26 +480,25 @@
 
                                 <div x-show="!item.producto_id" class="relative" @click.away="item.dropdownOpen = false">
                                     <input type="text" x-model="item.searchQuery" @focus="item.dropdownOpen = true"
-                                        @input="item.dropdownOpen = true" placeholder="🔍 Buscar artículo..."
-                                        class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:outline-none focus:border-indigo-500">
+                                        @input="item.dropdownOpen = true" placeholder="Buscar artículo..."
+                                        class="input-base text-xs">
                                     <div x-cloak x-show="item.dropdownOpen && !item.producto_id"
-                                        class="absolute left-0 right-0 z-30 mt-1 bg-white rounded-xl shadow-lg border border-slate-200 max-h-48 overflow-y-auto">
+                                        class="absolute left-0 right-0 z-30 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 max-h-48 overflow-y-auto">
                                         <template x-for="p in getFilteredRowProducts(item.searchQuery, idx)"
                                             :key="p.id">
                                             <button type="button" @click.stop="setLineProduct(idx, p)"
-                                                class="w-full px-3 py-2 text-left text-xs hover:bg-indigo-50 border-b border-slate-50 last:border-0 flex items-center justify-between">
+                                                class="w-full px-3 py-2 text-left text-xs hover:bg-slate-50 border-b border-slate-100 last:border-0 flex items-center justify-between">
                                                 <div class="truncate mr-2">
-                                                    <div class="font-bold text-slate-800 truncate" x-text="p.nombre"></div>
+                                                    <div class="font-medium text-slate-800 truncate" x-text="p.nombre"></div>
                                                     <div class="text-[10px] text-slate-400 font-mono"
                                                         x-text="p.codigo || p.sku"></div>
                                                 </div>
-                                                <span class="font-mono text-xs font-bold text-slate-700"
+                                                <span class="font-mono text-xs font-semibold text-slate-700 tabular-nums"
                                                     x-text="formatMoney(p.precio_compra)"></span>
                                             </button>
                                         </template>
-                                        <template
-                                            x-if="getFilteredRowProducts(item.searchQuery, idx).length === 0">
-                                            <div class="px-3 py-2 text-xs text-slate-400 text-center">
+                                        <template x-if="getFilteredRowProducts(item.searchQuery, idx).length === 0">
+                                            <div class="px-3 py-2 text-xs text-slate-500 text-center">
                                                 No se encontraron artículos
                                             </div>
                                         </template>
@@ -527,33 +508,33 @@
 
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-600 mb-1">Cantidad</label>
+                                    <label class="label-base">Cantidad</label>
                                     <input type="number" :name="'items[' + idx + '][cantidad]'"
                                         x-model.number="item.cantidad" min="0.01" step="any" required
-                                        class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl text-right font-mono">
+                                        class="input-base text-right font-mono text-xs tabular-nums">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-600 mb-1">Costo Unitario</label>
+                                    <label class="label-base">Costo Unitario</label>
                                     <input type="number" :name="'items[' + idx + '][costo_unitario]'"
                                         x-model.number="item.costo_unitario" min="0" step="0.01" required
-                                        class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl text-right font-mono">
+                                        class="input-base text-right font-mono text-xs tabular-nums">
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-600 mb-1">% IVA</label>
+                                    <label class="label-base">% IVA</label>
                                     <select :name="'items[' + idx + '][porcentaje_iva]'"
                                         x-model.number="item.porcentaje_iva"
-                                        class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl text-right font-mono">
+                                        class="input-select text-right font-mono text-xs">
                                         <option value="0">0%</option>
                                         <option value="5">5%</option>
                                         <option value="19">19%</option>
                                     </select>
                                 </div>
                                 <div class="flex flex-col justify-end text-right">
-                                    <div class="text-[11px] text-slate-400">Total Fila:</div>
-                                    <div class="text-sm font-bold text-slate-900 font-mono"
+                                    <div class="text-[10px] text-slate-400">Total Fila:</div>
+                                    <div class="text-xs font-semibold text-slate-900 font-mono tabular-nums"
                                         x-text="formatMoney(itemTotal(item))"></div>
                                 </div>
                             </div>
@@ -563,8 +544,7 @@
 
                 <!-- Botón Añadir Ítem Móvil -->
                 <div class="pt-2 md:hidden">
-                    <button type="button" @click="addItem()"
-                        class="w-full py-2.5 rounded-xl text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-200 flex items-center justify-center">
+                    <button type="button" @click="addItem()" class="btn-secondary w-full justify-center text-xs">
                         + Añadir Otra Fila
                     </button>
                 </div>
@@ -573,55 +553,49 @@
             <!-- 3. Resumen y Confirmación -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Columna Informativa de Auditoría -->
-                <div
-                    class="lg:col-span-2 bg-indigo-50/60 rounded-2xl border border-indigo-100 p-5 text-sm text-indigo-950 space-y-2">
-                    <div class="font-bold flex items-center text-indigo-900">
-                        <svg class="h-5 w-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="lg:col-span-2 card p-5 text-sm space-y-2 bg-slate-50 border-slate-200">
+                    <div class="font-semibold flex items-center text-slate-800">
+                        <svg class="h-4 w-4 mr-2 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         Impacto en Inventario y Costos
                     </div>
-                    <ul class="list-disc list-inside text-xs text-indigo-800 space-y-1 pl-1">
-                        <li>Cada producto registrado aumentará automáticamente las existencias de la sucursal receptora
-                            seleccionada.</li>
-                        <li>Se generará un movimiento inmutable en el <strong>Kardex</strong> con tipo <code
-                                class="bg-indigo-100 px-1 py-0.5 rounded text-indigo-900">ENTRADA_COMPRA</code> y referencia
-                            a la factura.</li>
-                        <li>El costo unitario ingresado se establecerá como el nuevo costo de reposición maestro del
-                            producto en el catálogo.</li>
+                    <ul class="list-disc list-inside text-xs text-slate-600 space-y-1 pl-1">
+                        <li>Cada producto registrado aumentará automáticamente las existencias de la sucursal receptora seleccionada.</li>
+                        <li>Se generará un movimiento inmutable en el <strong>Kardex</strong> con tipo <code class="bg-slate-200 px-1 py-0.5 rounded text-slate-800 font-mono text-[11px]">ENTRADA_COMPRA</code> y referencia a la factura.</li>
+                        <li>El costo unitario ingresado se establecerá como el nuevo costo de reposición maestro del producto en el catálogo.</li>
                     </ul>
                 </div>
 
                 <!-- Tarjeta de Totales Finales -->
-                <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-3">
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Resumen de Liquidación</h3>
+                <div class="card p-5 sm:p-6 space-y-3">
+                    <div class="kpi-label">Resumen de Liquidación</div>
 
-                    <div class="space-y-2 text-sm text-slate-600 pt-1">
+                    <div class="space-y-2 text-xs text-slate-600 pt-1">
                         <div class="flex justify-between">
                             <span>Subtotal Neto:</span>
-                            <span class="font-mono font-semibold text-slate-800"
+                            <span class="font-mono font-semibold text-slate-800 tabular-nums"
                                 x-text="formatMoney(totalSubtotal())"></span>
                         </div>
                         <div class="flex justify-between">
                             <span>Impuestos (IVA):</span>
-                            <span class="font-mono font-semibold text-slate-800" x-text="formatMoney(totalIva())"></span>
+                            <span class="font-mono font-semibold text-slate-800 tabular-nums" x-text="formatMoney(totalIva())"></span>
                         </div>
-                        <div class="flex justify-between text-amber-600">
+                        <div class="flex justify-between text-amber-700">
                             <span>Descuento Aplicado:</span>
-                            <span class="font-mono font-semibold" x-text="'-' + formatMoney(descuento)"></span>
+                            <span class="font-mono font-semibold tabular-nums" x-text="'-' + formatMoney(descuento)"></span>
                         </div>
-                        <div class="border-t border-slate-100 pt-3 flex justify-between items-baseline">
-                            <span class="text-base font-bold text-slate-900">Total a Pagar:</span>
-                            <span class="text-2xl font-black text-slate-900 font-mono"
+                        <div class="border-t border-slate-200 pt-3 flex justify-between items-baseline">
+                            <span class="text-sm font-semibold text-slate-900">Total a Pagar:</span>
+                            <span class="text-xl font-bold text-slate-900 font-mono tabular-nums"
                                 x-text="formatMoney(grandTotal())"></span>
                         </div>
                     </div>
 
                     <div class="pt-3">
-                        <button type="submit"
-                            class="w-full py-3 px-4 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md transition flex items-center justify-center">
-                            <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <button type="submit" class="btn-primary w-full justify-center py-2.5">
+                            <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                             </svg>
                             Registrar Factura y Cargar Stock

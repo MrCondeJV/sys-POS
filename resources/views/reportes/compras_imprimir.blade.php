@@ -15,7 +15,7 @@
 </head>
 <body>
     <div class="no-print" style="text-align: right; margin-bottom: 10px;">
-        <button onclick="window.print()" style="padding: 6px 12px; background: #4f46e5; color: white; border: none; border-radius: 4px;">Imprimir</button>
+        <button onclick="window.print()" style="padding: 6px 12px; background: #0284c7; color: white; border: none; border-radius: 4px;">Imprimir</button>
     </div>
     <h2>Reporte de Compras</h2>
     <p>Periodo: {{ $fechaDesde }} al {{ $fechaHasta }} | Total Comprado: <strong>${{ number_format($totalComprado, 2) }}</strong></p>

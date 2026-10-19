@@ -1,50 +1,56 @@
 @extends('layouts.app')
 
-@section('title', 'Detalle de Auditoría')
+@section('title', 'Detalle de Auditoría #' . $auditoria->id)
 
 @section('content')
-<div class="w-full max-w-4xl mx-auto space-y-6">
-    <div class="flex items-center justify-between">
+<div class="max-w-4xl mx-auto space-y-6">
+    {{-- Header --}}
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
-                <a href="{{ route('auditoria.index') }}" class="hover:text-indigo-600 transition">Auditoría</a>
+            <div class="flex items-center gap-2 text-xs font-medium text-slate-500 mb-1">
+                <a href="{{ route('auditoria.index') }}" class="hover:text-brand-600 transition">Auditoría</a>
                 <span>&rsaquo;</span>
-                <span class="text-indigo-600">Registro #{{ $auditoria->id }}</span>
+                <span class="text-slate-700 font-semibold">Registro #{{ $auditoria->id }}</span>
             </div>
-            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Detalle de Registro de Auditoría</h1>
+            <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Detalle de Registro de Auditoría</h1>
         </div>
         <div>
-            <a href="{{ route('auditoria.index') }}" class="px-4 py-2 text-sm font-semibold rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition">
-                &larr; Volver
+            <a href="{{ route('auditoria.index') }}" class="btn-secondary">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Volver a la bitácora
             </a>
         </div>
     </div>
 
-    <!-- Metadata Card -->
-    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+    {{-- Metadata Card --}}
+    <div class="card p-6 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
             <div class="flex items-center gap-3">
-                <span class="px-3 py-1 rounded-full text-xs font-extrabold border {{ $auditoria->badgeClasses() }}">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border {{ $auditoria->badgeClasses() }}">
                     {{ $auditoria->accion }}
                 </span>
-                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">{{ $auditoria->modulo }}</span>
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">{{ $auditoria->modulo }}</span>
             </div>
-            <span class="text-xs font-semibold text-slate-500">{{ $auditoria->created_at->format('d/m/Y H:i:s') }}</span>
+            <div class="text-xs font-mono tabular-nums text-slate-600">
+                {{ $auditoria->created_at->format('d/m/Y H:i:s') }}
+            </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-                <span class="text-xs text-slate-400 font-bold uppercase">Usuario</span>
-                <div class="text-sm font-extrabold text-slate-900 mt-0.5">{{ $auditoria->usuario?->name ?? 'Sistema' }}</div>
-                <div class="text-xs text-slate-500">{{ $auditoria->usuario?->email }}</div>
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Usuario</span>
+                <div class="text-sm font-semibold text-slate-900 mt-1">{{ $auditoria->usuario?->name ?? 'Sistema' }}</div>
+                <div class="text-xs text-slate-500">{{ $auditoria->usuario?->email ?? 'N/A' }}</div>
             </div>
             <div>
-                <span class="text-xs text-slate-400 font-bold uppercase">Dirección IP</span>
-                <div class="text-sm font-mono font-bold text-slate-900 mt-0.5">{{ $auditoria->ip ?? 'Local' }}</div>
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Dirección IP</span>
+                <div class="text-sm font-mono tabular-nums font-semibold text-slate-900 mt-1">{{ $auditoria->ip ?? 'Local' }}</div>
             </div>
             <div>
-                <span class="text-xs text-slate-400 font-bold uppercase">Entidad Afectada</span>
-                <div class="text-sm font-bold text-slate-900 mt-0.5">
+                <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Entidad Afectada</span>
+                <div class="text-sm font-semibold text-slate-900 mt-1">
                     {{ class_basename($auditoria->auditable_type ?? 'N/A') }} #{{ $auditoria->auditable_id ?? 'N/A' }}
                 </div>
             </div>
@@ -52,25 +58,25 @@
 
         @if($auditoria->descripcion)
         <div class="pt-4 border-t border-slate-100">
-            <span class="text-xs text-slate-400 font-bold uppercase">Descripción</span>
-            <p class="text-sm text-slate-700 font-medium mt-1">{{ $auditoria->descripcion }}</p>
+            <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Descripción del Evento</span>
+            <p class="text-sm text-slate-800 font-medium mt-1 leading-relaxed">{{ $auditoria->descripcion }}</p>
         </div>
         @endif
 
         @if($auditoria->user_agent)
-        <div class="pt-2 text-[11px] text-slate-400 font-mono break-all">
-            User-Agent: {{ $auditoria->user_agent }}
+        <div class="pt-3 border-t border-slate-100 text-[11px] text-slate-400 font-mono break-all">
+            <span class="font-semibold text-slate-500">Agente:</span> {{ $auditoria->user_agent }}
         </div>
         @endif
     </div>
 
-    <!-- Comparativa Diff: Datos Anteriores vs Nuevos -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Datos Anteriores -->
-        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-            <div class="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-                <span class="text-xs font-bold text-slate-600 uppercase tracking-wider">Estado Anterior</span>
-                <span class="text-[10px] px-2 py-0.5 rounded bg-rose-50 text-rose-600 font-bold">Antes</span>
+    {{-- Comparativa de Datos --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {{-- Estado Anterior --}}
+        <div class="card overflow-hidden">
+            <div class="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Estado Anterior</span>
+                <span class="text-[10px] px-2 py-0.5 rounded font-semibold bg-rose-50 text-rose-700 border border-rose-200">Antes</span>
             </div>
             <div class="p-4 bg-slate-900 text-slate-200 font-mono text-xs overflow-x-auto min-h-[160px]">
                 @if($auditoria->datos_anteriores)
@@ -81,11 +87,11 @@
             </div>
         </div>
 
-        <!-- Datos Nuevos -->
-        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-            <div class="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-                <span class="text-xs font-bold text-slate-600 uppercase tracking-wider">Estado Nuevo / Cambios</span>
-                <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 font-bold">Después</span>
+        {{-- Estado Nuevo --}}
+        <div class="card overflow-hidden">
+            <div class="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Estado Nuevo / Cambios</span>
+                <span class="text-[10px] px-2 py-0.5 rounded font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Después</span>
             </div>
             <div class="p-4 bg-slate-900 text-slate-200 font-mono text-xs overflow-x-auto min-h-[160px]">
                 @if($auditoria->datos_nuevos)

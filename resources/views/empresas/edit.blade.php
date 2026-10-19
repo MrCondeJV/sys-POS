@@ -6,26 +6,30 @@
 <div class="max-w-4xl mx-auto space-y-6">
 
     <!-- Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <div class="flex items-center gap-2 text-sm text-slate-500 mb-1">
-                <a href="{{ route('empresas.index') }}" class="hover:text-indigo-600 transition">Empresas</a>
-                <span>/</span>
-                <span>Editar</span>
+            <div class="flex items-center gap-2 text-xs font-medium text-slate-500 mb-1">
+                <a href="{{ route('empresas.index') }}" class="hover:text-brand-600 transition">Empresas</a>
+                <span>&rsaquo;</span>
+                <span class="text-slate-700 font-semibold">Editar</span>
             </div>
-            <h1 class="text-2xl font-bold text-slate-900">Editar Empresa: {{ $empresa->nombre_comercial }}</h1>
+            <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Editar Empresa: {{ $empresa->nombre_comercial }}</h1>
             <p class="text-sm text-slate-500">Actualiza los datos fiscales, monedas y estado de operación.</p>
         </div>
-        <a href="{{ route('empresas.index') }}"
-            class="inline-flex items-center px-4 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
-            Volver
-        </a>
+        <div>
+            <a href="{{ route('empresas.index') }}" class="btn-secondary">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Volver
+            </a>
+        </div>
     </div>
 
     @if ($errors->any())
-    <div class="rounded-2xl bg-red-50 p-4 border border-red-200 text-sm text-red-700">
-        <div class="font-bold mb-1">Por favor corrige los siguientes errores:</div>
-        <ul class="list-disc list-inside space-y-1">
+    <div class="rounded-lg bg-rose-50 p-4 border border-rose-200 text-sm text-rose-800">
+        <div class="font-semibold mb-1">Por favor corrige los siguientes errores:</div>
+        <ul class="list-disc list-inside space-y-0.5 text-xs">
             @foreach ($errors->all() as $error)
             <li>{{ $error }}</li>
             @endforeach
@@ -53,30 +57,29 @@
         @csrf
         @method('PUT')
 
-        <div class="bg-white rounded-3xl border border-slate-200/70 p-6 sm:p-8 shadow-sm space-y-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div class="card p-6 sm:p-8 space-y-5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="sm:col-span-2">
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label class="label-base">
                         Nombre Comercial *
                     </label>
                     <input type="text" name="nombre_comercial" value="{{ old('nombre_comercial', $empresa->nombre_comercial) }}" required
-                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        class="input-base">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label class="label-base">
                         Razón Social
                     </label>
                     <input type="text" name="razon_social" value="{{ old('razon_social', $empresa->razon_social) }}"
-                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        class="input-base">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label class="label-base">
                         Tipo de Documento *
                     </label>
-                    <select name="tipo_documento" required
-                        class="w-full py-2.5 px-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <select name="tipo_documento" required class="input-base">
                         @foreach($tiposDocumento as $td)
                         <option value="{{ $td->value }}" {{ old('tipo_documento', $empresa->tipo_documento?->value ?? $empresa->tipo_documento) === $td->value ? 'selected' : '' }}>
                             {{ $td->value }}
@@ -86,69 +89,69 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label class="label-base">
                         NIT / Número de Identificación *
                     </label>
                     <input type="text" name="nit" value="{{ old('nit', $empresa->nit) }}" required
-                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        class="input-base font-mono">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label class="label-base">
                         Dígito de Verificación (DV)
                     </label>
                     <input type="text" name="dv" value="{{ old('dv', $empresa->dv) }}" maxlength="2"
-                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        class="input-base font-mono">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label class="label-base">
                         Correo Electrónico
                     </label>
                     <input type="email" name="email" value="{{ old('email', $empresa->email) }}"
-                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        class="input-base">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label class="label-base">
                         Teléfono / Celular
                     </label>
                     <input type="text" name="telefono" value="{{ old('telefono', $empresa->telefono) }}"
-                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        class="input-base">
                 </div>
 
                 <div class="sm:col-span-2">
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label class="label-base">
                         Dirección Principal
                     </label>
                     <input type="text" name="direccion" value="{{ old('direccion', $empresa->direccion) }}"
-                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        class="input-base">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label class="label-base">
                         Ciudad
                     </label>
                     <input type="text" name="ciudad" value="{{ old('ciudad', $empresa->ciudad) }}"
-                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        class="input-base">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label class="label-base">
                         Departamento
                     </label>
                     <input type="text" name="departamento" value="{{ old('departamento', $empresa->departamento) }}"
-                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        class="input-base">
                 </div>
 
                 <div>
-                    <label for="moneda" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label for="moneda" class="label-base">
                         Moneda *
                     </label>
                     <select name="moneda" id="moneda" required
                         x-model="monedaSeleccionada"
                         @change="onMonedaChange($event)"
-                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                        class="input-base bg-white">
                         @if(!isset($monedas[old('moneda', $empresa->moneda)]))
                             <option value="{{ old('moneda', $empresa->moneda) }}" selected>{{ old('moneda', $empresa->moneda) }} (Personalizada)</option>
                         @endif
@@ -158,16 +161,16 @@
                             </option>
                         @endforeach
                     </select>
-                    <p class="mt-1 text-[11px] text-slate-400">Código ISO internacional de la divisa.</p>
+                    <p class="mt-1 text-xs text-slate-500">Código ISO internacional de la divisa.</p>
                 </div>
 
                 <div>
-                    <label for="simbolo_moneda" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label for="simbolo_moneda" class="label-base">
                         Símbolo Moneda *
                     </label>
                     <select name="simbolo_moneda" id="simbolo_moneda" required
                         x-model="simboloSeleccionado"
-                        class="w-full py-2.5 px-3.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                        class="input-base bg-white">
                         @if(!isset($simbolos[old('simbolo_moneda', $empresa->simbolo_moneda)]))
                             <option value="{{ old('simbolo_moneda', $empresa->simbolo_moneda) }}" selected>{{ old('simbolo_moneda', $empresa->simbolo_moneda) }} (Personalizado)</option>
                         @endif
@@ -177,15 +180,14 @@
                             </option>
                         @endforeach
                     </select>
-                    <p class="mt-1 text-[11px] text-slate-400">Símbolo visible en precios y recibos.</p>
+                    <p class="mt-1 text-xs text-slate-500">Símbolo visible en precios y recibos.</p>
                 </div>
 
                 <div class="sm:col-span-2">
-                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label class="label-base">
                         Estado de la Empresa *
                     </label>
-                    <select name="estado" required
-                        class="w-full py-2.5 px-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <select name="estado" required class="input-base">
                         <option value="ACTIVO" {{ old('estado', $empresa->estado?->value ?? $empresa->estado) === 'ACTIVO' ? 'selected' : '' }}>
                             ACTIVO (Operando normalmente)
                         </option>
@@ -199,12 +201,10 @@
 
         <!-- Botones de Acción -->
         <div class="flex items-center justify-end gap-3">
-            <a href="{{ route('empresas.index') }}"
-                class="px-4 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+            <a href="{{ route('empresas.index') }}" class="btn-secondary">
                 Cancelar
             </a>
-            <button type="submit"
-                class="inline-flex items-center px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition">
+            <button type="submit" class="btn-primary">
                 Guardar Cambios
             </button>
         </div>

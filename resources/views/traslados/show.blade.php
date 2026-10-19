@@ -1,94 +1,99 @@
 @extends('layouts.app')
 
+@section('title', 'Remisión ' . $traslado->consecutivo)
+
 @section('content')
 <div class="max-w-4xl mx-auto space-y-6">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-            <div class="flex items-center gap-3">
-                <h1 class="text-2xl font-bold text-slate-900">Remisión {{ $traslado->consecutivo }}</h1>
-                <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold border {{ $traslado->estado->badgeClasses() }}">
-                    {{ $traslado->estado->label() }}
-                </span>
+    <!-- Header -->
+    <x-page-header
+        :title="'Remisión ' . $traslado->consecutivo"
+        subtitle="Documento de traslado interno de existencias entre sucursales."
+        :breadcrumbs="[
+            ['label' => 'Traslados', 'url' => route('traslados.index')],
+            ['label' => 'Detalle de Remisión']
+        ]"
+    >
+        <x-slot:actions>
+            <div class="flex items-center space-x-2">
+                <x-status-badge :status="$traslado->estado" size="md" />
+                <x-button variant="outline" size="sm" href="{{ route('traslados.index') }}">
+                    <svg class="h-4 w-4 mr-1.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Volver
+                </x-button>
             </div>
-            <p class="text-sm text-slate-500">Documento de traslado interno de inventario.</p>
-        </div>
-        <a href="{{ route('traslados.index') }}" class="text-sm text-slate-500 hover:text-slate-800 transition">&larr; Volver al listado</a>
-    </div>
+        </x-slot:actions>
+    </x-page-header>
 
-
-    <div class="bg-white shadow-sm rounded-2xl border border-slate-200 p-6 space-y-6">
-        {{-- Cabecera de sedes --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-b border-slate-100 pb-5">
+    <div class="bg-white shadow-xs rounded-xl border border-slate-200/80 p-6 space-y-6">
+        <!-- Cabecera de Sedes -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 border-b border-slate-100 pb-5">
             <div class="space-y-1">
-                <p class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Sucursal Origen</p>
-                <p class="text-base font-bold text-slate-900">{{ $traslado->sucursalOrigen?->nombre ?? 'Sin sucursal' }}</p>
-                <p class="text-xs text-slate-500">Despachado por: {{ $traslado->usuarioDespacho->name ?? 'Sistema' }}</p>
-                <p class="text-xs text-slate-500">Fecha envío: {{ $traslado->fecha_envio?->format('d/m/Y H:i') ?? '-' }}</p>
+                <p class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Sucursal Origen</p>
+                <p class="text-sm font-bold text-slate-900">{{ $traslado->sucursalOrigen?->nombre ?? 'Sin sucursal' }}</p>
+                <p class="text-xs text-slate-500">Despachado por: <span class="font-medium text-slate-700">{{ $traslado->usuarioDespacho->name ?? 'Sistema' }}</span></p>
+                <p class="text-xs text-slate-500 tabular-nums">Fecha envío: {{ $traslado->fecha_envio?->format('d/m/Y H:i') ?? '—' }}</p>
             </div>
             <div class="space-y-1">
-                <p class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Sucursal Destino</p>
-                <p class="text-base font-bold text-slate-900">{{ $traslado->sucursalDestino?->nombre ?? 'Sin sucursal' }}</p>
-                <p class="text-xs text-slate-500">Receptor: {{ $traslado->usuarioReceptor->name ?? 'Pendiente de entrega' }}</p>
-                <p class="text-xs text-slate-500">Fecha recepción: {{ $traslado->fecha_recepcion?->format('d/m/Y H:i') ?? '-' }}</p>
+                <p class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Sucursal Destino</p>
+                <p class="text-sm font-bold text-slate-900">{{ $traslado->sucursalDestino?->nombre ?? 'Sin sucursal' }}</p>
+                <p class="text-xs text-slate-500">Receptor: <span class="font-medium text-slate-700">{{ $traslado->usuarioReceptor->name ?? 'Pendiente de entrega' }}</span></p>
+                <p class="text-xs text-slate-500 tabular-nums">Fecha recepción: {{ $traslado->fecha_recepcion?->format('d/m/Y H:i') ?? '—' }}</p>
             </div>
         </div>
 
-        {{-- Motivo --}}
+        <!-- Motivo -->
         <div class="space-y-1">
-            <p class="text-xs text-slate-500 uppercase font-semibold tracking-wider">Motivo y Observaciones</p>
-            <p class="text-sm text-slate-800 font-semibold">{{ $traslado->motivo }}</p>
+            <p class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Motivo y Observaciones</p>
+            <p class="text-xs text-slate-800 font-semibold">{{ $traslado->motivo }}</p>
             @if($traslado->observaciones)
-                <p class="text-xs text-slate-600 mt-1 bg-slate-50 border border-slate-100 p-3 rounded-xl">{{ $traslado->observaciones }}</p>
+                <p class="text-xs text-slate-600 mt-1 bg-slate-50 border border-slate-200/60 p-3 rounded-lg">{{ $traslado->observaciones }}</p>
             @endif
         </div>
 
-        {{-- Tabla de artículos --}}
-        <div>
-            <h3 class="text-sm font-bold text-slate-900 mb-3 uppercase tracking-wide">Detalle de Artículos Trasladados</h3>
-            <div class="overflow-hidden rounded-xl border border-slate-200">
-                <table class="min-w-full divide-y divide-slate-100 text-sm">
-                    <thead class="bg-slate-50">
-                        <tr>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Producto</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Lote</th>
-                            <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Cant. Enviada</th>
-                            <th class="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Cant. Recibida</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-slate-100">
-                        @foreach($traslado->detalles as $d)
-                            <tr class="hover:bg-slate-50 transition">
-                                <td class="px-4 py-3 font-semibold text-slate-900">{{ $d->producto->nombre }}</td>
-                                <td class="px-4 py-3 text-slate-500">{{ $d->lote?->numero_lote ?? 'N/A' }}</td>
-                                <td class="px-4 py-3 text-right font-bold text-slate-900">{{ number_format($d->cantidad_enviada, 2) }}</td>
-                                <td class="px-4 py-3 text-right font-bold text-emerald-600">{{ number_format($d->cantidad_recibida, 2) }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+        <!-- Tabla de Artículos -->
+        <div class="space-y-2">
+            <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wide">Artículos Trasladados</h3>
+            <x-table>
+                <x-slot:thead>
+                    <tr>
+                        <th class="px-5 py-3 text-left uppercase">Producto</th>
+                        <th class="px-4 py-3 text-left uppercase">Lote</th>
+                        <th class="px-4 py-3 text-right uppercase">Cant. Enviada</th>
+                        <th class="px-5 py-3 text-right uppercase">Cant. Recibida</th>
+                    </tr>
+                </x-slot:thead>
+
+                @foreach($traslado->detalles as $d)
+                    <tr class="hover:bg-slate-50/70 transition">
+                        <td class="px-5 py-3 text-xs font-semibold text-slate-900">{{ $d->producto->nombre }}</td>
+                        <td class="px-4 py-3 text-xs text-slate-500 font-mono">{{ $d->lote?->numero_lote ?? '—' }}</td>
+                        <td class="px-4 py-3 text-right text-xs font-bold text-slate-900 tabular-nums">{{ number_format($d->cantidad_enviada, 2) }}</td>
+                        <td class="px-5 py-3 text-right text-xs font-bold text-emerald-600 tabular-nums">{{ number_format($d->cantidad_recibida, 2) }}</td>
+                    </tr>
+                @endforeach
+            </x-table>
         </div>
 
-        {{-- Acciones (si está en tránsito) --}}
+        <!-- Acciones si está en tránsito -->
         @if($traslado->isEnTransito())
-            <div class="border-t border-slate-100 pt-5 flex flex-col sm:flex-row justify-end gap-3">
-                <form method="POST" action="{{ route('traslados.rechazar', $traslado) }}" class="flex items-center gap-2"
-                    onsubmit="return confirm('¿Confirmas que deseas rechazar este traslado? Se reversará el inventario al origen.');">
+            <div class="border-t border-slate-100 pt-5 flex flex-col sm:flex-row justify-end gap-3" x-data="{ motivoRechazo: '' }">
+                <form method="POST" action="{{ route('traslados.rechazar', $traslado) }}" class="flex items-center gap-2">
                     @csrf
                     <input type="text" name="motivo_rechazo" required
                         placeholder="Motivo de rechazo..."
-                        class="text-xs w-48">
-                    <button type="submit" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-xl shadow-sm transition">
-                        Rechazar Traslado
-                    </button>
+                        class="text-xs py-2 px-3 border border-slate-300 rounded-lg w-48 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                    <x-button variant="danger" size="sm" type="submit">
+                        Rechazar
+                    </x-button>
                 </form>
 
-                <form method="POST" action="{{ route('traslados.recibir', $traslado) }}"
-                    onsubmit="return confirm('¿Confirmas la recepción física del inventario en la sede destino?');">
+                <form method="POST" action="{{ route('traslados.recibir', $traslado) }}">
                     @csrf
-                    <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-xl shadow-sm transition">
+                    <x-button variant="primary" size="sm" type="submit">
                         Confirmar y Recibir en Destino
-                    </button>
+                    </x-button>
                 </form>
             </div>
         @endif
