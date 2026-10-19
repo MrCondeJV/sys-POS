@@ -432,10 +432,40 @@
 <body class="h-full font-sans antialiased text-[#0F172A] bg-[#F4F6F9] flex overflow-hidden" 
       x-data="{ 
           mobileMenuOpen: false,
+          posMode: {{ request()->routeIs('pos.*') ? 'true' : 'false' }},
           sidebarCollapsed: {{ request()->routeIs('pos.*') ? 'true' : 'false' }},
+          hoverOpen: false,
+          pinned: false,
+          _openT: null,
+          _closeT: null,
+          get expanded() {
+              if (this.posMode) {
+                  return this.pinned || this.hoverOpen;
+              }
+              return !this.sidebarCollapsed;
+          },
+          enter() {
+              if (!this.posMode || window.innerWidth < 1024 || this.pinned) return;
+              if (document.querySelector('[role=\'dialog\'][aria-modal=\'true\']:not([style*=\'display: none\'])')) return;
+              clearTimeout(this._closeT);
+              this._openT = setTimeout(() => this.hoverOpen = true, 120);
+          },
+          leave() {
+              if (!this.posMode || this.pinned) return;
+              clearTimeout(this._openT);
+              this._closeT = setTimeout(() => this.hoverOpen = false, 250);
+          },
+          leaveNow() {
+              clearTimeout(this._openT);
+              clearTimeout(this._closeT);
+              this.hoverOpen = false;
+          },
           toggleSidebar() {
               if (window.innerWidth < 1024) {
                   this.mobileMenuOpen = !this.mobileMenuOpen;
+              } else if (this.posMode) {
+                  this.pinned = !this.pinned;
+                  this.sidebarCollapsed = !this.pinned;
               } else {
                   this.sidebarCollapsed = !this.sidebarCollapsed;
               }
@@ -443,9 +473,19 @@
       }">
 
     @auth
-    <!-- Sidebar para Escritorio / Pantallas medianas y grandes -->
-    <aside :class="{ 'sidebar-collapsed lg:w-20': sidebarCollapsed, 'lg:w-64': !sidebarCollapsed }"
-           class="hidden lg:flex lg:flex-col bg-[#0B1F36] text-slate-300 flex-shrink-0 border-r border-[#1E3A5F]/60 h-full overflow-hidden transition-[width] duration-300 ease-in-out">
+    <!-- Contenedor del Sidebar para Escritorio (Reserva espacio fijo en el flujo) -->
+    <div class="hidden lg:block relative flex-shrink-0 h-full"
+         :class="posMode && !pinned ? 'lg:w-20' : (sidebarCollapsed ? 'lg:w-20' : 'lg:w-64')">
+        <!-- Sidebar para Escritorio con soporte Overlay en POS -->
+        <aside @mouseenter="enter()" @mouseleave="leave()"
+               @focusin="enter()" @keydown.escape.window="leaveNow()"
+               :class="{
+                   'sidebar-collapsed': !expanded,
+                   'absolute inset-y-0 left-0 z-40': posMode && !pinned,
+                   'shadow-[8px_0_24px_-12px_rgba(11,31,54,0.45)]': posMode && !pinned && hoverOpen
+               }"
+               :style="posMode && !pinned ? 'width:' + (expanded ? '16rem' : '5rem') : ''"
+               class="w-full flex flex-col bg-[#0B1F36] text-slate-300 flex-shrink-0 border-r border-[#1E3A5F]/60 h-full overflow-hidden transition-[width] duration-200 ease-out">
         <!-- Brand Header -->
         <div class="h-16 flex items-center px-4 bg-[#081729] border-b border-[#1E3A5F]/60 sidebar-brand-container justify-between">
             <div class="flex items-center min-w-0">
@@ -509,8 +549,8 @@
                          gestion: {{ request()->routeIs('empresa.*', 'usuarios.*', 'sucursales.*', 'traslados.*') ? 'true' : 'false' }},
                          inventario: {{ request()->routeIs('productos.*', 'listas-precios.*', 'inventario.*', 'catalogos.*') ? 'true' : 'false' }},
                          compras: {{ request()->routeIs('compras.*', 'proveedores.*') ? 'true' : 'false' }},
-                         ventas: {{ request()->routeIs('ventas.*', 'devoluciones.*', 'documentos.*', 'clientes.*', 'cartera.*') ? 'true' : 'true' }},
-                         caja: {{ request()->routeIs('cajas.*', 'pos.*') ? 'true' : 'true' }},
+                         ventas: {{ request()->routeIs('ventas.*', 'devoluciones.*', 'documentos.*', 'clientes.*', 'cartera.*') ? 'true' : 'false' }},
+                         caja: {{ request()->routeIs('cajas.*', 'pos.*') ? 'true' : 'false' }},
                          analitica: {{ request()->routeIs('reportes.*', 'auditoria.*', 'impuestos.*') ? 'true' : 'false' }},
                          dian: {{ request()->routeIs('facturacion-electronica.*', 'resoluciones.*') ? 'true' : 'false' }}
                      };
@@ -961,6 +1001,7 @@
             <span class="sidebar-badge text-[10px] text-[#64748B] tabular-nums font-mono">v1.2</span>
         </div>
     </aside>
+    </div>
 
     <!-- Mobile Drawer Menu (Teléfonos y Tablets pequeñas) -->
     <div x-cloak x-show="mobileMenuOpen" class="relative z-50 lg:hidden" role="dialog" aria-modal="true">
@@ -1218,7 +1259,7 @@
                 <button type="button" 
                         @click="toggleSidebar()" 
                         class="p-2 text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#1D4ED8]/20 cursor-pointer"
-                        :title="sidebarCollapsed ? 'Maximizar menú lateral' : 'Minimizar menú lateral'"
+                        :title="posMode ? (pinned ? 'Desfijar menú lateral' : 'Fijar menú lateral') : (sidebarCollapsed ? 'Maximizar menú lateral' : 'Minimizar menú lateral')"
                         id="btn-toggle-sidebar"
                         aria-label="Alternar menú lateral">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

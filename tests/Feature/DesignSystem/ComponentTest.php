@@ -123,6 +123,15 @@ class ComponentTest extends TestCase
         $this->assertStringContainsString('Intente otra búsqueda', $rendered);
     }
 
+    public function test_filter_bar_renders_cleanly(): void
+    {
+        $rendered = Blade::render('<x-filter-bar :hasActiveFilters="true" resetUrl="/reset"><input name="q" /></x-filter-bar>');
+        $this->assertStringContainsString('card-banking', $rendered);
+        $this->assertStringContainsString('Filtrar', $rendered);
+        $this->assertStringContainsString('Limpiar filtros', $rendered);
+        $this->assertStringContainsString('href="/reset"', $rendered);
+    }
+
     public function test_design_system_preview_view_compiles_successfully(): void
     {
         $view = view('design-system-preview')->render();
@@ -131,3 +140,4 @@ class ComponentTest extends TestCase
         $this->assertStringContainsString('Tarjetas de Métricas', $view);
     }
 }
+

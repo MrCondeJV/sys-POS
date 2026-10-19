@@ -394,6 +394,24 @@
 }
 
 /* =============================================================================
+   Sidebar Overlay & Text Transitions (POS & Desktop)
+   ============================================================================= */
+aside:not(.sidebar-collapsed) .sidebar-text,
+aside:not(.sidebar-collapsed) .sidebar-brand-text,
+aside:not(.sidebar-collapsed) .sidebar-user-info,
+aside:not(.sidebar-collapsed) .sidebar-badge {
+    opacity: 1;
+    transition: opacity 150ms ease-in 100ms;
+}
+
+aside.sidebar-collapsed .sidebar-text,
+aside.sidebar-collapsed .sidebar-brand-text,
+aside.sidebar-collapsed .sidebar-user-info,
+aside.sidebar-collapsed .sidebar-badge {
+    opacity: 0;
+}
+
+/* =============================================================================
    Accesibilidad & Motion Reduction
    ============================================================================= */
 @media (prefers-reduced-motion: reduce) {
