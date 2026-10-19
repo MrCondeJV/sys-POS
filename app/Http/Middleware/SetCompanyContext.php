@@ -31,21 +31,14 @@ class SetCompanyContext
             }
 
             if ($user->isSuperAdmin()) {
-                // Super Admin: resolver tenant activo desde sesión o primera empresa disponible
+                // Super Admin: resolver tenant activo únicamente si ha entrado explícitamente a un negocio
                 $sessionEmpresaId = session('superadmin_empresa_id');
                 $empresaActiva = null;
 
                 if ($sessionEmpresaId) {
                     $empresaActiva = Empresa::withoutGlobalScopes()->find($sessionEmpresaId);
-                }
-
-                if (! $empresaActiva) {
-                    $empresaActiva = $user->empresa_id
-                        ? Empresa::withoutGlobalScopes()->find($user->empresa_id)
-                        : Empresa::withoutGlobalScopes()->first();
-
-                    if ($empresaActiva) {
-                        session(['superadmin_empresa_id' => $empresaActiva->id]);
+                    if (! $empresaActiva) {
+                        session()->forget('superadmin_empresa_id');
                     }
                 }
 

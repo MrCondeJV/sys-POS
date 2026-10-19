@@ -18,8 +18,13 @@ class EnsureValidTenant
     {
         $user = $request->user();
 
-        // Si es superadministrador, tiene autorización transversal
+        // Si es superadministrador, tiene autorización transversal pero requiere contexto para rutas de negocio
         if ($user && $user->isSuperAdmin()) {
+            if (! CompanyContext::check() && $this->isBusinessRoute($request)) {
+                return redirect()->route('empresas.index')
+                    ->with('warning', 'Debes entrar a un negocio primero desde el panel de empresas para acceder a los módulos operativos.');
+            }
+
             return $next($request);
         }
 
@@ -39,5 +44,34 @@ class EnsureValidTenant
         }
 
         return $next($request);
+    }
+
+    /**
+     * Determina si la ruta actual es una ruta operativa dependiente de un contexto de empresa.
+     */
+    protected function isBusinessRoute(Request $request): bool
+    {
+        $routeName = $request->route()?->getName();
+
+        if (! $routeName) {
+            return false;
+        }
+
+        $platformPrefixes = [
+            'empresas.',
+            'usuarios.',
+            'auditoria.',
+            'login',
+            'logout',
+            'dashboard',
+        ];
+
+        foreach ($platformPrefixes as $prefix) {
+            if ($routeName === $prefix || str_starts_with($routeName, $prefix)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

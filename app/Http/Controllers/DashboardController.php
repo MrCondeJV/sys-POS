@@ -12,6 +12,8 @@ use App\Models\Sucursal;
 use App\Models\Venta;
 use App\Models\VentaDetalle;
 use Carbon\Carbon;
+use App\Support\Tenancy\CompanyContext;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -21,8 +23,12 @@ class DashboardController extends Controller
     /**
      * Muestra el panel principal con KPIs, accesos y estado del negocio.
      */
-    public function __invoke(Request $request): View
+    public function __invoke(Request $request): View|RedirectResponse
     {
+        if ($request->user()->isSuperAdmin() && ! CompanyContext::check()) {
+            return redirect()->route('empresas.index');
+        }
+
         $hoy = Carbon::today();
         $mesActual = Carbon::now()->month;
         $anioActual = Carbon::now()->year;

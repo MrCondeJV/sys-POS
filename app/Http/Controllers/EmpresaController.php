@@ -250,7 +250,7 @@ class EmpresaController extends Controller
     }
 
     /**
-     * Cambia la empresa activa en la sesión de trabajo del Super Administrador.
+     * Cambia la empresa activa en la sesión de trabajo del Super Administrador (Entrar al negocio).
      */
     public function seleccionar(Request $request): RedirectResponse
     {
@@ -280,7 +280,27 @@ class EmpresaController extends Controller
             BranchContext::clear();
         }
 
-        return back()->with('success', "Has cambiado a la empresa activa: {$empresa->nombre_comercial}");
+        return redirect()->route('dashboard')
+            ->with('success', "Has ingresado al negocio: {$empresa->nombre_comercial} (Modo Soporte Super Admin)");
+    }
+
+    /**
+     * Sale del contexto del negocio actual y regresa al panel principal de Super Admin.
+     */
+    public function salir(): RedirectResponse
+    {
+        if (! auth()->user()->isSuperAdmin()) {
+            abort(403, 'Solo el Super Administrador puede alternar entre empresas.');
+        }
+
+        session()->forget(['superadmin_empresa_id', 'sucursal_activa_id']);
+
+        CompanyContext::clear();
+        BranchContext::clear();
+        setPermissionsTeamId(null);
+
+        return redirect()->route('empresas.index')
+            ->with('success', 'Has salido del negocio. Ahora estás en el Panel Super Admin.');
     }
 
     /**

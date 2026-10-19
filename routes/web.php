@@ -54,6 +54,7 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/{empresa}', [EmpresaController::class, 'update'])->name('update');
         Route::post('/{empresa}/toggle-estado', [EmpresaController::class, 'toggleEstado'])->name('toggle-estado');
         Route::post('/seleccionar', [EmpresaController::class, 'seleccionar'])->name('seleccionar');
+        Route::post('/salir', [EmpresaController::class, 'salir'])->name('salir');
     });
 
     // Gestión de Empresa Activa
