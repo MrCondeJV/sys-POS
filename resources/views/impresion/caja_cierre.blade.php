@@ -8,8 +8,8 @@
         body {
             font-family: monospace;
             font-size: 11px;
-            color: #000;
-            background: #fff;
+            color: rgb(0, 0, 0);
+            background: rgb(255, 255, 255);
             width: 72mm;
             margin: 0 auto;
             padding: 8px 4px;
@@ -17,8 +17,8 @@
         .text-center { text-align: center; }
         .text-right { text-align: right; }
         .font-bold { font-weight: bold; }
-        .border-t { border-top: 1px dashed #000; }
-        .border-b { border-bottom: 1px dashed #000; }
+        .border-t { border-top: 1px dashed rgb(0, 0, 0); }
+        .border-b { border-bottom: 1px dashed rgb(0, 0, 0); }
         .my-2 { margin-top: 5px; margin-bottom: 5px; }
         table { width: 100%; border-collapse: collapse; }
         td { padding: 3px 0; }

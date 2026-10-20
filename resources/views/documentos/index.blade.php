@@ -36,13 +36,13 @@
                         </svg>
                     </div>
                     <input type="text" name="q" id="q" value="{{ request('q') }}" placeholder="FAC-000001, Cliente..."
-                        class="input-base pl-9 text-xs">
+                        class="input pl-9 text-xs">
                 </div>
             </div>
 
             <div>
                 <label for="tipo" class="label-base">Tipo Documento</label>
-                <select name="tipo" id="tipo" class="input-select text-xs">
+                <select name="tipo" id="tipo" class="input text-xs">
                     <option value="">Todos los tipos</option>
                     @foreach($tipos as $tipo)
                         <option value="{{ $tipo->value }}" {{ request('tipo') === $tipo->value ? 'selected' : '' }}>
@@ -54,7 +54,7 @@
 
             <div>
                 <label for="estado" class="label-base">Estado</label>
-                <select name="estado" id="estado" class="input-select text-xs">
+                <select name="estado" id="estado" class="input text-xs">
                     <option value="">Todos los estados</option>
                     @foreach($estados as $est)
                         <option value="{{ $est->value }}" {{ request('estado') === $est->value ? 'selected' : '' }}>
@@ -67,7 +67,7 @@
             <div>
                 <label for="fecha_desde" class="label-base">Fecha Desde</label>
                 <input type="date" name="fecha_desde" id="fecha_desde" value="{{ request('fecha_desde') }}"
-                    class="input-base text-xs">
+                    class="input text-xs">
             </div>
 
             <div class="flex items-end space-x-2">
@@ -97,7 +97,7 @@
             </div>
         @else
             <div class="overflow-x-auto">
-                <table class="table-corporate">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>Comprobante</th>

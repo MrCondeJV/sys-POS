@@ -72,7 +72,7 @@
                     @csrf
                     <div>
                         <label for="cat_nombre" class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                            Nombre de la Categoría <span class="text-rose-500">*</span>
+                            Nombre de la Categoría <span class="text-danger-text">*</span>
                         </label>
                         <input type="text" name="nombre" id="cat_nombre" required
                             placeholder="Ej: Lácteos, Tornillería, Abarrotes"
@@ -113,11 +113,18 @@
                         </div>
                         <div>
                             @if($cat->productos_count === 0)
-                            <form action="{{ route('catalogos.categorias.destroy', $cat) }}" method="POST" onsubmit="return confirm('¿Eliminar esta categoría?');">
-                                @csrf
-                                @method('DELETE')
-                                <x-icon-button type="submit" variant="danger" icon="trash" title="Eliminar categoría" />
-                            </form>
+                            <x-modal-confirm
+                                title="¿Eliminar esta categoría?"
+                                message="Se eliminará permanentemente la categoría «{{ $cat->nombre }}»."
+                                action="{{ route('catalogos.categorias.destroy', $cat) }}"
+                                method="DELETE"
+                                confirmText="Eliminar"
+                                variant="danger"
+                            >
+                                <x-slot:trigger>
+                                    <x-icon-button type="button" variant="danger" icon="trash" title="Eliminar categoría" />
+                                </x-slot:trigger>
+                            </x-modal-confirm>
                             @else
                             <x-badge color="neutral" title="No se puede eliminar porque tiene productos vinculados">
                                 En uso
@@ -147,7 +154,7 @@
                     @csrf
                     <div>
                         <label for="marca_nombre" class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                            Nombre de la Marca <span class="text-rose-500">*</span>
+                            Nombre de la Marca <span class="text-danger-text">*</span>
                         </label>
                         <input type="text" name="nombre" id="marca_nombre" required
                             placeholder="Ej: Nestlé, Stanley, Colanta"
@@ -188,11 +195,18 @@
                         </div>
                         <div>
                             @if($m->productos_count === 0)
-                            <form action="{{ route('catalogos.marcas.destroy', $m) }}" method="POST" onsubmit="return confirm('¿Eliminar esta marca?');">
-                                @csrf
-                                @method('DELETE')
-                                <x-icon-button type="submit" variant="danger" icon="trash" title="Eliminar marca" />
-                            </form>
+                            <x-modal-confirm
+                                title="¿Eliminar esta marca?"
+                                message="Se eliminará permanentemente la marca «{{ $m->nombre }}»."
+                                action="{{ route('catalogos.marcas.destroy', $m) }}"
+                                method="DELETE"
+                                confirmText="Eliminar"
+                                variant="danger"
+                            >
+                                <x-slot:trigger>
+                                    <x-icon-button type="button" variant="danger" icon="trash" title="Eliminar marca" />
+                                </x-slot:trigger>
+                            </x-modal-confirm>
                             @else
                             <x-badge color="neutral" title="No se puede eliminar porque tiene productos vinculados">
                                 En uso
@@ -222,7 +236,7 @@
                     @csrf
                     <div>
                         <label for="uni_codigo" class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                            Código Corto / Símbolo <span class="text-rose-500">*</span>
+                            Código Corto / Símbolo <span class="text-danger-text">*</span>
                         </label>
                         <input type="text" name="codigo" id="uni_codigo" required maxlength="10"
                             placeholder="Ej: UND, KG, LT, MT, CAJ"
@@ -230,7 +244,7 @@
                     </div>
                     <div>
                         <label for="uni_nombre" class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                            Nombre Completo <span class="text-rose-500">*</span>
+                            Nombre Completo <span class="text-danger-text">*</span>
                         </label>
                         <input type="text" name="nombre" id="uni_nombre" required
                             placeholder="Ej: Unidad, Kilogramo, Litro, Metro"
@@ -267,11 +281,18 @@
                         </div>
                         <div>
                             @if($u->productos_count === 0)
-                            <form action="{{ route('catalogos.unidades.destroy', $u) }}" method="POST" onsubmit="return confirm('¿Eliminar esta unidad de medida?');">
-                                @csrf
-                                @method('DELETE')
-                                <x-icon-button type="submit" variant="danger" icon="trash" title="Eliminar unidad" />
-                            </form>
+                            <x-modal-confirm
+                                title="¿Eliminar esta unidad de medida?"
+                                message="Se eliminará permanentemente la unidad «{{ $u->nombre }}»."
+                                action="{{ route('catalogos.unidades.destroy', $u) }}"
+                                method="DELETE"
+                                confirmText="Eliminar"
+                                variant="danger"
+                            >
+                                <x-slot:trigger>
+                                    <x-icon-button type="button" variant="danger" icon="trash" title="Eliminar unidad" />
+                                </x-slot:trigger>
+                            </x-modal-confirm>
                             @else
                             <x-badge color="neutral" title="No se puede eliminar porque tiene productos vinculados">
                                 En uso

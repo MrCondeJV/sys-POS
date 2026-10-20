@@ -76,7 +76,7 @@
         <div class="card overflow-hidden">
             <div class="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
                 <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Estado Anterior</span>
-                <span class="text-[10px] px-2 py-0.5 rounded font-semibold bg-rose-50 text-rose-700 border border-rose-200">Antes</span>
+                <span class="text-[10px] px-2 py-0.5 rounded font-semibold bg-danger-bg text-danger-text border border-danger-border">Antes</span>
             </div>
             <div class="p-4 bg-slate-900 text-slate-200 font-mono text-xs overflow-x-auto min-h-[160px]">
                 @if($auditoria->datos_anteriores)

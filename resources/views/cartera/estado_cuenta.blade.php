@@ -81,14 +81,14 @@
             gap: 8px !important;
         }
 
-        .kpi-card-item {
+        .print-kpi-box {
             padding: 6px 8px !important;
             border-radius: 4px !important;
             border: 1px solid var(--color-border) !important;
             background-color: var(--color-surface-muted) !important;
         }
 
-        .kpi-card-item .text-xl {
+        .print-kpi-box .text-xl {
             font-size: 13pt !important;
             font-weight: 700 !important;
             margin-top: 2px !important;
@@ -233,25 +233,25 @@
 
         <!-- 4 Tarjetas de Métricas del Cliente -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 kpi-container">
-            <div class="p-4 rounded-lg bg-slate-50 border border-slate-200/80 kpi-card-item">
+            <div class="p-4 rounded-lg bg-slate-50 border border-slate-200/80 print-kpi-box">
                 <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider block print:text-[8pt]">Cupo de Crédito</span>
                 <div class="text-xl font-bold font-mono tabular-nums text-slate-900 mt-1">${{ number_format($cupoTotal, 2) }}</div>
                 <div class="text-xs text-slate-500 mt-0.5 print:text-[7.5pt]">Plazo: {{ $cliente->plazo_dias }} días</div>
             </div>
 
-            <div class="p-4 rounded-lg bg-slate-50 border border-slate-200/80 kpi-card-item">
+            <div class="p-4 rounded-lg bg-slate-50 border border-slate-200/80 print-kpi-box">
                 <span class="text-xs font-semibold text-warning-text uppercase tracking-wider block print:text-[8pt]">Deuda Total Pendiente</span>
                 <div class="text-xl font-bold font-mono tabular-nums text-warning-text mt-1">${{ number_format($totalDeuda, 2) }}</div>
                 <div class="text-xs text-warning-text mt-0.5 print:text-[7.5pt]">{{ $cuentasPendientes->count() }} facturas activas</div>
             </div>
 
-            <div class="p-4 rounded-lg bg-slate-50 border border-slate-200/80 kpi-card-item">
+            <div class="p-4 rounded-lg bg-slate-50 border border-slate-200/80 print-kpi-box">
                 <span class="text-xs font-semibold text-success-text uppercase tracking-wider block print:text-[8pt]">Cupo Disponible</span>
                 <div class="text-xl font-bold font-mono tabular-nums text-success-text mt-1">${{ number_format($cupoDisponible, 2) }}</div>
                 <div class="text-xs text-success-text mt-0.5 print:text-[7.5pt]">{{ 100 - $porcentajeUtilizado }}% libre</div>
             </div>
 
-            <div class="p-4 rounded-lg {{ $deudaVencida > 0 ? 'bg-danger-bg border border-danger-border' : 'bg-slate-50 border border-slate-200/80' }} kpi-card-item">
+            <div class="p-4 rounded-lg {{ $deudaVencida > 0 ? 'bg-danger-bg border border-danger-border' : 'bg-slate-50 border border-slate-200/80' }} print-kpi-box">
                 <span class="text-xs font-semibold {{ $deudaVencida > 0 ? 'text-danger-text' : 'text-slate-500' }} uppercase tracking-wider block print:text-[8pt]">
                     Saldo Vencido (Mora)
                 </span>

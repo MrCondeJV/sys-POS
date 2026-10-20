@@ -35,34 +35,34 @@
 
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                            Nombre Presentación <span class="text-rose-500">*</span>
+                            Nombre Presentación <span class="text-danger-text">*</span>
                         </label>
                         <input type="text" name="nombre" value="{{ old('nombre') }}" required
                             class="block w-full px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs"
                             placeholder="Ej. Caja x 100, Rollo 50m, Bulto 50kg">
-                        @error('nombre') <p class="text-xs text-rose-600 mt-1">{{ $message }}</p> @enderror
+                        @error('nombre') <p class="text-xs text-danger-text mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                            Factor de Conversión <span class="text-rose-500">*</span>
+                            Factor de Conversión <span class="text-danger-text">*</span>
                         </label>
                         <input type="number" step="0.0001" name="factor_conversion" value="{{ old('factor_conversion', 1) }}" min="0.0001" required
                             class="block w-full px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs font-mono tabular-nums">
                         <span class="text-[11px] text-slate-500 mt-1 block">Unidades base que contiene (Ej: 1 caja = 100 unidades -> factor = 100)</span>
-                        @error('factor_conversion') <p class="text-xs text-rose-600 mt-1">{{ $message }}</p> @enderror
+                        @error('factor_conversion') <p class="text-xs text-danger-text mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">
-                            Precio de Venta Presentación <span class="text-rose-500">*</span>
+                            Precio de Venta Presentación <span class="text-danger-text">*</span>
                         </label>
                         <div class="relative">
                             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-sm">$</span>
                             <input type="number" step="0.01" name="precio_venta" value="{{ old('precio_venta', $producto->precio_venta) }}" min="0" required
                                 class="block w-full pl-7 pr-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs font-mono tabular-nums">
                         </div>
-                        @error('precio_venta') <p class="text-xs text-rose-600 mt-1">{{ $message }}</p> @enderror
+                        @error('precio_venta') <p class="text-xs text-danger-text mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
@@ -126,11 +126,18 @@
                             ${{ number_format($pres->precio_venta, 2) }}
                         </td>
                         <td class="px-4 py-3 text-right">
-                            <form action="{{ route('productos.presentaciones.destroy', [$producto, $pres]) }}" method="POST" class="inline" onsubmit="return confirm('¿Eliminar esta presentación?');">
-                                @csrf
-                                @method('DELETE')
-                                <x-icon-button type="submit" variant="danger" icon="trash" title="Eliminar presentación" />
-                            </form>
+                            <x-modal-confirm
+                                title="¿Eliminar esta presentación?"
+                                message="Se eliminará la presentación «{{ $pres->nombre }}» del producto."
+                                action="{{ route('productos.presentaciones.destroy', [$producto, $pres]) }}"
+                                method="DELETE"
+                                confirmText="Eliminar"
+                                variant="danger"
+                            >
+                                <x-slot:trigger>
+                                    <x-icon-button type="button" variant="danger" icon="trash" title="Eliminar presentación" />
+                                </x-slot:trigger>
+                            </x-modal-confirm>
                         </td>
                     </tr>
                 @empty

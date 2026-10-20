@@ -32,50 +32,50 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="label-base">Código Identificador *</label>
-                    <input type="text" name="codigo" value="{{ old('codigo', $impuesto->codigo) }}" required class="input-base uppercase font-mono">
-                    @error('codigo') <p class="text-xs text-rose-600 mt-1 font-medium">{{ $message }}</p> @enderror
+                    <input type="text" name="codigo" value="{{ old('codigo', $impuesto->codigo) }}" required class="input uppercase font-mono">
+                    @error('codigo') <p class="text-xs text-danger-text mt-1 font-medium">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label class="label-base">Nombre Comercial *</label>
-                    <input type="text" name="nombre" value="{{ old('nombre', $impuesto->nombre) }}" required class="input-base">
-                    @error('nombre') <p class="text-xs text-rose-600 mt-1 font-medium">{{ $message }}</p> @enderror
+                    <input type="text" name="nombre" value="{{ old('nombre', $impuesto->nombre) }}" required class="input">
+                    @error('nombre') <p class="text-xs text-danger-text mt-1 font-medium">{{ $message }}</p> @enderror
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                     <label class="label-base">Tipo de Impuesto *</label>
-                    <select name="tipo" required class="input-base">
+                    <select name="tipo" required class="input">
                         @foreach($tipos as $tipo)
                             <option value="{{ $tipo->value }}" {{ old('tipo', $impuesto->tipo->value) === $tipo->value ? 'selected' : '' }}>
                                 {{ $tipo->value }} ({{ $tipo->label() }})
                             </option>
                         @endforeach
                     </select>
-                    @error('tipo') <p class="text-xs text-rose-600 mt-1 font-medium">{{ $message }}</p> @enderror
+                    @error('tipo') <p class="text-xs text-danger-text mt-1 font-medium">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label class="label-base">Porcentaje (%) *</label>
-                    <input type="number" step="0.01" min="0" max="100" name="porcentaje" value="{{ old('porcentaje', $impuesto->porcentaje) }}" required class="input-base tabular-nums font-mono font-semibold">
-                    @error('porcentaje') <p class="text-xs text-rose-600 mt-1 font-medium">{{ $message }}</p> @enderror
+                    <input type="number" step="0.01" min="0" max="100" name="porcentaje" value="{{ old('porcentaje', $impuesto->porcentaje) }}" required class="input tabular-nums font-mono font-semibold">
+                    @error('porcentaje') <p class="text-xs text-danger-text mt-1 font-medium">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label class="label-base">Estado *</label>
-                    <select name="estado" required class="input-base">
+                    <select name="estado" required class="input">
                         @foreach($estados as $est)
                             <option value="{{ $est->value }}" {{ old('estado', $impuesto->estado->value) === $est->value ? 'selected' : '' }}>
                                 {{ $est->value }}
                             </option>
                         @endforeach
                     </select>
-                    @error('estado') <p class="text-xs text-rose-600 mt-1 font-medium">{{ $message }}</p> @enderror
+                    @error('estado') <p class="text-xs text-danger-text mt-1 font-medium">{{ $message }}</p> @enderror
                 </div>
             </div>
 
             <div>
                 <label class="label-base">Descripción / Norma de Referencia</label>
-                <textarea name="descripcion" rows="2" class="input-base">{{ old('descripcion', $impuesto->descripcion) }}</textarea>
-                @error('descripcion') <p class="text-xs text-rose-600 mt-1 font-medium">{{ $message }}</p> @enderror
+                <textarea name="descripcion" rows="2" class="input">{{ old('descripcion', $impuesto->descripcion) }}</textarea>
+                @error('descripcion') <p class="text-xs text-danger-text mt-1 font-medium">{{ $message }}</p> @enderror
             </div>
 
             <div class="flex items-center gap-3 p-3.5 bg-slate-50 rounded-lg border border-slate-200">

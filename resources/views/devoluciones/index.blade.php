@@ -47,15 +47,15 @@
                     </svg>
                 </div>
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar por número de devolución o venta..."
-                       class="input-base pl-9 text-xs">
+                       class="input pl-9 text-xs">
             </div>
             <div>
                 <input type="date" name="fecha_desde" value="{{ request('fecha_desde') }}"
-                       class="input-base text-xs">
+                       class="input text-xs">
             </div>
             <div class="flex items-center space-x-2">
                 <input type="date" name="fecha_hasta" value="{{ request('fecha_hasta') }}"
-                       class="input-base text-xs">
+                       class="input text-xs">
                 <button type="submit" class="btn-primary">
                     Filtrar
                 </button>
@@ -66,7 +66,7 @@
     <!-- Tabla de Devoluciones -->
     <div class="card p-0 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="table-corporate">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Comprobante / Venta</th>

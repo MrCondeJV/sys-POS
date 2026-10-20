@@ -26,49 +26,49 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="label-base">Número de Resolución DIAN <span class="text-red-500">*</span></label>
-                        <input type="text" name="numero_resolucion" value="{{ old('numero_resolucion') }}" required class="input-base text-xs font-mono" placeholder="Ej. 18764000001">
+                        <input type="text" name="numero_resolucion" value="{{ old('numero_resolucion') }}" required class="input text-xs font-mono" placeholder="Ej. 18764000001">
                         @error('numero_resolucion') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label class="label-base">Prefijo Autorizado <span class="text-red-500">*</span></label>
-                        <input type="text" name="prefijo" value="{{ old('prefijo') }}" required class="input-base text-xs uppercase font-mono" placeholder="Ej. SETT, FE, POS">
+                        <input type="text" name="prefijo" value="{{ old('prefijo') }}" required class="input text-xs uppercase font-mono" placeholder="Ej. SETT, FE, POS">
                         @error('prefijo') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label class="label-base">Rango Desde <span class="text-red-500">*</span></label>
-                        <input type="number" name="rango_desde" value="{{ old('rango_desde', 1) }}" min="1" required class="input-base text-xs font-mono tabular-nums">
+                        <input type="number" name="rango_desde" value="{{ old('rango_desde', 1) }}" min="1" required class="input text-xs font-mono tabular-nums">
                         @error('rango_desde') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label class="label-base">Rango Hasta <span class="text-red-500">*</span></label>
-                        <input type="number" name="rango_hasta" value="{{ old('rango_hasta', 50000) }}" min="1" required class="input-base text-xs font-mono tabular-nums">
+                        <input type="number" name="rango_hasta" value="{{ old('rango_hasta', 50000) }}" min="1" required class="input text-xs font-mono tabular-nums">
                         @error('rango_hasta') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label class="label-base">Fecha Inicio Vigencia <span class="text-red-500">*</span></label>
-                        <input type="date" name="fecha_inicio" value="{{ old('fecha_inicio', date('Y-m-d')) }}" required class="input-base text-xs">
+                        <input type="date" name="fecha_inicio" value="{{ old('fecha_inicio', date('Y-m-d')) }}" required class="input text-xs">
                         @error('fecha_inicio') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label class="label-base">Fecha Fin Vigencia <span class="text-red-500">*</span></label>
-                        <input type="date" name="fecha_vigencia" value="{{ old('fecha_vigencia', date('Y-m-d', strtotime('+1 year'))) }}" required class="input-base text-xs">
+                        <input type="date" name="fecha_vigencia" value="{{ old('fecha_vigencia', date('Y-m-d', strtotime('+1 year'))) }}" required class="input text-xs">
                         @error('fecha_vigencia') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div class="sm:col-span-2">
                         <label class="label-base">Clave Técnica DIAN</label>
-                        <input type="password" name="clave_tecnica" value="{{ old('clave_tecnica') }}" class="input-base text-xs font-mono" placeholder="Clave técnica para cálculo del CUFE">
+                        <input type="password" name="clave_tecnica" value="{{ old('clave_tecnica') }}" class="input text-xs font-mono" placeholder="Clave técnica para cálculo del CUFE">
                         @error('clave_tecnica') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
                         <label class="label-base">Estado <span class="text-red-500">*</span></label>
-                        <select name="estado" required class="input-select text-xs">
+                        <select name="estado" required class="input text-xs">
                             @foreach($estados as $est)
                                 <option value="{{ $est->value }}" @selected(old('estado') === $est->value)>{{ $est->label() }}</option>
                             @endforeach

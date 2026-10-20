@@ -12,8 +12,8 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, monospace;
             font-size: 12px;
             line-height: 1.3;
-            color: #111;
-            background: #fff;
+            color: rgb(17, 17, 17);
+            background: rgb(255, 255, 255);
             width: 72mm;
             margin: 0 auto;
             padding: 10px 4px;
@@ -22,9 +22,9 @@
         .text-right { text-align: right; }
         .font-bold { font-weight: 700; }
         .font-mono { font-family: monospace; }
-        .border-t { border-top: 1px dashed #333; }
-        .border-b { border-bottom: 1px dashed #333; }
-        .border-double { border-top: 2px solid #000; border-bottom: 2px solid #000; }
+        .border-t { border-top: 1px dashed rgb(51, 51, 51); }
+        .border-b { border-bottom: 1px dashed rgb(51, 51, 51); }
+        .border-double { border-top: 2px solid rgb(0, 0, 0); border-bottom: 2px solid rgb(0, 0, 0); }
         .py-1 { padding-top: 4px; padding-bottom: 4px; }
         .my-2 { margin-top: 6px; margin-bottom: 6px; }
         table { width: 100%; border-collapse: collapse; }
@@ -38,7 +38,7 @@
 </head>
 <body>
     <div class="no-print">
-        <button onclick="window.print()" style="padding: 6px 14px; font-weight: bold; background: #0f172a; color: #fff; border: none; border-radius: 6px; cursor: pointer;">
+        <button onclick="window.print()" style="padding: 6px 14px; font-weight: bold; background: rgb(15, 23, 42); color: rgb(255, 255, 255); border: none; border-radius: 6px; cursor: pointer;">
             🖨️ Imprimir Ticket 80mm
         </button>
     </div>
@@ -62,7 +62,7 @@
             {{ $documento->numero_completo ?? $venta->numero_venta }}
         </div>
         @if($documento && $venta)
-            <div class="text-center" style="font-size: 10.5px; color: #555;">(Venta: {{ $venta->numero_venta }})</div>
+            <div class="text-center" style="font-size: 10.5px; color: rgb(85, 85, 85);">(Venta: {{ $venta->numero_venta }})</div>
         @endif
         <div class="border-t my-2 pt-1">
             <div><strong>Fecha:</strong> {{ ($documento->fecha_emision ?? $venta->created_at)->format('d/m/Y H:i:s') }}</div>
@@ -98,7 +98,7 @@
                         </td>
                     </tr>
                     <tr class="border-b">
-                        <td style="font-size: 10px; color: #555;">{{ $det->producto->codigo ?? '' }}</td>
+                        <td style="font-size: 10px; color: rgb(85, 85, 85);">{{ $det->producto->codigo ?? '' }}</td>
                         <td class="text-center">{{ number_format($det->cantidad, 2) }}</td>
                         <td class="text-right">${{ number_format($det->precio_unitario, 2) }}</td>
                         <td class="text-right font-bold">${{ number_format($det->subtotal, 2) }}</td>
@@ -161,7 +161,7 @@
     <div class="text-center border-t pt-2 my-2" style="font-size: 10px;">
         <div class="font-bold">¡GRACIAS POR SU PREFERENCIA!</div>
         <div>Conserve este comprobante para cualquier reclamo o garantía.</div>
-        <div style="margin-top: 4px; color: #666;">Documento emitido por software POS Comercial</div>
+        <div style="margin-top: 4px; color: rgb(102, 102, 102);">Documento emitido por software POS Comercial</div>
     </div>
 </body>
 </html>

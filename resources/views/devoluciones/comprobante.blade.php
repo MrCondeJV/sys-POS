@@ -5,11 +5,11 @@
     <title>Comprobante de Devolución - {{ $devolucion->numero_devolucion }}</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: monospace, sans-serif; font-size: 11px; }
-        body { width: 80mm; margin: 0 auto; padding: 10px; background: #fff; color: #000; }
+        body { width: 80mm; margin: 0 auto; padding: 10px; background: rgb(255, 255, 255); color: rgb(0, 0, 0); }
         .text-center { text-align: center; }
         .text-right { text-align: right; }
         .bold { font-weight: bold; }
-        .line { border-top: 1px dashed #000; margin: 6px 0; }
+        .line { border-top: 1px dashed rgb(0, 0, 0); margin: 6px 0; }
         .row { display: flex; justify-content: space-between; margin: 2px 0; }
         @media print {
             body { width: 100%; margin: 0; padding: 0; }
@@ -19,7 +19,7 @@
 </head>
 <body>
     <div class="no-print" style="margin-bottom: 10px; text-align: center;">
-        <button onclick="window.print()" style="padding: 6px 12px; background: #000; color: #fff; border: none; border-radius: 4px; cursor: pointer;">
+        <button onclick="window.print()" style="padding: 6px 12px; background: rgb(0, 0, 0); color: rgb(255, 255, 255); border: none; border-radius: 4px; cursor: pointer;">
             Imprimir Comprobante
         </button>
     </div>

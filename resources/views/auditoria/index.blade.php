@@ -25,15 +25,15 @@
         <form method="GET" action="{{ route('auditoria.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
             <div>
                 <label class="label-base">Desde</label>
-                <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="input-base">
+                <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="input">
             </div>
             <div>
                 <label class="label-base">Hasta</label>
-                <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="input-base">
+                <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="input">
             </div>
             <div>
                 <label class="label-base">Módulo</label>
-                <select name="modulo" class="input-base">
+                <select name="modulo" class="input">
                     <option value="">Todos los Módulos</option>
                     @foreach($modulos as $mod)
                         <option value="{{ $mod }}" {{ $modulo === $mod ? 'selected' : '' }}>{{ $mod }}</option>
@@ -42,7 +42,7 @@
             </div>
             <div>
                 <label class="label-base">Acción</label>
-                <select name="accion" class="input-base">
+                <select name="accion" class="input">
                     <option value="">Todas las Acciones</option>
                     @foreach($acciones as $acc)
                         <option value="{{ $acc }}" {{ $accion === $acc ? 'selected' : '' }}>{{ $acc }}</option>
@@ -51,7 +51,7 @@
             </div>
             <div>
                 <label class="label-base">Usuario</label>
-                <select name="user_id" class="input-base">
+                <select name="user_id" class="input">
                     <option value="">Todos los Usuarios</option>
                     @foreach($usuarios as $u)
                         <option value="{{ $u->id }}" {{ $userId == $u->id ? 'selected' : '' }}>{{ $u->name }}</option>
@@ -73,7 +73,7 @@
     {{-- Tabla de Auditoría --}}
     <div class="card overflow-hidden">
         <div class="table-container">
-            <table class="table-corporate">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Fecha / Hora</th>

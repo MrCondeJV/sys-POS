@@ -64,7 +64,7 @@
         </div>
 
         <div class="overflow-x-auto">
-            <table class="table-corporate">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Producto</th>

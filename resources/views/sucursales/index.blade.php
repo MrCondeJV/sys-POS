@@ -8,6 +8,7 @@
     editMode: false,
     modalTitle: 'Nueva Sucursal',
     formAction: '{{ route('sucursales.store') }}',
+    updateUrlBase: '{{ route('sucursales.update', '__SUCURSAL__') }}',
     sucursal: {
         id: null,
         nombre: '',
@@ -28,7 +29,7 @@
     openEditModal(item) {
         this.editMode = true;
         this.modalTitle = 'Editar Sucursal: ' + item.nombre;
-        this.formAction = '/sucursales/' + item.id;
+        this.formAction = this.updateUrlBase.replace('__SUCURSAL__', item.id);
         this.sucursal = { ...item, es_principal: Boolean(item.es_principal) };
         this.modalOpen = true;
     }
@@ -51,7 +52,7 @@
     <div class="card p-0 overflow-hidden">
         <!-- Vista Desktop -->
         <div class="hidden lg:block overflow-x-auto">
-            <table class="table-corporate">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Sucursal</th>
@@ -120,13 +121,20 @@
                                 </button>
 
                                 @if(!$s->es_principal)
-                                <form action="{{ route('sucursales.destroy', $s) }}" method="POST" class="inline" onsubmit="return confirm('¿Seguro que deseas eliminar esta sucursal?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn-danger py-1 px-2 text-xs">
-                                        Eliminar
-                                    </button>
-                                </form>
+                                <x-modal-confirm
+                                    title="¿Eliminar sucursal?"
+                                    message="Se eliminará la sucursal «{{ $s->nombre }}». Esta acción solo es permitida si no posee inventario ni documentos asociados."
+                                    action="{{ route('sucursales.destroy', $s) }}"
+                                    method="DELETE"
+                                    confirmText="Eliminar Sucursal"
+                                    variant="danger"
+                                >
+                                    <x-slot:trigger>
+                                        <button type="button" class="btn-danger py-1 px-2 text-xs">
+                                            Eliminar
+                                        </button>
+                                    </x-slot:trigger>
+                                </x-modal-confirm>
                                 @endif
                             </div>
                         </td>
@@ -204,13 +212,20 @@
                         </button>
 
                         @if(!$s->es_principal)
-                        <form action="{{ route('sucursales.destroy', $s) }}" method="POST" onsubmit="return confirm('¿Eliminar esta sucursal?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn-danger py-1 px-2 text-xs">
-                                Eliminar
-                            </button>
-                        </form>
+                        <x-modal-confirm
+                            title="¿Eliminar sucursal?"
+                            message="Se eliminará la sucursal «{{ $s->nombre }}»."
+                            action="{{ route('sucursales.destroy', $s) }}"
+                            method="DELETE"
+                            confirmText="Eliminar"
+                            variant="danger"
+                        >
+                            <x-slot:trigger>
+                                <button type="button" class="btn-danger py-1 px-2 text-xs">
+                                    Eliminar
+                                </button>
+                            </x-slot:trigger>
+                        </x-modal-confirm>
                         @endif
                     </div>
                 </div>
@@ -268,7 +283,7 @@
                                 Nombre de la Sucursal <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="nombre" x-model="sucursal.nombre" required
-                                class="input-base text-xs"
+                                class="input text-xs"
                                 placeholder="Ej: Sede Norte">
                         </div>
 
@@ -278,7 +293,7 @@
                                     Código Interno
                                 </label>
                                 <input type="text" name="codigo" x-model="sucursal.codigo"
-                                    class="input-base text-xs font-mono"
+                                    class="input text-xs font-mono"
                                     placeholder="SUC-002">
                             </div>
 
@@ -287,7 +302,7 @@
                                     Teléfono
                                 </label>
                                 <input type="text" name="telefono" x-model="sucursal.telefono"
-                                    class="input-base text-xs font-mono"
+                                    class="input text-xs font-mono"
                                     placeholder="3001234567">
                             </div>
                         </div>
@@ -297,7 +312,7 @@
                                 Dirección
                             </label>
                             <input type="text" name="direccion" x-model="sucursal.direccion"
-                                class="input-base text-xs"
+                                class="input text-xs"
                                 placeholder="Calle 50 # 10-20">
                         </div>
 
@@ -307,7 +322,7 @@
                                     Ciudad
                                 </label>
                                 <input type="text" name="ciudad" x-model="sucursal.ciudad"
-                                    class="input-base text-xs"
+                                    class="input text-xs"
                                     placeholder="Medellín">
                             </div>
 
@@ -316,7 +331,7 @@
                                     Departamento
                                 </label>
                                 <input type="text" name="departamento" x-model="sucursal.departamento"
-                                    class="input-base text-xs"
+                                    class="input text-xs"
                                     placeholder="Antioquia">
                             </div>
                         </div>

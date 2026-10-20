@@ -7,27 +7,27 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-        body { font-family: "Courier New", Courier, monospace; font-size: 11px; line-height: 1.25; background: #f8fafc; margin: 0; padding: 0; }
+        body { font-family: "Courier New", Courier, monospace; font-size: 11px; line-height: 1.25; background: rgb(248, 250, 252); margin: 0; padding: 0; }
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; padding: 0 !important; }
             .ticket-wrapper { width: 100% !important; max-width: 80mm !important; margin: 0 !important; padding: 0 !important; border: none !important; box-shadow: none !important; }
         }
         @media screen {
-            .ticket-wrapper { max-width: 80mm; margin: 24px auto; background: white; padding: 18px 16px; border: 1px solid #cbd5e1; border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+            .ticket-wrapper { max-width: 80mm; margin: 24px auto; background: white; padding: 18px 16px; border: 1px solid rgb(203, 213, 225); border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
         }
     </style>
 </head>
 <body>
 
 <div class="no-print" style="max-width:80mm;margin:16px auto 0;display:flex;justify-content:space-between;">
-    <a href="{{ route('ventas.show', $venta) }}" style="font-size:11px;color:#475569;text-decoration:none;font-weight:bold;">&larr; Volver</a>
-    <button onclick="window.print()" style="font-size:11px;font-weight:bold;background:#0f172a;color:white;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;">Imprimir</button>
+    <a href="{{ route('ventas.show', $venta) }}" style="font-size:11px;color:rgb(71,85,105);text-decoration:none;font-weight:bold;">&larr; Volver</a>
+    <button onclick="window.print()" style="font-size:11px;font-weight:bold;background:rgb(15,23,42);color:white;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;">Imprimir</button>
 </div>
 
 <div class="ticket-wrapper">
     <!-- Header -->
-    <div style="text-align: center; border-bottom: 1px dashed #000; padding-bottom: 8px; margin-bottom: 8px;">
+    <div style="text-align: center; border-bottom: 1px dashed rgb(0,0,0); padding-bottom: 8px; margin-bottom: 8px;">
         <div style="font-size: 14px; font-weight: 900; text-transform: uppercase;">{{ $venta->empresa?->nombre_comercial ?? $venta->empresa?->razon_social ?? 'POS Comercial' }}</div>
         @if($venta->empresa?->nit)
             <div>NIT: {{ $venta->empresa->nit }}</div>
@@ -42,7 +42,7 @@
     </div>
 
     <!-- Info Venta -->
-    <div style="border-bottom: 1px dashed #000; padding-bottom: 6px; margin-bottom: 6px; font-size: 10px;">
+    <div style="border-bottom: 1px dashed rgb(0,0,0); padding-bottom: 6px; margin-bottom: 6px; font-size: 10px;">
         <div style="display: flex; justify-content: space-between;">
             <span><strong>COMPROBANTE:</strong></span>
             <span><strong>{{ $venta->numero_venta }}</strong></span>
@@ -70,7 +70,7 @@
     <!-- Items -->
     <table style="width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 8px;">
         <thead>
-            <tr style="border-bottom: 1px solid #000;">
+            <tr style="border-bottom: 1px solid rgb(0,0,0);">
                 <th style="text-align: left; padding: 2px 0;">CANT &bull; DESCRIPCIÓN</th>
                 <th style="text-align: right; padding: 2px 0;">TOTAL</th>
             </tr>
@@ -80,7 +80,7 @@
                 <tr>
                     <td style="padding: 2px 0;">
                         <div>{{ $item->producto->nombre }}</div>
-                        <div style="font-size: 9px; color: #555;">
+                        <div style="font-size: 9px; color: rgb(85,85,85);">
                             {{ number_format($item->cantidad, 2) }} x ${{ number_format($item->precio_unitario, 2) }}
                         </div>
                     </td>
@@ -93,13 +93,13 @@
     </table>
 
     <!-- Totales -->
-    <div style="border-top: 1px dashed #000; padding-top: 6px; font-size: 11px;">
+    <div style="border-top: 1px dashed rgb(0,0,0); padding-top: 6px; font-size: 11px;">
         <div style="display: flex; justify-content: space-between;">
             <span>Subtotal:</span>
             <span>${{ number_format($venta->subtotal, 2) }}</span>
         </div>
         @if($venta->descuento > 0)
-            <div style="display: flex; justify-content: space-between; color: #555;">
+            <div style="display: flex; justify-content: space-between; color: rgb(85,85,85);">
                 <span>Descuento:</span>
                 <span>-${{ number_format($venta->descuento, 2) }}</span>
             </div>
@@ -110,14 +110,14 @@
                 <span>+${{ number_format($venta->impuesto, 2) }}</span>
             </div>
         @endif
-        <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 900; border-top: 1px solid #000; padding-top: 4px; margin-top: 4px;">
+        <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 900; border-top: 1px solid rgb(0,0,0); padding-top: 4px; margin-top: 4px;">
             <span>TOTAL:</span>
             <span>${{ number_format($venta->total, 2) }}</span>
         </div>
     </div>
 
     <!-- Pagos -->
-    <div style="border-top: 1px dashed #000; margin-top: 8px; padding-top: 6px; font-size: 10px;">
+    <div style="border-top: 1px dashed rgb(0,0,0); margin-top: 8px; padding-top: 6px; font-size: 10px;">
         <div style="display: flex; justify-content: space-between;">
             <span>Forma de Pago:</span>
             <span><strong>{{ $venta->tipo_pago->label() }} ({{ $venta->metodo_pago }})</strong></span>
@@ -135,15 +135,15 @@
     </div>
 
     @if($venta->isAnulada())
-        <div style="margin-top: 10px; border: 2px solid #000; padding: 4px; text-align: center; font-weight: 900; font-size: 12px;">
+        <div style="margin-top: 10px; border: 2px solid rgb(0,0,0); padding: 4px; text-align: center; font-weight: 900; font-size: 12px;">
             *** VENTA ANULADA ***
         </div>
     @endif
 
     <!-- Footer -->
-    <div style="text-align: center; margin-top: 14px; border-top: 1px dashed #000; padding-top: 8px; font-size: 9.5px;">
+    <div style="text-align: center; margin-top: 14px; border-top: 1px dashed rgb(0,0,0); padding-top: 8px; font-size: 9.5px;">
         <div>¡GRACIAS POR SU COMPRA!</div>
-        <div style="color: #666; margin-top: 2px;">Documento sin validez fiscal formal</div>
+        <div style="color: rgb(102,102,102); margin-top: 2px;">Documento sin validez fiscal formal</div>
     </div>
 </div>
 

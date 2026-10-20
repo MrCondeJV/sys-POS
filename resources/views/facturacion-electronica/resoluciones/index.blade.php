@@ -22,7 +22,7 @@
 
     <div class="card p-0 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="table-corporate">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Resolución</th>
@@ -62,13 +62,20 @@
                                     <a href="{{ route('resoluciones.edit', $res) }}" class="btn-secondary py-1 px-2.5 text-xs">
                                         Editar
                                     </a>
-                                    <form action="{{ route('resoluciones.destroy', $res) }}" method="POST" class="inline" onsubmit="return confirm('¿Seguro de eliminar esta resolución?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn-danger py-1 px-2 text-xs">
-                                            Eliminar
-                                        </button>
-                                    </form>
+                                    <x-modal-confirm
+                                        title="¿Eliminar resolución DIAN?"
+                                        message="Se eliminará la resolución {{ $res->numero_resolucion }} ({{ $res->prefijo }}). Solo puede eliminarse si no tiene documentos emitidos."
+                                        action="{{ route('resoluciones.destroy', $res) }}"
+                                        method="DELETE"
+                                        confirmText="Eliminar"
+                                        variant="danger"
+                                    >
+                                        <x-slot:trigger>
+                                            <button type="button" class="btn-danger py-1 px-2 text-xs">
+                                                Eliminar
+                                            </button>
+                                        </x-slot:trigger>
+                                    </x-modal-confirm>
                                 </div>
                             </td>
                         </tr>

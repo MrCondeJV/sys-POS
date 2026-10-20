@@ -26,12 +26,20 @@
                     Ver Factura Electrónica ({{ $documento->documentoElectronico->consecutivo_completo }})
                 </a>
             @elseif($documento->esEmitido())
-                <form action="{{ route('facturacion-electronica.emitir', $documento) }}" method="POST" class="inline">
-                    @csrf
-                    <button type="submit" class="btn-primary" onclick="return confirm('¿Transmitir esta factura electrónicamente a la DIAN?');">
-                        Emitir DIAN
-                    </button>
-                </form>
+                <x-modal-confirm
+                    title="¿Emitir factura electrónica a la DIAN?"
+                    message="Se generará y transmitirá el documento electrónico oficial a partir del comprobante {{ $documento->numero_completo }}."
+                    action="{{ route('facturacion-electronica.emitir', $documento) }}"
+                    method="POST"
+                    confirmText="Transmitir a DIAN"
+                    variant="primary"
+                >
+                    <x-slot:trigger>
+                        <button type="button" class="btn-primary">
+                            Emitir DIAN
+                        </button>
+                    </x-slot:trigger>
+                </x-modal-confirm>
             @endif
 
             @can('anular', $documento)
@@ -111,7 +119,7 @@
 
         <!-- Tabla de Artículos -->
         <div class="py-6 overflow-x-auto">
-            <table class="table-corporate">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Descripción</th>
@@ -192,7 +200,7 @@
                 @csrf
                 <div class="mb-4">
                     <textarea name="motivo" rows="3" required placeholder="Motivo de la anulación..."
-                        class="input-base text-xs"></textarea>
+                        class="input text-xs"></textarea>
                 </div>
                 <div class="flex justify-end space-x-2">
                     <button type="button" @click="open = false" class="btn-secondary">Cancelar</button>

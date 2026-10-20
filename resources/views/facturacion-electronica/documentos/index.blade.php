@@ -33,10 +33,10 @@
                     </svg>
                 </div>
                 <input type="text" name="q" value="{{ request('q') }}" placeholder="Buscar por consecutivo o CUFE..."
-                    class="input-base pl-9 text-xs">
+                    class="input pl-9 text-xs">
             </div>
 
-            <select name="estado" class="input-select text-xs w-auto">
+            <select name="estado" class="input text-xs w-auto">
                 <option value="">Todos los Estados DIAN</option>
                 @foreach($estadosDian as $est)
                     <option value="{{ $est->value }}" @selected(request('estado') === $est->value)>{{ $est->label() }}</option>
@@ -51,7 +51,7 @@
 
     <div class="card p-0 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="table-corporate">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Consecutivo</th>

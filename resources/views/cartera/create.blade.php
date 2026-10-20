@@ -115,7 +115,7 @@
                     Concepto de la Cuenta / Factura <span class="text-danger-text">*</span>
                 </label>
                 <input type="text" id="concepto" name="concepto" value="{{ old('concepto') }}" required
-                    placeholder="Ej: Saldo Inicial / Crédito de Materiales Factura #1234"
+                    placeholder="Ej: Saldo Inicial / Crédito de Materiales Factura N° 1234"
                     class="block w-full py-2 px-3 border border-slate-300 rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
                 @error('concepto')
                     <p class="text-xs text-danger-text mt-1">{{ $message }}</p>

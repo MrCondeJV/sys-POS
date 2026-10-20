@@ -12,8 +12,8 @@
             font-family: 'Courier New', Courier, monospace;
             font-size: 10px;
             line-height: 1.2;
-            color: #000;
-            background: #fff;
+            color: rgb(0, 0, 0);
+            background: rgb(255, 255, 255);
             width: 48mm;
             margin: 0 auto;
             padding: 5px 2px;
@@ -21,8 +21,8 @@
         .text-center { text-align: center; }
         .text-right { text-align: right; }
         .font-bold { font-weight: bold; }
-        .border-t { border-top: 1px dashed #000; }
-        .border-b { border-bottom: 1px dashed #000; }
+        .border-t { border-top: 1px dashed rgb(0, 0, 0); }
+        .border-b { border-bottom: 1px dashed rgb(0, 0, 0); }
         .py-1 { padding-top: 3px; padding-bottom: 3px; }
         .my-1 { margin-top: 3px; margin-bottom: 3px; }
         table { width: 100%; border-collapse: collapse; }

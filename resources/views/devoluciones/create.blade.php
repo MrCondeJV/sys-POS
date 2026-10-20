@@ -36,7 +36,7 @@
             </div>
 
             <div class="overflow-x-auto">
-                <table class="table-corporate">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>Producto</th>
@@ -76,7 +76,7 @@
                                        name="items[{{ $idx }}][cantidad]"
                                        value="{{ old("items.$idx.cantidad", 0) }}"
                                        {{ $disponible <= 0 ? 'disabled' : '' }}
-                                       class="input-base text-center font-mono text-xs py-1.5 tabular-nums">
+                                       class="input text-center font-mono text-xs py-1.5 tabular-nums">
                             </td>
                             <td class="text-center">
                                 <input type="checkbox" name="items[{{ $idx }}][reingresa_inventario]" value="1" checked
@@ -95,7 +95,7 @@
             <div class="space-y-4">
                 <div>
                     <label class="label-base">Método de Reintegro <span class="text-red-500">*</span></label>
-                    <select name="tipo_reintegro" class="input-select text-xs">
+                    <select name="tipo_reintegro" class="input text-xs">
                         @foreach(App\Enums\TipoReintegroDevolucion::cases() as $tr)
                             <option value="{{ $tr->value }}" {{ old('tipo_reintegro') === $tr->value ? 'selected' : '' }}>
                                 {{ $tr->label() }}
@@ -121,7 +121,7 @@
                 <div>
                     <label class="label-base">Motivo de la Devolución <span class="text-red-500">*</span></label>
                     <textarea name="motivo" rows="3" required placeholder="Ej: Garantía por defecto de fábrica / Cambio de artículo..."
-                              class="input-base text-xs">{{ old('motivo') }}</textarea>
+                              class="input text-xs">{{ old('motivo') }}</textarea>
                 </div>
 
                 <div class="flex items-center justify-end space-x-3 pt-2">

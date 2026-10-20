@@ -80,16 +80,32 @@
             </div>
 
             @if($documento->tipo === \App\Enums\TipoDocumentoElectronico::FACTURA_ELECTRONICA && $documento->estado_dian === \App\Enums\EstadoDian::ACEPTADO)
-                <div class="pt-6 border-t border-slate-200">
+                <div class="pt-6 border-t border-slate-200" x-data="{ confirmNc: false }">
                     <h3 class="text-xs font-semibold text-slate-800 mb-2">Acciones Fiscales</h3>
-                    <form action="{{ route('facturacion-electronica.nota-credito', $documento) }}" method="POST" class="flex gap-2 items-center" onsubmit="return confirm('¿Confirma la emisión de una Nota Crédito Electrónica ante la DIAN para esta factura?');">
+                    <form x-ref="formNc" action="{{ route('facturacion-electronica.nota-credito', $documento) }}" method="POST" class="flex gap-2 items-center">
                         @csrf
                         <input type="text" name="motivo" required placeholder="Motivo de la nota crédito (ej. Anulación por devolución de mercancía)"
-                            class="input-base text-xs flex-1">
-                        <button type="submit" class="btn-danger">
+                            class="input text-xs flex-1">
+                        <button type="button" @click="if ($refs.formNc.reportValidity()) confirmNc = true" class="btn-danger">
                             Emitir Nota Crédito
                         </button>
                     </form>
+
+                    <template x-teleport="body">
+                        <div x-show="confirmNc" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+                            <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-[1px]" @click="confirmNc = false"></div>
+                            <div class="relative z-10 w-full max-w-md bg-white rounded-xl border border-slate-200 shadow-lg p-6">
+                                <h4 class="text-base font-semibold text-slate-900">¿Emitir Nota Crédito Electrónica?</h4>
+                                <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                                    Se transmitirá una Nota Crédito Electrónica ante la DIAN para la factura {{ $documento->consecutivo_completo }}.
+                                </p>
+                                <div class="mt-5 flex justify-end gap-2.5">
+                                    <button type="button" @click="confirmNc = false" class="btn-secondary">Cancelar</button>
+                                    <button type="button" @click="$refs.formNc.submit()" class="btn-danger">Confirmar Emisión</button>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                 </div>
             @endif
         </div>

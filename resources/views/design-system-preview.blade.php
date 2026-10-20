@@ -58,7 +58,7 @@
             <x-kpi-card
                 label="Caja Principal"
                 value="$350,000"
-                context="Turno #104 en curso"
+                context="Turno N° 104 en curso"
                 trend="neutral"
                 trendValue="0.0%"
             />
