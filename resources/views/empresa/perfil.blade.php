@@ -5,20 +5,16 @@
 @section('content')
 <div class="max-w-5xl mx-auto space-y-6">
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-            <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Perfil de la Empresa</h1>
-            <p class="text-sm text-slate-500 mt-0.5">
-                Configuración de datos comerciales y fiscales para {{ $empresa->nombre_comercial }}.
-            </p>
-        </div>
-        <div class="flex items-center">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+    <x-page-header
+        title="Perfil de la Empresa"
+        subtitle="Configuración de datos comerciales y fiscales para {{ $empresa->nombre_comercial }}."
+    >
+        <x-slot:actions>
+            <x-badge variant="success" :dot="true">
                 Empresa Activa (ID: #{{ $empresa->id }})
-            </span>
-        </div>
-    </div>
+            </x-badge>
+        </x-slot:actions>
+    </x-page-header>
 
     <!-- Formulario Principal -->
     <div class="card overflow-hidden">
@@ -29,7 +25,6 @@
         @endphp
         <form action="{{ route('empresa.perfil.update') }}" method="POST" enctype="multipart/form-data" class="p-6 sm:p-8 space-y-8"
             x-data="{
-                colorSeleccionado: '{{ old('color_primario', $empresa->configuraciones['color_primario'] ?? 'blue') }}',
                 monedaSeleccionada: '{{ old('moneda', $empresa->moneda ?? 'COP') }}',
                 simboloSeleccionado: '{{ old('simbolo_moneda', $empresa->simbolo_moneda ?? '$') }}',
                 mapaSimbolos: {{ json_encode($mapaSimbolos) }},
@@ -55,7 +50,7 @@
 
             <!-- Sección 1: Identificación Fiscal -->
             <div>
-                <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-2.5">
+                <h2 class="text-xs font-semibold text-text-primary uppercase tracking-wider border-b border-border pb-2.5">
                     Identificación Tributaria
                 </h2>
                 <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -64,7 +59,7 @@
                             Tipo de Documento
                         </label>
                         <input type="text" readonly disabled value="{{ $empresa->tipo_documento?->value ?? 'NIT' }}"
-                            class="input-base bg-slate-100 text-slate-500 cursor-not-allowed">
+                            class="input bg-surface-muted text-text-muted cursor-not-allowed">
                     </div>
 
                     <div>
@@ -72,7 +67,7 @@
                             Número de NIT
                         </label>
                         <input type="text" readonly disabled value="{{ $empresa->nit }}"
-                            class="input-base bg-slate-100 text-slate-500 font-mono cursor-not-allowed">
+                            class="input bg-surface-muted text-text-muted font-mono cursor-not-allowed">
                     </div>
 
                     <div>
@@ -80,27 +75,30 @@
                             Dígito de Verificación (DV)
                         </label>
                         <input type="text" readonly disabled value="{{ $empresa->dv ?? 'N/A' }}"
-                            class="input-base bg-slate-100 text-slate-500 font-mono cursor-not-allowed">
+                            class="input bg-surface-muted text-text-muted font-mono cursor-not-allowed">
                     </div>
                 </div>
-                <p class="mt-2 text-xs text-slate-500">
+                <p class="mt-2 text-xs text-text-secondary">
                     * El NIT y documento fiscal son inmutables para garantizar la trazabilidad contable y tributaria.
                 </p>
             </div>
 
             <!-- Sección 2: Información Comercial -->
             <div>
-                <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-2.5">
+                <h2 class="text-xs font-semibold text-text-primary uppercase tracking-wider border-b border-border pb-2.5">
                     Datos Comerciales
                 </h2>
                 <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label for="nombre_comercial" class="label-base">
-                            Nombre Comercial <span class="text-rose-500">*</span>
+                            Nombre Comercial <span class="text-danger">*</span>
                         </label>
                         <input type="text" name="nombre_comercial" id="nombre_comercial" required
                             value="{{ old('nombre_comercial', $empresa->nombre_comercial) }}"
-                            class="input-base">
+                            class="input @error('nombre_comercial') border-danger @enderror">
+                        @error('nombre_comercial')
+                            <p class="mt-1 text-xs text-danger">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -109,7 +107,10 @@
                         </label>
                         <input type="text" name="razon_social" id="razon_social"
                             value="{{ old('razon_social', $empresa->razon_social) }}"
-                            class="input-base">
+                            class="input @error('razon_social') border-danger @enderror">
+                        @error('razon_social')
+                            <p class="mt-1 text-xs text-danger">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -118,7 +119,10 @@
                         </label>
                         <input type="email" name="email" id="email"
                             value="{{ old('email', $empresa->email) }}"
-                            class="input-base">
+                            class="input @error('email') border-danger @enderror">
+                        @error('email')
+                            <p class="mt-1 text-xs text-danger">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -127,14 +131,17 @@
                         </label>
                         <input type="text" name="telefono" id="telefono"
                             value="{{ old('telefono', $empresa->telefono) }}"
-                            class="input-base">
+                            class="input @error('telefono') border-danger @enderror">
+                        @error('telefono')
+                            <p class="mt-1 text-xs text-danger">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
             </div>
 
             <!-- Sección 3: Ubicación y Moneda -->
             <div>
-                <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-2.5">
+                <h2 class="text-xs font-semibold text-text-primary uppercase tracking-wider border-b border-border pb-2.5">
                     Ubicación y Moneda Operativa
                 </h2>
                 <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -144,7 +151,10 @@
                         </label>
                         <input type="text" name="direccion" id="direccion"
                             value="{{ old('direccion', $empresa->direccion) }}"
-                            class="input-base">
+                            class="input @error('direccion') border-danger @enderror">
+                        @error('direccion')
+                            <p class="mt-1 text-xs text-danger">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -153,7 +163,10 @@
                         </label>
                         <input type="text" name="ciudad" id="ciudad"
                             value="{{ old('ciudad', $empresa->ciudad) }}"
-                            class="input-base">
+                            class="input @error('ciudad') border-danger @enderror">
+                        @error('ciudad')
+                            <p class="mt-1 text-xs text-danger">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -162,17 +175,20 @@
                         </label>
                         <input type="text" name="departamento" id="departamento"
                             value="{{ old('departamento', $empresa->departamento) }}"
-                            class="input-base">
+                            class="input @error('departamento') border-danger @enderror">
+                        @error('departamento')
+                            <p class="mt-1 text-xs text-danger">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
                         <label for="moneda" class="label-base">
-                            Código Moneda <span class="text-rose-500">*</span>
+                            Código Moneda <span class="text-danger">*</span>
                         </label>
                         <select name="moneda" id="moneda" required
                             x-model="monedaSeleccionada"
                             @change="onMonedaChange($event)"
-                            class="input-base bg-white">
+                            class="input bg-surface @error('moneda') border-danger @enderror">
                             @if(!isset($monedas[old('moneda', $empresa->moneda)]))
                                 <option value="{{ old('moneda', $empresa->moneda) }}" selected>{{ old('moneda', $empresa->moneda) }} (Personalizada)</option>
                             @endif
@@ -182,16 +198,19 @@
                                 </option>
                             @endforeach
                         </select>
-                        <p class="mt-1 text-xs text-slate-500">Código ISO internacional de la moneda.</p>
+                        <p class="mt-1 text-xs text-text-secondary">Código ISO internacional de la moneda.</p>
+                        @error('moneda')
+                            <p class="mt-1 text-xs text-danger">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
                         <label for="simbolo_moneda" class="label-base">
-                            Símbolo <span class="text-rose-500">*</span>
+                            Símbolo <span class="text-danger">*</span>
                         </label>
                         <select name="simbolo_moneda" id="simbolo_moneda" required
                             x-model="simboloSeleccionado"
-                            class="input-base bg-white">
+                            class="input bg-surface @error('simbolo_moneda') border-danger @enderror">
                             @if(!isset($simbolos[old('simbolo_moneda', $empresa->simbolo_moneda)]))
                                 <option value="{{ old('simbolo_moneda', $empresa->simbolo_moneda) }}" selected>{{ old('simbolo_moneda', $empresa->simbolo_moneda) }} (Personalizado)</option>
                             @endif
@@ -201,59 +220,60 @@
                                 </option>
                             @endforeach
                         </select>
-                        <p class="mt-1 text-xs text-slate-500">Símbolo visible en tickets, ventas y reportes.</p>
+                        <p class="mt-1 text-xs text-text-secondary">Símbolo visible en tickets, ventas y reportes.</p>
+                        @error('simbolo_moneda')
+                            <p class="mt-1 text-xs text-danger">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
             </div>
 
-            <!-- Sección 4: Identidad Visual y Personalización -->
-            <div class="border-t border-slate-200 pt-6">
-                <div class="flex items-center justify-between border-b border-slate-200 pb-2.5">
+            <!-- Sección 4: Identidad Visual e Imagen Institucional (Opción A) -->
+            <div class="border-t border-border pt-6">
+                <div class="flex items-center justify-between border-b border-border pb-2.5">
                     <div>
-                        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider">
-                            Identidad Visual y Color de la Plataforma
+                        <h2 class="text-xs font-semibold text-text-primary uppercase tracking-wider">
+                            Identidad Visual de la Empresa
                         </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">
-                            Personaliza el logotipo que aparece en el encabezado del sistema y el color temático de la interfaz.
+                        <p class="text-xs text-text-secondary mt-0.5">
+                            Personaliza el logotipo corporativo que aparece en el encabezado, menú lateral y comprobantes.
                         </p>
                     </div>
-                    <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
-                        Marca y Tema
-                    </span>
+                    <x-badge variant="neutral">Identidad Corporativa</x-badge>
                 </div>
 
                 <div class="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    <!-- Columna 1: Logotipo de la Empresa (5 cols) -->
-                    <div class="lg:col-span-5 space-y-4">
+                    <!-- Columna 1: Logotipo de la Empresa (6 cols) -->
+                    <div class="lg:col-span-6 space-y-4">
                         <label class="label-base">
                             Logotipo de la Empresa
                         </label>
 
                         <div class="flex items-start gap-4">
                             <!-- Preview Box -->
-                            <div class="relative flex-shrink-0 w-24 h-24 rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 flex items-center justify-center overflow-hidden">
+                            <div class="relative shrink-0 w-24 h-24 rounded-lg border-2 border-dashed border-border-strong bg-surface-muted flex items-center justify-center overflow-hidden">
                                 <!-- Preview de nuevo archivo seleccionado -->
                                 <template x-if="logoPreview">
-                                    <img :src="logoPreview" alt="Nuevo Logotipo" class="w-full h-full object-contain p-2 bg-white">
+                                    <img :src="logoPreview" alt="Nuevo Logotipo" class="w-full h-full object-contain p-2 bg-surface">
                                 </template>
 
                                 <!-- Logo actual guardado en storage -->
                                 <template x-if="!logoPreview && !eliminarLogo">
                                     @if($empresa->logo_path)
-                                        <img src="{{ Storage::url($empresa->logo_path) }}" alt="{{ $empresa->nombre_comercial }}" class="w-full h-full object-contain p-2 bg-white">
+                                        <img src="{{ Storage::url($empresa->logo_path) }}" alt="{{ $empresa->nombre_comercial }}" class="w-full h-full object-contain p-2 bg-surface">
                                     @else
                                         <div class="text-center p-2">
-                                            <div class="h-10 w-10 mx-auto rounded-lg bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-sm">
+                                            <div class="h-10 w-10 mx-auto rounded-lg bg-brand-50 text-brand-700 border border-brand-100 flex items-center justify-center font-semibold text-sm">
                                                 {{ mb_strtoupper(mb_substr($empresa->nombre_comercial, 0, 2)) }}
                                             </div>
-                                            <span class="text-[10px] text-slate-400 mt-1 block font-medium">Sin logo</span>
+                                            <span class="text-[10px] text-text-muted mt-1 block font-medium">Sin logo</span>
                                         </div>
                                     @endif
                                 </template>
 
                                 <!-- Marcado para eliminar -->
                                 <template x-if="eliminarLogo && !logoPreview">
-                                    <div class="text-center p-2 text-rose-500">
+                                    <div class="text-center p-2 text-danger">
                                         <svg class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                         </svg>
@@ -264,8 +284,8 @@
 
                             <!-- Botones y Controles del Logo -->
                             <div class="flex-1 space-y-2">
-                                <label class="btn-secondary cursor-pointer">
-                                    <svg class="h-4 w-4 mr-1.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <label class="btn btn-secondary cursor-pointer">
+                                    <svg class="h-4 w-4 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
                                     Cargar Logotipo
@@ -275,7 +295,7 @@
                                 @if($empresa->logo_path)
                                     <div>
                                         <button type="button" @click="eliminarLogo = !eliminarLogo; logoPreview = null"
-                                            class="inline-flex items-center text-xs font-semibold text-rose-600 hover:text-rose-800 transition">
+                                            class="inline-flex items-center text-xs font-semibold text-danger hover:text-danger-text transition">
                                             <svg class="h-3.5 w-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                             </svg>
@@ -285,72 +305,57 @@
                                     </div>
                                 @endif
 
-                                <p class="text-xs text-slate-500 leading-relaxed">
+                                <p class="text-xs text-text-secondary leading-relaxed">
                                     Recomendado: PNG o SVG transparente, cuadrado o ligeramente apaisado, máx. 2MB.
                                 </p>
+                                @error('logo')
+                                    <p class="mt-1 text-xs text-danger">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
                     </div>
 
-                    <!-- Columna 2: Selector de Color de la Plataforma (7 cols) -->
-                    <div class="lg:col-span-7 space-y-4">
-                        <div class="flex items-center justify-between">
-                            <label class="label-base">
-                                Color Temático de la Plataforma
-                            </label>
-                            <span class="text-xs text-slate-500">
-                                Seleccionado: <strong class="capitalize text-slate-900" x-text="colorSeleccionado"></strong>
-                            </span>
+                    <!-- Columna 2: Tarjeta Informativa Paleta Institucional (6 cols) -->
+                    <div class="lg:col-span-6">
+                        <div class="rounded-lg border border-border bg-surface-muted p-4 space-y-3">
+                            <div class="flex items-start gap-3">
+                                <div class="h-9 w-9 rounded-md bg-brand-900 text-white flex items-center justify-center shrink-0">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                    </svg>
+                                </div>
+                                <div class="min-w-0">
+                                    <h3 class="text-xs font-semibold text-text-primary uppercase tracking-wider">
+                                        Paleta Institucional Unificada
+                                    </h3>
+                                    <p class="text-xs text-text-secondary mt-1 leading-relaxed">
+                                        La plataforma utiliza un estándar visual financiero unificado para garantizar contraste WCAG AA, legibilidad en terminales POS y claridad en estados contables.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-2 pt-1">
+                                <div class="flex items-center gap-2 rounded-md border border-border bg-surface px-2.5 py-2">
+                                    <span class="h-4 w-4 rounded-sm bg-brand-900 shrink-0"></span>
+                                    <span class="text-[11px] font-medium text-text-primary truncate">Azul Marino</span>
+                                </div>
+                                <div class="flex items-center gap-2 rounded-md border border-border bg-surface px-2.5 py-2">
+                                    <span class="h-4 w-4 rounded-sm bg-brand-600 shrink-0"></span>
+                                    <span class="text-[11px] font-medium text-text-primary truncate">Azul Primario</span>
+                                </div>
+                                <div class="flex items-center gap-2 rounded-md border border-border bg-surface px-2.5 py-2">
+                                    <span class="h-4 w-4 rounded-sm bg-surface-muted border border-border-strong shrink-0"></span>
+                                    <span class="text-[11px] font-medium text-text-primary truncate">Gris Neutro</span>
+                                </div>
+                            </div>
                         </div>
-
-                        @php
-                            $paletaColores = [
-                                'blue'    => ['nombre' => 'Azul Corporativo', 'hex' => '#0284c7', 'desc' => 'Banca / Institucional'],
-                                'slate'   => ['nombre' => 'Pizarra',         'hex' => '#334155', 'desc' => 'Sobrio / Neutro'],
-                                'emerald' => ['nombre' => 'Esmeralda',       'hex' => '#059669', 'desc' => 'Retail / Fresco'],
-                                'indigo'  => ['nombre' => 'Índigo',          'hex' => '#4f46e5', 'desc' => 'Moderno'],
-                                'violet'  => ['nombre' => 'Violeta',         'hex' => '#7c3aed', 'desc' => 'Creativo'],
-                                'rose'    => ['nombre' => 'Carmín',          'hex' => '#e11d48', 'desc' => 'Enérgico'],
-                                'orange'  => ['nombre' => 'Naranja',         'hex' => '#ea580c', 'desc' => 'Ferretería / Obra'],
-                                'amber'   => ['nombre' => 'Ámbar',           'hex' => '#d97706', 'desc' => 'Industrial'],
-                            ];
-                        @endphp
-
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                            @foreach($paletaColores as $key => $col)
-                                <label class="relative flex flex-col items-center p-3 rounded-lg border cursor-pointer transition text-center select-none"
-                                    :class="colorSeleccionado === '{{ $key }}' ? 'border-brand-600 ring-2 ring-brand-500/20 bg-brand-50/30 shadow-sm' : 'border-slate-200 hover:border-slate-300 bg-white'">
-                                    <input type="radio" name="color_primario" value="{{ $key }}" class="sr-only"
-                                        x-model="colorSeleccionado">
-                                    
-                                    <!-- Swatch Círculo -->
-                                    <span class="w-7 h-7 rounded-full shadow-sm flex items-center justify-center transition transform"
-                                        :class="colorSeleccionado === '{{ $key }}' ? 'scale-110 ring-2 ring-offset-2 ring-slate-900' : ''"
-                                        style="background-color: {{ $col['hex'] }};">
-                                        <svg x-show="colorSeleccionado === '{{ $key }}'" class="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                                        </svg>
-                                    </span>
-
-                                    <span class="text-xs font-semibold text-slate-800 mt-2">
-                                        {{ $col['nombre'] }}
-                                    </span>
-                                    <span class="text-[10px] text-slate-500 mt-0.5">
-                                        {{ $col['desc'] }}
-                                    </span>
-                                </label>
-                            @endforeach
-                        </div>
-                        <p class="text-xs text-slate-500">
-                            * El color seleccionado se aplicará a la identidad visual corporativa en toda la aplicación.
-                        </p>
                     </div>
                 </div>
             </div>
 
             <!-- Botón Guardar -->
-            <div class="pt-4 border-t border-slate-200 flex justify-end">
-                <button type="submit" class="btn-primary w-full sm:w-auto">
+            <div class="pt-4 border-t border-border flex justify-end">
+                <button type="submit" class="btn btn-primary w-full sm:w-auto">
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
