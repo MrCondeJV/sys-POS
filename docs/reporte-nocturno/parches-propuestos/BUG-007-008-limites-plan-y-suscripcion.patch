@@ -1,0 +1,44 @@
+--- a/app/Http/Controllers/UserController.php
++++ b/app/Http/Controllers/UserController.php
+@@ -148,6 +148,14 @@ class UserController extends Controller
+         $empresaId = $currentUser->isSuperAdmin() && $request->filled('empresa_id')
+             ? (int) $request->empresa_id
+             : CompanyContext::getId();
++
++        $empresa = $empresaId ? Empresa::find($empresaId) : null;
++        if ($empresa && $request->input('rol') !== RolSistema::SUPER_ADMIN->value && ! $empresa->puedeCrearUsuario()) {
++            return back()->withErrors([
++                'general' => 'Has alcanzado el límite máximo de usuarios permitidos en tu plan actual. Mejora tu suscripción para continuar.',
++            ])->withInput();
++        }
+ 
+         $validated = $request->validate([
+--- a/app/Models/Empresa.php
++++ b/app/Models/Empresa.php
+@@ -96,8 +96,7 @@ class Empresa extends Model
+     public function suscripcionActual(): HasOne
+     {
+         return $this->hasOne(Suscripcion::class, 'empresa_id')
+-            ->whereIn('estado', [\App\Enums\EstadoSuscripcion::ACTIVA->value, \App\Enums\EstadoSuscripcion::PRUEBA->value])
+             ->latestOfMany();
+     }
++
++    public function suscripcionEstaOperativa(): bool
++    {
++        $suscripcion = $this->suscripcionActual;
++        return $suscripcion ? $suscripcion->isVigente() : true;
++    }
+ 
+     public function puedeCrearSucursal(): bool
+     {
++        if (! $this->suscripcionEstaOperativa()) {
++            return false;
++        }
+         $plan = $this->obtenerPlan();
+@@ -132,6 +138,9 @@ class Empresa extends Model
+     public function puedeCrearUsuario(): bool
+     {
++        if (! $this->suscripcionEstaOperativa()) {
++            return false;
++        }
+         $plan = $this->obtenerPlan();

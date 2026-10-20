@@ -40,3 +40,33 @@ Cada decisión tomada durante la ejecución autónoma nocturna sigue el criterio
   2. Renderizar las vistas desde un arnés PHP con `APP_ENV=testing`, `DB_CONNECTION=sqlite`, `DB_DATABASE=:memory:` (base de datos 100% en memoria RAM) e invocar Google Chrome Headless (`--headless=new --print-to-pdf` y `--screenshot`) para generar los PDFs y PNGs reales.
 - **Decisión tomada:** **Alternativa 2.**
 - **Razón:** Garantiza **cero impacto** sobre `database/database.sqlite` y `.env`, a la vez que produce evidencia real renderizada por el motor Blink de Google Chrome en `docs/reporte-nocturno/evidencia/impresion/` y `docs/reporte-nocturno/evidencia/capturas/`.
+
+---
+
+## DEC-005: Inviolabilidad del Motor JavaScript del POS (`posTerminal()`) en el Lote 3B
+- **Contexto:** Las reglas del prompt maestro y las condiciones de desbloqueo exigieron expresamente que la función `posTerminal(config)` y su lógica interna en `resources/views/pos/index.blade.php` no sufrieran alteraciones.
+- **Alternativas:**
+  1. Refactorizar el script de Alpine para integrar componentes adicionales.
+  2. Migrar únicamente el marcado Blade/HTML periférico (encabezado corporativo, tarjetas de cobro, badges de estado, panel numérico y modales) manteniendo el bloque `<script>function posTerminal(config)` con exactamente 0 líneas de diferencia en git diff.
+- **Decisión tomada:** **Alternativa 2.**
+- **Razón:** Verificado mediante `git diff -U0 resources/views/pos/index.blade.php`: el diff no contiene una sola línea dentro del bloque de script. Toda la lógica de atajos, IndexedDB, sincronización y escáner opera sin modificaciones.
+
+---
+
+## DEC-006: Manejo de `BUG-007` y `BUG-008` (Límites de Plan y Suscripciones)
+- **Contexto:** La auditoría de la Parte 4 detectó que `UserController@store` no verifica `$empresa->puedeCrearUsuario()` y que `Empresa::suscripcionActual()` retorna `null` cuando la suscripción está vencida o suspendida, permitiendo operaciones y creación de recursos sin límite.
+- **Alternativas:**
+  1. Modificar `app/Http/Controllers/UserController.php` y `app/Models/Empresa.php` de inmediato.
+  2. Cumplir estrictamente la Regla 5: caracterizar ambos hallazgos con pruebas automatizadas (`LimitesPlanYSuscripcionTest.php`) marcadas con `#[Group('known-bugs')]`, redactar la arquitectura correctiva en `docs/wompi/DISENO-B0.md` y entregar el parche listo en `docs/reporte-nocturno/parches-propuestos/BUG-007-008-limites-plan-y-suscripcion.patch`.
+- **Decisión tomada:** **Alternativa 2.**
+- **Razón:** Preserva la estabilidad del backend y permite al usuario revisar y aprobar las reglas exactas de bloqueo de escritura antes de aplicarlas.
+
+---
+
+## DEC-007: Alcance Estrictamente Documental de Wompi Colombia (Fase B0)
+- **Contexto:** La Parte 4 del prompt maestro estipuló que la integración con la pasarela de pagos Wompi Colombia debía realizarse en fase de diseño documental (Fase B0), prohibiendo cualquier transacción de dinero real o llamada HTTP a endpoints externos de pago.
+- **Alternativas:**
+  1. Instalar SDKs externos de pasarelas o crear migraciones y controladores parciales.
+  2. Diseñar la arquitectura completa en `docs/wompi/DISENO-B0.md` (modelo relacional de 4 tablas, generación de firmas SHA-256 de integridad, webhook idempotente, máquina de estados y plan de migración por fases B1–B4), sin alterar archivos productivos ni realizar llamadas de red.
+- **Decisión tomada:** **Alternativa 2.**
+- **Razón:** Se respeta la prohibición de llamadas externas y se entrega un plan de ingeniería exhaustivo y listo para implementación inmediata tras la aprobación matutina.

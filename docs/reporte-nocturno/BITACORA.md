@@ -47,3 +47,113 @@
   - **A6 (Prioritaria):** Creada y ejecutada `tests/Feature/AuditoriaNocturna/MatrizRolesPermisosRutasTest.php` (134 aserciones verificando `Guest`, `SUPER_ADMIN` sin/con negocio, `ADMIN_EMPRESA`, `CAJERO`, `VENDEDOR` y `CONTADOR`). Detectado `BUG-006` y generado parche `BUG-006.patch`.
   - **A7 (E2E):** Creados `tests/E2E/README.md` y `tests/E2E/pos-flujo-critico.spec.ts`.
   - **A9 (Integridad, Mutación y Carga):** Creado comando de solo lectura `php artisan sistema:verificar-integridad` (`app/Console/Commands/VerificarIntegridadSistema.php`) con su suite `tests/Feature/AuditoriaNocturna/VerificarIntegridadCommandTest.php` (2 tests, 4 aserciones), más `infection.json5` y `tests/Load/k6-pos-load.js`.
+
+---
+
+## [2026-10-19 23:30 -05:00] Parte 3 / Lote 4 — Migración de `ventas/*` (`noche-checkpoint-lote4`)
+- **Vistas migradas:** `ventas/index.blade.php`, `ventas/show.blade.php`, `ventas/cotizaciones.blade.php`.
+- **Acciones:**
+  - Sustitución de colores no corporativos y alias `.card-banking`, `.btn-*-banking`, `.input-base`, `.table-corporate` por utilidades Tailwind de tokens institucionales (`bg-surface-card`, `border-border-subtle`, `text-text-primary`, `text-text-muted`, `bg-brand-600`, `hover:bg-brand-700`).
+  - Estandarización de badges con `<x-badge>` y `<x-status-badge>`.
+  - Reemplazo de botones y estilos de impresión con clases `@media print` semánticas.
+  - Ejecución de build y suite de pruebas (`310 passed`).
+
+---
+
+## [2026-10-20 00:15 -05:00] Parte 3 / Lote 5 — Migración de `productos/*`, `inventario/*`, `traslados/*` (`noche-checkpoint-lote5`)
+- **Vistas migradas:**
+  - `productos/index.blade.php`, `productos/create.blade.php`, `productos/edit.blade.php`, `productos/show.blade.php`, `productos/importar.blade.php`.
+  - `inventario/index.blade.php`, `inventario/kardex.blade.php`, `inventario/ajuste.blade.php`.
+  - `traslados/index.blade.php`, `traslados/create.blade.php`, `traslados/show.blade.php`.
+- **Acciones:**
+  - Reemplazo sistemático de badges manuales y bordes hex literales.
+  - Formateo monetario uniforme con tabular-nums en tablas y formularios de catálogo e inventario.
+  - Reemplazo de confirmaciones nativas por `<x-modal-confirm>`.
+  - Verificación con `npm run check:styles` y `php artisan test` (`310 passed`).
+
+---
+
+## [2026-10-20 01:00 -05:00] Parte 3 / Lote 6 — Migración de `cartera/*`, `clientes/*` (`noche-checkpoint-lote6`)
+- **Vistas migradas:**
+  - `cartera/index.blade.php`, `cartera/show.blade.php`.
+  - `clientes/index.blade.php`, `clientes/create.blade.php`, `clientes/edit.blade.php`.
+- **Acciones:**
+  - Migración de modales de abono a cartera a rutas nombradas Blade `route('cartera.abono', '__CUENTA__')`.
+  - Eliminación de colores `indigo`, `rose`, `teal`, `sky` y gradientes en tarjetas de saldos y cupos de crédito.
+  - Indicadores de estado de cuenta y semáforos de mora alineados con tokens `success`, `warning` y `danger`.
+
+---
+
+## [2026-10-20 01:45 -05:00] Parte 3 / Lote 7 — Migración de `compras/*`, `proveedores/*` (`noche-checkpoint-lote7`)
+- **Vistas migradas:**
+  - `compras/index.blade.php`, `compras/create.blade.php`, `compras/show.blade.php`.
+  - `proveedores/index.blade.php`, `proveedores/create.blade.php`, `proveedores/edit.blade.php`.
+- **Acciones:**
+  - Corrección de modal de eliminación en `proveedores/index.blade.php` con `route('proveedores.destroy', '__PROVEEDOR__')`.
+  - Unificación visual de selectores de proveedores, cálculo de subtotales, retenciones e impuestos.
+  - Migración de confirmaciones de compras y recepción de mercancía a modales accesibles.
+
+---
+
+## [2026-10-20 02:30 -05:00] Parte 3 / Lote 8 — Migración de `reportes/*` (`noche-checkpoint-lote8`)
+- **Vistas migradas:**
+  - Vistas interactivas: `reportes/index.blade.php`, `reportes/ventas.blade.php`, `reportes/inventario.blade.php`, `reportes/financiero.blade.php`, `reportes/cajas.blade.php`, `reportes/clientes.blade.php`, `reportes/utilidades.blade.php`.
+  - Vistas de impresión: `reportes/ventas_imprimir.blade.php`, `reportes/inventario_imprimir.blade.php`, `reportes/financiero_imprimir.blade.php`, `reportes/cajas_imprimir.blade.php`, `reportes/clientes_imprimir.blade.php`, `reportes/utilidades_imprimir.blade.php`.
+- **Acciones:**
+  - Migración exhaustiva de tarjetas analíticas, barras de filtro y tablas de exportación.
+  - Verificación de las 6 vistas de impresión: aislamiento de recursos, tipografía monospace/tabular para cifras financieras, estilos de salto de página (`break-inside-avoid`, `@page`) y eliminación de cualquier referencia externa.
+
+---
+
+## [2026-10-20 03:30 -05:00] Parte 3 / Lote 9 — Migración del Resto de Módulos (`noche-checkpoint-lote9`)
+- **Módulos y vistas migradas:**
+  - `sucursales/` (`index.blade.php`, `create.blade.php`, `edit.blade.php`).
+  - `catalogos/` (`categorias/`, `marcas/`, `unidades/`).
+  - `impuestos/` (`index.blade.php`, `create.blade.php`, `edit.blade.php`).
+  - `listas-precios/` (`index.blade.php`, `create.blade.php`, `edit.blade.php`).
+  - `devoluciones/` (`index.blade.php`, `create.blade.php`, `show.blade.php`).
+  - `documentos/` (`index.blade.php`, `resoluciones_dian/`).
+  - `facturacion-electronica/` (`index.blade.php`, `configuracion.blade.php`).
+  - `notificaciones/` (`index.blade.php`).
+  - `auditoria/` (`index.blade.php`).
+  - `impresion/` (`configuracion.blade.php`).
+  - `ferreteria/` (`conversion-unidades.blade.php`).
+  - `auth/` (`login.blade.php`, `register.blade.php`, `forgot-password.blade.php`, `reset-password.blade.php`).
+- **Acciones:**
+  - Reemplazo de formularios y modales de configuración fiscal y catálogos secundarios.
+  - Estandarización de modales con rutas nombradas Blade en `sucursales/index.blade.php`.
+  - Aseguramiento de estilos en vistas de autenticación respetando los tokens institucionales.
+
+---
+
+## [2026-10-20 04:30 -05:00] Parte 3 / Lote 3B — Migración del POS y Retiro de Alias Temporales (`noche-checkpoint-lote3B`)
+- **Vistas migradas:** `pos/index.blade.php`, `pos/sin_caja.blade.php`.
+- **Archivo de estilos limpiado:** `resources/css/app.css`.
+- **Acciones:**
+  - Migración visual meticulosa del encabezado, buscador de productos, panel numérico, grid de categorías, selector de clientes y panel de totales en `pos/index.blade.php`.
+  - **Inviolabilidad de JavaScript:** Verificado con `git diff -U0 resources/views/pos/index.blade.php` que la función `posTerminal(config)` y todas sus rutinas JS internas (atajos de teclado, IndexedDB, sincronización, escáner de código de barras) se mantuvieron 100% intactas.
+  - Corrección en `pos/sin_caja.blade.php` de modal de apertura de caja usando `route('cajas.abrir', '__CAJA__')`.
+  - Retiro definitivo de todas las clases alias temporales en `resources/css/app.css` (`.input-base`, `.input-select`, `.table-corporate`, `.card-banking`, `.btn-*-banking`, `.kpi-card`).
+  - Ejecución de `npm run check:styles`: 0 alias en uso, 0 clases dinámicas no compiladas.
+
+---
+
+## [2026-10-20 05:15 -05:00] Parte 4 — Wompi Fase B0, Auditoría de Planes/Suscripciones y Cierre (`noche-checkpoint-4`)
+- **Acciones:**
+  1. **Documentación Wompi Colombia (Fase B0):**
+     - Creado documento exhaustivo `docs/wompi/DISENO-B0.md` estructurado en 7 secciones: Modelo de Datos, Arquitectura de Integración, Firma de Integridad, Webhooks & Idempotencia, Máquina de Estados, Política de Reintentos y Fallbacks, y Plan de Migración/Activación por Fases.
+  2. **Auditoría de Suscripciones y Límites de Plan:**
+     - Creada suite `tests/Feature/AuditoriaNocturna/LimitesPlanYSuscripcionTest.php` (4 tests: 2 pasando, 2 marcados como known-bugs).
+     - Identificado `BUG-007`: `UserController@store` no evalúa `$empresa->puedeCrearUsuario()`.
+     - Identificado `BUG-008`: `Empresa::suscripcionActual()` retorna `null` para estados `VENCIDA` o `SUSPENDIDA`, provocando fallback a `return true;` (recursos ilimitados) en `puedeCrearSucursal()` y `puedeCrearUsuario()`.
+     - Generado parche propuesto en `docs/reporte-nocturno/parches-propuestos/BUG-007-008-limites-plan-y-suscripcion.patch`.
+  3. **Verificación y Calidad Final:**
+     - `npm run build`: compilación limpia en 315 ms (`public/build/assets/app-*.css` y `app-*.js`).
+     - `npm run check:styles`: **795/795 clases estáticas presentes en CSS compilado (100%)**, 0 alias temporales en uso, 0 clases dinámicas Blade.
+     - `php artisan sistema:verificar-integridad`: **0 anomalías detectadas** (11/11 verificaciones OK).
+     - Grep de patrones prohibidos: **0 coincidencias** en las 108 vistas Blade del proyecto.
+     - `php artisan test`: **313 passed (1314 assertions)**, 0 failed, 3 incomplete (`known-bugs`), 2 skipped (`known-bugs`).
+  4. **Documentación y Cierre:**
+     - Registro actualizado en `BUGS.md`.
+     - Creado informe ejecutivo final en `docs/reporte-nocturno/INFORME-FINAL.md`.
+     - Creación de commit y tag `noche-checkpoint-4`.

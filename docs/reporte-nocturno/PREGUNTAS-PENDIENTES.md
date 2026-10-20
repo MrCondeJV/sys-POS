@@ -20,3 +20,15 @@ A continuación se listan las decisiones de negocio, infraestructura y arquitect
    - ¿Cuáles son los precios mensuales/anuales en COP de cada plan (`BASICO`, `PROFESIONAL`, `EMPRESARIAL`) y si incluyen IVA?
    - ¿Cuántos días de período de gracia (`dias_gracia`) deseas otorgar tras un fallo de cobro antes de pasar la suscripción a `VENCIDA` / restringir escritura (recomendado en `DISENO-B0.md`: 5 días con 3 reintentos)?
    - Cuando una suscripción vence, ¿el tenant entra en modo **solo lectura** (puede consultar/exportar reportes y pagar suscripción, pero no abrir caja ni vender) o **bloqueo total**?
+
+6. **Aplicación del parche `BUG-006` (Protección de `GET /empresa/perfil` y `GET /sucursales`):**
+   - Actualmente cajeros y vendedores pueden ver la vista de configuración fiscal y lista de sucursales (aunque los métodos POST/PUT bloquean con 403).
+   - ¿Autorizas aplicar `docs/reporte-nocturno/parches-propuestos/BUG-006.patch` para restringir el acceso con `Gate::authorize('configuracion.editar')` y `Gate::authorize('sucursales.ver')`?
+
+7. **Aplicación del parche `BUG-007-008` (Límites de plan y suscripciones vencidas):**
+   - Actualmente `UserController@store` no comprueba `$empresa->puedeCrearUsuario()`, y `Empresa::puedeCrearSucursal()` / `puedeCrearUsuario()` retornan `true` si la suscripción está vencida o suspendida.
+   - ¿Autorizas aplicar `docs/reporte-nocturno/parches-propuestos/BUG-007-008-limites-plan-y-suscripcion.patch`?
+
+8. **Rutas `show` no implementadas (`BUG-005`):**
+   - En `routes/web.php`, `Route::resource('productos')` y `Route::resource('clientes')` registran `productos.show` y `clientes.show`, pero sus controladores carecen del método `show()`.
+   - ¿Deseas añadir `->except(['show'])` en `routes/web.php` o prefieres implementar vistas de ficha técnica detallada para cada uno?
