@@ -194,10 +194,10 @@
             <td class="px-4 py-3 text-xs text-slate-600 whitespace-nowrap">
                 {{ $mov->usuario?->name ?? 'Sistema' }}
             </td>
-            <td class="px-4 py-3 text-right text-xs font-semibold text-emerald-600 whitespace-nowrap tabular-nums">
+            <td class="px-4 py-3 text-right text-xs font-semibold text-success whitespace-nowrap tabular-nums">
                 {{ $esEntrada ? '+' . number_format($mov->cantidad, 2) : '—' }}
             </td>
-            <td class="px-4 py-3 text-right text-xs font-semibold text-rose-600 whitespace-nowrap tabular-nums">
+            <td class="px-4 py-3 text-right text-xs font-semibold text-danger whitespace-nowrap tabular-nums">
                 {{ ! $esEntrada ? '-' . number_format($mov->cantidad, 2) : '—' }}
             </td>
             <td class="px-4 py-3 text-right text-xs font-bold text-slate-900 whitespace-nowrap tabular-nums">

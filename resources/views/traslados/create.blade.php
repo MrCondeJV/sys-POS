@@ -24,7 +24,7 @@
     </x-page-header>
 
     @if($errors->any())
-        <div class="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-lg text-xs font-medium">
+        <div class="p-4 bg-danger-bg border border-danger-border text-danger-text rounded-lg text-xs font-medium">
             <ul class="list-disc pl-5 space-y-1">
                 @foreach($errors->all() as $e)
                     <li>{{ $e }}</li>

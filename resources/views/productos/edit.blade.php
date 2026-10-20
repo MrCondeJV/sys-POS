@@ -161,7 +161,7 @@
                                     <input type="file" name="imagen" x-ref="fileInput" @change="previewFile" accept="image/png, image/jpeg, image/webp" class="hidden">
                                 </label>
                                 <button type="button" x-cloak x-show="imagePreview" @click="clearImage"
-                                    class="inline-flex items-center px-3 py-1.5 rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100 text-xs font-medium transition">
+                                    class="inline-flex items-center px-3 py-1.5 rounded-md bg-danger-bg text-danger-text hover:opacity-90 border border-danger-border text-xs font-medium transition">
                                     Quitar Foto
                                 </button>
                             </div>

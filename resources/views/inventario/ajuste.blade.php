@@ -154,22 +154,22 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
                     <!-- Selector Tipo -->
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-2">
-                            Sentido del Ajuste <span class="text-rose-500">*</span>
+                        <label class="block text-xs font-semibold text-text-secondary uppercase mb-2">
+                            Sentido del Ajuste <span class="text-danger">*</span>
                         </label>
                         <div class="grid grid-cols-2 gap-3">
                             <label class="relative flex flex-col items-center justify-center p-3.5 rounded-lg border cursor-pointer transition text-center"
-                                   :class="tipo === 'AJUSTE_POSITIVO' ? 'border-emerald-500 bg-emerald-50/40 text-emerald-900 font-bold' : 'border-slate-300 bg-white text-slate-600 hover:bg-slate-50'">
+                                   :class="tipo === 'AJUSTE_POSITIVO' ? 'border-success bg-success-bg/50 text-success-text font-bold' : 'border-border-strong bg-surface text-text-secondary hover:bg-surface-muted'">
                                 <input type="radio" name="tipo" value="AJUSTE_POSITIVO" x-model="tipo" class="sr-only">
                                 <span class="text-xs font-bold leading-tight">&plus; Entrada / Sobrante</span>
-                                <span class="text-[10px] text-slate-500 mt-0.5">Incrementa stock</span>
+                                <span class="text-[10px] text-text-muted mt-0.5">Incrementa stock</span>
                             </label>
 
                             <label class="relative flex flex-col items-center justify-center p-3.5 rounded-lg border cursor-pointer transition text-center"
-                                   :class="tipo === 'AJUSTE_NEGATIVO' ? 'border-rose-500 bg-rose-50/40 text-rose-900 font-bold' : 'border-slate-300 bg-white text-slate-600 hover:bg-slate-50'">
+                                   :class="tipo === 'AJUSTE_NEGATIVO' ? 'border-danger bg-danger-bg/50 text-danger-text font-bold' : 'border-border-strong bg-surface text-text-secondary hover:bg-surface-muted'">
                                 <input type="radio" name="tipo" value="AJUSTE_NEGATIVO" x-model="tipo" class="sr-only">
                                 <span class="text-xs font-bold leading-tight">&minus; Salida / Merma</span>
-                                <span class="text-[10px] text-slate-500 mt-0.5">Reduce stock</span>
+                                <span class="text-[10px] text-text-muted mt-0.5">Reduce stock</span>
                             </label>
                         </div>
                     </div>
@@ -179,37 +179,37 @@
                         <x-field label="Cantidad de Unidades" name="cantidad" :required="true">
                             <input type="number" step="0.01" min="0.01" name="cantidad" id="cantidad" x-model="cantidad" required
                                 placeholder="0.00"
-                                class="block w-full py-2 px-3 text-sm border border-slate-300 rounded-lg text-slate-900 tabular-nums font-bold focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+                                class="input text-sm tabular-nums font-bold">
                         </x-field>
                     </div>
                 </div>
 
                 <!-- SIMULADOR EN VIVO -->
                 <div class="p-4 rounded-lg border transition"
-                     :class="getStockProyectado() < 0 ? 'bg-rose-50 border-rose-200' : 'bg-slate-50/80 border-slate-200'">
+                     :class="getStockProyectado() < 0 ? 'bg-danger-bg border-danger-border' : 'bg-surface-muted border-border'">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
                         <!-- Stock Actual -->
                         <div class="flex-1">
-                            <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">Stock Actual en Sede</span>
-                            <div class="text-base font-bold font-mono text-slate-800 mt-0.5 tabular-nums" x-text="getStockActual().toFixed(2)"></div>
+                            <span class="text-[10px] font-semibold uppercase tracking-wider text-text-muted block">Stock Actual en Sede</span>
+                            <div class="text-base font-bold font-mono text-text-primary mt-0.5 tabular-nums" x-text="getStockActual().toFixed(2)"></div>
                         </div>
 
                         <!-- Operador -->
                         <div class="text-center sm:px-3">
-                            <span class="text-[10px] font-semibold uppercase tracking-wider block text-slate-400">Efecto</span>
+                            <span class="text-[10px] font-semibold uppercase tracking-wider block text-text-muted">Efecto</span>
                             <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold mt-0.5 tabular-nums"
-                                  :class="tipo === 'AJUSTE_POSITIVO' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'"
+                                  :class="tipo === 'AJUSTE_POSITIVO' ? 'bg-success-bg text-success-text' : 'bg-danger-bg text-danger-text'"
                                   x-text="(tipo === 'AJUSTE_POSITIVO' ? '+' : '-') + (parseFloat(cantidad) || 0).toFixed(2)"></span>
                         </div>
 
                         <!-- Flecha -->
-                        <div class="hidden sm:block text-slate-300 font-bold">&rarr;</div>
+                        <div class="hidden sm:block text-text-muted font-bold">&rarr;</div>
 
                         <!-- Saldo Resultante -->
                         <div class="text-left sm:text-right flex-1">
-                            <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block">Saldo Proyectado</span>
+                            <span class="text-[10px] font-semibold uppercase tracking-wider text-text-muted block">Saldo Proyectado</span>
                             <div class="text-xl font-bold font-mono mt-0.5 tabular-nums"
-                                 :class="getStockProyectado() < 0 ? 'text-rose-600' : 'text-slate-900'"
+                                 :class="getStockProyectado() < 0 ? 'text-danger' : 'text-text-primary'"
                                  x-text="getStockProyectado().toFixed(2)">
                             </div>
                         </div>
@@ -217,7 +217,7 @@
 
                     <!-- Mensaje de Alerta en caso de Stock Negativo -->
                     <template x-if="getStockProyectado() < 0">
-                        <div class="mt-3 pt-2.5 border-t border-rose-200 flex items-start space-x-2 text-rose-700 text-xs font-semibold">
+                        <div class="mt-3 pt-2.5 border-t border-danger-border flex items-start space-x-2 text-danger-text text-xs font-semibold">
                             <svg class="h-4 w-4 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>

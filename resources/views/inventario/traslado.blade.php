@@ -87,8 +87,8 @@
          class="bg-white rounded-xl border border-slate-200/80 shadow-xs overflow-hidden">
 
         @if($errors->has('general'))
-        <div class="p-4 bg-rose-50 border-b border-rose-200 text-rose-800 text-xs font-semibold flex items-center space-x-2">
-            <svg class="h-4 w-4 text-rose-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="p-4 bg-danger-bg border-b border-danger-border text-danger-text text-xs font-semibold flex items-center space-x-2">
+            <svg class="h-4 w-4 text-danger flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span>{{ $errors->first('general') }}</span>
