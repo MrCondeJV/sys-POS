@@ -229,7 +229,7 @@
                                 triggerEl: $el,
                                 title: @js('¿Eliminar colaborador ' . $user->name . '?'),
                                 message: @js('Se aplicará eliminación lógica (soft delete) sobre el registro del usuario.'),
-                                consequence: @js('El usuario dejará de aparecer en los listados activos y no podrá autenticarse en el sistema. Sus registros históricos en la base de datos (ventas, arqueos y movimientos asociados a su ID) se conservan sin cambios.'),
+                                consequence: @js('El usuario dejará de aparecer en los listados activos y no podrá autenticarse. Su correo electrónico permanece reservado en la base de datos y sus registros históricos (ventas, arqueos y movimientos asociados a su ID) se conservan sin cambios.'),
                                 confirmText: 'Sí, eliminar usuario',
                                 variant: 'danger',
                                 action: @js(route('usuarios.destroy', $user)),

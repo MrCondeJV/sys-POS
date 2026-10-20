@@ -2,9 +2,7 @@
 
 namespace Tests\Feature\DesignSystem;
 
-use App\Enums\EstadoCaja;
 use App\Enums\EstadoCuentaCobrar;
-use App\Enums\EstadoGeneral;
 use App\Enums\EstadoSesionCaja;
 use App\Enums\EstadoSuscripcion;
 use App\Enums\EstadoVenta;
@@ -140,4 +138,3 @@ class ComponentTest extends TestCase
         $this->assertStringContainsString('Tarjetas de Métricas', $view);
     }
 }
-

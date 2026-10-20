@@ -4,6 +4,10 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto space-y-6" x-data="{
+    // Plantillas de rutas generadas por Laravel con placeholder reemplazable
+    urlAbrirTemplate: @js(route('cajas.abrir', '__CAJA__')),
+    urlMovimientoTemplate: @js(route('cajas.movimiento', '__CAJA__')),
+
     // Modal Crear Caja
     modalCrearCajaOpen: false,
 
@@ -284,7 +288,7 @@
                     </button>
                 </div>
 
-                <form :action="'/cajas/' + cajaParaAbrir.id + '/abrir'" method="POST" class="space-y-4">
+                <form :action="urlAbrirTemplate.replace('__CAJA__', cajaParaAbrir.id)" method="POST" class="space-y-4">
                     @csrf
                     <div>
                         <label class="label-base">Monto de Apertura (Fondo Inicial) <span class="text-danger">*</span></label>
@@ -339,7 +343,7 @@
                     </button>
                 </div>
 
-                <form :action="'/cajas/' + cajaParaMovimiento.id + '/movimiento'" method="POST" class="space-y-4">
+                <form :action="urlMovimientoTemplate.replace('__CAJA__', cajaParaMovimiento.id)" method="POST" class="space-y-4">
                     @csrf
                     <!-- Selector Tipo -->
                     <div class="grid grid-cols-2 gap-1.5 p-1 bg-surface-muted border border-border rounded-lg">

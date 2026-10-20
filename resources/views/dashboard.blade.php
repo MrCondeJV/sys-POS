@@ -286,8 +286,8 @@
 
             <!-- Panel de Artículos / Monitoreo de Stock -->
             <x-card
-                :title="$prodCriticos->isNotEmpty() ? 'Artículos con Stock Crítico' : 'Artículos Recientes en Catálogo'"
-                subtitle="Nivel de existencias y precio unitario"
+                title="Estado de Artículos en Catálogo"
+                :subtitle="$prodCriticos->isNotEmpty() ? 'Artículos con stock crítico que requieren reposición' : 'Nivel de existencias y precio unitario'"
             >
                 <x-slot:actions>
                     <a href="{{ route('productos.index') }}" class="text-xs font-semibold text-brand-600 hover:underline">

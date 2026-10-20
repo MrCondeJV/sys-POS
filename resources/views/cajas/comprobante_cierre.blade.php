@@ -5,34 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reporte Z - Cierre de Caja {{ $sesion->caja->codigo }} #{{ $sesion->id }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <style>
+    <style id="page-print-style">
         * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         @page { size: letter portrait; margin: 12mm 14mm; }
+        body[data-formato="termico"] .report-sheet { max-width: 80mm !important; padding: 12px 10px !important; }
+        body[data-formato="termico"] .report-grid-2 { grid-template-columns: 1fr !important; gap: 8px !important; }
+        body[data-formato="termico"] .report-header { flex-direction: column !important; gap: 6px !important; }
+        body[data-formato="termico"] .report-header-right { text-align: left !important; }
+        body[data-formato="termico"] .report-signatures { grid-template-columns: 1fr !important; gap: 24px !important; margin-top: 24px !important; }
     </style>
+    <script>
+        function cambiarFormatoImpresion(formato) {
+            document.body.setAttribute('data-formato', formato);
+            var styleEl = document.getElementById('page-print-style');
+            var pageRule = formato === 'termico'
+                ? '@page { size: 80mm auto; margin: 3mm 4mm; }'
+                : '@page { size: letter portrait; margin: 12mm 14mm; }';
+            styleEl.textContent = '* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }\n'
+                + pageRule + '\n'
+                + 'body[data-formato="termico"] .report-sheet { max-width: 80mm !important; padding: 12px 10px !important; }\n'
+                + 'body[data-formato="termico"] .report-grid-2 { grid-template-columns: 1fr !important; gap: 8px !important; }\n'
+                + 'body[data-formato="termico"] .report-header { flex-direction: column !important; gap: 6px !important; }\n'
+                + 'body[data-formato="termico"] .report-header-right { text-align: left !important; }\n'
+                + 'body[data-formato="termico"] .report-signatures { grid-template-columns: 1fr !important; gap: 24px !important; margin-top: 24px !important; }';
+
+            var btnCarta = document.getElementById('btn-formato-carta');
+            var btnTermico = document.getElementById('btn-formato-termico');
+            if (btnCarta && btnTermico) {
+                btnCarta.className = formato === 'carta' ? 'btn btn-primary text-xs h-8 px-3' : 'btn btn-secondary text-xs h-8 px-3';
+                btnTermico.className = formato === 'termico' ? 'btn btn-primary text-xs h-8 px-3' : 'btn btn-secondary text-xs h-8 px-3';
+            }
+        }
+    </script>
 </head>
-<body class="bg-app print:bg-surface text-text-primary text-[11px] py-6 print:py-0 antialiased">
+<body data-formato="{{ request('formato') === '80mm' ? 'termico' : 'carta' }}" class="bg-app print:bg-surface text-text-primary text-[11px] py-6 print:py-0 antialiased">
 
 <!-- Barra de Control en Pantalla -->
-<div class="print:hidden max-w-[680px] mx-auto mb-4 px-4 flex items-center justify-between">
+<div class="print:hidden max-w-[680px] mx-auto mb-4 px-4 flex flex-wrap items-center justify-between gap-2">
     <a href="{{ route('cajas.index') }}" class="btn btn-secondary text-xs h-8 px-3">
         &larr; Volver al Módulo de Cajas
     </a>
-    <button type="button" onclick="window.print()" class="btn btn-primary text-xs h-8 px-4">
-        Imprimir Reporte Z
-    </button>
+    <div class="flex items-center gap-2">
+        <div class="inline-flex items-center gap-1" role="group" aria-label="Formato de impresión">
+            <button type="button" id="btn-formato-carta" onclick="cambiarFormatoImpresion('carta')" class="btn btn-primary text-xs h-8 px-3">
+                Formato Carta
+            </button>
+            <button type="button" id="btn-formato-termico" onclick="cambiarFormatoImpresion('termico')" class="btn btn-secondary text-xs h-8 px-3">
+                Térmica 80mm
+            </button>
+        </div>
+        <button type="button" onclick="window.print()" class="btn btn-primary text-xs h-8 px-4">
+            Imprimir Reporte Z
+        </button>
+    </div>
 </div>
 
 <!-- Contenedor Principal del Reporte -->
-<div class="max-w-[680px] mx-auto bg-surface rounded-lg border border-border shadow-xs p-7 px-8 print:max-w-none print:shadow-none print:border-0 print:p-0">
+<div class="report-sheet max-w-[680px] mx-auto bg-surface rounded-lg border border-border shadow-xs p-7 px-8 print:max-w-none print:shadow-none print:border-0 print:p-0">
 
     <!-- Membrete -->
     <div class="border-b-2 border-brand-900 pb-3 mb-3.5">
-        <div class="flex justify-between items-start gap-4">
+        <div class="report-header flex justify-between items-start gap-4">
             <div>
                 <span class="text-[9px] font-bold tracking-wider text-text-muted uppercase block">
                     Auditoría de Caja &bull; Sys-POS
                 </span>
-                <h1 class="text-xl font-bold text-text-primary mt-0.5 leading-none">
+                <h1 class="text-lg sm:text-xl font-bold text-text-primary mt-0.5 leading-tight">
                     COMPROBANTE DE CIERRE (REPORTE Z)
                 </h1>
                 <div class="text-[11px] font-semibold text-text-secondary mt-1 tabular-nums">
@@ -40,7 +78,7 @@
                 </div>
             </div>
 
-            <div class="text-right text-[10px] text-text-secondary">
+            <div class="report-header-right text-right text-[10px] text-text-secondary">
                 <div class="text-xs font-bold text-text-primary">{{ $sesion->empresa->nombre_comercial ?? $sesion->empresa->nombre }}</div>
                 @if($sesion->empresa->nit)
                     <div class="tabular-nums">NIT: {{ $sesion->empresa->nit }}</div>
@@ -51,7 +89,7 @@
     </div>
 
     <!-- Tiempos y Operadores -->
-    <div class="grid grid-cols-2 gap-3 bg-surface-muted border border-border rounded-md p-3 px-3.5 mb-4">
+    <div class="report-grid-2 grid grid-cols-2 gap-3 bg-surface-muted border border-border rounded-md p-3 px-3.5 mb-4">
         <div>
             <div class="text-[9px] font-bold uppercase text-text-muted">Datos de Apertura</div>
             <div class="text-[11px] font-bold text-text-primary mt-0.5">Cajero: {{ $sesion->cajero->name }}</div>
@@ -110,7 +148,7 @@
                 : 'bg-danger-bg border-danger-border text-danger-text');
     @endphp
     <div class="rounded-md p-3 px-3.5 mb-4 border {{ $difClass }}">
-        <div class="flex justify-between items-center">
+        <div class="flex justify-between items-center gap-2">
             <div>
                 <div class="text-[9px] font-bold uppercase tracking-wider">
                     Diferencia de Arqueo
@@ -125,7 +163,7 @@
                     @endif
                 </div>
             </div>
-            <div class="text-[10px] font-bold">
+            <div class="text-[10px] font-bold text-right">
                 Estado: {{ $sesion->estado->label() }}
             </div>
         </div>
@@ -138,7 +176,7 @@
     </div>
 
     <!-- Firmas de Auditoría -->
-    <div class="grid grid-cols-2 gap-10 mt-12 pt-5">
+    <div class="report-signatures grid grid-cols-2 gap-10 mt-12 pt-5">
         <div class="border-t border-border-strong text-center pt-1.5">
             <div class="font-bold text-[10px] text-text-primary">{{ $sesion->cajero->name }}</div>
             <div class="text-[9px] text-text-muted">Firma del Cajero Responsable</div>
@@ -151,7 +189,7 @@
     </div>
 
     <!-- Pie del Documento -->
-    <div class="mt-8 border-t border-border pt-1.5 text-[8.5px] text-text-muted flex justify-between tabular-nums">
+    <div class="mt-8 border-t border-border pt-1.5 text-[8.5px] text-text-muted flex flex-wrap justify-between gap-1 tabular-nums">
         <span>Documento generado por Sys-POS &bull; Gestión de Cajas y Arqueos</span>
         <span>Impreso el: {{ now()->format('d/m/Y H:i:s') }}</span>
     </div>
