@@ -29,6 +29,9 @@ class DatabaseSeeder extends Seeder
         // 1. Sembrar roles y permisos del sistema
         $this->call(RolesAndPermissionsSeeder::class);
 
+        // 1.1 Sembrar planes comerciales SaaS
+        $this->call(PlanesSaaSSeeder::class);
+
         // 2. Crear Empresa Demo
         $empresa = Empresa::firstOrCreate(
             ['nit' => '900123456'],
