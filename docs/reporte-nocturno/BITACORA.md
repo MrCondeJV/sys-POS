@@ -34,3 +34,16 @@
      - Configurado script `composer test` en `composer.json` y creado workflow `.github/workflows/ci.yml` (incluyendo job de concurrencia con servicio MySQL 8.0).
   5. **Evidencia visual (capturas Chrome Headless):**
      - Generadas 10 capturas PNG en `docs/reporte-nocturno/evidencia/capturas/` usando BD SQLite en memoria (`:memory:`).
+
+---
+
+## [2026-10-19 22:48 -05:00] Parte 2 — Auditoría y Pruebas Intensivas A0–A9 (`noche-checkpoint-2`)
+- **Acciones:**
+  - **A0:** Documentación de cobertura (`docs/reporte-nocturno/evidencia/cobertura-a0.md`) e invariantes formales por módulo (`docs/reglas-de-negocio.md`).
+  - **A1:** Workflow `.github/workflows/ci.yml` y script `composer test`.
+  - **A2/A4/A8:** Verificación de invariantes financieros, Kardex, descuentos, impuestos, cupo de cartera y sincronización offline POS.
+  - **A3 (Prioritaria):** Creada y ejecutada `tests/Feature/AuditoriaNocturna/BarridoMultiempresaRutasTest.php` (39 aserciones cubriendo productos, catálogos, inventario, clientes, proveedores, sucursales, cajas, sesiones, ventas, compras, cartera, devoluciones, listas de precios, impuestos, resoluciones DIAN, traslados y usuarios). Detectado `BUG-005`.
+  - **A5 (Concurrencia):** Creada `tests/Concurrency/BloqueoConcurrenciaRealTest.php` (`#[Group('concurrency')]`) conectada al servicio MySQL 8.0 en CI y omitida con mensaje explícito en SQLite local.
+  - **A6 (Prioritaria):** Creada y ejecutada `tests/Feature/AuditoriaNocturna/MatrizRolesPermisosRutasTest.php` (134 aserciones verificando `Guest`, `SUPER_ADMIN` sin/con negocio, `ADMIN_EMPRESA`, `CAJERO`, `VENDEDOR` y `CONTADOR`). Detectado `BUG-006` y generado parche `BUG-006.patch`.
+  - **A7 (E2E):** Creados `tests/E2E/README.md` y `tests/E2E/pos-flujo-critico.spec.ts`.
+  - **A9 (Integridad, Mutación y Carga):** Creado comando de solo lectura `php artisan sistema:verificar-integridad` (`app/Console/Commands/VerificarIntegridadSistema.php`) con su suite `tests/Feature/AuditoriaNocturna/VerificarIntegridadCommandTest.php` (2 tests, 4 aserciones), más `infection.json5` y `tests/Load/k6-pos-load.js`.

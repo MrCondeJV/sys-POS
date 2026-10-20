@@ -1,0 +1,26 @@
+--- a/app/Http/Controllers/EmpresaController.php
++++ b/app/Http/Controllers/EmpresaController.php
+@@ -314,6 +314,10 @@ class EmpresaController extends Controller
+             abort(404, 'Empresa no encontrada en el contexto actual.');
+         }
+ 
++        if (auth()->user()->cannot('update', $empresa)) {
++            abort(403, 'No tienes permisos para ver la configuración fiscal de la empresa.');
++        }
++
+         $monedas = Monedas::todas();
+         $simbolos = Monedas::simbolos();
+ 
+--- a/app/Http/Controllers/SucursalController.php
++++ b/app/Http/Controllers/SucursalController.php
+@@ -21,6 +21,10 @@ class SucursalController extends Controller
+      */
+     public function index(): View
+     {
++        if (Gate::denies('viewAny', Sucursal::class)) {
++            abort(403, 'No tienes autorización para ver el listado de sucursales.');
++        }
++
+         $empresa = CompanyContext::getCompany();
+ 
+         if (! $empresa) {

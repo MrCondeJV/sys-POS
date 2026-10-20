@@ -1,0 +1,18 @@
+{
+    "$schema": "https://raw.githubusercontent.com/infection/infection/0.29.0/resources/schema.json",
+    "source": {
+        "directories": [
+            "app/Actions",
+            "app/Services",
+            "app/Support"
+        ]
+    },
+    "logs": {
+        "text": "docs/reporte-nocturno/evidencia/infection.log"
+    },
+    "mutators": {
+        "@default": true
+    },
+    "minMsi": 75,
+    "minCoveredMsi": 80
+}
