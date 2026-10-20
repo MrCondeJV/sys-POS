@@ -1,0 +1,94 @@
+name: CI Quality & Tests (sys-POS)
+
+on:
+  push:
+    branches: [ main, master, "noche/**" ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  quality-and-tests:
+    name: Pint, Styles, Build & Feature Suite (SQLite)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, sqlite3, dom, filter, gd, json
+          coverage: pcov
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Install NPM dependencies & Build Assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Verify Design System CSS Classes (check:styles)
+        run: npm run check:styles
+
+      - name: Check PHP Code Style (Laravel Pint)
+        run: ./vendor/bin/pint --test --dirty
+
+      - name: Prepare Environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Run Unit & Feature Test Suite
+        run: php artisan test --exclude-group=concurrency
+
+  mysql-concurrency:
+    name: Concurrency & Row-Locking Suite (MySQL 8.0)
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: secret
+          MYSQL_DATABASE: sys_pos_testing
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, json
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Prepare Environment & Build Assets
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Run Concurrency Test Suite on MySQL
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: sys_pos_testing
+          DB_USERNAME: root
+          DB_PASSWORD: secret
+        run: php artisan test --group=concurrency

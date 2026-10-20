@@ -1,0 +1,392 @@
+Command exited with code 0.
+
+Command output:
+
+   PASS  Tests\Unit\Calculos\ConversionUnidadesTest
+  ✓ conversion caja a unidades
+  ✓ conversion fraccionada
+  ✓ venta fraccionada granel
+
+   PASS  Tests\Unit\Calculos\DescuentosTest
+  ✓ descuento porcentual                                                                                         0.01s  
+  ✓ descuento valor fijo
+  ✓ descuento no puede exceder subtotal
+
+   PASS  Tests\Unit\Calculos\ImpuestosTest
+  ✓ calculo iva 19 por ciento
+  ✓ calculo iva 5 por ciento
+  ✓ desglose precio iva incluido
+  ✓ producto tarifa cero
+
+   PASS  Tests\Unit\ExampleTest
+  ✓ that true is true
+
+   PASS  Tests\Feature\DesignSystem\ComponentTest
+  ✓ badge renders correctly                                                                                      0.19s  
+  ✓ status badge maps enums and strings semantically                                                             0.02s  
+  ✓ button renders variants and sizes                                                                            0.02s  
+  ✓ icon button renders accessible attributes                                                                    0.02s  
+  ✓ kpi card renders metrics and trends                                                                          0.02s  
+  ✓ field renders label required and errors                                                                      0.02s  
+  ✓ empty state renders title and description                                                                    0.02s  
+  ✓ filter bar renders cleanly                                                                                   0.02s  
+  ✓ design system preview view compiles successfully                                                             0.04s  
+
+   PASS  Tests\Feature\ExampleTest
+  ✓ the application returns a successful response                                                                0.04s  
+
+   PASS  Tests\Feature\Fase10\VentaTest
+  ✓ usuario no autenticado es redirigido al login                                                                0.40s  
+  ✓ admin o cajero puede ver listado de ventas con kpis                                                          0.23s  
+  ✓ registrar venta al contado valida stock y descuenta inventario                                               0.20s  
+  ✓ registrar venta al contado impacta caja abierta automaticamente                                              0.20s  
+  ✓ no se puede vender mas del stock disponible                                                                  0.19s  
+  ✓ registrar venta a credito valida cupo y genera cuenta por cobrar                                             0.20s  
+  ✓ venta a credito falla si supera cupo disponible                                                              0.20s  
+  ✓ anulacion de venta reingresa existencias al inventario                                                       0.19s  
+  ✓ ticket de venta se renderiza correctamente                                                                   0.22s  
+  ✓ aislamiento multitenant estricto en ventas                                                                   0.21s  
+
+   PASS  Tests\Feature\Fase11\PosTest
+  ✓ invitado no puede acceder al pos                                                                             0.20s  
+  ✓ pos muestra pantalla sin caja si no hay turno abierto                                                        0.22s  
+  ✓ pos carga terminal cuando hay caja abierta                                                                   0.23s  
+  ✓ pos procesar falla si faltan items                                                                           0.21s  
+  ✓ pos procesar venta efectivo con exito                                                                        0.23s  
+  ✓ pos procesar venta pago mixto exitoso                                                                        0.22s  
+  ✓ pos procesar venta a credito crea cuenta en cartera                                                          0.22s  
+  ✓ aislamiento multiempresa en pos                                                                              0.21s  
+
+   PASS  Tests\Feature\Fase13\ListaPrecioTest
+  ✓ invitado no puede ver listas precios                                                                         0.19s  
+  ✓ admin puede ver listado de listas de precios                                                                 0.23s  
+  ✓ admin puede crear lista de precios con datos validos                                                         0.22s  
+  ✓ no se puede crear lista con codigo duplicado en misma empresa                                                0.21s  
+  ✓ distintas empresas pueden usar mismo codigo de lista                                                         0.21s  
+  ✓ marcar lista como predeterminada desmarca la anterior                                                        0.21s  
+  ✓ admin puede asignar precio especifico a producto                                                             0.22s  
+  ✓ resolver precio por descuento porcentual                                                                     0.19s  
+  ✓ resolver precio por aumento porcentual                                                                       0.19s  
+  ✓ precio especifico tiene prioridad sobre regla porcentual                                                     0.18s  
+  ✓ cliente con lista asignada aplica precio en venta                                                            0.20s  
+  ✓ aislamiento multiempresa en listas de precios                                                                0.19s  
+
+   PASS  Tests\Feature\Fase14\DevolucionTest
+  ✓ invitado no puede acceder a devoluciones                                                                     0.20s  
+  ✓ admin puede ver listado de devoluciones                                                                      0.23s  
+  ✓ devolucion total actualiza inventario caja y venta                                                           0.23s  
+  ✓ devolucion parcial permite remanente                                                                         0.21s  
+  ✓ validacion impide devolver mas de lo vendido                                                                 0.21s  
+  ✓ devolucion con ajuste cartera reduce saldo en cuentas por cobrar                                             0.22s  
+  ✓ aislamiento multiempresa en devoluciones                                                                     0.20s  
+
+   PASS  Tests\Feature\Fase15\ReporteTest
+  ✓ invitado no puede acceder a reportes                                                                         0.20s  
+  ✓ usuario sin permiso recibe 403                                                                               0.21s  
+  ✓ admin puede ver centro de reportes                                                                           0.23s  
+  ✓ dashboard muestra kpis financieros                                                                           0.24s  
+  ✓ reporte ventas calcula totales y aplica filtros                                                              0.24s  
+  ✓ reporte utilidad calcula margen bruto                                                                        0.23s  
+  ✓ reporte inventario calcula costo y valor comercial                                                           0.23s  
+  ✓ reporte cajas muestra sesiones y diferencias                                                                 0.23s  
+  ✓ reporte cartera clasifica por antiguedad                                                                     0.23s  
+  ✓ reporte metodos pago desglosa transacciones                                                                  0.24s  
+  ✓ reporte impuestos calcula balance fiscal                                                                     0.23s  
+  ✓ aislamiento multitenant estricto en reportes                                                                 0.25s  
+  ✓ vistas imprimibles renderizan exitosamente                                                                   0.23s  
+
+   PASS  Tests\Feature\Fase16\AuditoriaTest
+  ✓ invitado no puede acceder a auditoria                                                                        0.21s  
+  ✓ usuario sin permiso recibe 403                                                                               0.21s  
+  ✓ admin puede ver bitacora auditoria                                                                           0.22s  
+  ✓ anulacion venta registra auditoria automaticamente                                                           0.20s  
+  ✓ devolucion registra auditoria automaticamente                                                                0.20s  
+  ✓ apertura y cierre caja registran auditoria                                                                   0.21s  
+  ✓ ajuste inventario registra auditoria                                                                         0.19s  
+  ✓ aislamiento multitenant estricto en auditoria                                                                0.23s  
+  ✓ vista detalle muestra diffs                                                                                  0.23s  
+
+   PASS  Tests\Feature\Fase17\ImpuestoTest
+  ✓ invitado es redirigido al login                                                                              0.21s  
+  ✓ usuario sin permiso recibe 403                                                                               0.21s  
+  ✓ admin puede listar impuestos                                                                                 0.23s  
+  ✓ admin puede crear impuesto                                                                                   0.21s  
+  ✓ codigo debe ser unico por empresa                                                                            0.22s  
+  ✓ admin puede actualizar impuesto                                                                              0.21s  
+  ✓ marcar por defecto desmarca otros en la misma empresa                                                        0.21s  
+  ✓ no se puede eliminar impuesto vinculado a productos                                                          0.22s  
+  ✓ admin puede eliminar impuesto sin productos                                                                  0.23s  
+  ✓ calculo monto impuesto funciona correctamente                                                                0.20s  
+  ✓ producto relacion y accessor porcentaje iva                                                                  0.20s  
+  ✓ aislamiento multitenant empresa a no puede modificar impuesto empresa b                                      0.21s  
+
+   PASS  Tests\Feature\Fase18\DocumentoVentaTest
+  ✓ invitado es redirigido al login                                                                              0.23s  
+  ✓ usuario puede listar documentos                                                                              0.24s  
+  ✓ venta genera automaticamente documento comercial ticket                                                      0.20s  
+  ✓ venta factura genera documento tipo factura con consecutivo                                                  0.20s  
+  ✓ consecutivos incrementan secuencialmente por tipo                                                            0.22s  
+  ✓ anulacion de venta anula documento comercial vinculado                                                       0.21s  
+  ✓ anulacion manual de documento                                                                                0.21s  
+  ✓ aislamiento multitenant empresa a no puede ver ni anular documento empresa b                                 0.20s  
+
+   PASS  Tests\Feature\Fase19\ImpresionTest
+  ✓ invitados redirigen al login                                                                                 0.20s  
+  ✓ imprimir documento en formatos 58mm 80mm y carta                                                             0.24s  
+  ✓ imprimir venta directa                                                                                       0.22s  
+  ✓ imprimir cierre caja                                                                                         0.20s  
+  ✓ imprimir recibo abono cartera                                                                                0.20s  
+  ✓ aislamiento multitenant empresa a no puede imprimir recursos empresa b                                       0.22s  
+
+   PASS  Tests\Feature\Fase1\EmpresaTest
+  ✓ se puede crear una empresa con datos validos                                                                 0.02s  
+  ✓ nit debe ser unico                                                                                           0.02s  
+  ✓ empresa puede tener multiples sucursales                                                                     0.02s  
+  ✓ scope activa filtra empresas correctamente                                                                   0.02s  
+  ✓ soft deletes en empresa                                                                                      0.02s  
+
+   PASS  Tests\Feature\Fase1\SucursalTest
+  ✓ se puede crear sucursal asociada a empresa                                                                   0.02s  
+  ✓ no se puede repetir nombre de sucursal en la misma empresa                                                   0.02s  
+  ✓ dos empresas diferentes pueden tener sucursal con mismo nombre                                               0.02s  
+  ✓ integridad referencial cascada al eliminar empresa en bd                                                     0.03s  
+  ✓ aislamiento multiempresa mediante company context                                                            0.02s  
+
+   PASS  Tests\Feature\Fase20\NotificacionTest
+  ✓ invitados redirigen al login                                                                                 0.19s  
+  ✓ salida que reduce stock por debajo del minimo crea notificacion automatica                                   0.19s  
+  ✓ cierre de caja crea notificacion automatica                                                                  0.19s  
+  ✓ marcar notificacion como leida                                                                               0.19s  
+  ✓ marcar todas las notificaciones como leidas                                                                  0.19s  
+  ✓ endpoint conteo no leidas retorna json                                                                       0.19s  
+  ✓ aislamiento multitenant empresa a no puede ver ni marcar notificaciones empresa b                            0.22s  
+
+   PASS  Tests\Feature\Fase21\ApiTest
+  ✓ login con credenciales validas retorna token                                                                 0.21s  
+  ✓ login con credenciales invalidas retorna 401                                                                 0.19s  
+  ✓ me retorna informacion del usuario autenticado                                                               0.21s  
+  ✓ consultar empresa autenticada                                                                                0.19s  
+  ✓ listar productos aplica aislamiento multiempresa                                                             0.19s  
+  ✓ crear y consultar cliente via api                                                                            0.20s  
+  ✓ registrar venta pos via api                                                                                  0.20s  
+  ✓ consultar estado caja via api                                                                                0.20s  
+  ✓ resumen reportes financieros via api                                                                         0.19s  
+  ✓ aislamiento multitenant usuario a no puede acceder a producto empresa b                                      0.19s  
+
+   PASS  Tests\Feature\Fase22\FacturacionElectronicaTest
+  ✓ admin puede crear resolucion facturacion                                                                     0.21s  
+  ✓ aislamiento multiempresa en resoluciones facturacion                                                         0.23s  
+  ✓ resolucion genera consecutivos y detecta agotamiento                                                         0.19s  
+  ✓ emitir factura electronica genera cufe xml y qr                                                              0.20s  
+  ✓ emision via controlador web                                                                                  0.19s  
+  ✓ emitir nota credito electronica                                                                              0.20s  
+  ✓ descargar xml ubl factura electronica                                                                        0.20s  
+
+   PASS  Tests\Feature\Fase24\FerreteriaTest
+  ✓ admin puede crear presentacion con factor de conversion                                                      0.21s  
+  ✓ venta de presentacion descuenta inventario base segun factor                                                 0.20s  
+  ✓ venta fraccionada por metro                                                                                  0.20s  
+  ✓ aislamiento multiempresa en presentaciones                                                                   0.20s  
+
+   PASS  Tests\Feature\Fase25\MultisucursalTest
+  ✓ admin puede despachar traslado entre sucursales y descuenta stock origen                                     0.20s  
+  ✓ recepcion de traslado ingresa stock a destino y cambia a recibido                                            0.22s  
+  ✓ rechazo de traslado reversa stock a origen                                                                   0.21s  
+  ✓ usuario restringido no puede cambiar a sucursal no asignada                                                  0.19s  
+  ✓ aislamiento multiempresa en traslados                                                                        0.20s  
+  ✓ reporte multisucursal consolida existencias y ventas por sede                                                0.23s  
+
+   PASS  Tests\Feature\Fase27\PwaOfflineTest
+  ✓ manifest pwa es accesible y contiene configuracion valida                                                    0.20s  
+  ✓ service worker script es accesible                                                                           0.18s  
+  ✓ sincronizacion offline procesa lote y descuenta inventario                                                   0.21s  
+  ✓ idempotencia evita duplicar ventas con mismo client transaction id                                           0.21s  
+  ✓ aislamiento multiempresa en sincronizacion offline                                                           0.20s  
+
+   PASS  Tests\Feature\Fase28\ConcurrenciaVentasTest
+  ✓ dos ventas simultaneas no dejan stock negativo                                                               0.12s  
+
+   PASS  Tests\Feature\Fase28\FlujoIntegralComercialTest
+  ✓ ciclo de vida comercial completo                                                                             0.14s  
+
+   PASS  Tests\Feature\Fase29\OptimizacionProduccionTest
+  ✓ indices de alto rendimiento existen en base de datos                                                         0.02s  
+  ✓ archivos de despliegue en produccion estan configurados                                                      0.02s  
+
+   PASS  Tests\Feature\Fase2\AuthTest
+  ✓ pantalla de login se renderiza correctamente                                                                 0.02s  
+  ✓ usuario activo puede iniciar sesion                                                                          0.02s  
+  ✓ usuario inactivo no puede iniciar sesion                                                                     0.02s  
+  ✓ credenciales invalidas son rechazadas                                                                        0.22s  
+  ✓ proteccion contra fuerza bruta rate limiting                                                                 1.08s  
+  ✓ cierre de sesion invalida y limpia contexto                                                                  0.02s  
+
+   PASS  Tests\Feature\Fase2\RolesAndPermissionsTest
+  ✓ asignacion de rol cajero y verificacion de permisos                                                          0.11s  
+  ✓ super admin tiene acceso total mediante gate                                                                 0.05s  
+  ✓ roles estan aislados por empresa                                                                             0.18s  
+
+   PASS  Tests\Feature\Fase2\UserTenancyAndPolicyTest
+  ✓ usuario solo puede ver su propia empresa                                                                     0.02s  
+  ✓ usuario no puede modificar otra empresa                                                                      0.02s  
+  ✓ usuario puede ver sucursal de su empresa pero no de otra                                                     0.03s  
+  ✓ middleware set company context establece tenant en peticiones autenticadas                                   0.04s  
+
+   PASS  Tests\Feature\Fase3\MultiempresaTest
+  ✓ inyeccion de empresa id desde el frontend es ignorada al crear sucursal                                      0.12s  
+  ✓ usuario empresa a no puede modificar sucursal de empresa b                                                   0.11s  
+  ✓ usuario empresa a no puede eliminar sucursal de empresa b                                                    0.10s  
+  ✓ regla belongs to active company valida apropiadamente                                                        0.04s  
+  ✓ usuario no puede seleccionar como activa una sucursal de otra empresa                                        0.04s  
+  ✓ vistas responsivas se renderizan con status 200                                                              0.17s  
+
+   PASS  Tests\Feature\Fase4\CatalogoTest
+  ✓ admin empresa puede ver vista catalogos                                                                      0.23s  
+  ✓ admin empresa puede crear categoria marca y unidad aisladas                                                  0.21s  
+  ✓ nombres de categoria son unicos por empresa pero permiten mismo nombre en otra empresa                       0.20s  
+  ✓ admin empresa puede eliminar categoria propia                                                                0.20s  
+  ✓ usuario no puede eliminar categoria de otra empresa                                                          0.18s  
+
+   PASS  Tests\Feature\Fase4\ProductoTest
+  ✓ admin empresa puede ver listado productos de su empresa solamente                                            0.23s  
+  ✓ admin empresa puede crear un producto con precios e impuestos                                                0.20s  
+  ✓ validacion impide asociar categoria o marca de otra empresa                                                  0.20s  
+  ✓ admin empresa puede actualizar su producto                                                                   0.20s  
+  ✓ admin empresa no puede modificar o eliminar producto de otra empresa                                         0.19s  
+  ✓ filtro por busqueda y bajo stock                                                                             0.25s  
+  ✓ vistas create y edit se renderizan correctamente                                                             0.25s  
+  ✓ admin empresa puede crear producto con imagen                                                                0.22s  
+  ✓ admin empresa puede actualizar y eliminar imagen de producto                                                 0.22s  
+  ✓ validacion rechaza archivos no imagen o demasiado pesados                                                    0.21s  
+  ✓ dashboard renderiza metricas y articulos del tenant                                                          0.24s  
+
+   PASS  Tests\Feature\Fase5\InventarioTest
+  ✓ admin empresa puede ver panel de inventario                                                                  0.23s  
+  ✓ ajuste positivo incrementa stock sucursal y producto y genera kardex                                         0.20s  
+  ✓ ajuste negativo decrementa stock sucursal y producto y genera kardex                                         0.21s  
+  ✓ ajuste negativo con stock insuficiente es rechazado y no altera el balance                                   0.21s  
+  ✓ traslado entre sucursales mueve stock atomicamente y crea ambos movimientos en kardex                        0.21s  
+  ✓ traslado falla si sucursal origen no tiene stock suficiente                                                  0.21s  
+  ✓ traslado falla si origen y destino son la misma sucursal                                                     0.21s  
+  ✓ aislamiento multiempresa usuario empresa a no puede ver kardex de empresa b                                  0.21s  
+  ✓ aislamiento multiempresa usuario a no puede ajustar stock de producto empresa b                              0.22s  
+  ✓ aislamiento multiempresa no se puede trasladar hacia sucursal de otra empresa                                0.20s  
+  ✓ vistas create ajuste y create traslado se renderizan correctamente                                           0.24s  
+  ✓ panel inventario y kardex soportan sucursal eliminada o nula                                                 0.26s  
+
+   PASS  Tests\Feature\Fase6\CompraTest
+  ✓ admin puede ver listado compras de su empresa solamente                                                      0.24s  
+  ✓ admin puede ver formulario creacion compra                                                                   0.25s  
+  ✓ admin puede registrar compra e ingresar stock al kardex transaccionalmente                                   0.22s  
+  ✓ admin no puede registrar compra con productos o sedes de otra empresa                                        0.21s  
+  ✓ admin puede ver detalle de factura de su empresa                                                             0.24s  
+  ✓ admin no puede ver detalle de factura de otra empresa                                                        0.19s  
+  ✓ admin puede anular compra y revertir stock                                                                   0.22s  
+  ✓ no se puede anular compra si el stock fue consumido                                                          0.21s  
+  ✓ no se puede registrar compra con productos duplicados en multiples lineas                                    0.21s  
+
+   PASS  Tests\Feature\Fase6\ProveedorTest
+  ✓ admin puede ver listado proveedores de su empresa solamente                                                  0.23s  
+  ✓ admin puede crear proveedor con datos validos                                                                0.21s  
+  ✓ no se puede crear proveedor con numero documento duplicado en misma empresa                                  0.21s  
+  ✓ se permite mismo numero documento en distintas empresas                                                      0.21s  
+  ✓ admin puede actualizar proveedor de su empresa                                                               0.21s  
+  ✓ admin no puede actualizar proveedor de otra empresa                                                          0.19s  
+  ✓ admin puede eliminar proveedor de su empresa                                                                 0.20s  
+  ✓ admin no puede eliminar proveedor de otra empresa                                                            0.19s  
+
+   PASS  Tests\Feature\Fase7\ClienteTest
+  ✓ usuario no autenticado es redirigido al login                                                                0.19s  
+  ✓ admin puede ver listado clientes y metricas                                                                  0.24s  
+  ✓ aislamiento multitenant estricto no muestra clientes de otra empresa                                         0.26s  
+  ✓ usuario puede crear cliente persona natural                                                                  0.21s  
+  ✓ usuario puede crear cliente persona juridica con credito                                                     0.21s  
+  ✓ no se puede crear cliente con documento duplicado en la misma empresa                                        0.20s  
+  ✓ distintas empresas pueden registrar mismo numero de documento                                                0.20s  
+  ✓ usuario puede actualizar datos del cliente                                                                   0.21s  
+  ✓ cliente consumidor final no puede ser eliminado                                                              0.21s  
+  ✓ cliente regular puede ser eliminado logicamente                                                              0.21s  
+  ✓ busqueda y filtros en catalogo de clientes                                                                   0.27s  
+  ✓ usuario de empresa a no puede editar cliente de empresa b                                                    0.20s  
+
+   PASS  Tests\Feature\Fase8\CarteraTest
+  ✓ usuario no autenticado es redirigido al login                                                                0.20s  
+  ✓ admin puede ver dashboard de cartera con kpis                                                                0.23s  
+  ✓ aislamiento multitenant estricto en cartera                                                                  0.26s  
+  ✓ admin puede aperturar cuenta por cobrar con consecutivo                                                      0.20s  
+  ✓ validacion impide crear cuenta con monto invalido                                                            0.21s  
+  ✓ admin o cajero puede aplicar abono parcial y actualiza saldo y estado                                        0.22s  
+  ✓ abono total marca cuenta como pagada                                                                         0.21s  
+  ✓ no se puede abonar mas del saldo pendiente                                                                   0.21s  
+  ✓ anulacion de abono revierte saldo correctamente                                                              0.22s  
+  ✓ filtro de cartera vencida y vigente                                                                          0.26s  
+  ✓ vista estado de cuenta del cliente consolida saldos y cupo                                                   0.24s  
+  ✓ vista recibo de caja se renderiza correctamente                                                              0.22s  
+  ✓ usuario empresa a no puede abonar a cuenta de empresa b                                                      0.21s  
+
+   PASS  Tests\Feature\Fase9\CajaTest
+  ✓ usuario no autenticado es redirigido al login                                                                0.21s  
+  ✓ admin puede ver dashboard de cajas con metricas                                                              0.27s  
+  ✓ admin puede crear caja para su sucursal                                                                      0.21s  
+  ✓ cajero puede abrir caja con fondo inicial                                                                    0.21s  
+  ✓ no se puede abrir caja si ya cuenta con turno abierto                                                        0.21s  
+  ✓ no se puede abrir caja con monto negativo                                                                    0.21s  
+  ✓ se puede registrar ingreso de dinero en caja abierta                                                         0.21s  
+  ✓ se puede registrar egreso de dinero en caja abierta                                                          0.20s  
+  ✓ egreso no puede superar el efectivo disponible en caja                                                       0.20s  
+  ✓ no se pueden registrar movimientos en caja cerrada                                                           0.20s  
+  ✓ cierre de caja calcula saldo esperado y diferencia de arqueo                                                 0.22s  
+  ✓ comprobante de cierre se renderiza correctamente                                                             0.21s  
+  ✓ aislamiento multitenant estricto entre empresas en cajas                                                     0.20s  
+  ✓ usuario empresa a no puede abrir ni cerrar caja de empresa b                                                 0.19s  
+
+   PASS  Tests\Feature\Seguridad\AuditoriaVulnerabilidadesTest
+  ✓ vulnerabilidad descuento excesivo debe ser rechazado                                                         0.23s  
+  ✓ vulnerabilidad descuento negativo debe ser rechazado                                                         0.21s  
+  ✓ vulnerabilidad producto inactivo no puede ser vendido                                                        0.21s  
+  ✓ vulnerabilidad venta en caja cerrada debe ser rechazada                                                      0.21s  
+  ✓ vulnerabilidad secuestro de caja entre empresas debe ser bloqueado                                           0.21s  
+  ✓ vulnerabilidad traslado entre sucursales de distintas empresas debe fallar                                   0.20s  
+  ✓ vulnerabilidad despacho traslado entre distintas empresas debe fallar                                        0.19s  
+  ✓ vulnerabilidad egreso de caja superior al saldo disponible debe fallar                                       0.20s  
+  ✓ vulnerabilidad movimiento de caja con monto negativo debe fallar                                             0.19s  
+  ✓ vulnerabilidad sobrepago de abono a cartera debe fallar                                                      0.19s  
+  ✓ vulnerabilidad idor cajero b no puede ver ticket de empresa a                                                0.19s  
+
+   PASS  Tests\Feature\Seguridad\MenuPermisosTest
+  ✓ admin empresa ve todos los modulos en el menu                                                                0.15s  
+  ✓ cajero solo ve modulos permitidos y no ve modulos administrativos                                            0.14s  
+  ✓ vendedor no ve cajas ni compras ni gestion empresarial                                                       0.15s  
+  ✓ contador no ve pos ni cajas ni gestion empresarial                                                           0.13s  
+
+   PASS  Tests\Feature\Seguridad\ModalConsequencesVerificationTest
+  ✓ inactivar usuario con sesion abierta lo expulsa en siguiente peticion                                        0.15s  
+  ✓ evidencia usuario de empresa inactiva aun puede iniciar sesion y operar                                      0.15s  
+  ✓ evidencia reutilizar email de usuario con soft delete falla por indice unico db                              0.12s  
+
+   PASS  Tests\Feature\Seguridad\SuperAdminNavigationTest
+  ✓ super admin por defecto tiene navbar limpio sin modulos operativos                                           0.13s  
+  ✓ super admin puede entrar opcionalmente a un negocio y ver sus modulos                                        0.20s  
+  ✓ super admin puede salir del negocio y retorna al panel super admin limpio                                    0.12s  
+  ✓ super admin sin negocio redirige si intenta acceder a rutas operativas directamente                          0.10s  
+  ✓ usuario regular de empresa mantiene acceso a sus modulos normalmente                                         0.14s  
+
+   PASS  Tests\Feature\SimulacionVentas\SimulacionVentaCompletaTest
+  ✓ simulacion venta pos efectivo con cambio y descuento kardex                                                  0.23s  
+  ✓ simulacion venta pago mixto efectivo y tarjeta                                                               0.23s  
+  ✓ simulacion venta a credito apertura cartera exitosamente                                                     0.23s  
+  ✓ simulacion rechaza credito si supera cupo del cliente                                                        0.23s  
+  ✓ simulacion rechaza credito a consumidor final                                                                0.22s  
+  ✓ simulacion rechaza venta con stock insuficiente                                                              0.22s  
+  ✓ simulacion venta con descuento calcula base e impuesto correctos                                             0.22s  
+  ✓ simulacion anulacion de venta devuelve stock y egresa caja                                                   0.25s  
+  ✓ simulacion aislamiento empresa b no puede vender en caja empresa a                                           0.22s  
+  ✓ simulacion ciclo completo con cierre de caja y arqueo                                                        0.24s  
+  ✓ simulacion rechaza pago efectivo menor al total                                                              0.20s  
+  ✓ simulacion rechaza pago mixto menor al total                                                                 0.21s  
+  ✓ simulacion limite stock exacto y agotamiento                                                                 0.24s  
+  ✓ simulacion anulacion de venta con caja ya cerrada                                                            0.23s  
+
+  Tests:    299 passed (1124 assertions)
+  Duration: 54.99s
+

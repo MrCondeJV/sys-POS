@@ -1,0 +1,44 @@
+--- a/app/Http/Middleware/SetCompanyContext.php
++++ b/app/Http/Middleware/SetCompanyContext.php
+@@ -31,6 +31,19 @@ class SetCompanyContext
+                 ]);
+             }
+ 
++            if (! $user->isSuperAdmin() && $user->empresa_id) {
++                $empresaTenant = Empresa::withoutGlobalScopes()->find($user->empresa_id);
++                if (! $empresaTenant || ! $empresaTenant->isActiva()) {
++                    auth()->logout();
++                    $request->session()->invalidate();
++                    $request->session()->regenerateToken();
++
++                    return redirect()->route('login')->withErrors([
++                        'email' => 'La empresa asociada a tu cuenta se encuentra suspendida. Contacta al administrador de plataforma.',
++                    ]);
++                }
++            }
++
+             if ($user->isSuperAdmin()) {
+                 // Super Admin: resolver tenant activo únicamente si ha entrado explícitamente a un negocio
+                 $sessionEmpresaId = session('superadmin_empresa_id');
+--- a/app/Http/Controllers/Auth/LoginController.php
++++ b/app/Http/Controllers/Auth/LoginController.php
+@@ -26,6 +26,17 @@ class LoginController extends Controller
+                 ]);
+             }
+ 
++            if (! $user->isSuperAdmin() && $user->empresa_id) {
++                $empresaTenant = \App\Models\Empresa::withoutGlobalScopes()->find($user->empresa_id);
++                if (! $empresaTenant || ! $empresaTenant->isActiva()) {
++                    Auth::logout();
++                    $request->session()->invalidate();
++                    $request->session()->regenerateToken();
++
++                    throw ValidationException::withMessages([
++                        'email' => 'La empresa asociada a tu cuenta se encuentra suspendida.',
++                    ]);
++                }
++            }
++
+             $request->session()->regenerate();
+ 
+             $user->forceFill(['ultimo_login_at' => now()])->save();

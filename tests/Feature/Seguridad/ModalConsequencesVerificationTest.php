@@ -2,8 +2,13 @@
 
 namespace Tests\Feature\Seguridad;
 
+use App\Actions\Caja\AbrirCajaAction;
+use App\Actions\Caja\CerrarCajaAction;
+use App\Enums\EstadoCaja;
 use App\Enums\EstadoGeneral;
 use App\Enums\RolSistema;
+use App\Enums\TipoMovimientoCaja;
+use App\Models\Caja;
 use App\Models\Empresa;
 use App\Models\Sucursal;
 use App\Models\User;
@@ -11,6 +16,7 @@ use App\Support\Tenancy\CompanyContext;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\TestCase;
 
 class ModalConsequencesVerificationTest extends TestCase
@@ -24,7 +30,7 @@ class ModalConsequencesVerificationTest extends TestCase
     }
 
     /**
-     * 4(a): Inactivar un usuario con sesión abierta lo expulsa en la siguiente petición HTTP.
+     * 1B.1(a): Inactivar un usuario con sesión abierta lo expulsa en la siguiente petición HTTP.
      */
     public function test_inactivar_usuario_con_sesion_abierta_lo_expulsa_en_siguiente_peticion(): void
     {
@@ -64,10 +70,11 @@ class ModalConsequencesVerificationTest extends TestCase
     }
 
     /**
-     * 4(b): Evidencia del comportamiento actual cuando una empresa está en estado INACTIVO:
-     * Sus usuarios activos AÚN pueden iniciar sesión y operar (Bug de Severidad Alta reportado).
+     * 1B.1(b): Verifica si un usuario de una empresa en estado INACTIVO puede iniciar sesión y operar.
+     * Marcado como known-bug (BUG-001) siguiendo la Regla 5 (severidad Alta, parche propuesto en BUG-001.patch).
      */
-    public function test_evidencia_usuario_de_empresa_inactiva_aun_puede_iniciar_sesion_y_operar(): void
+    #[Group('known-bugs')]
+    public function test_usuario_de_empresa_inactiva_no_deberia_poder_iniciar_sesion_ni_operar(): void
     {
         $empresaInactiva = Empresa::factory()->create([
             'estado' => EstadoGeneral::INACTIVO,
@@ -89,27 +96,29 @@ class ModalConsequencesVerificationTest extends TestCase
         setPermissionsTeamId($empresaInactiva->id);
         $usuario->assignRole(RolSistema::ADMIN_EMPRESA->value);
 
-        // Login exitoso a pesar de que la empresa está INACTIVO
         $loginResponse = $this->post('/login', [
             'email' => 'operador@empresainactiva.com',
             'password' => 'secret1234',
         ]);
 
-        $loginResponse->assertRedirect(route('dashboard'));
-        $this->assertAuthenticatedAs($usuario);
-
-        // Puede operar en /dashboard con respuesta 200
         $dashResponse = $this->get(route('dashboard'));
-        $dashResponse->assertOk();
+
+        if ($dashResponse->status() === 200) {
+            $this->markTestIncomplete(
+                'BUG-001 (Severidad Alta): Un usuario activo perteneciente a una Empresa en estado INACTIVO aún puede iniciar sesión y operar (HTTP 200 en /dashboard). Parche propuesto en docs/reporte-nocturno/parches-propuestos/BUG-001.patch.'
+            );
+        }
+
+        $loginResponse->assertSessionHasErrors(['email']);
+        $this->assertGuest();
     }
 
     /**
-     * 4(c): Evidencia del comportamiento actual al crear un usuario con el mismo email
-     * de un usuario eliminado con soft delete:
-     * La validación Rule::unique('users', 'email')->whereNull('deleted_at') pasa,
-     * pero el índice UNIQUE físico de la tabla `users.email` lanza UniqueConstraintViolationException (500).
+     * 1B.1(c): Verifica qué ocurre al crear un usuario con el mismo email de un usuario con soft delete.
+     * Marcado como known-bug (BUG-002) porque la validación pasa pero la BD lanza UniqueConstraintViolationException.
      */
-    public function test_evidencia_reutilizar_email_de_usuario_con_soft_delete_falla_por_indice_unico_db(): void
+    #[Group('known-bugs')]
+    public function test_reutilizar_email_de_usuario_con_soft_delete_no_deberia_lanzar_error_500_sql(): void
     {
         $empresa = Empresa::factory()->create(['estado' => EstadoGeneral::ACTIVO]);
         $sucursal = Sucursal::factory()->create(['empresa_id' => $empresa->id, 'es_principal' => true]);
@@ -138,17 +147,137 @@ class ModalConsequencesVerificationTest extends TestCase
         $this->assertSoftDeleted('users', ['id' => $colaborador->id]);
 
         // 2. Intentar registrar otro usuario con el mismo email 'duplicado@comercio.com'
-        $this->withoutExceptionHandling();
-        $this->expectException(UniqueConstraintViolationException::class);
+        try {
+            $this->withoutExceptionHandling();
+            $this->actingAs($admin)->post(route('usuarios.store'), [
+                'name' => 'Nuevo Colaborador',
+                'email' => 'duplicado@comercio.com',
+                'password' => 'password123',
+                'password_confirmation' => 'password123',
+                'sucursal_id' => $sucursal->id,
+                'rol' => RolSistema::CAJERO->value,
+                'estado' => EstadoGeneral::ACTIVO->value,
+            ]);
+        } catch (UniqueConstraintViolationException $e) {
+            $this->markTestIncomplete(
+                'BUG-002 (Severidad Media): Reutilizar email de usuario eliminado (soft delete) pasa la validación Rule::unique()->whereNull("deleted_at") pero lanza UniqueConstraintViolationException por el índice único físico users_email_unique. Parche propuesto en docs/reporte-nocturno/parches-propuestos/BUG-002.patch.'
+            );
+        }
+    }
 
-        $this->actingAs($admin)->post(route('usuarios.store'), [
-            'name' => 'Nuevo Colaborador',
-            'email' => 'duplicado@comercio.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+    /**
+     * 1B.2: Comprobante de cierre de caja renderiza cero URLs externas y contiene reglas @media print (Carta y 80mm).
+     */
+    public function test_comprobante_cierre_caja_renderiza_sin_urls_externas_y_con_reglas_print(): void
+    {
+        $this->seed(RolesAndPermissionsSeeder::class);
+        $empresa = Empresa::factory()->create(['estado' => EstadoGeneral::ACTIVO]);
+        RolesAndPermissionsSeeder::crearRolesParaEmpresa($empresa);
+        $sucursal = Sucursal::factory()->create(['empresa_id' => $empresa->id, 'es_principal' => true]);
+
+        $admin = User::factory()->create([
+            'empresa_id' => $empresa->id,
             'sucursal_id' => $sucursal->id,
-            'rol' => RolSistema::CAJERO->value,
-            'estado' => EstadoGeneral::ACTIVO->value,
+            'estado' => EstadoGeneral::ACTIVO,
         ]);
+        setPermissionsTeamId($empresa->id);
+        $admin->assignRole(RolSistema::ADMIN_EMPRESA->value);
+
+        CompanyContext::setCompany($empresa);
+        $caja = Caja::create([
+            'empresa_id' => $empresa->id,
+            'sucursal_id' => $sucursal->id,
+            'nombre' => 'Caja Principal 01',
+            'codigo' => 'CAJ-01',
+            'estado' => EstadoCaja::ACTIVA,
+        ]);
+
+        $sesion = app(AbrirCajaAction::class)->execute($caja, $admin, 100000.00);
+        app(CerrarCajaAction::class)->execute($sesion, $admin, 100000.00, 'Arqueo cuadrado sin novedades.');
+
+        $response = $this->actingAs($admin)->get(route('cajas.comprobante', $sesion));
+        $response->assertOk();
+
+        $html = $response->getContent();
+
+        // Verificar presencia de reglas @media print y ambos formatos (Carta y Térmica 80mm)
+        $this->assertStringContainsString('@media print', $html);
+        $this->assertStringContainsString('size: letter portrait', $html);
+        $this->assertStringContainsString('size: 80mm auto', $html);
+        $this->assertStringContainsString('print-color-adjust: exact', $html);
+        $this->assertStringContainsString('cambiarFormatoImpresion', $html);
+
+        // Verificar cero recursos externos (ningún script/link/import hacia dominios externos)
+        preg_match_all('/(?:src|href)=["\'](https?:\/\/[^"\']+)["\']/i', $html, $matches);
+        $baseUrl = rtrim(url('/'), '/');
+        $externalUrls = array_filter($matches[1] ?? [], function (string $url) use ($baseUrl) {
+            return ! str_starts_with($url, 'http://localhost')
+                && ! str_starts_with($url, 'http://127.0.0.1')
+                && ! str_starts_with($url, 'http://sys-pos.test')
+                && ! str_starts_with($url, $baseUrl)
+                && ! str_starts_with($url, (string) config('app.url'));
+        });
+
+        $this->assertEmpty(
+            $externalUrls,
+            'El comprobante de cierre no debe cargar recursos externos: '.implode(', ', $externalUrls)
+        );
+    }
+
+    /**
+     * 1B.3: Modales de caja en cajas/index generan rutas con route() + placeholder y los endpoints responden.
+     */
+    public function test_modales_de_cajas_usan_rutas_nombradas_y_endpoints_funcionan(): void
+    {
+        $this->seed(RolesAndPermissionsSeeder::class);
+        $empresa = Empresa::factory()->create(['estado' => EstadoGeneral::ACTIVO]);
+        RolesAndPermissionsSeeder::crearRolesParaEmpresa($empresa);
+        $sucursal = Sucursal::factory()->create(['empresa_id' => $empresa->id, 'es_principal' => true]);
+
+        $admin = User::factory()->create([
+            'empresa_id' => $empresa->id,
+            'sucursal_id' => $sucursal->id,
+            'estado' => EstadoGeneral::ACTIVO,
+        ]);
+        setPermissionsTeamId($empresa->id);
+        $admin->assignRole(RolSistema::ADMIN_EMPRESA->value);
+
+        CompanyContext::setCompany($empresa);
+        $caja = Caja::create([
+            'empresa_id' => $empresa->id,
+            'sucursal_id' => $sucursal->id,
+            'nombre' => 'Caja Verificación Rutas',
+            'codigo' => 'CAJ-VR',
+            'estado' => EstadoCaja::ACTIVA,
+        ]);
+
+        // 1. Verificar que la vista renderiza las plantillas de ruta nombradas y no concatena '/cajas/' en duro
+        $indexResponse = $this->actingAs($admin)->get(route('cajas.index'));
+        $indexResponse->assertOk();
+        $html = $indexResponse->getContent();
+
+        $this->assertStringContainsString('urlAbrirTemplate', $html);
+        $this->assertStringContainsString('urlMovimientoTemplate', $html);
+        $this->assertStringContainsString('__CAJA__', $html);
+        $this->assertStringNotContainsString("'/cajas/' +", $html);
+
+        // 2. Simular el reemplazo JS del placeholder '__CAJA__' y enviar POST real al endpoint de apertura
+        $abrirUrl = str_replace('__CAJA__', (string) $caja->id, route('cajas.abrir', '__CAJA__'));
+        $this->actingAs($admin)->post($abrirUrl, [
+            'monto_apertura' => 50000,
+        ])->assertRedirect();
+
+        $this->assertTrue($caja->fresh()->estaAbierta());
+
+        // 3. Simular el reemplazo JS del placeholder '__CAJA__' y enviar POST real al endpoint de movimiento
+        $movimientoUrl = str_replace('__CAJA__', (string) $caja->id, route('cajas.movimiento', '__CAJA__'));
+        $this->actingAs($admin)->post($movimientoUrl, [
+            'tipo' => TipoMovimientoCaja::INGRESO->value,
+            'monto' => 15000,
+            'concepto' => 'Base adicional de monedas',
+            'metodo_pago' => 'EFECTIVO',
+        ])->assertRedirect();
+
+        $this->assertEquals(65000.00, $caja->fresh()->sesionActual->calcularSaldoEsperadoEfectivo());
     }
 }

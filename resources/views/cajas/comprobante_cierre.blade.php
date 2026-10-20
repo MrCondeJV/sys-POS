@@ -8,6 +8,11 @@
     <style id="page-print-style">
         * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         @page { size: letter portrait; margin: 12mm 14mm; }
+        @media print {
+            body { background: transparent !important; padding: 0 !important; }
+            .no-print { display: none !important; }
+            .report-sheet { border: none !important; box-shadow: none !important; margin: 0 auto !important; }
+        }
         body[data-formato="termico"] .report-sheet { max-width: 80mm !important; padding: 12px 10px !important; }
         body[data-formato="termico"] .report-grid-2 { grid-template-columns: 1fr !important; gap: 8px !important; }
         body[data-formato="termico"] .report-header { flex-direction: column !important; gap: 6px !important; }

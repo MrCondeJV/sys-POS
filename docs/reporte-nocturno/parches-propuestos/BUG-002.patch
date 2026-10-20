@@ -1,0 +1,23 @@
+# Parche Propuesto BUG-002 (Opción A: Validar unicidad global de email incluyendo soft-deleted para evitar HTTP 500)
+# Alternativa Opción B documentada en DECISIONES.md: Migración que reemplace users_email_unique por índice compuesto o limpie email al hacer soft-delete.
+
+--- a/app/Http/Controllers/UserController.php
++++ b/app/Http/Controllers/UserController.php
+@@ -150,7 +150,7 @@ class UserController extends Controller
+ 
+         $validated = $request->validate([
+             'name' => ['required', 'string', 'max:150'],
+-            'email' => ['required', 'email', 'max:100', Rule::unique('users', 'email')->whereNull('deleted_at')],
++            'email' => ['required', 'email', 'max:100', Rule::unique('users', 'email')],
+             'password' => ['required', 'string', 'min:8', 'confirmed'],
+             'sucursal_id' => ['nullable', 'exists:sucursales,id'],
+             'cargo' => ['nullable', 'string', 'max:100'],
+@@ -220,7 +220,7 @@ class UserController extends Controller
+ 
+         $validated = $request->validate([
+             'name' => ['required', 'string', 'max:150'],
+-            'email' => ['required', 'email', 'max:100', Rule::unique('users', 'email')->ignore($usuario->id)->whereNull('deleted_at')],
++            'email' => ['required', 'email', 'max:100', Rule::unique('users', 'email')->ignore($usuario->id)],
+             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+             'sucursal_id' => ['nullable', 'exists:sucursales,id'],
+             'cargo' => ['nullable', 'string', 'max:100'],
