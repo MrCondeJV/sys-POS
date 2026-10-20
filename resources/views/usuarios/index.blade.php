@@ -59,7 +59,7 @@
     >
         <div class="sm:col-span-12 lg:col-span-4">
             <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
@@ -68,14 +68,14 @@
                     type="text"
                     name="buscar"
                     value="{{ request('buscar') }}"
-                    class="input-banking pl-9"
+                    class="input pl-9"
                     placeholder="Buscar por nombre, correo, cargo..."
                 />
             </div>
         </div>
 
         <div class="sm:col-span-6 lg:col-span-3">
-            <select name="sucursal_id" class="input-banking">
+            <select name="sucursal_id" class="input">
                 <option value="">Todas las Sedes</option>
                 @foreach($sucursales as $suc)
                 <option value="{{ $suc->id }}" {{ request('sucursal_id') == $suc->id ? 'selected' : '' }}>
@@ -86,7 +86,7 @@
         </div>
 
         <div class="sm:col-span-6 lg:col-span-3">
-            <select name="rol" class="input-banking">
+            <select name="rol" class="input">
                 <option value="">Todos los Roles</option>
                 @foreach($rolesDisponibles as $rol)
                 <option value="{{ $rol->value }}" {{ request('rol') === $rol->value ? 'selected' : '' }}>
@@ -97,7 +97,7 @@
         </div>
 
         <div class="sm:col-span-6 lg:col-span-2">
-            <select name="estado" class="input-banking">
+            <select name="estado" class="input">
                 <option value="">Todos los Estados</option>
                 <option value="ACTIVO" {{ request('estado') === 'ACTIVO' ? 'selected' : '' }}>Activo</option>
                 <option value="INACTIVO" {{ request('estado') === 'INACTIVO' ? 'selected' : '' }}>Inactivo</option>
@@ -119,14 +119,14 @@
         </x-slot:header>
 
         @forelse($usuarios as $user)
-        <tr class="{{ $user->id === auth()->id() ? 'bg-slate-50/70 font-medium' : '' }}">
+        <tr class="{{ $user->id === auth()->id() ? 'bg-surface-muted font-medium' : '' }}">
             <td>
                 <div class="flex items-center gap-3">
-                    <div class="h-9 w-9 rounded-md bg-[#1E3A5F] text-white font-semibold text-xs flex items-center justify-center shrink-0">
+                    <div class="h-9 w-9 rounded-md bg-brand-700 text-white font-semibold text-xs flex items-center justify-center shrink-0">
                         {{ strtoupper(substr($user->name, 0, 2)) }}
                     </div>
                     <div class="min-w-0">
-                        <div class="font-semibold text-slate-900 flex items-center gap-1.5 truncate">
+                        <div class="font-semibold text-text-primary flex items-center gap-1.5 truncate">
                             <span>{{ $user->name }}</span>
                             @if($user->id === auth()->id())
                             <span class="badge badge-neutral text-[10px] font-medium shrink-0">
@@ -134,15 +134,15 @@
                             </span>
                             @endif
                         </div>
-                        <div class="text-xs text-slate-500 truncate">
+                        <div class="text-xs text-text-secondary truncate">
                             {{ $user->cargo ?? 'Sin cargo definido' }}
                         </div>
                     </div>
                 </div>
             </td>
             <td>
-                <div class="font-mono text-xs text-slate-800">{{ $user->email }}</div>
-                <div class="text-xs text-slate-500 mt-0.5">{{ $user->telefono ?? 'Sin teléfono' }}</div>
+                <div class="font-mono text-xs text-text-primary">{{ $user->email }}</div>
+                <div class="text-xs text-text-secondary mt-0.5">{{ $user->telefono ?? 'Sin teléfono' }}</div>
             </td>
             <td>
                 @php
@@ -154,8 +154,8 @@
                 </x-badge>
             </td>
             <td>
-                <span class="inline-flex items-center gap-1.5 text-xs text-slate-700">
-                    <svg class="h-3.5 w-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <span class="inline-flex items-center gap-1.5 text-xs text-text-primary">
+                    <svg class="h-3.5 w-3.5 text-text-muted shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     </svg>
                     <span>{{ $user->sucursal?->nombre ?? 'Todas / Global' }}</span>
@@ -186,7 +186,7 @@
                             type="submit"
                             variant="ghost"
                             size="sm"
-                            class="{{ $user->estado === \App\Enums\EstadoGeneral::ACTIVO ? 'text-amber-600 hover:text-amber-700 hover:bg-amber-50' : 'text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50' }}"
+                            class="{{ $user->estado === \App\Enums\EstadoGeneral::ACTIVO ? 'text-warning hover:text-warning-text hover:bg-warning-bg' : 'text-success hover:text-success-text hover:bg-success-bg' }}"
                             :title="$user->estado === \App\Enums\EstadoGeneral::ACTIVO ? 'Desactivar acceso' : 'Reactivar acceso'"
                             :aria-label="$user->estado === \App\Enums\EstadoGeneral::ACTIVO ? 'Desactivar acceso' : 'Reactivar acceso'"
                         >
@@ -214,6 +214,7 @@
                         variant="danger"
                         :action="route('usuarios.destroy', $user)"
                         method="DELETE"
+                        formId="form-delete-usuario-{{ $user->id }}"
                     >
                         <x-slot:trigger>
                             <x-icon-button
@@ -252,7 +253,7 @@
 
         @if($usuarios->hasPages())
         <x-slot:footer>
-            <div class="text-xs text-slate-500">
+            <div class="text-xs text-text-secondary">
                 Mostrando {{ $usuarios->firstItem() ?? 0 }}–{{ $usuarios->lastItem() ?? 0 }} de {{ $usuarios->total() }} colaboradores
             </div>
             <div>
