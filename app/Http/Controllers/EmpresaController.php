@@ -314,6 +314,10 @@ class EmpresaController extends Controller
             abort(404, 'Empresa no encontrada en el contexto actual.');
         }
 
+        if (auth()->user()->cannot('update', $empresa)) {
+            abort(403, 'No tienes permisos para ver la configuración fiscal de la empresa.');
+        }
+
         $monedas = Monedas::todas();
         $simbolos = Monedas::simbolos();
 

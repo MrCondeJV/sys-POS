@@ -21,6 +21,10 @@ class SucursalController extends Controller
      */
     public function index(): View
     {
+        if (Gate::denies('viewAny', Sucursal::class)) {
+            abort(403, 'No tienes autorización para ver el listado de sucursales.');
+        }
+
         $empresa = CompanyContext::getCompany();
 
         if (! $empresa) {

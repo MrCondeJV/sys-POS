@@ -56,6 +56,16 @@ class LoginController extends Controller
             ]);
         }
 
+        if ($user && ! $user->isSuperAdmin() && $user->empresa_id) {
+            $empresaTenant = \App\Models\Empresa::withoutGlobalScopes()->find($user->empresa_id);
+            if (! $empresaTenant || ! $empresaTenant->isActiva()) {
+                RateLimiter::hit($throttleKey);
+                throw ValidationException::withMessages([
+                    'email' => 'La empresa asociada a tu cuenta se encuentra suspendida.',
+                ]);
+            }
+        }
+
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             RateLimiter::clear($throttleKey);
             $request->session()->regenerate();

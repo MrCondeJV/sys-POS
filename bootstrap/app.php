@@ -19,9 +19,15 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: [__DIR__.'/../app/Console/Commands'],
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->validateCsrfTokens(except: [
+            'webhooks/wompi',
+            'webhooks/wompi/*',
+        ]);
+
         $middleware->web(append: [
             SetCompanyContext::class,
             EnsureValidTenant::class,
+            \App\Http\Middleware\EnsureSubscriptionIsActive::class,
         ]);
 
         $middleware->alias([
@@ -31,6 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'company.context' => SetCompanyContext::class,
             'tenant.valid' => EnsureValidTenant::class,
             'plan.feature' => \App\Http\Middleware\EnforcePlanLimits::class,
+            'subscription.active' => \App\Http\Middleware\EnsureSubscriptionIsActive::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

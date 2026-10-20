@@ -193,8 +193,8 @@
                                 ? 'El estado del registro de la empresa cambiará a INACTIVO en el directorio de tenants.'
                                 : 'El estado del registro de la empresa cambiará a ACTIVO en el directorio de tenants.'),
                             consequence: @js($empEstadoActivo
-                                ? 'Esta acción actualiza únicamente el campo estado de la empresa a INACTIVO; sus sucursales, usuarios y registros contables se conservan sin modificaciones.'
-                                : 'Esta acción actualiza el campo estado de la empresa a ACTIVO en el panel de administración.'),
+                                ? 'Al suspender la empresa, sus usuarios no podrán iniciar sesión ni operar en el sistema. Las sesiones activas serán cerradas en su siguiente petición.'
+                                : 'Esta acción reactiva el acceso de la empresa y permite a sus usuarios volver a iniciar sesión y operar.'),
                             confirmText: @js($empEstadoActivo ? 'Suspender empresa' : 'Activar empresa'),
                             variant: @js($empEstadoActivo ? 'danger' : 'primary'),
                             action: @js(route('empresas.toggle-estado', $emp)),

@@ -299,16 +299,11 @@ class MatrizRolesPermisosRutasTest extends TestCase
         $this->actingAs($this->contador)->post(route('sucursales.store'), [])->assertForbidden();
     }
 
-    #[Group('known-bugs')]
     public function test_get_empresa_perfil_y_sucursales_index_deberian_bloquear_roles_sin_permiso(): void
     {
         $resPerfil = $this->actingAs($this->cajero)->get(route('empresa.perfil'));
         $resSucursales = $this->actingAs($this->cajero)->get(route('sucursales.index'));
-        if ($resPerfil->getStatusCode() === 200 || $resSucursales->getStatusCode() === 200) {
-            $this->markTestIncomplete(
-                'BUG-006 (Severidad Media): EmpresaController@perfil y SucursalController@index no verifican Gate en GET (aunque sus endpoints PUT/POST sí retornan 403). Parche propuesto en docs/reporte-nocturno/parches-propuestos/BUG-006.patch.'
-            );
-        }
+
         $resPerfil->assertForbidden();
         $resSucursales->assertForbidden();
     }

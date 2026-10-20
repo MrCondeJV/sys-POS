@@ -70,10 +70,8 @@ class ModalConsequencesVerificationTest extends TestCase
     }
 
     /**
-     * 1B.1(b): Verifica si un usuario de una empresa en estado INACTIVO puede iniciar sesión y operar.
-     * Marcado como known-bug (BUG-001) siguiendo la Regla 5 (severidad Alta, parche propuesto en BUG-001.patch).
+     * 1B.1(b): Verifica que un usuario de una empresa en estado INACTIVO NO pueda iniciar sesión ni operar.
      */
-    #[Group('known-bugs')]
     public function test_usuario_de_empresa_inactiva_no_deberia_poder_iniciar_sesion_ni_operar(): void
     {
         $empresaInactiva = Empresa::factory()->create([
@@ -101,23 +99,14 @@ class ModalConsequencesVerificationTest extends TestCase
             'password' => 'secret1234',
         ]);
 
-        $dashResponse = $this->get(route('dashboard'));
-
-        if ($dashResponse->status() === 200) {
-            $this->markTestIncomplete(
-                'BUG-001 (Severidad Alta): Un usuario activo perteneciente a una Empresa en estado INACTIVO aún puede iniciar sesión y operar (HTTP 200 en /dashboard). Parche propuesto en docs/reporte-nocturno/parches-propuestos/BUG-001.patch.'
-            );
-        }
-
         $loginResponse->assertSessionHasErrors(['email']);
         $this->assertGuest();
     }
 
     /**
      * 1B.1(c): Verifica qué ocurre al crear un usuario con el mismo email de un usuario con soft delete.
-     * Marcado como known-bug (BUG-002) porque la validación pasa pero la BD lanza UniqueConstraintViolationException.
+     * Con la validación corregida, Laravel retorna error de validación 422 en vez de error 500 SQL.
      */
-    #[Group('known-bugs')]
     public function test_reutilizar_email_de_usuario_con_soft_delete_no_deberia_lanzar_error_500_sql(): void
     {
         $empresa = Empresa::factory()->create(['estado' => EstadoGeneral::ACTIVO]);
@@ -147,22 +136,17 @@ class ModalConsequencesVerificationTest extends TestCase
         $this->assertSoftDeleted('users', ['id' => $colaborador->id]);
 
         // 2. Intentar registrar otro usuario con el mismo email 'duplicado@comercio.com'
-        try {
-            $this->withoutExceptionHandling();
-            $this->actingAs($admin)->post(route('usuarios.store'), [
-                'name' => 'Nuevo Colaborador',
-                'email' => 'duplicado@comercio.com',
-                'password' => 'password123',
-                'password_confirmation' => 'password123',
-                'sucursal_id' => $sucursal->id,
-                'rol' => RolSistema::CAJERO->value,
-                'estado' => EstadoGeneral::ACTIVO->value,
-            ]);
-        } catch (UniqueConstraintViolationException $e) {
-            $this->markTestIncomplete(
-                'BUG-002 (Severidad Media): Reutilizar email de usuario eliminado (soft delete) pasa la validación Rule::unique()->whereNull("deleted_at") pero lanza UniqueConstraintViolationException por el índice único físico users_email_unique. Parche propuesto en docs/reporte-nocturno/parches-propuestos/BUG-002.patch.'
-            );
-        }
+        $response = $this->actingAs($admin)->post(route('usuarios.store'), [
+            'name' => 'Nuevo Colaborador',
+            'email' => 'duplicado@comercio.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'sucursal_id' => $sucursal->id,
+            'rol' => RolSistema::CAJERO->value,
+            'estado' => EstadoGeneral::ACTIVO->value,
+        ]);
+
+        $response->assertSessionHasErrors('email');
     }
 
     /**

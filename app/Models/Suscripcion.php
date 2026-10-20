@@ -21,6 +21,9 @@ class Suscripcion extends Model
         'estado',
         'fecha_inicio',
         'fecha_fin',
+        'fecha_gracia_fin',
+        'renovacion_automatica',
+        'ultimo_pago_id',
         'ciclo_facturacion',
         'precio_pago',
         'metodo_pago',
@@ -31,6 +34,8 @@ class Suscripcion extends Model
         'estado' => EstadoSuscripcion::class,
         'fecha_inicio' => 'datetime',
         'fecha_fin' => 'datetime',
+        'fecha_gracia_fin' => 'datetime',
+        'renovacion_automatica' => 'boolean',
         'precio_pago' => 'decimal:2',
     ];
 
@@ -39,10 +44,19 @@ class Suscripcion extends Model
         return $this->belongsTo(Plan::class, 'plan_id');
     }
 
+    public function ultimoPago(): BelongsTo
+    {
+        return $this->belongsTo(PagoSuscripcion::class, 'ultimo_pago_id');
+    }
+
     public function isVigente(): bool
     {
         if (! $this->estado->isOperativa()) {
             return false;
+        }
+
+        if ($this->estado === EstadoSuscripcion::EN_GRACIA) {
+            return $this->fecha_gracia_fin ? $this->fecha_gracia_fin->isFuture() : false;
         }
 
         if ($this->fecha_fin === null) {

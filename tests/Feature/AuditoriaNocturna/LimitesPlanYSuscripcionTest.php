@@ -100,7 +100,6 @@ class LimitesPlanYSuscripcionTest extends TestCase
         $this->assertEquals(1, Sucursal::withoutGlobalScopes()->where('empresa_id', $this->empresa->id)->count());
     }
 
-    #[Group('known-bugs')]
     public function test_bug_007_user_controller_store_no_valida_limite_usuarios_del_plan(): void
     {
         Suscripcion::withoutGlobalScopes()->create([
@@ -136,16 +135,10 @@ class LimitesPlanYSuscripcionTest extends TestCase
             'estado' => EstadoGeneral::ACTIVO->value,
         ]);
 
-        if (User::withoutGlobalScopes()->where('email', 'cajero2@limite.co')->exists()) {
-            $this->markTestSkipped(
-                'BUG-007 (Severidad Alta): UserController@store no invoca $empresa->puedeCrearUsuario(), permitiendo superar limite_usuarios del plan.'
-            );
-        }
-
-        $response->assertSessionHasErrors();
+        $this->assertFalse(User::withoutGlobalScopes()->where('email', 'cajero2@limite.co')->exists());
+        $response->assertSessionHasErrors('general');
     }
 
-    #[Group('known-bugs')]
     public function test_bug_008_suscripcion_vencida_o_suspendida_desactiva_limites_y_no_bloquea_escritura(): void
     {
         Suscripcion::withoutGlobalScopes()->create([
@@ -158,13 +151,7 @@ class LimitesPlanYSuscripcionTest extends TestCase
             'precio_pago' => 49900,
         ]);
 
-        // Al estar VENCIDA, suscripcionActual() devuelve null y puedeCrearSucursal() retorna true por fallback
-        if ($this->empresa->puedeCrearSucursal() === true) {
-            $this->markTestSkipped(
-                'BUG-008 (Severidad Alta): Cuando la suscripción pasa a VENCIDA/SUSPENDIDA o fecha_fin expira, suscripcionActual() retorna null y puedeCrearSucursal()/puedeCrearUsuario() hacen fallback a true (ilimitado), además de no existir middleware que restrinja operaciones de escritura.'
-            );
-        }
-
         $this->assertFalse($this->empresa->puedeCrearSucursal());
+        $this->assertFalse($this->empresa->puedeCrearUsuario());
     }
 }

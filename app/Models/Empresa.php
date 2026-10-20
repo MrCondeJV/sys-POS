@@ -91,13 +91,27 @@ class Empresa extends Model
     }
 
     /**
+     * Historial de intentos y transacciones de pago Wompi.
+     */
+    public function pagosSuscripcion(): HasMany
+    {
+        return $this->hasMany(PagoSuscripcion::class, 'empresa_id');
+    }
+
+    /**
      * Suscripción vigente actual de la empresa.
      */
     public function suscripcionActual(): HasOne
     {
         return $this->hasOne(Suscripcion::class, 'empresa_id')
-            ->whereIn('estado', [\App\Enums\EstadoSuscripcion::ACTIVA->value, \App\Enums\EstadoSuscripcion::PRUEBA->value])
             ->latestOfMany();
+    }
+
+    public function suscripcionEstaOperativa(): bool
+    {
+        $suscripcion = $this->suscripcionActual;
+
+        return $suscripcion ? $suscripcion->isVigente() : true;
     }
 
     /**
@@ -113,6 +127,10 @@ class Empresa extends Model
      */
     public function puedeCrearSucursal(): bool
     {
+        if (! $this->suscripcionEstaOperativa()) {
+            return false;
+        }
+
         $plan = $this->obtenerPlan();
         if (! $plan) {
             return true; // Si no hay plan asignado expresamente, permitir por defecto
@@ -132,6 +150,10 @@ class Empresa extends Model
      */
     public function puedeCrearUsuario(): bool
     {
+        if (! $this->suscripcionEstaOperativa()) {
+            return false;
+        }
+
         $plan = $this->obtenerPlan();
         if (! $plan) {
             return true;

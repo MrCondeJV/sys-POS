@@ -30,6 +30,19 @@ class SetCompanyContext
                 ]);
             }
 
+            if (! $user->isSuperAdmin() && $user->empresa_id) {
+                $empresaTenant = Empresa::withoutGlobalScopes()->find($user->empresa_id);
+                if (! $empresaTenant || ! $empresaTenant->isActiva()) {
+                    auth()->logout();
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
+
+                    return redirect()->route('login')->withErrors([
+                        'email' => 'La empresa asociada a tu cuenta se encuentra suspendida. Contacta al administrador de plataforma.',
+                    ]);
+                }
+            }
+
             if ($user->isSuperAdmin()) {
                 // Super Admin: resolver tenant activo únicamente si ha entrado explícitamente a un negocio
                 $sessionEmpresaId = session('superadmin_empresa_id');

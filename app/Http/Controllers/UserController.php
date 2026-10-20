@@ -148,9 +148,16 @@ class UserController extends Controller
             ? (int) $request->empresa_id
             : CompanyContext::getId();
 
+        $empresa = $empresaId ? Empresa::find($empresaId) : null;
+        if ($empresa && $request->input('rol') !== RolSistema::SUPER_ADMIN->value && ! $empresa->puedeCrearUsuario()) {
+            return back()->withErrors([
+                'general' => 'Has alcanzado el límite máximo de usuarios permitidos en tu plan actual. Mejora tu suscripción para continuar.',
+            ])->withInput();
+        }
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:150'],
-            'email' => ['required', 'email', 'max:100', Rule::unique('users', 'email')->whereNull('deleted_at')],
+            'email' => ['required', 'email', 'max:100', Rule::unique('users', 'email')],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'sucursal_id' => ['nullable', 'exists:sucursales,id'],
             'cargo' => ['nullable', 'string', 'max:100'],
@@ -228,7 +235,7 @@ class UserController extends Controller
 
         $rules = [
             'name' => ['required', 'string', 'max:150'],
-            'email' => ['required', 'email', 'max:100', Rule::unique('users', 'email')->ignore($usuario->id)->whereNull('deleted_at')],
+            'email' => ['required', 'email', 'max:100', Rule::unique('users', 'email')->ignore($usuario->id)],
             'sucursal_id' => ['nullable', 'exists:sucursales,id'],
             'cargo' => ['nullable', 'string', 'max:100'],
             'telefono' => ['nullable', 'string', 'max:50'],

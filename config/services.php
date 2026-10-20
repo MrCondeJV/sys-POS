@@ -35,4 +35,14 @@ return [
         ],
     ],
 
+    'wompi' => [
+        'env' => env('WOMPI_ENV', 'sandbox'),
+        'base_url' => env('WOMPI_BASE_URL', 'https://sandbox.wompi.co/v1'),
+        'public_key' => env('WOMPI_PUBLIC_KEY', 'pub_test_dummy'),
+        'private_key' => env('WOMPI_PRIVATE_KEY', 'prv_test_dummy'),
+        'integrity_secret' => env('WOMPI_INTEGRITY_SECRET', 'test_integrity_dummy'),
+        'events_secret' => env('WOMPI_EVENTS_SECRET', 'test_events_dummy'),
+        'dias_gracia' => (int) env('WOMPI_DIAS_GRACIA', 5),
+    ],
+
 ];

@@ -20,6 +20,14 @@ class SucursalPolicy
     }
 
     /**
+     * Determina si el usuario puede listar las sucursales.
+     */
+    public function viewAny(User $user): bool
+    {
+        return $user->isAdminEmpresa() || $user->can('sucursales.gestionar');
+    }
+
+    /**
      * Determina si el usuario puede ver la sucursal.
      */
     public function view(User $user, Sucursal $sucursal): bool

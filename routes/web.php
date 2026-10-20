@@ -24,8 +24,10 @@ use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\ResolucionFacturacionController;
 use App\Http\Controllers\SucursalController;
+use App\Http\Controllers\SuscripcionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VentaController;
+use App\Http\Controllers\WompiWebhookController;
 use Illuminate\Support\Facades\Route;
 
 // Redirección de la raíz hacia el login o dashboard
@@ -38,6 +40,9 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
 });
+
+// Webhook Wompi Colombia (exento de CSRF y público)
+Route::post('/webhooks/wompi', [WompiWebhookController::class, 'handle'])->name('webhooks.wompi');
 
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
 
@@ -80,7 +85,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/sucursales/seleccionar', [SucursalController::class, 'seleccionar'])->name('sucursales.seleccionar');
 
     // Fase 4: Catálogo de Productos y Clasificación
-    Route::resource('productos', ProductoController::class);
+    Route::resource('productos', ProductoController::class)->except(['show']);
 
     Route::prefix('catalogos')->name('catalogos.')->group(function () {
         Route::get('/', [CatalogoController::class, 'index'])->name('index');
@@ -114,7 +119,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/compras/{compra}/anular', [CompraController::class, 'anular'])->name('compras.anular');
 
     // Fase 7: Clientes y Consumidor Final
-    Route::resource('clientes', ClienteController::class);
+    Route::resource('clientes', ClienteController::class)->except(['show']);
 
     // Fase 8: Crédito y Cartera
     Route::prefix('cartera')->name('cartera.')->group(function () {
@@ -253,6 +258,13 @@ Route::middleware(['auth'])->group(function () {
 
     // FASE 27: PWA y Sincronización Offline POS
     Route::post('pos/sync-offline', [\App\Http\Controllers\PosOfflineSyncController::class, 'sync'])->name('pos.sync-offline');
+
+    // Suscripciones SaaS y Pagos Wompi Colombia
+    Route::prefix('suscripcion')->name('suscripcion.')->group(function () {
+        Route::get('/', [SuscripcionController::class, 'index'])->name('index');
+        Route::get('/checkout/{plan}', [SuscripcionController::class, 'checkout'])->name('checkout');
+        Route::get('/retorno', [SuscripcionController::class, 'retorno'])->name('retorno');
+    });
 
 });
 
