@@ -167,9 +167,9 @@
                     <!-- Sucursal Receptora -->
                     <div>
                         <label class="label-base">
-                            Sede de Recepción <span class="text-red-500">*</span>
+                            Sede de Recepción <span class="text-danger-text">*</span>
                         </label>
-                        <select name="sucursal_id" required class="input-select">
+                        <select name="sucursal_id" required class="input">
                             <option value="">Seleccionar Sede</option>
                             @foreach($sucursales as $s)
                                 <option value="{{ $s->id }}" {{ (old('sucursal_id', \App\Support\Tenancy\BranchContext::getId()) == $s->id) ? 'selected' : '' }}>
@@ -178,16 +178,16 @@
                             @endforeach
                         </select>
                         @error('sucursal_id')
-                            <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+                            <p class="text-xs text-danger-text mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Proveedor Emisor -->
                     <div>
                         <label class="label-base">
-                            Proveedor <span class="text-red-500">*</span>
+                            Proveedor <span class="text-danger-text">*</span>
                         </label>
-                        <select name="proveedor_id" required class="input-select">
+                        <select name="proveedor_id" required class="input">
                             <option value="">Seleccionar Proveedor</option>
                             @foreach($proveedores as $p)
                                 <option value="{{ $p->id }}" {{ old('proveedor_id') == $p->id ? 'selected' : '' }}>
@@ -196,42 +196,42 @@
                             @endforeach
                         </select>
                         @error('proveedor_id')
-                            <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+                            <p class="text-xs text-danger-text mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Número de Factura -->
                     <div>
                         <label class="label-base">
-                            Número de Factura <span class="text-red-500">*</span>
+                            Número de Factura <span class="text-danger-text">*</span>
                         </label>
                         <input type="text" name="numero_factura" value="{{ old('numero_factura') }}" required
                             placeholder="Ej: FE-10492"
-                            class="input-base font-mono">
+                            class="input font-mono">
                         @error('numero_factura')
-                            <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+                            <p class="text-xs text-danger-text mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Fecha de Emisión -->
                     <div>
                         <label class="label-base">
-                            Fecha de Emisión <span class="text-red-500">*</span>
+                            Fecha de Emisión <span class="text-danger-text">*</span>
                         </label>
                         <input type="date" name="fecha_emision" value="{{ old('fecha_emision', date('Y-m-d')) }}" required
                             max="{{ date('Y-m-d') }}"
-                            class="input-base">
+                            class="input">
                         @error('fecha_emision')
-                            <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+                            <p class="text-xs text-danger-text mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Forma de Pago -->
                     <div>
                         <label class="label-base">
-                            Forma de Pago <span class="text-red-500">*</span>
+                            Forma de Pago <span class="text-danger-text">*</span>
                         </label>
-                        <select name="tipo_pago" required class="input-select">
+                        <select name="tipo_pago" required class="input">
                             <option value="CONTADO" {{ old('tipo_pago') === 'CONTADO' ? 'selected' : '' }}>Contado</option>
                             <option value="CREDITO" {{ old('tipo_pago') === 'CREDITO' ? 'selected' : '' }}>Crédito Comercial</option>
                         </select>
@@ -244,7 +244,7 @@
                         </label>
                         <input type="number" name="descuento" x-model.number="descuento" min="0" step="0.01"
                             placeholder="0.00"
-                            class="input-base font-mono">
+                            class="input font-mono">
                     </div>
 
                     <!-- Observaciones -->
@@ -254,7 +254,7 @@
                         </label>
                         <input type="text" name="observaciones" value="{{ old('observaciones') }}"
                             placeholder="Opcional: Términos de entrega, guía de transporte..."
-                            class="input-base">
+                            class="input">
                     </div>
                 </div>
             </div>
@@ -279,7 +279,7 @@
 
                 <!-- Tabla de Artículos Desktop -->
                 <div class="hidden md:block overflow-visible">
-                    <table class="table-corporate">
+                    <table class="table">
                         <thead>
                             <tr>
                                 <th class="w-5/12">Artículo</th>
@@ -338,7 +338,7 @@
                                                         if (list.length > 0) setLineProduct(idx, list[0]);
                                                     "
                                                     placeholder="Buscar por nombre, SKU o código..."
-                                                    class="input-base pl-9 text-xs">
+                                                    class="input pl-9 text-xs">
                                             </div>
 
                                             <!-- Dropdown flotante -->
@@ -386,21 +386,21 @@
                                     <td>
                                         <input type="number" :name="'items[' + idx + '][cantidad]'"
                                             x-model.number="item.cantidad" min="0.01" step="any" required
-                                            class="input-base text-right font-mono text-xs tabular-nums">
+                                            class="input text-right font-mono text-xs tabular-nums">
                                     </td>
 
                                     <!-- Costo Unitario -->
                                     <td>
                                         <input type="number" :name="'items[' + idx + '][costo_unitario]'"
                                             x-model.number="item.costo_unitario" min="0" step="0.01" required
-                                            class="input-base text-right font-mono text-xs tabular-nums">
+                                            class="input text-right font-mono text-xs tabular-nums">
                                     </td>
 
                                     <!-- % IVA -->
                                     <td>
                                         <select :name="'items[' + idx + '][porcentaje_iva]'"
                                             x-model.number="item.porcentaje_iva"
-                                            class="input-select text-right font-mono text-xs">
+                                            class="input text-right font-mono text-xs">
                                             <option value="0">0%</option>
                                             <option value="5">5%</option>
                                             <option value="19">19%</option>
@@ -418,7 +418,7 @@
                                     <!-- Eliminar Fila -->
                                     <td class="text-center">
                                         <button type="button" @click="removeItem(idx)"
-                                            class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition"
+                                            class="p-1 text-slate-400 hover:text-danger-text hover:bg-danger-bg rounded transition"
                                             title="Eliminar fila">
                                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -449,7 +449,7 @@
                             <div class="flex items-center justify-between">
                                 <span class="text-xs font-semibold text-slate-600" x-text="'Línea #' + (idx + 1)"></span>
                                 <button type="button" @click="removeItem(idx)"
-                                    class="text-xs font-semibold text-red-600 hover:text-red-800">
+                                    class="text-xs font-semibold text-danger-text hover:opacity-80">
                                     Quitar
                                 </button>
                             </div>
@@ -481,7 +481,7 @@
                                 <div x-show="!item.producto_id" class="relative" @click.away="item.dropdownOpen = false">
                                     <input type="text" x-model="item.searchQuery" @focus="item.dropdownOpen = true"
                                         @input="item.dropdownOpen = true" placeholder="Buscar artículo..."
-                                        class="input-base text-xs">
+                                        class="input text-xs">
                                     <div x-cloak x-show="item.dropdownOpen && !item.producto_id"
                                         class="absolute left-0 right-0 z-30 mt-1 bg-white rounded-lg shadow-lg border border-slate-200 max-h-48 overflow-y-auto">
                                         <template x-for="p in getFilteredRowProducts(item.searchQuery, idx)"
@@ -511,13 +511,13 @@
                                     <label class="label-base">Cantidad</label>
                                     <input type="number" :name="'items[' + idx + '][cantidad]'"
                                         x-model.number="item.cantidad" min="0.01" step="any" required
-                                        class="input-base text-right font-mono text-xs tabular-nums">
+                                        class="input text-right font-mono text-xs tabular-nums">
                                 </div>
                                 <div>
                                     <label class="label-base">Costo Unitario</label>
                                     <input type="number" :name="'items[' + idx + '][costo_unitario]'"
                                         x-model.number="item.costo_unitario" min="0" step="0.01" required
-                                        class="input-base text-right font-mono text-xs tabular-nums">
+                                        class="input text-right font-mono text-xs tabular-nums">
                                 </div>
                             </div>
 
@@ -526,7 +526,7 @@
                                     <label class="label-base">% IVA</label>
                                     <select :name="'items[' + idx + '][porcentaje_iva]'"
                                         x-model.number="item.porcentaje_iva"
-                                        class="input-select text-right font-mono text-xs">
+                                        class="input text-right font-mono text-xs">
                                         <option value="0">0%</option>
                                         <option value="5">5%</option>
                                         <option value="19">19%</option>
@@ -582,7 +582,7 @@
                             <span>Impuestos (IVA):</span>
                             <span class="font-mono font-semibold text-slate-800 tabular-nums" x-text="formatMoney(totalIva())"></span>
                         </div>
-                        <div class="flex justify-between text-amber-700">
+                        <div class="flex justify-between text-warning-text">
                             <span>Descuento Aplicado:</span>
                             <span class="font-mono font-semibold tabular-nums" x-text="'-' + formatMoney(descuento)"></span>
                         </div>

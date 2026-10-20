@@ -10,9 +10,9 @@
             margin: 8mm 10mm;
         }
         body {
-            background-color: #ffffff !important;
-            background: #ffffff !important;
-            color: #0f172a !important;
+            background-color: var(--color-surface) !important;
+            background: var(--color-surface) !important;
+            color: var(--color-text-primary) !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
         }
@@ -127,7 +127,7 @@
         </div>
 
         <div class="overflow-x-auto">
-            <table class="table-corporate">
+            <table class="table">
                 <thead>
                     <tr>
                         <th class="w-10">#</th>
@@ -186,7 +186,7 @@
                     <span class="font-mono font-semibold text-slate-900 tabular-nums">${{ number_format($compra->impuestos, 2) }}</span>
                 </div>
                 @if($compra->descuento > 0)
-                <div class="flex justify-between text-amber-700">
+                <div class="flex justify-between text-warning-text">
                     <span>Descuento Comercial:</span>
                     <span class="font-mono font-semibold tabular-nums">-${{ number_format($compra->descuento, 2) }}</span>
                 </div>
@@ -226,7 +226,7 @@
                     @csrf
 
                     <div class="p-6 space-y-4">
-                        <div class="w-10 h-10 rounded-lg bg-red-50 text-red-600 flex items-center justify-center mx-auto border border-red-200">
+                        <div class="w-10 h-10 rounded-lg bg-danger-bg text-danger-text flex items-center justify-center mx-auto border border-danger-border">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>
@@ -241,11 +241,11 @@
 
                         <div>
                             <label class="label-base">
-                                Motivo de la Anulación <span class="text-red-500">*</span>
+                                Motivo de la Anulación <span class="text-danger-text">*</span>
                             </label>
                             <textarea name="motivo" x-model="motivo" rows="3" required
                                 placeholder="Indica la razón: error de digitación, devolución de mercancía por garantía, etc."
-                                class="input-base"></textarea>
+                                class="input"></textarea>
                         </div>
                     </div>
 
@@ -316,7 +316,7 @@
                 </div>
                 <div class="flex justify-between items-center pt-1 border-t border-slate-200">
                     <span class="font-semibold text-slate-600">Estado:</span>
-                    <span class="px-1.5 py-0.5 rounded font-bold text-[9px] uppercase tracking-wider {{ $compra->isRegistrada() ? 'bg-emerald-100 text-emerald-900' : 'bg-red-100 text-red-900' }}">
+                    <span class="px-1.5 py-0.5 rounded font-bold text-[9px] uppercase tracking-wider {{ $compra->isRegistrada() ? 'bg-success-bg text-success-text' : 'bg-danger-bg text-danger-text' }}">
                         {{ $compra->estado->value }}
                     </span>
                 </div>
@@ -440,8 +440,8 @@
                     </tr>
                     @if($compra->descuento > 0)
                     <tr>
-                        <td class="py-1 px-2 font-semibold text-amber-700 bg-slate-50">Descuento Comercial:</td>
-                        <td class="py-1 px-2 text-right font-mono font-bold text-amber-700">-${{ number_format($compra->descuento, 2) }}</td>
+                        <td class="py-1 px-2 font-semibold text-warning-text bg-slate-50">Descuento Comercial:</td>
+                        <td class="py-1 px-2 text-right font-mono font-bold text-warning-text">-${{ number_format($compra->descuento, 2) }}</td>
                     </tr>
                     @endif
                     <tr class="bg-slate-800 text-white font-bold">

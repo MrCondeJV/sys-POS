@@ -8,6 +8,7 @@
     editMode: false,
     modalTitle: 'Nuevo Proveedor',
     formAction: '{{ route('proveedores.store') }}',
+    updateUrlTemplate: '{{ route('proveedores.update', '__PROVEEDOR__') }}',
     proveedor: {
         id: null,
         razon_social: '',
@@ -43,7 +44,7 @@
     openEditModal(item) {
         this.editMode = true;
         this.modalTitle = 'Editar Proveedor: ' + item.razon_social;
-        this.formAction = '/proveedores/' + item.id;
+        this.formAction = this.updateUrlTemplate.replace('__PROVEEDOR__', item.id);
         this.proveedor = {
             id: item.id,
             razon_social: item.razon_social || '',
@@ -127,11 +128,11 @@
                 </div>
                 <input type="text" name="buscar" value="{{ $term }}"
                     placeholder="Buscar por razón social, NIT/documento, contacto, email..."
-                    class="input-base pl-9">
+                    class="input pl-9">
             </div>
 
             <div class="w-full md:w-48">
-                <select name="estado" onchange="this.form.submit()" class="input-select">
+                <select name="estado" onchange="this.form.submit()" class="input">
                     <option value="">Todos los Estados</option>
                     <option value="ACTIVO" {{ $estado === 'ACTIVO' ? 'selected' : '' }}>Solo Activos</option>
                     <option value="INACTIVO" {{ $estado === 'INACTIVO' ? 'selected' : '' }}>Solo Inactivos</option>
@@ -155,7 +156,7 @@
     <div class="card p-0 overflow-hidden">
         <!-- Vista Desktop -->
         <div class="hidden lg:block overflow-x-auto">
-            <table class="table-corporate">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Identificación</th>
@@ -231,19 +232,26 @@
                                     </svg>
                                 </button>
 
-                                <form action="{{ route('proveedores.destroy', $p) }}" method="POST"
-                                    onsubmit="return confirm('¿Estás seguro de eliminar este proveedor? Sus registros de compras anteriores se preservarán para auditoría.');"
-                                    class="inline-block">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                        class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition"
-                                        title="Eliminar proveedor">
-                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
-                                </form>
+                                <x-modal-confirm
+                                    name="delete-proveedor-{{ $p->id }}"
+                                    title="Eliminar proveedor {{ $p->razon_social }}"
+                                    message="¿Estás seguro de que deseas eliminar este proveedor del catálogo?"
+                                    consequence="Se aplicará eliminación lógica (soft delete). Las facturas de compra anteriores registradas con este proveedor se conservarán intactas para auditoría."
+                                    confirmText="Eliminar proveedor"
+                                    variant="danger"
+                                    :action="route('proveedores.destroy', $p)"
+                                    method="DELETE"
+                                >
+                                    <x-slot:trigger>
+                                        <button type="button"
+                                            class="p-1.5 text-slate-400 hover:text-danger-text hover:bg-danger-bg rounded transition"
+                                            title="Eliminar proveedor">
+                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </x-slot:trigger>
+                                </x-modal-confirm>
                             </div>
                         </td>
                     </tr>
@@ -314,14 +322,10 @@
                             class="text-xs font-semibold text-brand-600 hover:text-brand-800">
                             Editar
                         </button>
-                        <form action="{{ route('proveedores.destroy', $p) }}" method="POST"
-                            onsubmit="return confirm('¿Eliminar proveedor?');" class="inline-block">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-xs font-semibold text-red-600 hover:text-red-800">
-                                Eliminar
-                            </button>
-                        </form>
+                        <button type="button" @click="$dispatch('open-modal-delete-proveedor-{{ $p->id }}', { triggerEl: $el })"
+                            class="text-xs font-semibold text-danger-text hover:opacity-80">
+                            Eliminar
+                        </button>
                     </div>
                 </div>
             </div>
@@ -384,19 +388,19 @@
                             <!-- Razón Social -->
                             <div class="sm:col-span-2">
                                 <label class="label-base">
-                                    Razón Social / Nombre Comercial <span class="text-red-500">*</span>
+                                    Razón Social / Nombre Comercial <span class="text-danger-text">*</span>
                                 </label>
                                 <input type="text" name="razon_social" x-model="proveedor.razon_social" required
                                     placeholder="Ej: Distribuciones Andinas S.A.S."
-                                    class="input-base">
+                                    class="input">
                             </div>
 
                             <!-- Tipo Documento -->
                             <div>
                                 <label class="label-base">
-                                    Tipo de Documento <span class="text-red-500">*</span>
+                                    Tipo de Documento <span class="text-danger-text">*</span>
                                 </label>
-                                <select name="tipo_documento" x-model="proveedor.tipo_documento" required class="input-select">
+                                <select name="tipo_documento" x-model="proveedor.tipo_documento" required class="input">
                                     <option value="NIT">NIT - Número de Identificación Tributaria</option>
                                     <option value="CC">CC - Cédula de Ciudadanía</option>
                                     <option value="CE">CE - Cédula de Extranjería</option>
@@ -408,11 +412,11 @@
                             <!-- Número Documento -->
                             <div>
                                 <label class="label-base">
-                                    Número de Documento / NIT <span class="text-red-500">*</span>
+                                    Número de Documento / NIT <span class="text-danger-text">*</span>
                                 </label>
                                 <input type="text" name="numero_documento" x-model="proveedor.numero_documento" required
                                     placeholder="Ej: 901234567-8"
-                                    class="input-base font-mono">
+                                    class="input font-mono">
                             </div>
 
                             <!-- Nombre Contacto -->
@@ -422,7 +426,7 @@
                                 </label>
                                 <input type="text" name="nombre_contacto" x-model="proveedor.nombre_contacto"
                                     placeholder="Ej: Carlos Gómez"
-                                    class="input-base">
+                                    class="input">
                             </div>
 
                             <!-- Teléfono -->
@@ -432,7 +436,7 @@
                                 </label>
                                 <input type="text" name="telefono" x-model="proveedor.telefono"
                                     placeholder="Ej: +57 300 123 4567"
-                                    class="input-base font-mono">
+                                    class="input font-mono">
                             </div>
 
                             <!-- Email -->
@@ -442,7 +446,7 @@
                                 </label>
                                 <input type="email" name="email" x-model="proveedor.email"
                                     placeholder="Ej: ventas@proveedor.com"
-                                    class="input-base">
+                                    class="input">
                             </div>
 
                             <!-- Dirección -->
@@ -452,7 +456,7 @@
                                 </label>
                                 <input type="text" name="direccion" x-model="proveedor.direccion"
                                     placeholder="Ej: Calle 45 # 12-34 Bodega 3"
-                                    class="input-base">
+                                    class="input">
                             </div>
 
                             <!-- Ciudad -->
@@ -462,7 +466,7 @@
                                 </label>
                                 <input type="text" name="ciudad" x-model="proveedor.ciudad"
                                     placeholder="Ej: Bogotá"
-                                    class="input-base">
+                                    class="input">
                             </div>
 
                             <!-- Departamento -->
@@ -472,15 +476,15 @@
                                 </label>
                                 <input type="text" name="departamento" x-model="proveedor.departamento"
                                     placeholder="Ej: Cundinamarca"
-                                    class="input-base">
+                                    class="input">
                             </div>
 
                             <!-- Estado -->
                             <div class="sm:col-span-2">
                                 <label class="label-base">
-                                    Estado Operativo <span class="text-red-500">*</span>
+                                    Estado Operativo <span class="text-danger-text">*</span>
                                 </label>
-                                <select name="estado" x-model="proveedor.estado" required class="input-select">
+                                <select name="estado" x-model="proveedor.estado" required class="input">
                                     <option value="ACTIVO">ACTIVO (Habilitado para emitir compras)</option>
                                     <option value="INACTIVO">INACTIVO (Suspendido temporalmente)</option>
                                 </select>

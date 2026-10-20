@@ -71,12 +71,12 @@
                 </div>
                 <input type="text" name="buscar" value="{{ $term }}"
                     placeholder="Factura # o razón social..."
-                    class="input-base pl-9">
+                    class="input pl-9">
             </div>
 
             <!-- Filtro Sucursal -->
             <div>
-                <select name="sucursal_id" class="input-select">
+                <select name="sucursal_id" class="input">
                     <option value="">Todas las Sedes</option>
                     @foreach($sucursales as $s)
                         <option value="{{ $s->id }}" {{ $sucursalId == $s->id ? 'selected' : '' }}>
@@ -88,7 +88,7 @@
 
             <!-- Filtro Proveedor -->
             <div>
-                <select name="proveedor_id" class="input-select">
+                <select name="proveedor_id" class="input">
                     <option value="">Todos los Proveedores</option>
                     @foreach($proveedores as $p)
                         <option value="{{ $p->id }}" {{ $proveedorId == $p->id ? 'selected' : '' }}>
@@ -100,7 +100,7 @@
 
             <!-- Filtro Estado -->
             <div>
-                <select name="estado" class="input-select">
+                <select name="estado" class="input">
                     <option value="">Cualquier Estado</option>
                     <option value="REGISTRADA" {{ $estado === 'REGISTRADA' ? 'selected' : '' }}>Registradas</option>
                     <option value="ANULADA" {{ $estado === 'ANULADA' ? 'selected' : '' }}>Anuladas</option>
@@ -125,7 +125,7 @@
     <div class="card p-0 overflow-hidden">
         <!-- Vista Desktop -->
         <div class="hidden lg:block overflow-x-auto">
-            <table class="table-corporate">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Fecha</th>
