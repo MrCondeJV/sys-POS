@@ -14,23 +14,23 @@ x-init="initTerminal()"
 @keydown.window="handleHotkeys($event)"
 class="max-w-[1720px] mx-auto pb-10">
 
-    <!-- Header Terminal POS -->
-    <div class="card p-4 sm:p-5 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div class="flex items-center gap-3.5">
-            <div class="h-11 w-11 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold shadow-sm">
-                <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <!-- Header Terminal POS Compacto -->
+    <div class="card px-4 py-2.5 mb-4 min-h-14 flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+            <div class="h-9 w-9 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold shadow-xs">
+                <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
             </div>
             <div>
                 <div class="flex items-center gap-2">
-                    <h1 class="text-lg font-bold text-slate-900 tracking-tight">Terminal de Venta</h1>
+                    <h1 class="text-base font-bold text-slate-900 tracking-tight">Terminal de Venta</h1>
                     <span class="badge badge-success">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
                         Caja Abierta
                     </span>
                 </div>
-                <div class="text-xs text-slate-500 flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5">
+                <div class="text-xs text-slate-500 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 mt-0.5">
                     <span><strong>Caja:</strong> {{ $sesionCaja->caja->nombre }} ({{ $sesionCaja->caja->codigo }})</span>
                     <span>&bull;</span>
                     <span><strong>Sucursal:</strong> {{ $sesionCaja->sucursal?->nombre ?? 'Sin sucursal' }}</span>
@@ -40,24 +40,24 @@ class="max-w-[1720px] mx-auto pb-10">
             </div>
         </div>
 
-        <div class="flex items-center gap-2.5 text-xs">
-            <div class="hidden lg:flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg text-slate-600">
-                <span class="font-semibold text-slate-700">Teclas rápidas:</span>
-                <span class="bg-white border border-slate-200 px-1.5 py-0.5 rounded shadow-xs font-mono font-bold text-slate-800">F2</span> Buscar
-                <span class="bg-white border border-slate-200 px-1.5 py-0.5 rounded shadow-xs font-mono font-bold text-slate-800">F4</span> Cobrar
-                <span class="bg-white border border-slate-200 px-1.5 py-0.5 rounded shadow-xs font-mono font-bold text-slate-800">F8</span> Cancelar
+        <div class="flex items-center gap-2 text-xs">
+            <div class="hidden lg:flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1 rounded-lg text-slate-600">
+                <span class="font-semibold text-slate-700">Atajos:</span>
+                <span class="kbd">F2</span> Buscar
+                <span class="kbd">F4</span> Cobrar
+                <span class="kbd">F8</span> Cancelar
             </div>
             <a href="{{ route('cajas.show', $sesionCaja->caja) }}" class="btn-secondary text-xs">
                 Ver Caja
             </a>
-            <a href="{{ route('cajas.cierre', $sesionCaja->caja) }}" class="inline-flex items-center px-3.5 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs shadow-sm transition">
+            <a href="{{ route('cajas.cierre', $sesionCaja->caja) }}" class="btn-secondary text-xs">
                 Cerrar Turno
             </a>
         </div>
     </div>
 
     <!-- Main Grid: Catalog / Search (Left) & Cart / Checkout (Right) -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
 
         <!-- Columna Izquierda: Búsqueda y Catálogo (7 cols) -->
         <div class="lg:col-span-7 space-y-4">
@@ -75,14 +75,15 @@ class="max-w-[1720px] mx-auto pb-10">
                            x-model="searchQuery"
                            @keydown.enter.prevent="onSearchEnter()"
                            placeholder="Escanear código de barras o buscar por nombre / SKU (F2)..."
-                           class="input-base pl-11 pr-24 py-3 text-sm">
-                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center gap-1">
+                           class="input h-11 pl-11 pr-28 text-sm">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center gap-1.5">
                         <template x-if="searchQuery">
                             <button @click="searchQuery = ''; focusSearch()" class="p-1 text-slate-400 hover:text-slate-600">
                                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                         </template>
-                        <span class="bg-slate-100 text-slate-600 font-mono text-[11px] px-1.5 py-0.5 rounded border border-slate-200">F2</span>
+                        <span class="kbd">F2</span>
+                        <span class="kbd">Enter</span>
                     </div>
                 </div>
 
@@ -90,14 +91,14 @@ class="max-w-[1720px] mx-auto pb-10">
                 <div class="flex items-center gap-1.5 overflow-x-auto pt-3 mt-3 border-t border-slate-100 no-scrollbar">
                     <button type="button"
                             @click="selectedCategory = null"
-                            :class="selectedCategory === null ? 'bg-slate-900 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                            :class="selectedCategory === null ? 'bg-slate-900 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
                             class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition">
                         Todos
                     </button>
                     @foreach($categorias as $cat)
                         <button type="button"
                                 @click="selectedCategory = {{ $cat->id }}"
-                                :class="selectedCategory === {{ $cat->id }} ? 'bg-slate-900 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                                :class="selectedCategory === {{ $cat->id }} ? 'bg-slate-900 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
                                 class="px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition">
                             {{ $cat->nombre }}
                         </button>
@@ -117,10 +118,11 @@ class="max-w-[1720px] mx-auto pb-10">
                 <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 max-h-[580px] overflow-y-auto pr-1">
                     <template x-for="p in filteredProducts" :key="p.id">
                         <div @click="addToCart(p)"
-                             class="group p-3 rounded-lg border border-slate-200 hover:border-brand-500 hover:shadow-md transition-all duration-150 cursor-pointer flex flex-col justify-between bg-white relative overflow-hidden">
+                             :class="p.stock <= 0 ? 'opacity-60 border-slate-200 bg-slate-50/60' : 'border-slate-200 hover:border-brand-400 hover:bg-brand-50/20 bg-white'"
+                             class="group p-3 rounded-lg border transition-all duration-150 cursor-pointer flex flex-col justify-between relative overflow-hidden">
                             
-                            <!-- Contenedor de Imagen de Producto con Badges flotantes -->
-                            <div class="relative w-full h-28 sm:h-32 mb-2 rounded-md overflow-hidden bg-slate-100 border border-slate-200/60 flex items-center justify-center flex-shrink-0">
+                            <!-- Contenedor de Imagen o Icono de Categoría de Producto -->
+                            <div class="relative w-full h-24 mb-2 rounded-md overflow-hidden bg-surface-muted border border-slate-200/60 flex items-center justify-center flex-shrink-0">
                                 <!-- Si tiene imagen -->
                                 <template x-if="p.imagen_url">
                                     <img :src="p.imagen_url" 
@@ -128,13 +130,12 @@ class="max-w-[1720px] mx-auto pb-10">
                                          loading="lazy"
                                          class="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-200">
                                 </template>
-                                <!-- Si no tiene imagen -->
+                                <!-- Si no tiene imagen: ícono limpio de producto sin texto gigante 'Sin foto' -->
                                 <template x-if="!p.imagen_url">
-                                    <div class="h-full w-full flex flex-col items-center justify-center bg-slate-50 text-slate-400">
-                                        <svg class="h-7 w-7 mb-0.5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    <div class="h-full w-full flex items-center justify-center bg-surface-muted text-slate-400">
+                                        <svg class="h-8 w-8 opacity-75" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                         </svg>
-                                        <span class="text-[9px] font-semibold text-slate-400 uppercase tracking-wider">Sin foto</span>
                                     </div>
                                 </template>
 
@@ -143,8 +144,8 @@ class="max-w-[1720px] mx-auto pb-10">
                                       x-text="p.categoria_nombre"></span>
 
                                 <!-- Badge de Stock (flotante superior derecha) -->
-                                <span :class="p.stock > 5 ? 'bg-emerald-600 text-white' : (p.stock > 0 ? 'bg-amber-600 text-white' : 'bg-rose-600 text-white')"
-                                      class="absolute top-1.5 right-1.5 text-[10px] font-bold font-mono px-1.5 py-0.5 rounded shadow-xs">
+                                <span :class="p.stock > 5 ? 'badge-success' : (p.stock > 0 ? 'badge-warning' : 'badge-danger')"
+                                      class="badge absolute top-1.5 right-1.5 text-[10px] font-bold font-mono px-1.5 py-0.5 shadow-xs">
                                     <span x-text="p.stock"></span> <span x-text="p.unidad"></span>
                                 </span>
                             </div>
@@ -157,7 +158,7 @@ class="max-w-[1720px] mx-auto pb-10">
 
                             <!-- Price -->
                             <div class="flex items-center justify-between pt-2 border-t border-slate-100 mt-auto">
-                                <span class="text-xs sm:text-sm font-bold font-mono tabular-nums text-slate-900">
+                                <span class="text-sm sm:text-base font-bold font-mono tabular-nums text-slate-900">
                                     $<span x-text="formatCurrency(p.precio_venta)"></span>
                                 </span>
                                 <div class="h-6 w-6 rounded-md bg-slate-100 group-hover:bg-brand-600 group-hover:text-white text-slate-600 flex items-center justify-center transition shadow-xs">
@@ -194,7 +195,7 @@ class="max-w-[1720px] mx-auto pb-10">
                         </template>
                     </div>
                     <select x-model="selectedClienteId"
-                            class="input-base text-xs sm:text-sm font-medium">
+                            class="input text-xs sm:text-sm font-medium">
                         <template x-for="c in clientes" :key="c.id">
                             <option :value="c.id" x-text="c.razon_social + (c.es_consumidor_final ? ' (Consumidor Final)' : ' - ' + c.numero_documento)"></option>
                         </template>
@@ -205,7 +206,7 @@ class="max-w-[1720px] mx-auto pb-10">
                 <div class="border border-slate-200 rounded-lg overflow-hidden">
                     <div class="bg-slate-50 px-3 py-2 border-b border-slate-200 flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                         <span>Detalle de Venta (<span x-text="cart.length"></span>)</span>
-                        <button @click="clearCart()" x-show="cart.length > 0" class="text-rose-600 hover:text-rose-700 text-[11px] font-semibold">
+                        <button @click="clearCart()" x-show="cart.length > 0" class="text-danger-text hover:underline text-[11px] font-semibold">
                             Vaciar (F8)
                         </button>
                     </div>
@@ -220,7 +221,7 @@ class="max-w-[1720px] mx-auto pb-10">
                                     </template>
                                     <template x-if="!item.imagen_url">
                                         <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                         </svg>
                                     </template>
                                 </div>
@@ -237,12 +238,12 @@ class="max-w-[1720px] mx-auto pb-10">
 
                                 <!-- Cantidad Controls -->
                                 <div class="flex items-center gap-1">
-                                    <button @click="updateQty(idx, -1)" class="h-6 w-6 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs">
+                                    <button @click="updateQty(idx, -1)" class="h-7 w-7 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs">
                                         -
                                     </button>
                                     <input type="number" step="1" min="1" x-model.number="item.cantidad" @change="if(item.cantidad < 1) item.cantidad = 1"
                                            class="w-12 text-center text-xs font-semibold font-mono tabular-nums py-1 px-1 border border-slate-200 rounded">
-                                    <button @click="updateQty(idx, 1)" class="h-6 w-6 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs">
+                                    <button @click="updateQty(idx, 1)" class="h-7 w-7 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs">
                                         +
                                     </button>
                                 </div>
@@ -252,7 +253,7 @@ class="max-w-[1720px] mx-auto pb-10">
                                     <div class="text-xs font-bold font-mono tabular-nums text-slate-900">
                                         $<span x-text="formatCurrency(item.cantidad * item.precio)"></span>
                                     </div>
-                                    <button @click="removeItem(idx)" class="text-[10px] text-rose-600 hover:underline">
+                                    <button @click="removeItem(idx)" class="text-[10px] text-danger-text hover:underline">
                                         Quitar
                                     </button>
                                 </div>
@@ -283,26 +284,26 @@ class="max-w-[1720px] mx-auto pb-10">
                     </template>
                     <div class="border-t border-slate-200 pt-3 flex justify-between items-baseline">
                         <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Total a Pagar:</span>
-                        <span class="text-2xl font-bold font-mono tabular-nums text-slate-900">
+                        <span class="text-3xl font-bold font-mono tabular-nums text-slate-900">
                             $<span x-text="formatCurrency(total)"></span>
                         </span>
                     </div>
                 </div>
 
                 <!-- Botones de Acción -->
-                <div class="grid grid-cols-2 gap-3 pt-2">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
                     <button type="button"
                             @click="clearCart()"
                             :disabled="cart.length === 0"
-                            class="btn-secondary text-xs justify-center py-2.5 disabled:opacity-50">
+                            class="btn-secondary text-xs justify-center h-12 sm:h-14 disabled:opacity-50">
                         Cancelar (F8)
                     </button>
                     <button type="button"
                             @click="openPaymentModal()"
                             :disabled="cart.length === 0"
-                            class="btn-primary text-xs justify-center py-2.5 disabled:opacity-50">
+                            class="sm:col-span-2 bg-accent-pos hover:bg-accent-pos-hover text-white h-12 sm:h-14 text-base font-semibold rounded-lg inline-flex items-center justify-center transition shadow-xs disabled:opacity-50">
                         <span>COBRAR (F4)</span>
-                        <svg class="h-4 w-4 ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                        <svg class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                     </button>
                 </div>
 
@@ -334,7 +335,7 @@ class="max-w-[1720px] mx-auto pb-10">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="label-base">Comprobante</label>
-                        <select x-model="tipoComprobante" class="input-base text-xs">
+                        <select x-model="tipoComprobante" class="input text-xs">
                             <option value="TICKET">Ticket POS</option>
                             <option value="FACTURA">Factura Comercial</option>
                             <option value="NOTA_VENTA">Nota de Venta</option>
@@ -392,12 +393,12 @@ class="max-w-[1720px] mx-auto pb-10">
                                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center font-bold text-slate-400">$</span>
                                     <input type="number" step="100" min="0" x-model.number="pagoCon"
                                            x-ref="pagoConInput"
-                                           class="input-base pl-7 pr-3 py-2 text-lg font-bold font-mono tabular-nums text-slate-900">
+                                           class="input pl-7 pr-3 py-2 text-lg font-bold font-mono tabular-nums text-slate-900">
                                 </div>
                             </div>
                             <div>
                                 <label class="label-base">Cambio / Vueltos</label>
-                                <div :class="cambio >= 0 ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : 'text-rose-700 bg-rose-50 border-rose-200'"
+                                <div :class="cambio >= 0 ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : 'text-danger-text bg-danger-bg border-danger-border'"
                                      class="px-3 py-2 text-xl font-bold font-mono tabular-nums rounded-lg border">
                                     $<span x-text="formatCurrency(Math.max(0, cambio))"></span>
                                 </div>
@@ -444,7 +445,7 @@ class="max-w-[1720px] mx-auto pb-10">
                                     </div>
                                     <input type="text" x-model="pagoItem.referencia" placeholder="Ref/voucher"
                                            class="w-28 input-compact">
-                                    <button type="button" @click="quitarFilaMixta(pIdx)" class="text-rose-600 hover:text-rose-700 px-1 font-bold text-xs">
+                                    <button type="button" @click="quitarFilaMixta(pIdx)" class="text-danger-text hover:underline px-1 font-bold text-xs">
                                         ✕
                                     </button>
                                 </div>
@@ -453,7 +454,7 @@ class="max-w-[1720px] mx-auto pb-10">
 
                         <div class="flex justify-between items-center text-xs pt-1">
                             <span class="font-semibold text-slate-700 font-mono tabular-nums">Suma ingresada: $<span x-text="formatCurrency(sumaPagosMixtos)"></span></span>
-                            <span :class="sumaPagosMixtos >= total ? 'text-emerald-700 font-semibold' : 'text-rose-700 font-semibold'">
+                            <span :class="sumaPagosMixtos >= total ? 'text-emerald-700 font-semibold' : 'text-danger-text font-semibold'">
                                 <span x-text="sumaPagosMixtos >= total ? '¡Monto cubierto!' : 'Faltan $' + formatCurrency(total - sumaPagosMixtos)"></span>
                             </span>
                         </div>
@@ -476,11 +477,11 @@ class="max-w-[1720px] mx-auto pb-10">
                 <div>
                     <label class="label-base">Observaciones (Opcional)</label>
                     <input type="text" x-model="observaciones" placeholder="Ej: Pago con billete de $100.000 / Cliente frecuente"
-                           class="input-base text-xs">
+                           class="input text-xs">
                 </div>
 
                 <!-- Error alert in modal -->
-                <div x-show="errorMsg" class="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-lg text-xs font-semibold flex items-center gap-2">
+                <div x-show="errorMsg" class="p-3 bg-danger-bg border border-danger-border text-danger-text rounded-lg text-xs font-semibold flex items-center gap-2">
                     <svg class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span x-text="errorMsg"></span>
                 </div>
@@ -493,7 +494,7 @@ class="max-w-[1720px] mx-auto pb-10">
                     <button type="button"
                             @click="enviarVenta()"
                             :disabled="loading || (tipoPago === 'CONTADO' && metodoPago === 'EFECTIVO' && cambio < 0) || (tipoPago === 'CONTADO' && metodoPago === 'MIXTO' && sumaPagosMixtos < total)"
-                            class="btn-primary text-xs sm:text-sm py-2 px-5 disabled:opacity-50">
+                            class="bg-accent-pos hover:bg-accent-pos-hover text-white font-semibold rounded-lg inline-flex items-center justify-center transition text-xs sm:text-sm py-2.5 px-5 disabled:opacity-50">
                         <template x-if="loading">
                             <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
