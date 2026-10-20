@@ -192,6 +192,17 @@
                 <div class="my-1 border-t border-border"></div>
                 @endif
 
+                @can('empresa.gestionar')
+                <a href="{{ route('suscripcion.index') }}"
+                   class="w-full text-left px-3 py-2 text-xs rounded-lg text-text-primary hover:bg-surface-muted flex items-center gap-2 transition cursor-pointer font-medium">
+                    <svg class="w-3.5 h-3.5 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                    </svg>
+                    <span>Mi Suscripción y Pagos</span>
+                </a>
+                <div class="my-1 border-t border-border"></div>
+                @endcan
+
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
                     <button type="submit"

@@ -89,6 +89,15 @@
                 </svg>
                 <span class="sidebar-text truncate whitespace-nowrap">Perfil de Empresa</span>
             </a>
+
+            <a href="{{ route('suscripcion.index') }}"
+               class="sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('suscripcion.*') ? 'bg-white/[0.08] text-white border-l-[3px] border-brand-500 pl-[9px]' : 'text-slate-300 hover:text-white hover:bg-white/[0.05]' }}"
+               data-title="Suscripción y Pagos">
+                <svg class="w-[18px] h-[18px] mr-3 flex-shrink-0 {{ request()->routeIs('suscripcion.*') ? 'text-brand-400' : 'text-slate-400' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+                <span class="sidebar-text truncate whitespace-nowrap">Suscripción y Pagos</span>
+            </a>
             @endcan
 
             @canany(['usuarios.ver', 'usuarios.gestionar'])
