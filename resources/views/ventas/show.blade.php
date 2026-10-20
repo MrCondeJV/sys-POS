@@ -9,10 +9,6 @@
     <x-page-header
         :title="$venta->numero_venta"
         subtitle="Emitida el {{ $venta->fecha->format('d/m/Y \a \l\a\s H:i') }} &bull; Sucursal: {{ $venta->sucursal?->nombre ?? 'Sin sucursal' }}"
-        :breadcrumbs="[
-            ['label' => 'Ventas Realizadas', 'url' => route('ventas.index')],
-            ['label' => 'Ficha de Venta']
-        ]"
     >
         <x-slot:actions>
             <div class="flex items-center space-x-2">
@@ -22,14 +18,14 @@
                 </x-badge>
 
                 <x-button variant="outline" size="sm" href="{{ route('ventas.index') }}">
-                    <svg class="h-4 w-4 mr-1.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="h-4 w-4 mr-1.5 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                     Volver
                 </x-button>
 
                 <x-button variant="secondary" size="sm" href="{{ route('ventas.ticket', $venta) }}" target="_blank">
-                    <svg class="h-4 w-4 mr-1.5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="h-4 w-4 mr-1.5 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                     </svg>
                     Imprimir Ticket
@@ -38,7 +34,7 @@
                 @if($venta->isCompletada())
                     @can('create', App\Models\Devolucion::class)
                     <x-button variant="outline" size="sm" href="{{ route('devoluciones.create', $venta) }}">
-                        <svg class="h-4 w-4 mr-1.5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg class="h-4 w-4 mr-1.5 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z" />
                         </svg>
                         Devolución
@@ -60,13 +56,13 @@
 
     <!-- Alerta de Venta Anulada -->
     @if($venta->isAnulada())
-    <div class="bg-rose-50 border border-rose-200 rounded-lg p-4 flex items-start space-x-3">
-        <svg class="h-5 w-5 text-rose-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div class="bg-danger-bg border border-danger-border rounded-lg p-4 flex items-start space-x-3">
+        <svg class="h-5 w-5 text-danger flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
         <div>
-            <h4 class="text-xs font-bold text-rose-900 uppercase tracking-wide">Esta venta fue anulada formalmente</h4>
-            <p class="text-xs text-rose-700 mt-0.5">
+            <h4 class="text-xs font-bold text-danger-text uppercase tracking-wide">Esta venta fue anulada formalmente</h4>
+            <p class="text-xs text-danger-text mt-0.5">
                 Anulada el <span class="tabular-nums font-medium">{{ $venta->fecha_anulacion?->format('d/m/Y H:i') }}</span> por <span class="font-medium">{{ $venta->anulador?->name ?? 'Usuario' }}</span>.
                 <br>
                 <strong>Motivo:</strong> {{ $venta->motivo_anulacion }}
@@ -76,32 +72,32 @@
     @endif
 
     <!-- Datos Generales -->
-    <div class="bg-white rounded-xl border border-slate-200/80 shadow-xs p-5 grid grid-cols-1 sm:grid-cols-3 gap-6">
+    <div class="bg-surface rounded-lg border border-border shadow-xs p-5 grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div>
-            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Cliente</span>
+            <span class="text-xs font-semibold text-text-muted uppercase tracking-wider block">Cliente</span>
             @if($venta->cliente)
-                <div class="text-sm font-bold text-slate-900 mt-1">{{ $venta->cliente->razon_social }}</div>
-                <div class="text-xs text-slate-500 font-mono">{{ $venta->cliente->tipo_documento->value }}: {{ $venta->cliente->numero_documento }}</div>
-                <div class="text-xs text-slate-400">{{ $venta->cliente->telefono ?? 'Sin teléfono' }}</div>
+                <div class="text-sm font-bold text-text-primary mt-1">{{ $venta->cliente->razon_social }}</div>
+                <div class="text-xs text-text-secondary font-mono">{{ $venta->cliente->tipo_documento->value }}: {{ $venta->cliente->numero_documento }}</div>
+                <div class="text-xs text-text-muted">{{ $venta->cliente->telefono ?? 'Sin teléfono' }}</div>
             @else
-                <div class="text-sm font-bold text-slate-900 mt-1">Consumidor Final</div>
-                <div class="text-xs text-slate-500">Sin registro de cliente</div>
+                <div class="text-sm font-bold text-text-primary mt-1">Consumidor Final</div>
+                <div class="text-xs text-text-secondary">Sin registro de cliente</div>
             @endif
         </div>
 
         <div>
-            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Operación</span>
-            <div class="text-xs text-slate-700 mt-1"><strong>Vendedor:</strong> {{ $venta->usuario->name }}</div>
-            <div class="text-xs text-slate-700 mt-0.5"><strong>Comprobante:</strong> {{ $venta->tipo_comprobante->label() }}</div>
-            <div class="text-xs text-slate-700 mt-0.5"><strong>Método:</strong> {{ $venta->metodo_pago }}</div>
+            <span class="text-xs font-semibold text-text-muted uppercase tracking-wider block">Operación</span>
+            <div class="text-xs text-text-secondary mt-1"><strong>Vendedor:</strong> {{ $venta->usuario->name }}</div>
+            <div class="text-xs text-text-secondary mt-0.5"><strong>Comprobante:</strong> {{ $venta->tipo_comprobante->label() }}</div>
+            <div class="text-xs text-text-secondary mt-0.5"><strong>Método:</strong> {{ $venta->metodo_pago }}</div>
         </div>
 
         <div>
-            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Condición Comercial</span>
-            <div class="text-xs text-slate-700 mt-1"><strong>Tipo:</strong> {{ $venta->tipo_pago->label() }}</div>
+            <span class="text-xs font-semibold text-text-muted uppercase tracking-wider block">Condición Comercial</span>
+            <div class="text-xs text-text-secondary mt-1"><strong>Tipo:</strong> {{ $venta->tipo_pago->label() }}</div>
             @if($venta->pago_con)
-                <div class="text-xs text-slate-700 mt-0.5 tabular-nums"><strong>Efectivo Recibido:</strong> ${{ number_format($venta->pago_con, 2) }}</div>
-                <div class="text-xs text-emerald-700 font-semibold mt-0.5 tabular-nums"><strong>Cambio / Vuelto:</strong> ${{ number_format($venta->cambio, 2) }}</div>
+                <div class="text-xs text-text-secondary mt-0.5 tabular-nums"><strong>Efectivo Recibido:</strong> ${{ number_format($venta->pago_con, 2) }}</div>
+                <div class="text-xs text-success-text font-semibold mt-0.5 tabular-nums"><strong>Cambio / Vuelto:</strong> ${{ number_format($venta->cambio, 2) }}</div>
             @endif
         </div>
     </div>
@@ -109,8 +105,8 @@
     <!-- Detalle de Ítems -->
     <div class="space-y-2">
         <div class="flex items-center justify-between px-1">
-            <h2 class="text-sm font-bold text-slate-900">Productos Vendidos</h2>
-            <span class="text-xs font-semibold text-slate-500">{{ $venta->detalles->count() }} ítems</span>
+            <h2 class="text-sm font-bold text-text-primary">Productos Vendidos</h2>
+            <span class="text-xs font-semibold text-text-secondary">{{ $venta->detalles->count() }} ítems</span>
         </div>
 
         <x-table>
@@ -126,24 +122,24 @@
             </x-slot:thead>
 
             @foreach($venta->detalles as $det)
-                <tr class="hover:bg-slate-50/70 transition">
+                <tr class="hover:bg-surface-muted/60 transition">
                     <td class="px-5 py-3">
-                        <div class="font-semibold text-slate-900 text-xs">{{ $det->producto->nombre }}</div>
-                        <div class="text-slate-400 text-[11px] font-mono">{{ $det->producto->codigo_barras ?? $det->producto->codigo }}</div>
+                        <div class="font-semibold text-text-primary text-xs">{{ $det->producto->nombre }}</div>
+                        <div class="text-text-muted text-[11px] font-mono">{{ $det->producto->codigo_barras ?? $det->producto->codigo }}</div>
                     </td>
-                    <td class="px-5 py-3 text-center font-medium text-slate-800 text-xs tabular-nums whitespace-nowrap">
+                    <td class="px-5 py-3 text-center font-medium text-text-primary text-xs tabular-nums whitespace-nowrap">
                         {{ number_format($det->cantidad, 2) }} {{ $det->producto->unidadMedida?->codigo ?? 'UND' }}
                     </td>
-                    <td class="px-5 py-3 text-right text-slate-700 text-xs tabular-nums whitespace-nowrap">
+                    <td class="px-5 py-3 text-right text-text-secondary text-xs tabular-nums whitespace-nowrap">
                         ${{ number_format($det->precio_unitario, 2) }}
                     </td>
-                    <td class="px-5 py-3 text-right text-slate-500 text-xs tabular-nums whitespace-nowrap">
+                    <td class="px-5 py-3 text-right text-text-muted text-xs tabular-nums whitespace-nowrap">
                         ${{ number_format($det->descuento, 2) }}
                     </td>
-                    <td class="px-5 py-3 text-right text-slate-500 text-xs tabular-nums whitespace-nowrap">
+                    <td class="px-5 py-3 text-right text-text-muted text-xs tabular-nums whitespace-nowrap">
                         ${{ number_format($det->impuesto_monto, 2) }} ({{ $det->impuesto_porcentaje }}%)
                     </td>
-                    <td class="px-5 py-3 text-right font-bold text-slate-900 text-xs tabular-nums whitespace-nowrap">
+                    <td class="px-5 py-3 text-right font-bold text-text-primary text-xs tabular-nums whitespace-nowrap">
                         ${{ number_format($det->total, 2) }}
                     </td>
                 </tr>
@@ -151,25 +147,25 @@
         </x-table>
 
         <!-- Totales -->
-        <div class="p-5 bg-white rounded-xl border border-slate-200/80 shadow-xs flex justify-end">
+        <div class="p-5 bg-surface rounded-lg border border-border shadow-xs flex justify-end">
             <div class="w-72 space-y-2 text-xs">
-                <div class="flex justify-between text-slate-600">
+                <div class="flex justify-between text-text-secondary">
                     <span>Subtotal:</span>
-                    <span class="font-semibold text-slate-900 tabular-nums">${{ number_format($venta->subtotal, 2) }}</span>
+                    <span class="font-semibold text-text-primary tabular-nums">${{ number_format($venta->subtotal, 2) }}</span>
                 </div>
                 @if($venta->descuento > 0)
-                <div class="flex justify-between text-rose-600 font-medium">
+                <div class="flex justify-between text-danger font-medium">
                     <span>Descuento aplicado:</span>
                     <span class="tabular-nums">&minus;${{ number_format($venta->descuento, 2) }}</span>
                 </div>
                 @endif
                 @if($venta->impuesto > 0)
-                <div class="flex justify-between text-slate-600">
+                <div class="flex justify-between text-text-secondary">
                     <span>Impuestos:</span>
-                    <span class="font-semibold text-slate-900 tabular-nums">+${{ number_format($venta->impuesto, 2) }}</span>
+                    <span class="font-semibold text-text-primary tabular-nums">+${{ number_format($venta->impuesto, 2) }}</span>
                 </div>
                 @endif
-                <div class="flex justify-between text-base font-bold text-slate-900 pt-2 border-t border-slate-200">
+                <div class="flex justify-between text-base font-bold text-text-primary pt-2 border-t border-border">
                     <span>Total General:</span>
                     <span class="text-brand-700 tabular-nums">${{ number_format($venta->total, 2) }}</span>
                 </div>
@@ -181,19 +177,19 @@
     @if($venta->isCompletada())
     <div x-cloak x-show="modalAnularOpen" class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4 p-6">
-            <div x-show="modalAnularOpen" @click="modalAnularOpen = false" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"></div>
-            <div x-show="modalAnularOpen" class="relative bg-white rounded-xl max-w-md w-full p-6 shadow-xl border border-slate-200 z-10 space-y-5">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div x-show="modalAnularOpen" @click="modalAnularOpen = false" class="fixed inset-0 bg-brand-900/50 backdrop-blur-xs transition-opacity"></div>
+            <div x-show="modalAnularOpen" class="relative bg-surface rounded-lg max-w-md w-full p-6 shadow-lg border border-border z-10 space-y-5">
+                <div class="flex items-center justify-between border-b border-border pb-3">
                     <div>
-                        <span class="text-xs font-semibold text-rose-600 uppercase tracking-wider block">Anulación de Venta</span>
-                        <h3 class="text-base font-bold text-slate-900 mt-0.5">Venta {{ $venta->numero_venta }}</h3>
+                        <span class="text-xs font-semibold text-danger uppercase tracking-wider block">Anulación de Venta</span>
+                        <h3 class="text-base font-bold text-text-primary mt-0.5">Venta {{ $venta->numero_venta }}</h3>
                     </div>
-                    <button @click="modalAnularOpen = false" class="text-slate-400 hover:text-slate-600 transition">
+                    <button @click="modalAnularOpen = false" class="text-text-muted hover:text-text-primary transition">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
 
-                <div class="bg-amber-50/70 p-3 rounded-lg border border-amber-200 text-xs text-amber-800">
+                <div class="bg-warning-bg p-3 rounded-md border border-warning-border text-xs text-warning-text">
                     Esta acción reingresará automáticamente las existencias al inventario y revertirá los saldos correspondientes.
                 </div>
 
@@ -201,10 +197,10 @@
                     @csrf
                     <x-field label="Motivo de Anulación" name="motivo" :required="true">
                         <textarea name="motivo" required rows="3" placeholder="Ej: Error en digitación de producto / Devolución inmediata del cliente..."
-                            class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs focus:border-brand-500 focus:ring-1 focus:ring-brand-500"></textarea>
+                            class="input h-auto py-2"></textarea>
                     </x-field>
 
-                    <div class="flex items-center justify-end space-x-2 pt-4 border-t border-slate-100">
+                    <div class="flex items-center justify-end space-x-2 pt-4 border-t border-border">
                         <x-button variant="outline" size="sm" type="button" @click="modalAnularOpen = false">
                             Cancelar
                         </x-button>

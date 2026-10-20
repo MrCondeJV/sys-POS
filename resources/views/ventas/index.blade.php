@@ -9,10 +9,6 @@
     <x-page-header
         title="Historial de Ventas"
         subtitle="Consulta y auditoría de transacciones comerciales, facturación y tickets emitidos."
-        :breadcrumbs="[
-            ['label' => 'Ventas & Clientes'],
-            ['label' => 'Ventas Realizadas']
-        ]"
     >
         <x-slot:actions>
             @can('ventas.crear')
@@ -67,19 +63,19 @@
         :clear-url="route('ventas.index')"
     >
         <div class="sm:col-span-2">
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Buscar Venta / Cliente</label>
+            <label class="block text-xs font-medium text-text-secondary uppercase mb-1">Buscar Venta / Cliente</label>
             <div class="relative">
-                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-text-muted">
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </span>
                 <input type="text" name="buscar" value="{{ request('buscar') }}" placeholder="N° Venta o Razón Social..."
-                    class="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-300 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500">
+                    class="input pl-9">
             </div>
         </div>
 
         <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Estado</label>
-            <select name="estado" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500">
+            <label class="block text-xs font-medium text-text-secondary uppercase mb-1">Estado</label>
+            <select name="estado" class="input">
                 <option value="">Todos los estados</option>
                 <option value="COMPLETADA" {{ request('estado') === 'COMPLETADA' ? 'selected' : '' }}>Completadas</option>
                 <option value="ANULADA" {{ request('estado') === 'ANULADA' ? 'selected' : '' }}>Anuladas</option>
@@ -87,8 +83,8 @@
         </div>
 
         <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Tipo de Pago</label>
-            <select name="tipo_pago" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500">
+            <label class="block text-xs font-medium text-text-secondary uppercase mb-1">Tipo de Pago</label>
+            <select name="tipo_pago" class="input">
                 <option value="">Todos</option>
                 <option value="CONTADO" {{ request('tipo_pago') === 'CONTADO' ? 'selected' : '' }}>Contado</option>
                 <option value="CREDITO" {{ request('tipo_pago') === 'CREDITO' ? 'selected' : '' }}>Crédito</option>
@@ -96,9 +92,9 @@
         </div>
 
         <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Desde</label>
+            <label class="block text-xs font-medium text-text-secondary uppercase mb-1">Desde</label>
             <input type="date" name="fecha_desde" value="{{ request('fecha_desde') }}"
-                class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500">
+                class="input">
         </div>
     </x-filter-bar>
 
@@ -118,32 +114,32 @@
         </x-slot:thead>
 
         @forelse($ventas as $v)
-            <tr class="hover:bg-slate-50/70 transition {{ $v->isAnulada() ? 'opacity-60 bg-rose-50/20' : '' }}">
+            <tr class="hover:bg-surface-muted/60 transition {{ $v->isAnulada() ? 'opacity-60 bg-danger-bg/20' : '' }}">
                 <td class="px-5 py-3">
-                    <div class="font-bold text-slate-900 font-mono text-xs">{{ $v->numero_venta }}</div>
-                    <div class="text-[11px] text-slate-500 font-medium">{{ $v->tipo_comprobante->label() }}</div>
+                    <div class="font-bold text-text-primary font-mono text-xs">{{ $v->numero_venta }}</div>
+                    <div class="text-[11px] text-text-muted font-medium">{{ $v->tipo_comprobante->label() }}</div>
                 </td>
-                <td class="px-5 py-3 whitespace-nowrap text-slate-700 text-xs tabular-nums">
+                <td class="px-5 py-3 whitespace-nowrap text-text-secondary text-xs tabular-nums">
                     {{ $v->fecha->format('d/m/Y H:i') }}
                 </td>
                 <td class="px-5 py-3">
                     @if($v->cliente)
-                        <div class="font-semibold text-slate-900 text-xs">{{ $v->cliente->razon_social }}</div>
-                        <div class="text-[11px] text-slate-500 font-mono">{{ $v->cliente->numero_documento }}</div>
+                        <div class="font-semibold text-text-primary text-xs">{{ $v->cliente->razon_social }}</div>
+                        <div class="text-[11px] text-text-muted font-mono">{{ $v->cliente->numero_documento }}</div>
                     @else
-                        <span class="text-slate-500 italic text-xs">Consumidor Final</span>
+                        <span class="text-text-muted italic text-xs">Consumidor Final</span>
                     @endif
                 </td>
-                <td class="px-5 py-3 text-slate-700 text-xs whitespace-nowrap">
+                <td class="px-5 py-3 text-text-secondary text-xs whitespace-nowrap">
                     {{ $v->usuario->name }}
                 </td>
                 <td class="px-5 py-3 text-center whitespace-nowrap">
                     <x-badge :status="$v->tipo_pago->value === 'CONTADO' ? 'success' : 'warning'" size="sm">
                         {{ $v->tipo_pago->label() }}
                     </x-badge>
-                    <div class="text-[11px] text-slate-500 mt-0.5">{{ $v->metodo_pago }}</div>
+                    <div class="text-[11px] text-text-muted mt-0.5">{{ $v->metodo_pago }}</div>
                 </td>
-                <td class="px-5 py-3 text-right font-bold text-slate-900 text-sm tabular-nums whitespace-nowrap">
+                <td class="px-5 py-3 text-right font-bold text-text-primary text-sm tabular-nums whitespace-nowrap">
                     ${{ number_format($v->total, 2) }}
                 </td>
                 <td class="px-5 py-3 text-center whitespace-nowrap">

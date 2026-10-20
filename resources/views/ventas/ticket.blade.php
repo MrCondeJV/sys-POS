@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ticket {{ $venta->numero_venta }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         body { font-family: "Courier New", Courier, monospace; font-size: 11px; line-height: 1.25; background: #f8fafc; margin: 0; padding: 0; }
