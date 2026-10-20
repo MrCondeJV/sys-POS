@@ -1,30 +1,53 @@
 @props([
     'variant' => 'ghost', // ghost, secondary, outline, danger, primary
-    'size' => 'sm', // sm (32px), md (36px)
+    'size' => 'sm', // sm (32px), md (36px) — área táctil garantizada de 40px
     'type' => 'button',
     'href' => null,
     'title' => null,
+    'label' => null,
     'ariaLabel' => null,
+    'icon' => null,
     'disabled' => false,
 ])
 
 @php
-    $accessibleLabel = $ariaLabel ?? $title ?? 'Acción';
+    $accessibleLabel = $ariaLabel ?? $attributes->get('aria-label') ?? $title ?? $label ?? 'Acción';
+    $tooltipTitle = $title ?? $label ?? $accessibleLabel;
 
-    $baseClasses = 'inline-flex items-center justify-center rounded-md font-medium transition-all select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none shrink-0';
+    // Área táctil expandida a 40px mediante pseudo-elemento invisible (after:-inset-1)
+    $baseClasses = 'relative inline-flex items-center justify-center rounded-lg font-medium transition-all select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none shrink-0 after:content-[\'\'] after:absolute after:-inset-1';
 
     $sizeClasses = match ($size) {
         'md' => 'w-9 h-9 text-sm',
-        default => 'w-8 h-8 text-xs', // 32px
+        default => 'w-8 h-8 text-xs', // 32px visual, 40px táctil
     };
 
     $variantClasses = match ($variant) {
-        'secondary' => 'bg-white text-slate-700 border border-slate-300 shadow-xs hover:bg-slate-50 hover:text-slate-900 focus-visible:ring-slate-400',
-        'outline' => 'bg-transparent text-slate-700 border border-slate-300 hover:bg-slate-50 hover:text-slate-900 focus-visible:ring-brand-600',
-        'danger' => 'bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-600 hover:text-white focus-visible:ring-rose-600',
+        'secondary' => 'bg-surface text-text-primary border border-border-strong shadow-xs hover:bg-surface-muted focus-visible:ring-brand-600',
+        'outline' => 'bg-transparent text-text-secondary border border-border-strong hover:bg-surface-muted hover:text-text-primary focus-visible:ring-brand-600',
+        'danger' => 'bg-danger-bg text-danger border border-danger-border hover:bg-danger hover:text-white focus-visible:ring-danger',
         'primary' => 'bg-brand-600 text-white shadow-xs hover:bg-brand-500 focus-visible:ring-brand-600',
-        default => 'bg-transparent text-slate-500 hover:bg-slate-100 hover:text-slate-800 focus-visible:ring-slate-400', // ghost
+        default => 'bg-transparent text-text-secondary hover:bg-surface-muted hover:text-text-primary focus-visible:ring-brand-600', // ghost
     };
+
+    $renderedIcon = null;
+    if ($icon) {
+        if (str_contains($icon, '<svg')) {
+            $renderedIcon = $icon;
+        } else {
+            $renderedIcon = match ($icon) {
+                'eye' => '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>',
+                'pencil', 'edit' => '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>',
+                'trash', 'delete' => '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>',
+                'printer', 'print' => '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>',
+                'download' => '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>',
+                'plus' => '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>',
+                'check' => '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>',
+                'x' => '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>',
+                default => null,
+            };
+        }
+    }
 
     $classes = "{$baseClasses} {$sizeClasses} {$variantClasses}";
     $tag = $href ? 'a' : 'button';
@@ -37,9 +60,13 @@
         type="{{ $type }}"
         @if($disabled) disabled @endif
     @endif
-    @if($title) title="{{ $title }}" @endif
+    title="{{ $tooltipTitle }}"
     aria-label="{{ $accessibleLabel }}"
     {{ $attributes->merge(['class' => $classes]) }}
 >
-    {{ $slot }}
+    @if($renderedIcon)
+        {!! $renderedIcon !!}
+    @else
+        {{ $slot }}
+    @endif
 </{{ $tag }}>

@@ -75,7 +75,7 @@ class ComponentTest extends TestCase
         $this->assertStringContainsString('Guardar', $renderedPrimary);
 
         $renderedDanger = Blade::render('<x-button variant="danger" size="sm">Eliminar</x-button>');
-        $this->assertStringContainsString('bg-rose-600', $renderedDanger);
+        $this->assertStringContainsString('bg-danger', $renderedDanger);
         $this->assertStringContainsString('h-8', $renderedDanger);
 
         $renderedLink = Blade::render('<x-button href="https://example.com">Enlace</x-button>');
@@ -98,10 +98,10 @@ class ComponentTest extends TestCase
         $this->assertStringContainsString('$500,000', $rendered);
         $this->assertStringContainsString('tabular-nums', $rendered);
         $this->assertStringContainsString('+12%', $rendered);
-        $this->assertStringContainsString('text-emerald-700', $rendered);
+        $this->assertStringContainsString('text-success-text', $rendered);
 
         $renderedAlert = Blade::render('<x-kpi-card label="Stock Bajo" value="3" alert="danger" />');
-        $this->assertStringContainsString('border-rose-300', $renderedAlert);
+        $this->assertStringContainsString('border-danger-border', $renderedAlert);
     }
 
     public function test_field_renders_label_required_and_errors(): void
@@ -113,7 +113,7 @@ class ComponentTest extends TestCase
 
         $renderedError = Blade::render('<x-field label="Email" error="Correo inválido"><input name="email" /></x-field>');
         $this->assertStringContainsString('Correo inválido', $renderedError);
-        $this->assertStringContainsString('text-rose-600', $renderedError);
+        $this->assertStringContainsString('text-danger', $renderedError);
     }
 
     public function test_empty_state_renders_title_and_description(): void
@@ -126,7 +126,7 @@ class ComponentTest extends TestCase
     public function test_filter_bar_renders_cleanly(): void
     {
         $rendered = Blade::render('<x-filter-bar :hasActiveFilters="true" resetUrl="/reset"><input name="q" /></x-filter-bar>');
-        $this->assertStringContainsString('card-banking', $rendered);
+        $this->assertStringContainsString('card', $rendered);
         $this->assertStringContainsString('Filtrar', $rendered);
         $this->assertStringContainsString('Limpiar filtros', $rendered);
         $this->assertStringContainsString('href="/reset"', $rendered);

@@ -20,19 +20,23 @@
 
     $normalized = strtoupper(trim((string) $rawStatus));
 
-    // Determine semantic variant (success, warning, danger, info, neutral)
+    // Mapeo semántico completo para todos los Enums del proyecto (success, warning, danger, info, neutral)
     $variant = match ($normalized) {
         // Success (Verde)
-        'COMPLETADA', 'PAGADA', 'ACTIVO', 'ACTIVA', 'ABIERTA', 'REGISTRADA', 'RECIBIDA', 'RECIBIDO', 'APROBADA', 'PROCESADA', 'ACEPTADA', 'EXITOSO', '1', 'TRUE' => 'success',
+        'COMPLETADA', 'PAGADA', 'ACTIVO', 'ACTIVA', 'ABIERTA', 'REGISTRADA', 'RECIBIDA', 'RECIBIDO',
+        'APROBADA', 'PROCESADA', 'ACEPTADA', 'ACEPTADO', 'EMITIDO', 'DISPONIBLE', 'APLICADO', 'EXITOSO',
+        'EN_STOCK', '1', 'TRUE' => 'success',
 
         // Warning (Ámbar)
-        'PENDIENTE', 'POR_VENCER', 'EN_TRANSITO', 'SUSPENDIDO', 'SUSPENDIDA' => 'warning',
+        'PENDIENTE', 'POR_VENCER', 'PROXIMO_VENCER', 'EN_TRANSITO', 'SUSPENDIDO', 'SUSPENDIDA',
+        'BAJO_STOCK', 'STOCK_BAJO' => 'warning',
 
-        // Info (Azul)
+        // Info (Azul Institucional)
         'PARCIAL', 'PRUEBA', 'ENVIADO' => 'info',
 
         // Danger (Rojo)
-        'ANULADA', 'CANCELADA', 'VENCIDA', 'RECHAZADA', 'FALLIDO', 'AGOTADO', 'BLOQUEADO' => 'danger',
+        'ANULADA', 'ANULADO', 'CANCELADA', 'CANCELADO', 'VENCIDA', 'VENCIDO', 'RECHAZADA', 'RECHAZADO',
+        'FALLIDO', 'ERROR', 'AGOTADO', 'AGOTADA', 'SIN_STOCK', 'BLOQUEADO' => 'danger',
 
         // Neutral (Gris / Slate)
         'INACTIVO', 'INACTIVA', 'CERRADA', 'BORRADOR', 'ARCHIVADO', '0', 'FALSE' => 'neutral',
@@ -40,10 +44,11 @@
         default => 'neutral',
     };
 
-    // Determine default display label if not explicitly passed
+    // Etiqueta legible por defecto si no se pasa $label ni viene de $enum->label()
     $displayLabel = $label ?? $enumLabel ?? match ($normalized) {
         'COMPLETADA' => 'Completada',
         'ANULADA' => 'Anulada',
+        'ANULADO' => 'Anulado',
         'ACTIVO' => 'Activo',
         'ACTIVA' => 'Activa',
         'INACTIVO' => 'Inactivo',
@@ -59,10 +64,20 @@
         'SUSPENDIDO' => 'Suspendido',
         'SUSPENDIDA' => 'Suspendida',
         'VENCIDA' => 'Vencida',
+        'VENCIDO' => 'Vencido',
         'CANCELADA' => 'Cancelada',
+        'CANCELADO' => 'Cancelado',
         'ACEPTADA' => 'Aceptada',
+        'ACEPTADO' => 'Aceptado',
         'RECHAZADA' => 'Rechazada',
-        'EN_TRANSITO' => 'En Tránsito',
+        'RECHAZADO' => 'Rechazado',
+        'EMITIDO' => 'Emitido',
+        'DISPONIBLE' => 'Disponible',
+        'APLICADO' => 'Aplicado',
+        'AGOTADO' => 'Agotado',
+        'AGOTADA' => 'Agotada',
+        'PROXIMO_VENCER', 'POR_VENCER' => 'Próximo a vencer',
+        'EN_TRANSITO' => 'En tránsito',
         'BORRADOR' => 'Borrador',
         default => ucfirst(strtolower(str_replace('_', ' ', $normalized))),
     };

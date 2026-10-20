@@ -2,48 +2,45 @@
     'type' => null,
     'message' => null,
     'duration' => 4000,
+    'listenSession' => false, // Por defecto false porque layouts/partials/flash-messages.blade.php ya gestiona la sesión global
 ])
 
 @php
-    $flashType = $type ?? (
+    $flashType = $type ?? ($listenSession ? (
         session()->has('success') ? 'success' : (
         session()->has('error') ? 'error' : (
         session()->has('warning') ? 'warning' : (
         session()->has('info') ? 'info' : (
         session()->has('status') ? 'success' : null))))
-    );
+    ) : null);
 
-    $flashMessage = $message ?? (
+    $flashMessage = $message ?? ($listenSession ? (
         session('success') ?? (
         session('error') ?? (
         session('warning') ?? (
         session('info') ?? (
         session('status') ?? null))))
-    );
+    ) : null);
 
     $styleMap = [
         'success' => [
-            'border' => 'border-emerald-200',
-            'bg' => 'bg-white',
-            'iconBg' => 'bg-emerald-50 text-emerald-600',
-            'title' => 'Éxito',
+            'border' => 'border-success-border',
+            'iconBg' => 'bg-success-bg text-success-text',
+            'title' => 'Operación exitosa',
         ],
         'error' => [
-            'border' => 'border-rose-200',
-            'bg' => 'bg-white',
-            'iconBg' => 'bg-rose-50 text-rose-600',
+            'border' => 'border-danger-border',
+            'iconBg' => 'bg-danger-bg text-danger-text',
             'title' => 'Error',
         ],
         'warning' => [
-            'border' => 'border-amber-200',
-            'bg' => 'bg-white',
-            'iconBg' => 'bg-amber-50 text-amber-600',
+            'border' => 'border-warning-border',
+            'iconBg' => 'bg-warning-bg text-warning-text',
             'title' => 'Atención',
         ],
         'info' => [
-            'border' => 'border-sky-200',
-            'bg' => 'bg-white',
-            'iconBg' => 'bg-sky-50 text-sky-600',
+            'border' => 'border-info-border',
+            'iconBg' => 'bg-info-bg text-info-text',
             'title' => 'Información',
         ],
     ];
@@ -62,7 +59,7 @@
         x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        class="fixed top-4 right-4 z-50 max-w-sm w-full bg-white rounded-lg shadow-lg border {{ $currentStyle['border'] }} p-4 pointer-events-auto"
+        class="fixed top-4 right-4 z-50 max-w-sm w-full bg-surface rounded-xl shadow-lg border {{ $currentStyle['border'] }} p-4 pointer-events-auto"
         role="alert"
     >
         <div class="flex items-start gap-3">
@@ -87,10 +84,10 @@
             </div>
 
             <div class="flex-1 pt-0.5">
-                <p class="text-xs font-semibold text-slate-900">
+                <p class="text-xs font-semibold text-text-primary">
                     {{ $currentStyle['title'] }}
                 </p>
-                <p class="text-xs text-slate-600 mt-0.5">
+                <p class="text-xs text-text-secondary mt-0.5">
                     {{ $flashMessage }}
                 </p>
             </div>
@@ -98,7 +95,7 @@
             <button
                 type="button"
                 x-on:click="show = false"
-                class="text-slate-400 hover:text-slate-600 focus:outline-none p-1 rounded-md"
+                class="text-text-muted hover:text-text-primary focus:outline-none p-1 rounded-md"
                 aria-label="Cerrar notificación"
             >
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
