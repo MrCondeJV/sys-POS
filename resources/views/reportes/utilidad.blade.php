@@ -26,15 +26,15 @@
         <form method="GET" action="{{ route('reportes.utilidad') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             <div>
                 <label class="label-base">Desde</label>
-                <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="input-base text-xs">
+                <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="input text-xs">
             </div>
             <div>
                 <label class="label-base">Hasta</label>
-                <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="input-base text-xs">
+                <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="input text-xs">
             </div>
             <div>
                 <label class="label-base">Sucursal</label>
-                <select name="sucursal_id" class="input-select text-xs">
+                <select name="sucursal_id" class="input text-xs">
                     <option value="">Todas</option>
                     @foreach($sucursales as $s)
                         <option value="{{ $s->id }}" {{ $sucursalId == $s->id ? 'selected' : '' }}>{{ $s->nombre }}</option>
@@ -43,7 +43,7 @@
             </div>
             <div>
                 <label class="label-base">Categoría</label>
-                <select name="categoria_id" class="input-select text-xs">
+                <select name="categoria_id" class="input text-xs">
                     <option value="">Todas</option>
                     @foreach($categorias as $cat)
                         <option value="{{ $cat->id }}" {{ $categoriaId == $cat->id ? 'selected' : '' }}>{{ $cat->nombre }}</option>
@@ -96,7 +96,7 @@
             <h3 class="font-semibold text-slate-900 text-sm">Rentabilidad por Artículo</h3>
         </div>
         <div class="overflow-x-auto">
-            <table class="table-corporate">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Producto</th>
@@ -119,8 +119,8 @@
                         </td>
                         <td class="text-center font-mono text-xs text-slate-800 tabular-nums">{{ number_format($r->unidades_vendidas, 0) }}</td>
                         <td class="text-right font-mono text-xs text-slate-700 tabular-nums">${{ number_format($r->ingreso_neto, 2) }}</td>
-                        <td class="text-right font-mono text-xs text-red-600 tabular-nums">${{ number_format($r->costo_total, 2) }}</td>
-                        <td class="text-right font-mono font-semibold text-xs text-emerald-700 tabular-nums">${{ number_format($r->utilidad_bruta, 2) }}</td>
+                        <td class="text-right font-mono text-xs text-danger-text tabular-nums">${{ number_format($r->costo_total, 2) }}</td>
+                        <td class="text-right font-mono font-semibold text-xs text-success-text tabular-nums">${{ number_format($r->utilidad_bruta, 2) }}</td>
                         <td class="text-center">
                             <span class="badge {{ $pctProd >= 20 ? 'badge-success' : ($pctProd > 0 ? 'badge-warning' : 'badge-danger') }} font-mono">
                                 {{ $pctProd }}%

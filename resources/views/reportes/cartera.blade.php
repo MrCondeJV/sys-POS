@@ -26,7 +26,7 @@
         <form method="GET" action="{{ route('reportes.cartera') }}" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
                 <label class="label-base">Cliente</label>
-                <select name="cliente_id" class="input-select text-xs">
+                <select name="cliente_id" class="input text-xs">
                     <option value="">Todos los Clientes</option>
                     @foreach($clientes as $cl)
                         <option value="{{ $cl->id }}" {{ $clienteId == $cl->id ? 'selected' : '' }}>{{ $cl->razon_social }}</option>
@@ -35,7 +35,7 @@
             </div>
             <div>
                 <label class="label-base">Sucursal</label>
-                <select name="sucursal_id" class="input-select text-xs">
+                <select name="sucursal_id" class="input text-xs">
                     <option value="">Todas</option>
                     @foreach($sucursales as $s)
                         <option value="{{ $s->id }}" {{ $sucursalId == $s->id ? 'selected' : '' }}>{{ $s->nombre }}</option>
@@ -94,7 +94,7 @@
     <!-- Tabla -->
     <div class="card p-0 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="table-corporate">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Documento</th>
@@ -113,14 +113,14 @@
                         <td class="font-mono font-semibold text-slate-900 text-xs">{{ $cp->numero_documento }}</td>
                         <td class="text-xs font-medium text-slate-800">{{ $cp->cliente?->razon_social }}</td>
                         <td class="text-xs text-slate-500 font-mono">{{ $cp->fecha_emision->format('d/m/Y') }}</td>
-                        <td class="text-xs font-mono {{ $cp->estaVencida() ? 'text-red-600 font-semibold' : 'text-slate-600' }}">
+                        <td class="text-xs font-mono {{ $cp->estaVencida() ? 'text-danger-text font-semibold' : 'text-slate-600' }}">
                             {{ $cp->fecha_vencimiento->format('d/m/Y') }}
                             @if($cp->estaVencida())
-                                <span class="text-[10px] text-red-500">({{ abs($cp->diasDiferenciaVencimiento()) }} d mora)</span>
+                                <span class="text-[10px] text-danger-text">({{ abs($cp->diasDiferenciaVencimiento()) }} d mora)</span>
                             @endif
                         </td>
                         <td class="text-right font-mono text-xs text-slate-700 tabular-nums">${{ number_format($cp->monto_total, 2) }}</td>
-                        <td class="text-right font-mono text-xs text-emerald-700 tabular-nums">${{ number_format($cp->monto_pagado, 2) }}</td>
+                        <td class="text-right font-mono text-xs text-success-text tabular-nums">${{ number_format($cp->monto_pagado, 2) }}</td>
                         <td class="text-right font-mono font-semibold text-xs text-slate-900 tabular-nums">${{ number_format($cp->saldo_pendiente, 2) }}</td>
                         <td class="text-center">
                             <span class="badge {{ $cp->estado->value === 'PAGADA' ? 'badge-success' : ($cp->estaVencida() ? 'badge-danger' : 'badge-warning') }}">

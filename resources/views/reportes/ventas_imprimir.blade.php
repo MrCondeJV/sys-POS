@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Reporte de Ventas - {{ config('app.name') }}</title>
+    @vite(['resources/css/app.css'])
     <style>
-        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11px; color: #1e293b; margin: 20px; }
-        .header { border-bottom: 2px solid #0f172a; padding-bottom: 10px; margin-bottom: 15px; }
-        .title { font-size: 18px; font-weight: bold; text-transform: uppercase; color: #0f172a; }
-        .meta { font-size: 10px; color: #64748b; margin-top: 4px; }
-        .summary-box { display: flex; justify-content: space-between; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; margin-bottom: 15px; }
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 11px; color: rgb(30, 41, 59); margin: 20px; }
+        .header { border-bottom: 2px solid rgb(15, 23, 42); padding-bottom: 10px; margin-bottom: 15px; }
+        .title { font-size: 18px; font-weight: bold; text-transform: uppercase; color: rgb(15, 23, 42); }
+        .meta { font-size: 10px; color: rgb(100, 116, 139); margin-top: 4px; }
+        .summary-box { display: flex; justify-content: space-between; background: rgb(248, 250, 252); border: 1px solid rgb(226, 232, 240); padding: 10px; border-radius: 6px; margin-bottom: 15px; }
         .summary-item { text-align: center; }
-        .summary-label { font-size: 9px; text-transform: uppercase; color: #64748b; font-weight: bold; }
-        .summary-val { font-size: 14px; font-weight: bold; color: #0f172a; margin-top: 2px; }
+        .summary-label { font-size: 9px; text-transform: uppercase; color: rgb(100, 116, 139); font-weight: bold; }
+        .summary-val { font-size: 14px; font-weight: bold; color: rgb(15, 23, 42); margin-top: 2px; }
         table { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 10px; }
-        th { background: #0f172a; color: #ffffff; text-transform: uppercase; font-size: 9px; padding: 6px 8px; text-align: left; }
-        td { border-bottom: 1px solid #e2e8f0; padding: 6px 8px; }
+        th { background: rgb(15, 23, 42); color: rgb(255, 255, 255); text-transform: uppercase; font-size: 9px; padding: 6px 8px; text-align: left; }
+        td { border-bottom: 1px solid rgb(226, 232, 240); padding: 6px 8px; }
         .text-right { text-align: right; }
         .text-center { text-align: center; }
         .bold { font-weight: bold; }
@@ -26,7 +27,7 @@
 </head>
 <body>
     <div class="no-print" style="margin-bottom: 15px; text-align: right;">
-        <button onclick="window.print()" style="padding: 8px 16px; background: #0284c7; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
+        <button onclick="window.print()" class="btn-primary">
             Imprimir Reporte
         </button>
     </div>
@@ -49,7 +50,7 @@
         </div>
         <div class="summary-item">
             <div class="summary-label">Total Neto Facturado</div>
-            <div class="summary-val" style="color: #059669;">${{ number_format($totalNeto, 2) }}</div>
+            <div class="summary-val text-success-text">${{ number_format($totalNeto, 2) }}</div>
         </div>
     </div>
 

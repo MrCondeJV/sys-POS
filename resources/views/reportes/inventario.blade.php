@@ -26,7 +26,7 @@
         <form method="GET" action="{{ route('reportes.inventario') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div>
                 <label class="label-base">Sucursal</label>
-                <select name="sucursal_id" class="input-select text-xs">
+                <select name="sucursal_id" class="input text-xs">
                     <option value="">Todas las Sedes</option>
                     @foreach($sucursales as $s)
                         <option value="{{ $s->id }}" {{ $sucursalId == $s->id ? 'selected' : '' }}>{{ $s->nombre }}</option>
@@ -35,7 +35,7 @@
             </div>
             <div>
                 <label class="label-base">Categoría</label>
-                <select name="categoria_id" class="input-select text-xs">
+                <select name="categoria_id" class="input text-xs">
                     <option value="">Todas</option>
                     @foreach($categorias as $c)
                         <option value="{{ $c->id }}" {{ $categoriaId == $c->id ? 'selected' : '' }}>{{ $c->nombre }}</option>
@@ -44,7 +44,7 @@
             </div>
             <div>
                 <label class="label-base">Estado de Stock</label>
-                <select name="filtro_stock" class="input-select text-xs">
+                <select name="filtro_stock" class="input text-xs">
                     <option value="todos" {{ $filtroStock === 'todos' ? 'selected' : '' }}>Todos</option>
                     <option value="bajo_stock" {{ $filtroStock === 'bajo_stock' ? 'selected' : '' }}>Bajo Stock Mínimo</option>
                     <option value="agotados" {{ $filtroStock === 'agotados' ? 'selected' : '' }}>Agotados (0 o menos)</option>
@@ -94,7 +94,7 @@
     <!-- Tabla -->
     <div class="card p-0 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="table-corporate">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Producto</th>
@@ -125,7 +125,7 @@
                             </span>
                         </td>
                         <td class="text-right font-mono text-xs text-slate-700 tabular-nums">${{ number_format($inv->producto->precio_costo, 2) }}</td>
-                        <td class="text-right font-mono text-xs text-amber-700 tabular-nums">${{ number_format($costoTotalItem, 2) }}</td>
+                        <td class="text-right font-mono text-xs text-warning-text tabular-nums">${{ number_format($costoTotalItem, 2) }}</td>
                         <td class="text-right font-mono text-xs text-slate-700 tabular-nums">${{ number_format($inv->producto->precio_venta, 2) }}</td>
                         <td class="text-right font-mono font-semibold text-xs text-slate-900 tabular-nums">${{ number_format($ventaTotalItem, 2) }}</td>
                     </tr>

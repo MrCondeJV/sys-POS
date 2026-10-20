@@ -26,15 +26,15 @@
         <form method="GET" action="{{ route('reportes.cajas') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             <div>
                 <label class="label-base">Desde</label>
-                <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="input-base text-xs">
+                <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="input text-xs">
             </div>
             <div>
                 <label class="label-base">Hasta</label>
-                <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="input-base text-xs">
+                <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="input text-xs">
             </div>
             <div>
                 <label class="label-base">Caja</label>
-                <select name="caja_id" class="input-select text-xs">
+                <select name="caja_id" class="input text-xs">
                     <option value="">Todas</option>
                     @foreach($cajas as $c)
                         <option value="{{ $c->id }}" {{ $cajaId == $c->id ? 'selected' : '' }}>{{ $c->nombre }}</option>
@@ -43,7 +43,7 @@
             </div>
             <div>
                 <label class="label-base">Estado</label>
-                <select name="estado" class="input-select text-xs">
+                <select name="estado" class="input text-xs">
                     <option value="">Todos</option>
                     <option value="ABIERTA" {{ $estado === 'ABIERTA' ? 'selected' : '' }}>Abierta</option>
                     <option value="CERRADA" {{ $estado === 'CERRADA' ? 'selected' : '' }}>Cerrada</option>
@@ -93,7 +93,7 @@
     <!-- Tabla -->
     <div class="card p-0 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="table-corporate">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Caja / Sede</th>
@@ -120,7 +120,7 @@
                         <td class="text-right font-mono text-xs text-slate-700 tabular-nums">${{ number_format($s->monto_apertura, 2) }}</td>
                         <td class="text-right font-mono text-xs text-slate-700 tabular-nums">${{ number_format($s->monto_cierre_esperado ?? 0, 2) }}</td>
                         <td class="text-right font-mono font-semibold text-xs text-slate-900 tabular-nums">${{ number_format($s->monto_cierre_contado ?? 0, 2) }}</td>
-                        <td class="text-right font-mono font-semibold text-xs tabular-nums {{ (float)$s->diferencia < 0 ? 'text-red-600' : ((float)$s->diferencia > 0 ? 'text-emerald-600' : 'text-slate-700') }}">
+                        <td class="text-right font-mono font-semibold text-xs tabular-nums {{ (float)$s->diferencia < 0 ? 'text-danger-text' : ((float)$s->diferencia > 0 ? 'text-success-text' : 'text-slate-700') }}">
                             ${{ number_format($s->diferencia ?? 0, 2) }}
                         </td>
                         <td class="text-center">

@@ -26,15 +26,15 @@
         <form method="GET" action="{{ route('reportes.compras') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             <div>
                 <label class="label-base">Desde</label>
-                <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="input-base text-xs">
+                <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="input text-xs">
             </div>
             <div>
                 <label class="label-base">Hasta</label>
-                <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="input-base text-xs">
+                <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="input text-xs">
             </div>
             <div>
                 <label class="label-base">Sucursal</label>
-                <select name="sucursal_id" class="input-select text-xs">
+                <select name="sucursal_id" class="input text-xs">
                     <option value="">Todas</option>
                     @foreach($sucursales as $s)
                         <option value="{{ $s->id }}" {{ $sucursalId == $s->id ? 'selected' : '' }}>{{ $s->nombre }}</option>
@@ -43,7 +43,7 @@
             </div>
             <div>
                 <label class="label-base">Proveedor</label>
-                <select name="proveedor_id" class="input-select text-xs">
+                <select name="proveedor_id" class="input text-xs">
                     <option value="">Todos</option>
                     @foreach($proveedores as $p)
                         <option value="{{ $p->id }}" {{ $proveedorId == $p->id ? 'selected' : '' }}>{{ $p->razon_social }}</option>
@@ -85,7 +85,7 @@
     <!-- Tabla -->
     <div class="card p-0 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="table-corporate">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Factura N°</th>

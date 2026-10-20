@@ -22,7 +22,15 @@
     </x-page-header>
 
     {{-- Comparativo de Ventas --}}
-    <div class="grid grid-cols-1 sm:grid-cols-{{ max(count($ventasPorSucursal), 1) }} gap-4">
+    @php
+        $gridColsClass = [
+            1 => 'sm:grid-cols-1',
+            2 => 'sm:grid-cols-2',
+            3 => 'sm:grid-cols-3',
+            4 => 'sm:grid-cols-4',
+        ][min(max(count($ventasPorSucursal), 1), 4)] ?? 'sm:grid-cols-4';
+    @endphp
+    <div class="grid grid-cols-1 {{ $gridColsClass }} gap-4">
         @foreach($ventasPorSucursal as $item)
             <div class="card p-5 border-l-4 border-brand-600">
                 <p class="kpi-label">{{ $item['sucursal']->nombre }}</p>
@@ -46,7 +54,7 @@
                 </div>
                 <input type="text" name="search" value="{{ request('search') }}"
                     placeholder="Buscar producto por nombre o código de barras..."
-                    class="input-base pl-9 text-xs">
+                    class="input pl-9 text-xs">
             </div>
             <button type="submit" class="btn-primary">
                 Filtrar Existencias
@@ -60,7 +68,7 @@
             <h3 class="text-sm font-semibold text-slate-900">Matriz de Existencias por Sucursal</h3>
         </div>
         <div class="overflow-x-auto">
-            <table class="table-corporate">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Producto</th>

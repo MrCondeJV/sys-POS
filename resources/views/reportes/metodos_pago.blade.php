@@ -18,15 +18,15 @@
         <form method="GET" action="{{ route('reportes.metodos-pago') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div>
                 <label class="label-base">Desde</label>
-                <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="input-base text-xs">
+                <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="input text-xs">
             </div>
             <div>
                 <label class="label-base">Hasta</label>
-                <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="input-base text-xs">
+                <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="input text-xs">
             </div>
             <div>
                 <label class="label-base">Sucursal</label>
-                <select name="sucursal_id" class="input-select text-xs">
+                <select name="sucursal_id" class="input text-xs">
                     <option value="">Todas</option>
                     @foreach($sucursales as $s)
                         <option value="{{ $s->id }}" {{ $sucursalId == $s->id ? 'selected' : '' }}>{{ $s->nombre }}</option>
@@ -41,7 +41,7 @@
     </div>
 
     <!-- Total General (Corporate Dark Card) -->
-    <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl text-white shadow-sm flex items-center justify-between">
+    <div class="bg-slate-900 border border-slate-800 p-6 rounded-lg text-white shadow-sm flex items-center justify-between">
         <div>
             <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Recaudado en el Periodo</span>
             <div class="text-3xl font-bold font-mono tracking-tight mt-1 tabular-nums">${{ number_format($totalGeneral, 2) }}</div>

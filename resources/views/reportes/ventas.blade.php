@@ -27,15 +27,15 @@
         <form method="GET" action="{{ route('reportes.ventas') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
             <div>
                 <label class="label-base">Desde</label>
-                <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="input-base text-xs">
+                <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="input text-xs">
             </div>
             <div>
                 <label class="label-base">Hasta</label>
-                <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="input-base text-xs">
+                <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="input text-xs">
             </div>
             <div>
                 <label class="label-base">Sucursal</label>
-                <select name="sucursal_id" class="input-select text-xs">
+                <select name="sucursal_id" class="input text-xs">
                     <option value="">Todas las Sedes</option>
                     @foreach($sucursales as $suc)
                         <option value="{{ $suc->id }}" {{ $sucursalId == $suc->id ? 'selected' : '' }}>{{ $suc->nombre }}</option>
@@ -44,7 +44,7 @@
             </div>
             <div>
                 <label class="label-base">Cajero / Vendedor</label>
-                <select name="usuario_id" class="input-select text-xs">
+                <select name="usuario_id" class="input text-xs">
                     <option value="">Todos los Usuarios</option>
                     @foreach($usuarios as $usr)
                         <option value="{{ $usr->id }}" {{ $usuarioId == $usr->id ? 'selected' : '' }}>{{ $usr->name }}</option>
@@ -53,7 +53,7 @@
             </div>
             <div>
                 <label class="label-base">Tipo de Pago</label>
-                <select name="tipo_pago" class="input-select text-xs">
+                <select name="tipo_pago" class="input text-xs">
                     <option value="">Todos</option>
                     <option value="CONTADO" {{ $tipoPago === 'CONTADO' ? 'selected' : '' }}>Contado</option>
                     <option value="CREDITO" {{ $tipoPago === 'CREDITO' ? 'selected' : '' }}>Crédito</option>
@@ -106,7 +106,7 @@
     <!-- Tabla Detallada -->
     <div class="card p-0 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="table-corporate">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Comprobante</th>
