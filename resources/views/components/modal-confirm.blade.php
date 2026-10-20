@@ -2,10 +2,10 @@
     'name' => null, // Identificador único o nombre del evento
     'title' => 'Confirmar acción',
     'message' => '¿Estás seguro de que deseas continuar con esta operación?',
-    'consequence' => null, // Explicación explícita de las consecuencias de la acción destructiva
+    'consequence' => null, // Explicación explícita de las consecuencias de la acción
     'confirmText' => 'Confirmar',
     'cancelText' => 'Cancelar',
-    'variant' => 'danger', // 'danger' o 'primary'
+    'variant' => 'danger', // 'danger', 'warning' o 'primary'
     'confirmVariant' => null,
     'action' => null, // URL de acción del formulario si es POST/PUT/PATCH/DELETE estándar
     'method' => 'POST', // Método HTTP: POST, PUT, PATCH, DELETE
@@ -50,10 +50,32 @@
     x-data="{
         {{ $hasExternalShow ? '' : 'open: false,' }}
         _triggerEl: null,
+        dynTitle: @js($title),
+        dynMessage: @js($message),
+        dynConsequence: @js($consequence),
+        dynConfirmText: @js($confirmText),
+        dynCancelText: @js($cancelText),
+        dynVariant: @js($confirmButtonVariant),
+        dynAction: @js($action),
+        dynMethod: @js($httpMethod),
+        dynFormId: @js($formId),
+        dynFormName: @js($formName),
         get isOpen() { return Boolean({{ $showExpr }}); },
         focusSelector: 'button:not([disabled]), [href], input:not([disabled]):not([type=hidden]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex=\'-1\'])',
-        openModal(trigger = null) {
-            this._triggerEl = trigger || document.activeElement;
+        openModal(trigger = null, payload = null) {
+            this._triggerEl = (payload && payload.triggerEl) ? payload.triggerEl : (trigger || document.activeElement);
+            if (payload && typeof payload === 'object') {
+                if (payload.title !== undefined) this.dynTitle = payload.title;
+                if (payload.message !== undefined) this.dynMessage = payload.message;
+                if (payload.consequence !== undefined) this.dynConsequence = payload.consequence;
+                if (payload.confirmText !== undefined) this.dynConfirmText = payload.confirmText;
+                if (payload.cancelText !== undefined) this.dynCancelText = payload.cancelText;
+                if (payload.variant !== undefined) this.dynVariant = payload.variant === 'danger' ? 'danger' : 'primary';
+                if (payload.action !== undefined) this.dynAction = payload.action;
+                if (payload.method !== undefined) this.dynMethod = String(payload.method).toUpperCase().trim();
+                if (payload.formId !== undefined) this.dynFormId = payload.formId;
+                if (payload.formName !== undefined) this.dynFormName = payload.formName;
+            }
             {{ $openExpr }};
             this.$nextTick(() => this.focusFirst());
         },
@@ -96,7 +118,7 @@
             $nextTick(() => _triggerEl.focus());
         }
     })"
-    x-on:open-modal-{{ $name }}.window="openModal()"
+    x-on:open-modal-{{ $name }}.window="openModal($event.detail?.triggerEl || null, $event.detail || null)"
     x-on:close-modal-{{ $name }}.window="closeModal()"
     x-on:keydown.escape.window="if (isOpen) { {{ $cancelClickExpr }}; }"
     x-on:keydown.tab.window="trapFocus($event)"
@@ -147,33 +169,36 @@
                 >
                     <div class="bg-surface p-6">
                         <div class="sm:flex sm:items-start gap-4">
-                            @if($confirmButtonVariant === 'danger')
-                                <div class="mx-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-danger-bg border border-danger-border sm:mx-0 sm:h-10 sm:w-10 text-danger">
-                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                                    </svg>
-                                </div>
-                            @else
-                                <div class="mx-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-info-bg border border-info-border sm:mx-0 sm:h-10 sm:w-10 text-brand-600">
-                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-                                    </svg>
-                                </div>
-                            @endif
+                            <div
+                                x-show="dynVariant === 'danger'"
+                                class="mx-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-danger-bg border border-danger-border sm:mx-0 sm:h-10 sm:w-10 text-danger"
+                            >
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                                </svg>
+                            </div>
+                            <div
+                                x-show="dynVariant !== 'danger'"
+                                class="mx-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-info-bg border border-info-border sm:mx-0 sm:h-10 sm:w-10 text-brand-600"
+                            >
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                                </svg>
+                            </div>
 
                             <div class="mt-3 text-center sm:ml-0 sm:mt-0 sm:text-left flex-1">
-                                <h3 class="text-base font-semibold leading-6 text-text-primary" id="modal-title-{{ $name }}">
+                                <h3 class="text-base font-semibold leading-6 text-text-primary" id="modal-title-{{ $name }}" x-text="dynTitle">
                                     {{ $title }}
                                 </h3>
                                 <div class="mt-2 space-y-2" id="modal-desc-{{ $name }}">
-                                    <p class="text-xs sm:text-[13px] text-text-secondary leading-relaxed">
+                                    <p class="text-xs sm:text-[13px] text-text-secondary leading-relaxed" x-text="dynMessage">
                                         {{ $message }}
                                     </p>
-                                    @if($consequence)
-                                        <div class="p-2.5 rounded-lg bg-danger-bg/60 border border-danger-border text-xs text-danger-text">
-                                            {{ $consequence }}
-                                        </div>
-                                    @endif
+                                    <div
+                                        x-show="Boolean(dynConsequence)"
+                                        x-text="dynConsequence"
+                                        class="p-2.5 rounded-lg bg-surface-muted border border-border text-xs text-text-secondary"
+                                    ></div>
                                     @if(isset($slot) && $slot->isNotEmpty())
                                         <div class="mt-3">
                                             {{ $slot }}
@@ -188,43 +213,47 @@
                         <button
                             type="button"
                             x-on:click="{{ $cancelClickExpr }}"
-                            class="btn-secondary"
+                            class="btn btn-secondary"
+                            x-text="dynCancelText"
                         >
                             {{ $cancelText }}
                         </button>
 
-                        @if($action)
-                            <form
-                                method="POST"
-                                action="{{ $action }}"
-                                @if($formId) id="{{ $formId }}" @endif
-                                @if($formName) name="{{ $formName }}" @endif
-                                class="inline"
-                            >
-                                @csrf
-                                @if(in_array($httpMethod, ['PUT', 'PATCH', 'DELETE'], true))
-                                    @method($httpMethod)
-                                @endif
-                                @if(isset($formInputs))
-                                    {{ $formInputs }}
-                                @endif
+                        @if(isset($confirmAction))
+                            {{ $confirmAction }}
+                        @else
+                            <template x-if="Boolean(dynAction)">
+                                <form
+                                    method="POST"
+                                    :action="dynAction"
+                                    :id="dynFormId || null"
+                                    :name="dynFormName || null"
+                                    class="inline"
+                                >
+                                    @csrf
+                                    <template x-if="['PUT', 'PATCH', 'DELETE'].includes(dynMethod)">
+                                        <input type="hidden" name="_method" :value="dynMethod">
+                                    </template>
+                                    @if(isset($formInputs))
+                                        {{ $formInputs }}
+                                    @endif
+                                    <button
+                                        type="submit"
+                                        :class="dynVariant === 'danger' ? 'btn btn-danger' : 'btn btn-primary'"
+                                        x-text="dynConfirmText"
+                                    ></button>
+                                </form>
+                            </template>
+                            <template x-if="!Boolean(dynAction)">
                                 <button
-                                    type="submit"
-                                    class="{{ $confirmButtonVariant === 'danger' ? 'btn-danger' : 'btn-primary' }}"
+                                    type="button"
+                                    x-on:click="{{ $confirmClickExpr }}"
+                                    :class="dynVariant === 'danger' ? 'btn btn-danger' : 'btn btn-primary'"
+                                    x-text="dynConfirmText"
                                 >
                                     {{ $confirmText }}
                                 </button>
-                            </form>
-                        @elseif(isset($confirmAction))
-                            {{ $confirmAction }}
-                        @else
-                            <button
-                                type="button"
-                                x-on:click="{{ $confirmClickExpr }}"
-                                class="{{ $confirmButtonVariant === 'danger' ? 'btn-danger' : 'btn-primary' }}"
-                            >
-                                {{ $confirmText }}
-                            </button>
+                            </template>
                         @endif
                     </div>
                 </div>

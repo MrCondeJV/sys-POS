@@ -206,11 +206,11 @@
         <x-card title="Campos de Formulario (&lt;x-field&gt;)">
             <div class="space-y-4">
                 <x-field label="Razón Social / Nombre" name="nombre" required hint="Tal como aparece en el documento fiscal.">
-                    <input type="text" id="nombre" name="nombre" value="Ferretería El Progreso S.A.S." class="input-banking" />
+                    <input type="text" id="nombre" name="nombre" value="Ferretería El Progreso S.A.S." class="input" />
                 </x-field>
 
                 <x-field label="Correo Electrónico de Facturación" name="email" required error="Este correo ya se encuentra registrado en el sistema.">
-                    <input type="email" id="email" name="email" value="contacto@empresa.com" class="input-banking border-rose-300 ring-rose-200" />
+                    <input type="email" id="email" name="email" value="contacto@empresa.com" class="input border-danger" />
                 </x-field>
             </div>
         </x-card>
