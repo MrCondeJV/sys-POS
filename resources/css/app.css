@@ -571,6 +571,29 @@
         background-color: var(--color-danger-text);
     }
 
+    /* Alineación horizontal estricta y espaciado de iconos en botones */
+    .btn > svg,
+    .btn-primary > svg,
+    .btn-secondary > svg,
+    .btn-outline > svg,
+    .btn-danger > svg,
+    a.btn > svg,
+    a.btn-primary > svg,
+    a.btn-secondary > svg,
+    a.btn-outline > svg,
+    a.btn-danger > svg {
+        flex-shrink: 0;
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 0 !important;
+    }
+
+    button > svg {
+        flex-shrink: 0;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
     /* --- Badges Semánticos (.badge, .badge-*) --- */
     .badge {
         display: inline-flex;
