@@ -74,7 +74,7 @@
             </div>
         </div>
 
-        <div class="sm:col-span-6 lg:col-span-3">
+        <div class="sm:col-span-6 lg:col-span-2">
             <select name="sucursal_id" class="input">
                 <option value="">Todas las Sedes</option>
                 @foreach($sucursales as $suc)
@@ -85,7 +85,7 @@
             </select>
         </div>
 
-        <div class="sm:col-span-6 lg:col-span-3">
+        <div class="sm:col-span-6 lg:col-span-2">
             <select name="rol" class="input">
                 <option value="">Todos los Roles</option>
                 @foreach($rolesDisponibles as $rol)

@@ -32,20 +32,20 @@
         :has-active-filters="request()->hasAny(['search', 'estado'])"
         :clear-url="route('listas-precios.index')"
     >
-        <div class="sm:col-span-2">
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Buscar Lista</label>
+        <div class="sm:col-span-12 lg:col-span-6">
+            <label class="block text-xs font-semibold text-text-secondary uppercase mb-1">Buscar Lista</label>
             <div class="relative">
-                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-text-muted">
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                 </span>
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar por nombre o código..."
-                    class="w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-xs placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+                    class="input pl-9">
             </div>
         </div>
 
-        <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Estado</label>
-            <select name="estado" class="w-full py-2 px-3 text-xs border border-slate-300 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+        <div class="sm:col-span-6 lg:col-span-4">
+            <label class="block text-xs font-semibold text-text-secondary uppercase mb-1">Estado</label>
+            <select name="estado" class="input">
                 <option value="">Todos los Estados</option>
                 <option value="ACTIVO" {{ request('estado') === 'ACTIVO' ? 'selected' : '' }}>Activas</option>
                 <option value="INACTIVO" {{ request('estado') === 'INACTIVO' ? 'selected' : '' }}>Inactivas</option>

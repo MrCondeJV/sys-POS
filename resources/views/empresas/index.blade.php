@@ -68,7 +68,7 @@
         :hasActiveFilters="request()->hasAny(['buscar', 'estado'])"
         :resetUrl="route('empresas.index')"
     >
-        <div class="sm:col-span-8">
+        <div class="sm:col-span-12 lg:col-span-7">
             <div class="relative">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-text-muted pointer-events-none">
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -84,7 +84,7 @@
                 />
             </div>
         </div>
-        <div class="sm:col-span-4">
+        <div class="sm:col-span-6 lg:col-span-3">
             <select name="estado" class="input">
                 <option value="">Todos los Estados</option>
                 <option value="ACTIVO" {{ request('estado') === 'ACTIVO' ? 'selected' : '' }}>Activas</option>

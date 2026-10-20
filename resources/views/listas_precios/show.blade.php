@@ -47,7 +47,7 @@
             @csrf
             <div class="sm:col-span-7">
                 <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Producto del Catálogo</label>
-                <select name="producto_id" required class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                <select name="producto_id" required class="input">
                     <option value="">Buscar producto...</option>
                     @foreach($productos as $prod)
                         <option value="{{ $prod->id }}">

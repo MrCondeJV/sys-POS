@@ -20,55 +20,48 @@
         </x-slot:actions>
     </x-page-header>
 
-    {{-- Filtros --}}
-    <div class="card p-4">
-        <form method="GET" action="{{ route('auditoria.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
-            <div>
-                <label class="label-base">Desde</label>
-                <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="input">
-            </div>
-            <div>
-                <label class="label-base">Hasta</label>
-                <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="input">
-            </div>
-            <div>
-                <label class="label-base">Módulo</label>
-                <select name="modulo" class="input">
-                    <option value="">Todos los Módulos</option>
-                    @foreach($modulos as $mod)
-                        <option value="{{ $mod }}" {{ $modulo === $mod ? 'selected' : '' }}>{{ $mod }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="label-base">Acción</label>
-                <select name="accion" class="input">
-                    <option value="">Todas las Acciones</option>
-                    @foreach($acciones as $acc)
-                        <option value="{{ $acc }}" {{ $accion === $acc ? 'selected' : '' }}>{{ $acc }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="label-base">Usuario</label>
-                <select name="user_id" class="input">
-                    <option value="">Todos los Usuarios</option>
-                    @foreach($usuarios as $u)
-                        <option value="{{ $u->id }}" {{ $userId == $u->id ? 'selected' : '' }}>{{ $u->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="flex items-end gap-2">
-                <button type="submit" class="btn-primary w-full justify-center">
-                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                    </svg>
-                    Filtrar
-                </button>
-                <a href="{{ route('auditoria.index') }}" class="btn-secondary whitespace-nowrap">Limpiar</a>
-            </div>
-        </form>
-    </div>
+    <!-- Filtros de Auditoría -->
+    <x-filter-bar
+        :action="route('auditoria.index')"
+        :has-active-filters="!empty($fechaDesde) || !empty($fechaHasta) || !empty($modulo) || !empty($accion) || !empty($userId)"
+        :clear-url="route('auditoria.index')"
+    >
+        <div class="sm:col-span-6 lg:col-span-2">
+            <label class="block text-xs font-semibold text-text-secondary uppercase mb-1">Desde</label>
+            <input type="date" name="fecha_desde" value="{{ $fechaDesde }}" class="input">
+        </div>
+        <div class="sm:col-span-6 lg:col-span-2">
+            <label class="block text-xs font-semibold text-text-secondary uppercase mb-1">Hasta</label>
+            <input type="date" name="fecha_hasta" value="{{ $fechaHasta }}" class="input">
+        </div>
+        <div class="sm:col-span-6 lg:col-span-2">
+            <label class="block text-xs font-semibold text-text-secondary uppercase mb-1">Módulo</label>
+            <select name="modulo" class="input">
+                <option value="">Todos los Módulos</option>
+                @foreach($modulos as $mod)
+                    <option value="{{ $mod }}" {{ $modulo === $mod ? 'selected' : '' }}>{{ $mod }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="sm:col-span-6 lg:col-span-2">
+            <label class="block text-xs font-semibold text-text-secondary uppercase mb-1">Acción</label>
+            <select name="accion" class="input">
+                <option value="">Todas las Acciones</option>
+                @foreach($acciones as $acc)
+                    <option value="{{ $acc }}" {{ $accion === $acc ? 'selected' : '' }}>{{ $acc }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="sm:col-span-6 lg:col-span-2">
+            <label class="block text-xs font-semibold text-text-secondary uppercase mb-1">Usuario</label>
+            <select name="user_id" class="input">
+                <option value="">Todos los Usuarios</option>
+                @foreach($usuarios as $u)
+                    <option value="{{ $u->id }}" {{ $userId == $u->id ? 'selected' : '' }}>{{ $u->name }}</option>
+                @endforeach
+            </select>
+        </div>
+    </x-filter-bar>
 
     {{-- Tabla de Auditoría --}}
     <div class="card overflow-hidden">

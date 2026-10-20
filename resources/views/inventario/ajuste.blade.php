@@ -93,7 +93,7 @@
                     <div>
                         <x-field label="Producto a Ajustar" name="producto_id" :required="true">
                             <select name="producto_id" id="producto_id" x-model="productoId" required
-                                class="block w-full py-2 px-3 text-xs border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+                                class="input">
                                 <option value="">Selecciona un producto...</option>
                                 @foreach($productos as $p)
                                 <option value="{{ $p->id }}" {{ $initialProdId == $p->id ? 'selected' : '' }}>
@@ -108,7 +108,7 @@
                     <div>
                         <x-field label="Sucursal Afectada" name="sucursal_id" :required="true">
                             <select name="sucursal_id" id="sucursal_id" x-model="sucursalId" required
-                                class="block w-full py-2 px-3 text-xs border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+                                class="input">
                                 @foreach($sucursales as $s)
                                 <option value="{{ $s->id }}" {{ $initialSucId == $s->id ? 'selected' : '' }}>
                                     {{ $s->nombre }} ({{ $s->codigo }})

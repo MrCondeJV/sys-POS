@@ -62,8 +62,8 @@
         :has-active-filters="request()->hasAny(['buscar', 'estado', 'tipo_pago', 'fecha_desde', 'fecha_hasta'])"
         :clear-url="route('ventas.index')"
     >
-        <div class="sm:col-span-2">
-            <label class="block text-xs font-medium text-text-secondary uppercase mb-1">Buscar Venta / Cliente</label>
+        <div class="sm:col-span-12 lg:col-span-4">
+            <label class="block text-xs font-semibold text-text-secondary uppercase mb-1">Buscar Venta / Cliente</label>
             <div class="relative">
                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-text-muted">
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
@@ -73,8 +73,8 @@
             </div>
         </div>
 
-        <div>
-            <label class="block text-xs font-medium text-text-secondary uppercase mb-1">Estado</label>
+        <div class="sm:col-span-6 lg:col-span-2">
+            <label class="block text-xs font-semibold text-text-secondary uppercase mb-1">Estado</label>
             <select name="estado" class="input">
                 <option value="">Todos los estados</option>
                 <option value="COMPLETADA" {{ request('estado') === 'COMPLETADA' ? 'selected' : '' }}>Completadas</option>
@@ -82,8 +82,8 @@
             </select>
         </div>
 
-        <div>
-            <label class="block text-xs font-medium text-text-secondary uppercase mb-1">Tipo de Pago</label>
+        <div class="sm:col-span-6 lg:col-span-2">
+            <label class="block text-xs font-semibold text-text-secondary uppercase mb-1">Tipo de Pago</label>
             <select name="tipo_pago" class="input">
                 <option value="">Todos</option>
                 <option value="CONTADO" {{ request('tipo_pago') === 'CONTADO' ? 'selected' : '' }}>Contado</option>
@@ -91,8 +91,8 @@
             </select>
         </div>
 
-        <div>
-            <label class="block text-xs font-medium text-text-secondary uppercase mb-1">Desde</label>
+        <div class="sm:col-span-6 lg:col-span-2">
+            <label class="block text-xs font-semibold text-text-secondary uppercase mb-1">Desde</label>
             <input type="date" name="fecha_desde" value="{{ request('fecha_desde') }}"
                 class="input">
         </div>

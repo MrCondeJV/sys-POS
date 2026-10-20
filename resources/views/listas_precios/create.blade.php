@@ -47,7 +47,7 @@
 
             <div>
                 <x-field label="Tipo de Regla / Ajuste" name="tipo_ajuste" :required="true">
-                    <select name="tipo_ajuste" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+                    <select name="tipo_ajuste" class="input">
                         @foreach(App\Enums\TipoAjusteListaPrecio::cases() as $tipo)
                             <option value="{{ $tipo->value }}" {{ old('tipo_ajuste') === $tipo->value ? 'selected' : '' }}>
                                 {{ $tipo->label() }}

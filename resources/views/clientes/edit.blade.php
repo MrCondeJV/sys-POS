@@ -116,7 +116,7 @@
                             Tipo Documento <span class="text-danger-text">*</span>
                         </label>
                         <select id="tipo_documento" name="tipo_documento" x-model="tipoDoc"
-                            class="block w-full py-2 px-3 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
+                            class="input">
                             @foreach(\App\Enums\TipoDocumentoIdentidad::cases() as $doc)
                                 <option value="{{ $doc->value }}">{{ $doc->value }} - {{ $doc->label() }}</option>
                             @endforeach
@@ -281,7 +281,7 @@
                         Estado del Cliente <span class="text-danger-text">*</span>
                     </label>
                     <select id="estado" name="estado"
-                        class="block w-full py-2 px-3 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
+                        class="input">
                         <option value="ACTIVO" @selected(old('estado', $cliente->estado->value) === 'ACTIVO')>Activo (Habilitado)</option>
                         <option value="INACTIVO" @selected(old('estado', $cliente->estado->value) === 'INACTIVO')>Inactivo (Bloqueado)</option>
                     </select>

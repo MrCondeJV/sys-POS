@@ -60,66 +60,52 @@
     </div>
 
     <!-- Filtros de Búsqueda -->
-    <div class="card p-4">
-        <form action="{{ route('compras.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
-            <!-- Búsqueda textual -->
-            <div class="lg:col-span-2 relative">
-                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </div>
-                <input type="text" name="buscar" value="{{ $term }}"
-                    placeholder="Factura # o razón social..."
-                    class="input pl-9">
+    <x-filter-bar
+        :action="route('compras.index')"
+        :has-active-filters="!empty($term) || !empty($sucursalId) || !empty($proveedorId) || !empty($estado) || !empty($desde) || !empty($hasta)"
+        :clear-url="route('compras.index')"
+    >
+        <div class="sm:col-span-12 lg:col-span-4 relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
             </div>
+            <input type="text" name="buscar" value="{{ $term }}"
+                placeholder="Factura # o razón social..."
+                class="input pl-9">
+        </div>
 
-            <!-- Filtro Sucursal -->
-            <div>
-                <select name="sucursal_id" class="input">
-                    <option value="">Todas las Sedes</option>
-                    @foreach($sucursales as $s)
-                        <option value="{{ $s->id }}" {{ $sucursalId == $s->id ? 'selected' : '' }}>
-                            {{ $s->nombre }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+        <div class="sm:col-span-6 lg:col-span-2">
+            <select name="sucursal_id" class="input">
+                <option value="">Todas las Sedes</option>
+                @foreach($sucursales as $s)
+                    <option value="{{ $s->id }}" {{ $sucursalId == $s->id ? 'selected' : '' }}>
+                        {{ $s->nombre }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
-            <!-- Filtro Proveedor -->
-            <div>
-                <select name="proveedor_id" class="input">
-                    <option value="">Todos los Proveedores</option>
-                    @foreach($proveedores as $p)
-                        <option value="{{ $p->id }}" {{ $proveedorId == $p->id ? 'selected' : '' }}>
-                            {{ $p->razon_social }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+        <div class="sm:col-span-6 lg:col-span-2">
+            <select name="proveedor_id" class="input">
+                <option value="">Todos los Proveedores</option>
+                @foreach($proveedores as $p)
+                    <option value="{{ $p->id }}" {{ $proveedorId == $p->id ? 'selected' : '' }}>
+                        {{ $p->razon_social }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
-            <!-- Filtro Estado -->
-            <div>
-                <select name="estado" class="input">
-                    <option value="">Cualquier Estado</option>
-                    <option value="REGISTRADA" {{ $estado === 'REGISTRADA' ? 'selected' : '' }}>Registradas</option>
-                    <option value="ANULADA" {{ $estado === 'ANULADA' ? 'selected' : '' }}>Anuladas</option>
-                </select>
-            </div>
-
-            <!-- Botones -->
-            <div class="flex gap-2">
-                <button type="submit" class="btn-primary flex-1">
-                    Filtrar
-                </button>
-                @if($term || $sucursalId || $proveedorId || $estado || $desde || $hasta)
-                    <a href="{{ route('compras.index') }}" class="btn-secondary">
-                        Limpiar
-                    </a>
-                @endif
-            </div>
-        </form>
-    </div>
+        <div class="sm:col-span-6 lg:col-span-2">
+            <select name="estado" class="input">
+                <option value="">Cualquier Estado</option>
+                <option value="REGISTRADA" {{ $estado === 'REGISTRADA' ? 'selected' : '' }}>Registradas</option>
+                <option value="ANULADA" {{ $estado === 'ANULADA' ? 'selected' : '' }}>Anuladas</option>
+            </select>
+        </div>
+    </x-filter-bar>
 
     <!-- Lista de Compras: Desktop Table / Mobile Cards -->
     <div class="card p-0 overflow-hidden">

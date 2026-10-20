@@ -196,8 +196,7 @@
                 <!-- Categoría -->
                 <div>
                     <x-field label="Categoría" name="categoria_id">
-                        <select name="categoria_id" id="categoria_id"
-                            class="block w-full px-3 py-2 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+                        <select name="categoria_id" id="categoria_id" class="input">
                             <option value="">-- Sin Categoría --</option>
                             @foreach($categorias as $cat)
                             <option value="{{ $cat->id }}" {{ old('categoria_id', $producto->categoria_id) == $cat->id ? 'selected' : '' }}>
@@ -211,8 +210,7 @@
                 <!-- Marca -->
                 <div>
                     <x-field label="Marca / Fabricante" name="marca_id">
-                        <select name="marca_id" id="marca_id"
-                            class="block w-full px-3 py-2 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+                        <select name="marca_id" id="marca_id" class="input">
                             <option value="">-- Sin Marca --</option>
                             @foreach($marcas as $marca)
                             <option value="{{ $marca->id }}" {{ old('marca_id', $producto->marca_id) == $marca->id ? 'selected' : '' }}>
@@ -226,8 +224,7 @@
                 <!-- Unidad de Medida -->
                 <div>
                     <x-field label="Unidad de Medida" name="unidad_medida_id">
-                        <select name="unidad_medida_id" id="unidad_medida_id"
-                            class="block w-full px-3 py-2 border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+                        <select name="unidad_medida_id" id="unidad_medida_id" class="input">
                             <option value="">-- Unidad por defecto (UND) --</option>
                             @foreach($unidades as $u)
                             <option value="{{ $u->id }}" {{ old('unidad_medida_id', $producto->unidad_medida_id) == $u->id ? 'selected' : '' }}>
@@ -302,8 +299,7 @@
                 <!-- IVA (%) -->
                 <div>
                     <x-field label="IVA / Impuesto (%)" name="iva">
-                        <select name="iva" id="iva" x-model="iva"
-                            class="block w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-medium text-slate-900 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+                        <select name="iva" id="iva" x-model="iva" class="input">
                             @if(isset($impuestos) && $impuestos->isNotEmpty())
                                 @foreach($impuestos as $imp)
                                     <option value="{{ (float)$imp->porcentaje }}" {{ (old('iva', $producto->iva) == (float)$imp->porcentaje) ? 'selected' : '' }}>
@@ -346,8 +342,7 @@
                 <!-- Estado -->
                 <div>
                     <x-field label="Estado del Producto" name="estado">
-                        <select name="estado" id="estado"
-                            class="block w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-medium text-slate-900 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+                        <select name="estado" id="estado" class="input">
                             <option value="activo" {{ old('estado', $producto->estado?->value ?? 'activo') === 'activo' ? 'selected' : '' }}>Activo (Disponible para venta)</option>
                             <option value="inactivo" {{ old('estado', $producto->estado?->value ?? 'activo') === 'inactivo' ? 'selected' : '' }}>Inactivo (Oculto en caja)</option>
                         </select>

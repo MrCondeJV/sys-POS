@@ -38,30 +38,31 @@
     </div>
 
     <!-- Filtros -->
-    <div class="card p-4">
-        <form method="GET" action="{{ route('devoluciones.index') }}" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
-            <div class="sm:col-span-2 relative">
-                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </div>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar por número de devolución o venta..."
-                       class="input pl-9 text-xs">
+    <x-filter-bar
+        :action="route('devoluciones.index')"
+        :has-active-filters="request()->hasAny(['search', 'fecha_desde', 'fecha_hasta'])"
+        :clear-url="route('devoluciones.index')"
+    >
+        <div class="sm:col-span-12 lg:col-span-6 relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
             </div>
-            <div>
-                <input type="date" name="fecha_desde" value="{{ request('fecha_desde') }}"
-                       class="input text-xs">
-            </div>
-            <div class="flex items-center space-x-2">
-                <input type="date" name="fecha_hasta" value="{{ request('fecha_hasta') }}"
-                       class="input text-xs">
-                <button type="submit" class="btn-primary">
-                    Filtrar
-                </button>
-            </div>
-        </form>
-    </div>
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar por número de devolución o venta..."
+                   class="input pl-9">
+        </div>
+
+        <div class="sm:col-span-6 lg:col-span-2">
+            <input type="date" name="fecha_desde" value="{{ request('fecha_desde') }}"
+                   class="input" title="Fecha Desde">
+        </div>
+
+        <div class="sm:col-span-6 lg:col-span-2">
+            <input type="date" name="fecha_hasta" value="{{ request('fecha_hasta') }}"
+                   class="input" title="Fecha Hasta">
+        </div>
+    </x-filter-bar>
 
     <!-- Tabla de Devoluciones -->
     <div class="card p-0 overflow-hidden">

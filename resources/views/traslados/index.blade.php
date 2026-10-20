@@ -34,9 +34,9 @@
         :has-active-filters="request()->hasAny(['origen_id', 'destino_id', 'estado'])"
         :clear-url="route('traslados.index')"
     >
-        <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Sucursal Origen</label>
-            <select name="origen_id" class="w-full py-2 px-3 text-xs border border-slate-300 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+        <div class="sm:col-span-6 lg:col-span-4">
+            <label class="block text-xs font-semibold text-text-secondary uppercase mb-1">Sucursal Origen</label>
+            <select name="origen_id" class="input">
                 <option value="">Todas las sedes</option>
                 @foreach($sucursales as $s)
                     <option value="{{ $s->id }}" {{ request('origen_id') == $s->id ? 'selected' : '' }}>{{ $s->nombre }}</option>
@@ -44,9 +44,9 @@
             </select>
         </div>
 
-        <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Sucursal Destino</label>
-            <select name="destino_id" class="w-full py-2 px-3 text-xs border border-slate-300 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+        <div class="sm:col-span-6 lg:col-span-4">
+            <label class="block text-xs font-semibold text-text-secondary uppercase mb-1">Sucursal Destino</label>
+            <select name="destino_id" class="input">
                 <option value="">Todas las sedes</option>
                 @foreach($sucursales as $s)
                     <option value="{{ $s->id }}" {{ request('destino_id') == $s->id ? 'selected' : '' }}>{{ $s->nombre }}</option>
@@ -54,9 +54,9 @@
             </select>
         </div>
 
-        <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Estado</label>
-            <select name="estado" class="w-full py-2 px-3 text-xs border border-slate-300 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+        <div class="sm:col-span-6 lg:col-span-2">
+            <label class="block text-xs font-semibold text-text-secondary uppercase mb-1">Estado</label>
+            <select name="estado" class="input">
                 <option value="">Todos los estados</option>
                 @foreach($estados as $e)
                     <option value="{{ $e->value }}" {{ request('estado') == $e->value ? 'selected' : '' }}>{{ $e->label() }}</option>

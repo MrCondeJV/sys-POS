@@ -381,7 +381,7 @@
                             <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
                                 Método de Pago <span class="text-danger-text">*</span>
                             </label>
-                            <select name="metodo_pago" required class="block w-full py-2 px-3 border border-slate-300 rounded-lg text-sm text-slate-700 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
+                            <select name="metodo_pago" required class="input">
                                 @foreach(\App\Enums\MetodoPagoCartera::cases() as $mp)
                                     <option value="{{ $mp->value }}">{{ $mp->label() }}</option>
                                 @endforeach

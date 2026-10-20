@@ -58,24 +58,23 @@
         :has-active-filters="!empty($term) || !empty($categoriaId) || !empty($bajoStock)"
         :clear-url="route('productos.index')"
     >
-        <div class="sm:col-span-2">
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Buscar Producto</label>
+        <div class="sm:col-span-12 lg:col-span-5">
+            <label class="block text-xs font-semibold text-text-secondary uppercase mb-1">Buscar Producto</label>
             <div class="relative">
-                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-text-muted">
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </span>
                 <input type="text" name="buscar" value="{{ $term ?? '' }}"
-                    class="block w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-xs placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition"
+                    class="input pl-9"
                     placeholder="Buscar por nombre, SKU o código de barras...">
             </div>
         </div>
 
-        <div>
-            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Categoría</label>
-            <select name="categoria_id" onchange="this.form.submit()"
-                class="block w-full py-2 px-3 border border-slate-300 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+        <div class="sm:col-span-6 lg:col-span-3">
+            <label class="block text-xs font-semibold text-text-secondary uppercase mb-1">Categoría</label>
+            <select name="categoria_id" onchange="this.form.submit()" class="input">
                 <option value="">Todas las Categorías ({{ $categorias->count() }})</option>
                 @foreach($categorias as $cat)
                 <option value="{{ $cat->id }}" {{ ($categoriaId ?? '') == $cat->id ? 'selected' : '' }}>
@@ -85,10 +84,10 @@
             </select>
         </div>
 
-        <div class="flex items-center pt-5">
-            <label class="inline-flex items-center space-x-2 cursor-pointer text-xs font-medium text-slate-700 select-none">
+        <div class="sm:col-span-6 lg:col-span-2 flex items-center h-10">
+            <label class="inline-flex items-center space-x-2 cursor-pointer text-xs font-semibold text-text-primary select-none">
                 <input type="checkbox" name="bajo_stock" value="1" {{ ($bajoStock ?? false) ? 'checked' : '' }} onchange="this.form.submit()"
-                    class="h-4 w-4 text-brand-600 focus:ring-brand-500 border-slate-300 rounded">
+                    class="h-4 w-4 text-brand-600 focus:ring-brand-500 border-border-strong rounded">
                 <span>Solo Bajo Stock</span>
             </label>
         </div>

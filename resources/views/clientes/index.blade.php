@@ -52,19 +52,19 @@
 
     <!-- Barra de Búsqueda y Filtros -->
     <x-filter-bar :action="route('clientes.index')" :clear-url="route('clientes.index')" :has-active-filters="!empty($term) || !empty($tipoPersona) || !empty($estado)">
-        <div class="sm:col-span-5 relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+        <div class="sm:col-span-12 lg:col-span-5 relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
             </div>
             <input type="text" name="buscar" value="{{ $term ?? '' }}"
                 placeholder="Buscar por razón social, documento, teléfono..."
-                class="block w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
+                class="input pl-9">
         </div>
 
-        <div class="sm:col-span-3">
-            <select name="tipo_persona" class="block w-full py-2 px-3 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
+        <div class="sm:col-span-6 lg:col-span-3">
+            <select name="tipo_persona" class="input">
                 <option value="">Todos los tipos de persona</option>
                 @foreach(\App\Enums\TipoPersona::cases() as $tp)
                     <option value="{{ $tp->value }}" @selected(($tipoPersona ?? '') === $tp->value)>
@@ -74,8 +74,8 @@
             </select>
         </div>
 
-        <div class="sm:col-span-2">
-            <select name="estado" class="block w-full py-2 px-3 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
+        <div class="sm:col-span-6 lg:col-span-2">
+            <select name="estado" class="input">
                 <option value="">Todos los estados</option>
                 <option value="ACTIVO" @selected(($estado ?? '') === 'ACTIVO')>Activo</option>
                 <option value="INACTIVO" @selected(($estado ?? '') === 'INACTIVO')>Inactivo</option>

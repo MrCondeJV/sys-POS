@@ -108,7 +108,7 @@
                 <div>
                     <x-field label="Producto" name="producto_id" :required="true">
                         <select name="producto_id" id="producto_id" x-model="productoId" required
-                            class="block w-full py-2 px-3 text-xs border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+                            class="input">
                             <option value="">Selecciona un producto...</option>
                             @foreach($productos as $p)
                             <option value="{{ $p->id }}" {{ $initialProdId == $p->id ? 'selected' : '' }}>
@@ -132,7 +132,7 @@
                     <div>
                         <x-field label="Sucursal de Origen (Despacho)" name="sucursal_origen_id" :required="true">
                             <select name="sucursal_origen_id" id="sucursal_origen_id" x-model="sucursalOrigenId" required
-                                class="block w-full py-2 px-3 text-xs border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+                                class="input">
                                 @foreach($sucursales as $s)
                                 <option value="{{ $s->id }}" {{ $initialOrigenId == $s->id ? 'selected' : '' }}>
                                     {{ $s->nombre }} ({{ $s->codigo }})
@@ -149,7 +149,7 @@
                     <div>
                         <x-field label="Sucursal de Destino (Recepción)" name="sucursal_destino_id" :required="true">
                             <select name="sucursal_destino_id" id="sucursal_destino_id" x-model="sucursalDestinoId" required
-                                class="block w-full py-2 px-3 text-xs border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+                                class="input">
                                 @foreach($sucursales as $s)
                                 <option value="{{ $s->id }}" {{ $initialDestinoId == $s->id ? 'selected' : '' }}>
                                     {{ $s->nombre }} ({{ $s->codigo }})

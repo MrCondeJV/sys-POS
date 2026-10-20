@@ -122,9 +122,9 @@
         :has-active-filters="$sucursalId || $tipo || $desde || $hasta"
         :clear-url="route('inventario.kardex', $producto->id)"
     >
-        <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1 uppercase tracking-wider">Sucursal</label>
-            <select name="sucursal_id" class="block w-full py-2 px-3 text-xs border border-slate-300 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+        <div class="sm:col-span-6 lg:col-span-3">
+            <label class="block text-xs font-semibold text-text-secondary mb-1 uppercase tracking-wider">Sucursal</label>
+            <select name="sucursal_id" class="input">
                 <option value="">Todas las Sucursales</option>
                 @foreach($sucursales as $suc)
                 <option value="{{ $suc->id }}" {{ $sucursalId === $suc->id ? 'selected' : '' }}>{{ $suc->nombre }}</option>
@@ -132,9 +132,9 @@
             </select>
         </div>
 
-        <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1 uppercase tracking-wider">Tipo Movimiento</label>
-            <select name="tipo" class="block w-full py-2 px-3 text-xs border border-slate-300 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+        <div class="sm:col-span-6 lg:col-span-3">
+            <label class="block text-xs font-semibold text-text-secondary mb-1 uppercase tracking-wider">Tipo Movimiento</label>
+            <select name="tipo" class="input">
                 <option value="">Todos los Tipos</option>
                 @foreach($tiposMovimiento as $t)
                 <option value="{{ $t->value }}" {{ $tipo === $t->value ? 'selected' : '' }}>{{ $t->label() }}</option>
@@ -142,14 +142,14 @@
             </select>
         </div>
 
-        <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1 uppercase tracking-wider">Desde</label>
-            <input type="date" name="desde" value="{{ $desde }}" class="block w-full py-2 px-3 text-xs border border-slate-300 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+        <div class="sm:col-span-6 lg:col-span-2">
+            <label class="block text-xs font-semibold text-text-secondary mb-1 uppercase tracking-wider">Desde</label>
+            <input type="date" name="desde" value="{{ $desde }}" class="input">
         </div>
 
-        <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1 uppercase tracking-wider">Hasta</label>
-            <input type="date" name="hasta" value="{{ $hasta }}" class="block w-full py-2 px-3 text-xs border border-slate-300 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+        <div class="sm:col-span-6 lg:col-span-2">
+            <label class="block text-xs font-semibold text-text-secondary mb-1 uppercase tracking-wider">Hasta</label>
+            <input type="date" name="hasta" value="{{ $hasta }}" class="input">
         </div>
     </x-filter-bar>
 

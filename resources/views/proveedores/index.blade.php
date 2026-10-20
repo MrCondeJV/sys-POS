@@ -118,39 +118,30 @@
     </div>
 
     <!-- Barra de Búsqueda y Filtros -->
-    <div class="card p-4">
-        <form action="{{ route('proveedores.index') }}" method="GET" class="flex flex-col md:flex-row gap-3">
-            <div class="flex-1 relative">
-                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </div>
-                <input type="text" name="buscar" value="{{ $term }}"
-                    placeholder="Buscar por razón social, NIT/documento, contacto, email..."
-                    class="input pl-9">
+    <x-filter-bar
+        :action="route('proveedores.index')"
+        :has-active-filters="!empty($term) || !empty($estado)"
+        :clear-url="route('proveedores.index')"
+    >
+        <div class="sm:col-span-12 lg:col-span-7 relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
             </div>
+            <input type="text" name="buscar" value="{{ $term }}"
+                placeholder="Buscar por razón social, NIT/documento, contacto, email..."
+                class="input pl-9">
+        </div>
 
-            <div class="w-full md:w-48">
-                <select name="estado" onchange="this.form.submit()" class="input">
-                    <option value="">Todos los Estados</option>
-                    <option value="ACTIVO" {{ $estado === 'ACTIVO' ? 'selected' : '' }}>Solo Activos</option>
-                    <option value="INACTIVO" {{ $estado === 'INACTIVO' ? 'selected' : '' }}>Solo Inactivos</option>
-                </select>
-            </div>
-
-            <div class="flex gap-2">
-                <button type="submit" class="btn-primary">
-                    Filtrar
-                </button>
-                @if($term || $estado)
-                    <a href="{{ route('proveedores.index') }}" class="btn-secondary">
-                        Limpiar
-                    </a>
-                @endif
-            </div>
-        </form>
-    </div>
+        <div class="sm:col-span-6 lg:col-span-3">
+            <select name="estado" onchange="this.form.submit()" class="input">
+                <option value="">Todos los Estados</option>
+                <option value="ACTIVO" {{ $estado === 'ACTIVO' ? 'selected' : '' }}>Solo Activos</option>
+                <option value="INACTIVO" {{ $estado === 'INACTIVO' ? 'selected' : '' }}>Solo Inactivos</option>
+            </select>
+        </div>
+    </x-filter-bar>
 
     <!-- Tabla Desktop / Tarjetas Mobile -->
     <div class="card p-0 overflow-hidden">

@@ -25,63 +25,54 @@
     </x-page-header>
 
     <!-- Filtros -->
-    <div class="card p-4">
-        <form method="GET" action="{{ route('documentos.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            <div>
-                <label for="q" class="label-base">Buscar Comprobante</label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                    </div>
-                    <input type="text" name="q" id="q" value="{{ request('q') }}" placeholder="FAC-000001, Cliente..."
-                        class="input pl-9 text-xs">
+    <x-filter-bar
+        :action="route('documentos.index')"
+        :has-active-filters="request()->hasAny(['q', 'tipo', 'estado', 'fecha_desde', 'fecha_hasta'])"
+        :clear-url="route('documentos.index')"
+    >
+        <div class="sm:col-span-12 lg:col-span-4">
+            <label for="q" class="block text-xs font-semibold text-text-secondary uppercase mb-1">Buscar Comprobante</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
                 </div>
+                <input type="text" name="q" id="q" value="{{ request('q') }}" placeholder="FAC-000001, Cliente..."
+                    class="input pl-9">
             </div>
+        </div>
 
-            <div>
-                <label for="tipo" class="label-base">Tipo Documento</label>
-                <select name="tipo" id="tipo" class="input text-xs">
-                    <option value="">Todos los tipos</option>
-                    @foreach($tipos as $tipo)
-                        <option value="{{ $tipo->value }}" {{ request('tipo') === $tipo->value ? 'selected' : '' }}>
-                            {{ $tipo->label() }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+        <div class="sm:col-span-6 lg:col-span-2">
+            <label for="tipo" class="block text-xs font-semibold text-text-secondary uppercase mb-1">Tipo Documento</label>
+            <select name="tipo" id="tipo" class="input">
+                <option value="">Todos los tipos</option>
+                @foreach($tipos as $tipo)
+                    <option value="{{ $tipo->value }}" {{ request('tipo') === $tipo->value ? 'selected' : '' }}>
+                        {{ $tipo->label() }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
-            <div>
-                <label for="estado" class="label-base">Estado</label>
-                <select name="estado" id="estado" class="input text-xs">
-                    <option value="">Todos los estados</option>
-                    @foreach($estados as $est)
-                        <option value="{{ $est->value }}" {{ request('estado') === $est->value ? 'selected' : '' }}>
-                            {{ $est->label() }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+        <div class="sm:col-span-6 lg:col-span-2">
+            <label for="estado" class="block text-xs font-semibold text-text-secondary uppercase mb-1">Estado</label>
+            <select name="estado" id="estado" class="input">
+                <option value="">Todos los estados</option>
+                @foreach($estados as $est)
+                    <option value="{{ $est->value }}" {{ request('estado') === $est->value ? 'selected' : '' }}>
+                        {{ $est->label() }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
-            <div>
-                <label for="fecha_desde" class="label-base">Fecha Desde</label>
-                <input type="date" name="fecha_desde" id="fecha_desde" value="{{ request('fecha_desde') }}"
-                    class="input text-xs">
-            </div>
-
-            <div class="flex items-end space-x-2">
-                <button type="submit" class="btn-primary flex-1">
-                    Filtrar
-                </button>
-                @if(request()->hasAny(['q', 'tipo', 'estado', 'fecha_desde', 'fecha_hasta']))
-                    <a href="{{ route('documentos.index') }}" class="btn-secondary" title="Limpiar filtros">
-                        Limpiar
-                    </a>
-                @endif
-            </div>
-        </form>
-    </div>
+        <div class="sm:col-span-6 lg:col-span-2">
+            <label for="fecha_desde" class="block text-xs font-semibold text-text-secondary uppercase mb-1">Fecha Desde</label>
+            <input type="date" name="fecha_desde" id="fecha_desde" value="{{ request('fecha_desde') }}"
+                class="input">
+        </div>
+    </x-filter-bar>
 
     <!-- Tabla de Documentos -->
     <div class="card p-0 overflow-hidden">

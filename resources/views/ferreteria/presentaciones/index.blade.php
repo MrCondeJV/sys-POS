@@ -70,7 +70,7 @@
                             Unidad de Medida
                         </label>
                         <select name="unidad_medida_id"
-                            class="block w-full px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
+                            class="input">
                             <option value="">Seleccione...</option>
                             @foreach($unidades as $u)
                                 <option value="{{ $u->id }}">{{ $u->nombre }} ({{ $u->codigo }})</option>

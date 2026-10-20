@@ -74,7 +74,7 @@
                     Cliente Deudor <span class="text-danger-text">*</span>
                 </label>
                 <select id="cliente_id" name="cliente_id" x-model="clienteId" @change="onClienteChange" required
-                    class="block w-full py-2 px-3 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
+                    class="input">
                     <option value="">-- Selecciona el cliente --</option>
                     <template x-for="c in clientes" :key="c.id">
                         <option :value="c.id" x-text="c.nombre + ' (' + c.documento + ')'" :selected="c.id == clienteId"></option>

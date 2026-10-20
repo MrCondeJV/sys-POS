@@ -39,7 +39,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
                 <x-field label="Sucursal de Origen (Despacho)" name="sucursal_origen_id" :required="true">
-                    <select name="sucursal_origen_id" id="sucursal_origen_id" required class="w-full py-2 px-3 text-xs border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+                    <select name="sucursal_origen_id" id="sucursal_origen_id" required class="input">
                         @foreach($sucursales as $s)
                             <option value="{{ $s->id }}" {{ $sucursalOrigenId == $s->id ? 'selected' : '' }}>{{ $s->nombre }}</option>
                         @endforeach
@@ -48,7 +48,7 @@
             </div>
             <div>
                 <x-field label="Sucursal de Destino (Recepción)" name="sucursal_destino_id" :required="true">
-                    <select name="sucursal_destino_id" id="sucursal_destino_id" required class="w-full py-2 px-3 text-xs border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+                    <select name="sucursal_destino_id" id="sucursal_destino_id" required class="input">
                         @foreach($sucursales as $s)
                             <option value="{{ $s->id }}">{{ $s->nombre }}</option>
                         @endforeach
@@ -82,7 +82,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 p-3.5 bg-slate-50/70 rounded-lg border border-slate-200">
                     <div class="sm:col-span-6">
                         <label class="block text-[11px] font-semibold text-slate-600 mb-1">Producto</label>
-                        <select name="items[0][producto_id]" required class="w-full py-2 px-3 text-xs border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+                        <select name="items[0][producto_id]" required class="input">
                             <option value="">Seleccione un producto...</option>
                             @foreach($productos as $p)
                                 @php $stock = $p->inventarios->first()?->stock ?? 0; @endphp
