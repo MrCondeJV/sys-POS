@@ -5,6 +5,7 @@
 @section('content')
 <div class="space-y-6" x-data="{
     abonoModalOpen: false,
+    urlAbonoTemplate: '{{ route('cartera.abono.store', '__CUENTA__') }}',
     cuentaSeleccionada: {
         id: null,
         numero: '',
@@ -18,7 +19,7 @@
             numero: cuenta.numero_documento,
             cliente: cuenta.cliente ? cuenta.cliente.razon_social : 'Cliente',
             saldo: parseFloat(cuenta.saldo_pendiente),
-            urlAbono: '/cartera/' + cuenta.id + '/abono'
+            urlAbono: this.urlAbonoTemplate.replace('__CUENTA__', cuenta.id)
         };
         this.abonoModalOpen = true;
     }
@@ -43,9 +44,9 @@
 
     <!-- Mensajes Flash de Éxito -->
     @if(session('success'))
-        <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-between">
+        <div class="p-4 rounded-lg bg-success-bg border border-success-border text-success-text flex items-center justify-between">
             <div class="flex items-center space-x-2">
-                <svg class="h-5 w-5 text-emerald-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg class="h-5 w-5 text-success-text flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span class="text-sm font-semibold">{{ session('success') }}</span>
@@ -187,7 +188,7 @@
                             <span>{{ $cuenta->porcentajePagado() }}% pagado</span>
                         </div>
                         <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                            <div class="h-full rounded-full {{ $cuenta->estado->value === 'PAGADA' ? 'bg-emerald-500' : ($cuenta->estaVencida() ? 'bg-rose-500' : 'bg-brand-600') }}"
+                            <div class="h-full rounded-full {{ $cuenta->estado->value === 'PAGADA' ? 'bg-success-text' : ($cuenta->estaVencida() ? 'bg-danger-text' : 'bg-brand-600') }}"
                                  style="width: {{ $cuenta->porcentajePagado() }}%"></div>
                         </div>
                     </div>
@@ -198,10 +199,10 @@
                         {{ $cuenta->fecha_vencimiento->format('d/m/Y') }}
                     </div>
                     @if($cuenta->estado->value === 'PAGADA')
-                        <span class="text-xs text-emerald-600 font-medium">Cancelada</span>
+                        <span class="text-xs text-success-text font-medium">Cancelada</span>
                     @elseif($cuenta->estaVencida())
-                        <div class="mt-0.5 inline-flex items-center text-xs font-semibold text-rose-600">
-                            <svg class="h-3.5 w-3.5 mr-1 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div class="mt-0.5 inline-flex items-center text-xs font-semibold text-danger-text">
+                            <svg class="h-3.5 w-3.5 mr-1 text-danger-text" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>
                             {{ abs($cuenta->diasDiferenciaVencimiento()) }} días de mora
@@ -313,7 +314,7 @@
 
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                            Monto a Abonar ($ COP) <span class="text-rose-500">*</span>
+                            Monto a Abonar ($ COP) <span class="text-danger-text">*</span>
                         </label>
                         <div class="relative">
                             <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-semibold text-sm">$</span>
@@ -325,7 +326,7 @@
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                                Método de Pago <span class="text-rose-500">*</span>
+                                Método de Pago <span class="text-danger-text">*</span>
                             </label>
                             <select name="metodo_pago" required class="block w-full py-2 px-3 border border-slate-300 rounded-lg text-sm text-slate-700 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
                                 @foreach(\App\Enums\MetodoPagoCartera::cases() as $mp)
@@ -336,7 +337,7 @@
 
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                                Fecha de Pago <span class="text-rose-500">*</span>
+                                Fecha de Pago <span class="text-danger-text">*</span>
                             </label>
                             <input type="date" name="fecha_pago" value="{{ now()->toDateString() }}" required
                                 class="block w-full py-2 px-3 border border-slate-300 rounded-lg text-sm text-slate-700 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">

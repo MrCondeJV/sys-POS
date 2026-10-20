@@ -11,8 +11,8 @@
         }
 
         body {
-            background-color: #ffffff !important;
-            color: #0f172a !important;
+            background-color: var(--color-surface) !important;
+            color: var(--color-text-primary) !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
         }
@@ -51,13 +51,13 @@
             justify-content: space-between !important;
             margin-top: 12px !important;
             padding-top: 6px !important;
-            border-top: 1px solid #cbd5e1 !important;
+            border-top: 1px solid var(--color-border-strong) !important;
             font-size: 7.5pt !important;
-            color: #64748b !important;
+            color: var(--color-text-secondary) !important;
         }
 
         /* Contenedores limpios sin bordes exagerados ni sombras */
-        .rounded-3xl, .rounded-2xl, .rounded-xl {
+        .rounded-xl, .rounded-lg {
             border-radius: 4px !important;
         }
 
@@ -84,13 +84,13 @@
         .kpi-card-item {
             padding: 6px 8px !important;
             border-radius: 4px !important;
-            border: 1px solid #e2e8f0 !important;
-            background-color: #f8fafc !important;
+            border: 1px solid var(--color-border) !important;
+            background-color: var(--color-surface-muted) !important;
         }
 
         .kpi-card-item .text-xl {
             font-size: 13pt !important;
-            font-weight: 900 !important;
+            font-weight: 700 !important;
             margin-top: 2px !important;
         }
 
@@ -109,9 +109,9 @@
         th {
             padding: 5px 6px !important;
             font-size: 7.5pt !important;
-            background-color: #f1f5f9 !important;
-            color: #334155 !important;
-            border-bottom: 1.5px solid #cbd5e1 !important;
+            background-color: var(--color-surface-muted) !important;
+            color: var(--color-text-secondary) !important;
+            border-bottom: 1.5px solid var(--color-border-strong) !important;
             text-transform: uppercase !important;
             white-space: normal !important;
         }
@@ -119,7 +119,7 @@
         td {
             padding: 4px 6px !important;
             font-size: 8pt !important;
-            border-bottom: 1px solid #f1f5f9 !important;
+            border-bottom: 1px solid var(--color-border) !important;
             line-height: 1.25 !important;
             vertical-align: middle !important;
         }
@@ -200,10 +200,10 @@
     </x-page-header>
 
     <!-- Banner de Resumen de Cartera y Cupo -->
-    <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-5 sm:p-6 space-y-6">
+    <div class="bg-white rounded-lg border border-slate-200 shadow-xs p-5 sm:p-6 space-y-6">
         <div class="flex flex-col sm:flex-row justify-between items-start pb-5 border-b border-slate-100 gap-4 print:pb-2 print:border-slate-200">
             <div class="flex items-center space-x-4">
-                <div class="h-12 w-12 rounded-xl flex items-center justify-center font-bold text-base client-avatar-box {{ $cliente->tipo_persona->value === 'JURIDICA' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-slate-100 text-slate-700 border border-slate-200' }}">
+                <div class="h-12 w-12 rounded-lg flex items-center justify-center font-bold text-base client-avatar-box {{ $cliente->tipo_persona->value === 'JURIDICA' ? 'bg-brand-50 text-brand-700 border border-brand-200' : 'bg-slate-100 text-slate-700 border border-slate-200' }}">
                     {{ strtoupper(substr($cliente->razon_social, 0, 2)) }}
                 </div>
                 <div>
@@ -233,32 +233,32 @@
 
         <!-- 4 Tarjetas de Métricas del Cliente -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 kpi-container">
-            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 kpi-card-item">
+            <div class="p-4 rounded-lg bg-slate-50 border border-slate-200/80 kpi-card-item">
                 <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider block print:text-[8pt]">Cupo de Crédito</span>
                 <div class="text-xl font-bold font-mono tabular-nums text-slate-900 mt-1">${{ number_format($cupoTotal, 2) }}</div>
                 <div class="text-xs text-slate-500 mt-0.5 print:text-[7.5pt]">Plazo: {{ $cliente->plazo_dias }} días</div>
             </div>
 
-            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 kpi-card-item">
-                <span class="text-xs font-semibold text-amber-700 uppercase tracking-wider block print:text-[8pt]">Deuda Total Pendiente</span>
-                <div class="text-xl font-bold font-mono tabular-nums text-amber-800 mt-1">${{ number_format($totalDeuda, 2) }}</div>
-                <div class="text-xs text-amber-700 mt-0.5 print:text-[7.5pt]">{{ $cuentasPendientes->count() }} facturas activas</div>
+            <div class="p-4 rounded-lg bg-slate-50 border border-slate-200/80 kpi-card-item">
+                <span class="text-xs font-semibold text-warning-text uppercase tracking-wider block print:text-[8pt]">Deuda Total Pendiente</span>
+                <div class="text-xl font-bold font-mono tabular-nums text-warning-text mt-1">${{ number_format($totalDeuda, 2) }}</div>
+                <div class="text-xs text-warning-text mt-0.5 print:text-[7.5pt]">{{ $cuentasPendientes->count() }} facturas activas</div>
             </div>
 
-            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 kpi-card-item">
-                <span class="text-xs font-semibold text-emerald-700 uppercase tracking-wider block print:text-[8pt]">Cupo Disponible</span>
-                <div class="text-xl font-bold font-mono tabular-nums text-emerald-700 mt-1">${{ number_format($cupoDisponible, 2) }}</div>
-                <div class="text-xs text-emerald-700 mt-0.5 print:text-[7.5pt]">{{ 100 - $porcentajeUtilizado }}% libre</div>
+            <div class="p-4 rounded-lg bg-slate-50 border border-slate-200/80 kpi-card-item">
+                <span class="text-xs font-semibold text-success-text uppercase tracking-wider block print:text-[8pt]">Cupo Disponible</span>
+                <div class="text-xl font-bold font-mono tabular-nums text-success-text mt-1">${{ number_format($cupoDisponible, 2) }}</div>
+                <div class="text-xs text-success-text mt-0.5 print:text-[7.5pt]">{{ 100 - $porcentajeUtilizado }}% libre</div>
             </div>
 
-            <div class="p-4 rounded-xl {{ $deudaVencida > 0 ? 'bg-rose-50 border border-rose-200' : 'bg-slate-50 border border-slate-200/80' }} kpi-card-item">
-                <span class="text-xs font-semibold {{ $deudaVencida > 0 ? 'text-rose-700' : 'text-slate-500' }} uppercase tracking-wider block print:text-[8pt]">
+            <div class="p-4 rounded-lg {{ $deudaVencida > 0 ? 'bg-danger-bg border border-danger-border' : 'bg-slate-50 border border-slate-200/80' }} kpi-card-item">
+                <span class="text-xs font-semibold {{ $deudaVencida > 0 ? 'text-danger-text' : 'text-slate-500' }} uppercase tracking-wider block print:text-[8pt]">
                     Saldo Vencido (Mora)
                 </span>
-                <div class="text-xl font-bold font-mono tabular-nums mt-1 {{ $deudaVencida > 0 ? 'text-rose-600' : 'text-slate-400' }}">
+                <div class="text-xl font-bold font-mono tabular-nums mt-1 {{ $deudaVencida > 0 ? 'text-danger-text' : 'text-slate-400' }}">
                     ${{ number_format($deudaVencida, 2) }}
                 </div>
-                <div class="text-xs {{ $deudaVencida > 0 ? 'text-rose-600 font-medium' : 'text-slate-400' }} mt-0.5 print:text-[7.5pt]">
+                <div class="text-xs {{ $deudaVencida > 0 ? 'text-danger-text font-medium' : 'text-slate-400' }} mt-0.5 print:text-[7.5pt]">
                     {{ $deudaVencida > 0 ? 'Exige recaudo prioritario' : 'Sin morosidad' }}
                 </div>
             </div>
@@ -271,14 +271,14 @@
                 <span>{{ $porcentajeUtilizado }}%</span>
             </div>
             <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden print:h-1.5">
-                <div class="h-full rounded-full {{ $porcentajeUtilizado > 90 ? 'bg-rose-500' : ($porcentajeUtilizado > 70 ? 'bg-amber-500' : 'bg-brand-600') }}"
+                <div class="h-full rounded-full {{ $porcentajeUtilizado > 90 ? 'bg-danger-text' : ($porcentajeUtilizado > 70 ? 'bg-warning-text' : 'bg-brand-600') }}"
                      style="width: {{ $porcentajeUtilizado }}%"></div>
             </div>
         </div>
     </div>
 
     <!-- Sección 1: Cuentas Pendientes por Cobrar -->
-    <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+    <div class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between print:p-2.5 print:bg-slate-50 bg-slate-50/50">
             <div>
                 <h2 class="text-sm font-bold text-slate-900 print:text-xs">Obligaciones Pendientes de Pago</h2>
@@ -311,7 +311,7 @@
                             <td class="px-4 py-3 text-slate-700 whitespace-nowrap">{{ $c->fecha_emision->format('d/m/Y') }}</td>
                             <td class="px-4 py-3 text-slate-700 whitespace-nowrap">{{ $c->fecha_vencimiento->format('d/m/Y') }}</td>
                             <td class="px-4 py-3 text-right font-mono text-slate-800 whitespace-nowrap">${{ number_format($c->monto_total, 2) }}</td>
-                            <td class="px-4 py-3 text-right font-mono font-semibold text-emerald-600 whitespace-nowrap">${{ number_format($c->monto_pagado, 2) }}</td>
+                            <td class="px-4 py-3 text-right font-mono font-semibold text-success-text whitespace-nowrap">${{ number_format($c->monto_pagado, 2) }}</td>
                             <td class="px-4 py-3 text-right font-mono font-bold text-slate-900 whitespace-nowrap">${{ number_format($c->saldo_pendiente, 2) }}</td>
                             <td class="px-4 py-3 text-center whitespace-nowrap">
                                 @if($c->estaVencida())
@@ -343,7 +343,7 @@
     </div>
 
     <!-- Sección 2: Historial Reciente de Abonos -->
-    <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+    <div class="bg-white rounded-lg border border-slate-200 shadow-xs overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between print:p-2.5 print:bg-slate-50 bg-slate-50/50">
             <div>
                 <h2 class="text-sm font-bold text-slate-900 print:text-xs">Historial de Pagos & Recaudos</h2>
@@ -375,7 +375,7 @@
                             <td class="px-4 py-3 text-slate-700 whitespace-nowrap">
                                 <x-badge color="neutral">{{ $p->metodo_pago->label() }}</x-badge>
                             </td>
-                            <td class="px-4 py-3 text-right font-mono font-semibold text-emerald-600 whitespace-nowrap">${{ number_format($p->monto, 2) }}</td>
+                            <td class="px-4 py-3 text-right font-mono font-semibold text-success-text whitespace-nowrap">${{ number_format($p->monto, 2) }}</td>
                             <td class="px-4 py-3 text-right font-mono font-semibold text-slate-800 whitespace-nowrap">${{ number_format($p->saldo_posterior, 2) }}</td>
                             <td class="px-4 py-3 text-center whitespace-nowrap">
                                 @if($p->isAnulado())

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recibo de Caja {{ $pago->numero_recibo }} - {{ $pago->cliente->razon_social }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         @media print {
             .no-print {
@@ -48,7 +48,7 @@
     </div>
 
     <!-- Contenedor del Recibo -->
-    <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-xs border border-slate-200 p-8 sm:p-12 print-container space-y-6">
+    <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-xs border border-slate-200 p-8 sm:p-12 print-container space-y-6">
 
         <!-- Encabezado de Empresa y Documento -->
         <div class="flex flex-col sm:flex-row justify-between items-start pb-6 border-b border-slate-200 gap-4">
@@ -76,7 +76,7 @@
                     Fecha: <span class="font-semibold text-slate-800">{{ $pago->fecha_pago->format('d/m/Y') }}</span>
                 </div>
                 @if($pago->isAnulado())
-                    <span class="inline-block mt-2 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300">
+                    <span class="inline-block mt-2 px-2.5 py-0.5 rounded-full text-xs font-bold bg-danger-bg text-danger-text border border-danger-border">
                         RECIBO ANULADO
                     </span>
                 @endif
@@ -130,7 +130,7 @@
                         <td class="px-4 py-3 text-right font-mono text-slate-600 tabular-nums">
                             ${{ number_format($pago->saldo_anterior, 2) }}
                         </td>
-                        <td class="px-4 py-3 text-right font-mono font-bold text-emerald-600 text-sm tabular-nums">
+                        <td class="px-4 py-3 text-right font-mono font-bold text-success-text text-sm tabular-nums">
                             ${{ number_format($pago->monto, 2) }}
                         </td>
                         <td class="px-4 py-3 text-right font-mono font-semibold text-slate-900 tabular-nums">

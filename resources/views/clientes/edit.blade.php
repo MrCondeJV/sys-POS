@@ -24,9 +24,9 @@
     </x-page-header>
 
     @if ($errors->any())
-        <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800">
+        <div class="p-4 rounded-lg bg-danger-bg border border-danger-border text-danger-text">
             <div class="flex items-center space-x-2">
-                <svg class="h-5 w-5 text-rose-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg class="h-5 w-5 text-danger-text flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
                 <span class="text-sm font-bold">Por favor corrige los siguientes errores:</span>
@@ -40,8 +40,8 @@
     @endif
 
     @if($cliente->isConsumidorFinal())
-        <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 flex items-start space-x-3">
-            <svg class="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="p-4 rounded-lg bg-warning-bg border border-warning-border text-warning-text flex items-start space-x-3">
+            <svg class="h-5 w-5 text-warning-text mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <div class="text-xs">
@@ -71,7 +71,7 @@
         @method('PUT')
 
         <!-- Tarjeta 1: Identificación y Tipo de Persona -->
-        <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-5 space-y-4">
+        <div class="bg-white rounded-lg border border-slate-200 shadow-xs p-5 space-y-4">
             <div class="flex items-center space-x-3 pb-3 border-b border-slate-100">
                 <div class="h-7 w-7 bg-brand-50 text-brand-700 rounded-lg flex items-center justify-center font-bold text-xs border border-brand-200">
                     1
@@ -85,7 +85,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
-                        Tipo de Persona <span class="text-rose-500">*</span>
+                        Tipo de Persona <span class="text-danger-text">*</span>
                     </label>
                     <div class="grid grid-cols-2 gap-2">
                         <label class="flex items-center justify-center p-2.5 border rounded-lg cursor-pointer text-xs font-semibold transition"
@@ -106,14 +106,14 @@
                         </label>
                     </div>
                     @error('tipo_persona')
-                        <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
+                        <p class="text-xs text-danger-text mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label for="tipo_documento" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                            Tipo Documento <span class="text-rose-500">*</span>
+                            Tipo Documento <span class="text-danger-text">*</span>
                         </label>
                         <select id="tipo_documento" name="tipo_documento" x-model="tipoDoc"
                             class="block w-full py-2 px-3 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
@@ -122,19 +122,19 @@
                             @endforeach
                         </select>
                         @error('tipo_documento')
-                            <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
+                            <p class="text-xs text-danger-text mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
                         <label for="numero_documento" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                            Número Documento <span class="text-rose-500">*</span>
+                            Número Documento <span class="text-danger-text">*</span>
                         </label>
                         <input type="text" id="numero_documento" name="numero_documento" value="{{ old('numero_documento', $cliente->numero_documento) }}" required
                             placeholder="Ej: 1045678901 ó 901234567-8"
                             class="block w-full py-2 px-3 font-mono border border-slate-300 rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
                         @error('numero_documento')
-                            <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
+                            <p class="text-xs text-danger-text mt-1">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
@@ -149,7 +149,7 @@
                         placeholder="Ej: María Camila Restrepo / Ferretería Caribe S.A.S."
                         class="block w-full py-2 px-3 border border-slate-300 rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
                     @error('razon_social')
-                        <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
+                        <p class="text-xs text-danger-text mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -161,14 +161,14 @@
                         placeholder="Ej: Almacén El Constructor"
                         class="block w-full py-2 px-3 border border-slate-300 rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
                     @error('nombre_comercial')
-                        <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
+                        <p class="text-xs text-danger-text mt-1">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
         </div>
 
         <!-- Tarjeta 2: Contacto y Ubicación -->
-        <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-5 space-y-4">
+        <div class="bg-white rounded-lg border border-slate-200 shadow-xs p-5 space-y-4">
             <div class="flex items-center space-x-3 pb-3 border-b border-slate-100">
                 <div class="h-7 w-7 bg-brand-50 text-brand-700 rounded-lg flex items-center justify-center font-bold text-xs border border-brand-200">
                     2
@@ -188,7 +188,7 @@
                         placeholder="Ej: 3001234567"
                         class="block w-full py-2 px-3 border border-slate-300 rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
                     @error('telefono')
-                        <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
+                        <p class="text-xs text-danger-text mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -200,7 +200,7 @@
                         placeholder="cliente@ejemplo.com"
                         class="block w-full py-2 px-3 border border-slate-300 rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
                     @error('email')
-                        <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
+                        <p class="text-xs text-danger-text mt-1">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
@@ -236,7 +236,7 @@
         </div>
 
         <!-- Tarjeta 3: Condiciones Comerciales & Línea de Crédito -->
-        <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-5 space-y-4">
+        <div class="bg-white rounded-lg border border-slate-200 shadow-xs p-5 space-y-4">
             <div class="flex items-center space-x-3 pb-3 border-b border-slate-100">
                 <div class="h-7 w-7 bg-brand-50 text-brand-700 rounded-lg flex items-center justify-center font-bold text-xs border border-brand-200">
                     3
@@ -259,7 +259,7 @@
                     </div>
                     <p class="text-[11px] text-slate-500 mt-1">Dejar en 0 si no maneja crédito.</p>
                     @error('cupo_credito')
-                        <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
+                        <p class="text-xs text-danger-text mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -272,13 +272,13 @@
                         class="block w-full py-2 px-3 border border-slate-300 rounded-lg text-sm font-mono tabular-nums placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
                     <p class="text-[11px] text-slate-500 mt-1">Días autorizados para cancelar la factura.</p>
                     @error('plazo_dias')
-                        <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
+                        <p class="text-xs text-danger-text mt-1">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
                     <label for="estado" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                        Estado del Cliente <span class="text-rose-500">*</span>
+                        Estado del Cliente <span class="text-danger-text">*</span>
                     </label>
                     <select id="estado" name="estado"
                         class="block w-full py-2 px-3 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
@@ -286,7 +286,7 @@
                         <option value="INACTIVO" @selected(old('estado', $cliente->estado->value) === 'INACTIVO')>Inactivo (Bloqueado)</option>
                     </select>
                     @error('estado')
-                        <p class="text-xs text-rose-600 mt-1">{{ $message }}</p>
+                        <p class="text-xs text-danger-text mt-1">{{ $message }}</p>
                     @enderror
                 </div>
             </div>

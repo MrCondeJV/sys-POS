@@ -100,7 +100,7 @@
             <tr class="hover:bg-slate-50/60 transition">
                 <td class="px-4 py-3">
                     <div class="flex items-center space-x-3">
-                        <div class="h-9 w-9 flex-shrink-0 rounded-lg flex items-center justify-center font-bold text-xs {{ $cliente->isConsumidorFinal() ? 'bg-amber-100 text-amber-800 border border-amber-300' : ($cliente->tipo_persona->value === 'JURIDICA' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-slate-100 text-slate-700 border border-slate-200') }}">
+                        <div class="h-9 w-9 flex-shrink-0 rounded-lg flex items-center justify-center font-bold text-xs {{ $cliente->isConsumidorFinal() ? 'bg-warning-bg text-warning-text border border-warning-border' : ($cliente->tipo_persona->value === 'JURIDICA' ? 'bg-brand-50 text-brand-700 border border-brand-200' : 'bg-slate-100 text-slate-700 border border-slate-200') }}">
                             @if($cliente->isConsumidorFinal())
                                 CF
                             @else
@@ -170,17 +170,25 @@
                         />
 
                         @if($cliente->puedeEliminarse())
-                            <form action="{{ route('clientes.destroy', $cliente) }}" method="POST"
-                                onsubmit="return confirm('¿Estás seguro de que deseas eliminar este cliente?');" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <x-icon-button
-                                    type="submit"
-                                    variant="danger"
-                                    icon="trash"
-                                    title="Eliminar cliente"
-                                />
-                            </form>
+                            <x-modal-confirm
+                                name="delete-cliente-{{ $cliente->id }}"
+                                title="Eliminar cliente {{ $cliente->razon_social }}"
+                                message="¿Estás seguro de que deseas eliminar este cliente del directorio comercial?"
+                                consequence="Se aplicará eliminación lógica (soft delete). Las facturas, ventas y cuentas por cobrar históricas asociadas conservarán su trazabilidad."
+                                confirmText="Eliminar cliente"
+                                variant="danger"
+                                :action="route('clientes.destroy', $cliente)"
+                                method="DELETE"
+                            >
+                                <x-slot:trigger>
+                                    <x-icon-button
+                                        type="button"
+                                        variant="danger"
+                                        icon="trash"
+                                        title="Eliminar cliente"
+                                    />
+                                </x-slot:trigger>
+                            </x-modal-confirm>
                         @else
                             <span class="p-1.5 text-slate-300 cursor-not-allowed" title="El Consumidor Final predeterminado no puede ser eliminado">
                                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
