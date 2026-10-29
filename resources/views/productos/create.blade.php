@@ -344,8 +344,9 @@
                 <div>
                     <x-field label="Estado del Producto" name="estado">
                         <select name="estado" id="estado" class="input">
-                            <option value="activo" {{ old('estado', 'activo') === 'activo' ? 'selected' : '' }}>Activo (Disponible para venta)</option>
-                            <option value="inactivo" {{ old('estado', 'inactivo') === 'inactivo' ? 'selected' : '' }}>Inactivo (Oculto en caja)</option>
+                            @php($estadoActual = strtolower(old('estado', 'activo')))
+                            <option value="activo" {{ $estadoActual === 'activo' ? 'selected' : '' }}>Activo (Disponible para venta)</option>
+                            <option value="inactivo" {{ $estadoActual === 'inactivo' ? 'selected' : '' }}>Inactivo (Oculto en caja)</option>
                         </select>
                     </x-field>
                 </div>
