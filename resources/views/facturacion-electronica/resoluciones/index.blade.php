@@ -21,15 +21,15 @@
     </x-page-header>
 
     <div class="card p-0 overflow-hidden">
-        <div class="overflow-x-auto">
+        <div class="@container hidden lg:block overflow-x-auto">
             <table class="table">
                 <thead>
                     <tr>
                         <th>Resolución</th>
                         <th>Prefijo</th>
-                        <th>Rango Autorizado</th>
+                        <th class="hidden @4xl:table-cell">Rango Autorizado</th>
                         <th class="text-right">Actual</th>
-                        <th>Vigencia</th>
+                        <th class="hidden @5xl:table-cell">Vigencia</th>
                         <th class="text-center">Estado</th>
                         <th class="text-right">Acciones</th>
                     </tr>
@@ -42,11 +42,12 @@
                                 @if($res->es_predeterminada)
                                     <span class="badge badge-brand ml-1">Predeterminada</span>
                                 @endif
+                                <div class="@5xl:hidden font-normal text-[11px] text-slate-500 font-mono">Hasta {{ $res->fecha_vigencia->format('d/m/Y') }}</div>
                             </td>
                             <td class="font-mono font-bold text-xs text-brand-700">{{ $res->prefijo }}</td>
-                            <td class="font-mono text-xs tabular-nums">{{ number_format($res->rango_desde) }} - {{ number_format($res->rango_hasta) }}</td>
+                            <td class="hidden @4xl:table-cell font-mono text-xs tabular-nums whitespace-nowrap">{{ number_format($res->rango_desde) }} - {{ number_format($res->rango_hasta) }}</td>
                             <td class="text-right font-mono font-semibold text-xs text-slate-900 tabular-nums">{{ number_format($res->consecutivo_actual) }}</td>
-                            <td class="text-xs text-slate-600 font-mono">
+                            <td class="hidden @5xl:table-cell text-xs text-slate-600 font-mono">
                                 <div>Desde: {{ $res->fecha_inicio->format('d/m/Y') }}</div>
                                 <div class="text-[11px] text-slate-400">Hasta: {{ $res->fecha_vigencia->format('d/m/Y') }}</div>
                             </td>
@@ -94,6 +95,60 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <!-- Vista Móvil y Tablet -->
+        <div class="lg:hidden divide-y divide-slate-100">
+            @forelse($resoluciones as $res)
+            <div class="p-4 space-y-3">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <div class="font-semibold text-slate-800 text-sm">
+                            {{ $res->numero_resolucion }}
+                            <span class="font-mono font-bold text-xs text-brand-700 ml-1">{{ $res->prefijo }}</span>
+                        </div>
+                        @if($res->es_predeterminada)
+                            <span class="badge badge-brand mt-1">Predeterminada</span>
+                        @endif
+                    </div>
+                    @if($res->estaVigente())
+                        <span class="badge badge-success">Activa y Vigente</span>
+                    @else
+                        <span class="badge badge-danger">{{ $res->estado->label() }}</span>
+                    @endif
+                </div>
+
+                <div class="text-xs text-slate-600 space-y-1 font-mono tabular-nums">
+                    <div><span class="font-sans text-slate-400">Rango:</span> {{ number_format($res->rango_desde) }} - {{ number_format($res->rango_hasta) }}</div>
+                    <div><span class="font-sans text-slate-400">Actual:</span> <span class="font-semibold text-slate-900">{{ number_format($res->consecutivo_actual) }}</span></div>
+                    <div><span class="font-sans text-slate-400">Vigencia:</span> {{ $res->fecha_inicio->format('d/m/Y') }} &rarr; {{ $res->fecha_vigencia->format('d/m/Y') }}</div>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                    <a href="{{ route('resoluciones.edit', $res) }}" class="btn-secondary py-1 px-2.5 text-xs">
+                        Editar
+                    </a>
+                    <x-modal-confirm
+                        title="¿Eliminar resolución DIAN?"
+                        message="Se eliminará la resolución {{ $res->numero_resolucion }} ({{ $res->prefijo }}). Solo puede eliminarse si no tiene documentos emitidos."
+                        action="{{ route('resoluciones.destroy', $res) }}"
+                        method="DELETE"
+                        confirmText="Eliminar"
+                        variant="danger"
+                    >
+                        <x-slot:trigger>
+                            <button type="button" class="btn-danger py-1 px-2 text-xs">
+                                Eliminar
+                            </button>
+                        </x-slot:trigger>
+                    </x-modal-confirm>
+                </div>
+            </div>
+            @empty
+            <div class="p-8 text-center text-xs text-slate-500">
+                No hay resoluciones configuradas.
+            </div>
+            @endforelse
         </div>
         @if($resoluciones->hasPages())
             <div class="p-4 border-t border-slate-200">

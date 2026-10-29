@@ -2,7 +2,8 @@
     'responsive' => true,
 ])
 
-<div {{ $attributes->merge(['class' => 'w-full bg-surface border border-border rounded-xl overflow-hidden shadow-xs']) }}>
+{{-- @container: las columnas secundarias se ocultan según el ancho real disponible (@4xl:, @5xl:, @6xl:) --}}
+<div {{ $attributes->merge(['class' => '@container w-full bg-surface border border-border rounded-xl overflow-hidden shadow-xs']) }}>
     <div class="{{ $responsive ? 'overflow-x-auto' : '' }}">
         <table class="table tabular-nums">
             @if(isset($header) || isset($head) || isset($thead))

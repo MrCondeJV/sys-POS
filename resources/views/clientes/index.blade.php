@@ -83,13 +83,13 @@
         </div>
     </x-filter-bar>
 
-    <!-- Tabla Principal de Clientes -->
-    <x-table>
+    <!-- Tabla Principal de Clientes (Desktop) -->
+    <x-table class="hidden lg:block">
         <x-slot:head>
             <tr>
                 <th class="px-4 py-3 text-left">Cliente / Razón Social</th>
-                <th class="px-4 py-3 text-left">Identificación</th>
-                <th class="px-4 py-3 text-left">Contacto</th>
+                <th class="hidden @4xl:table-cell px-4 py-3 text-left">Identificación</th>
+                <th class="hidden @5xl:table-cell px-4 py-3 text-left">Contacto</th>
                 <th class="px-4 py-3 text-right">Línea de Crédito</th>
                 <th class="px-4 py-3 text-center">Estado</th>
                 <th class="px-4 py-3 text-right">Acciones</th>
@@ -108,8 +108,8 @@
                             @endif
                         </div>
                         <div class="min-w-0">
-                            <div class="flex items-center gap-2">
-                                <span class="font-semibold text-slate-900 text-sm truncate max-w-xs block">
+                            <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                <span class="font-semibold text-slate-900 text-sm line-clamp-2">
                                     {{ $cliente->razon_social }}
                                 </span>
                                 @if($cliente->isConsumidorFinal())
@@ -121,13 +121,16 @@
                                     Comercial: {{ $cliente->nombre_comercial }}
                                 </span>
                             @endif
+                            <span class="@4xl:hidden text-xs text-slate-600 font-mono block">
+                                {{ $cliente->tipo_documento->value }} {{ $cliente->numero_documento }}
+                            </span>
                             <span class="text-xs text-slate-400 block">
                                 {{ $cliente->ciudad ?? 'Sin ciudad' }}{{ $cliente->departamento ? ', ' . $cliente->departamento : '' }}
                             </span>
                         </div>
                     </div>
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap">
+                <td class="hidden @4xl:table-cell px-4 py-3 whitespace-nowrap">
                     <div class="text-sm font-semibold text-slate-900 font-mono">
                         {{ $cliente->tipo_documento->value }} {{ $cliente->numero_documento }}
                     </div>
@@ -137,11 +140,11 @@
                         </x-badge>
                     </div>
                 </td>
-                <td class="px-4 py-3">
+                <td class="hidden @5xl:table-cell px-4 py-3">
                     <div class="text-sm text-slate-700">
                         {{ $cliente->telefono ?? 'Sin teléfono' }}
                     </div>
-                    <div class="text-xs text-slate-500 truncate max-w-xs">
+                    <div class="text-xs text-slate-500 break-all">
                         {{ $cliente->email ?? 'Sin correo' }}
                     </div>
                 </td>
@@ -216,6 +219,71 @@
             </tr>
         @endforelse
     </x-table>
+
+    <!-- Vista Móvil y Tablet -->
+    <div class="lg:hidden bg-white rounded-xl border border-slate-200/80 shadow-xs divide-y divide-slate-100 overflow-hidden">
+        @forelse($clientes as $cliente)
+            <div class="p-4 space-y-3">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="flex items-start gap-3 min-w-0">
+                        <div class="h-9 w-9 flex-shrink-0 rounded-lg flex items-center justify-center font-bold text-xs {{ $cliente->isConsumidorFinal() ? 'bg-warning-bg text-warning-text border border-warning-border' : ($cliente->tipo_persona->value === 'JURIDICA' ? 'bg-brand-50 text-brand-700 border border-brand-200' : 'bg-slate-100 text-slate-700 border border-slate-200') }}">
+                            {{ $cliente->isConsumidorFinal() ? 'CF' : strtoupper(substr($cliente->razon_social, 0, 2)) }}
+                        </div>
+                        <div class="min-w-0">
+                            <div class="font-semibold text-slate-900 text-sm">{{ $cliente->razon_social }}</div>
+                            <div class="text-xs text-slate-600 font-mono">{{ $cliente->tipo_documento->value }} {{ $cliente->numero_documento }}</div>
+                        </div>
+                    </div>
+                    <x-status-badge :status="$cliente->estado->value === 'ACTIVO' ? 'ACTIVO' : 'INACTIVO'" />
+                </div>
+
+                <div class="text-xs text-slate-600 space-y-1">
+                    @if($cliente->isConsumidorFinal())
+                        <x-badge color="warning">PREDETERMINADO POS</x-badge>
+                    @endif
+                    <div><span class="text-slate-400">Teléfono:</span> {{ $cliente->telefono ?? 'Sin teléfono' }}</div>
+                    <div class="break-all"><span class="text-slate-400">Correo:</span> {{ $cliente->email ?? 'Sin correo' }}</div>
+                    <div><span class="text-slate-400">Ciudad:</span> {{ $cliente->ciudad ?? 'Sin ciudad' }}{{ $cliente->departamento ? ', ' . $cliente->departamento : '' }}</div>
+                </div>
+
+                <div class="pt-2 flex items-center justify-between gap-3 border-t border-slate-100">
+                    <div>
+                        <span class="text-[10px] text-slate-400 uppercase font-semibold block">Línea de Crédito</span>
+                        @if($cliente->tieneCredito())
+                            <span class="font-bold font-mono text-sm tabular-nums text-slate-900">${{ number_format($cliente->cupo_credito, 2) }}</span>
+                            <span class="text-[11px] text-slate-500">&bull; {{ $cliente->plazo_dias }} días</span>
+                        @else
+                            <span class="text-xs text-slate-400 italic">Sin crédito</span>
+                        @endif
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <x-icon-button href="{{ route('clientes.edit', $cliente) }}" variant="secondary" icon="pencil" title="Editar cliente" />
+                        @if($cliente->puedeEliminarse())
+                            <x-modal-confirm
+                                name="delete-cliente-movil-{{ $cliente->id }}"
+                                title="Eliminar cliente {{ $cliente->razon_social }}"
+                                message="¿Estás seguro de que deseas eliminar este cliente del directorio comercial?"
+                                consequence="Se aplicará eliminación lógica (soft delete). Las facturas, ventas y cuentas por cobrar históricas asociadas conservarán su trazabilidad."
+                                confirmText="Eliminar cliente"
+                                variant="danger"
+                                :action="route('clientes.destroy', $cliente)"
+                                method="DELETE"
+                            >
+                                <x-slot:trigger>
+                                    <x-icon-button type="button" variant="danger" icon="trash" title="Eliminar cliente" />
+                                </x-slot:trigger>
+                            </x-modal-confirm>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        @empty
+            <x-empty-state
+                title="No se encontraron clientes"
+                description="No hay clientes que coincidan con los criterios de búsqueda o filtros seleccionados."
+            />
+        @endforelse
+    </div>
 
     @if($clientes->hasPages())
         <div class="p-4 border-t border-slate-200 bg-slate-50/50 rounded-xl">

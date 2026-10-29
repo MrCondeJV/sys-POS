@@ -146,14 +146,14 @@
     <div class="bg-surface rounded-xl border border-border p-6">
         <h2 class="text-base font-semibold text-text-primary mb-4">Historial de Pagos y Transacciones Wompi</h2>
         @if($pagosRecientes->isNotEmpty())
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm">
+            <div class="@container hidden md:block overflow-x-auto">
+                <table class="w-full text-left text-sm [&_th]:pr-4 [&_td]:pr-4 [&_th:last-child]:pr-0 [&_td:last-child]:pr-0">
                     <thead>
                         <tr class="border-b border-border text-text-muted text-xs uppercase font-semibold">
                             <th class="pb-3">Referencia</th>
                             <th class="pb-3">Plan / Ciclo</th>
                             <th class="pb-3">Monto</th>
-                            <th class="pb-3">Método</th>
+                            <th class="hidden @3xl:table-cell pb-3">Método</th>
                             <th class="pb-3">Estado</th>
                             <th class="pb-3">Fecha</th>
                         </tr>
@@ -161,10 +161,10 @@
                     <tbody class="divide-y divide-border text-text-primary">
                         @foreach($pagosRecientes as $pago)
                             <tr>
-                                <td class="py-3 font-mono text-xs">{{ $pago->reference }}</td>
+                                <td class="py-3 font-mono text-xs break-all">{{ $pago->reference }}</td>
                                 <td class="py-3">{{ $pago->plan?->nombre ?? 'N/A' }} <span class="text-xs text-text-muted">({{ $pago->ciclo_facturacion }})</span></td>
-                                <td class="py-3 font-semibold tabular-nums">${{ number_format($pago->amount_in_cents / 100, 0, ',', '.') }} COP</td>
-                                <td class="py-3 text-xs text-text-muted">{{ $pago->payment_method_type ?? 'Pendiente' }}</td>
+                                <td class="py-3 font-semibold tabular-nums whitespace-nowrap">${{ number_format($pago->amount_in_cents / 100, 0, ',', '.') }} COP</td>
+                                <td class="hidden @3xl:table-cell py-3 text-xs text-text-muted">{{ $pago->payment_method_type ?? 'Pendiente' }}</td>
                                 <td class="py-3">
                                     @if($pago->status === 'APPROVED')
                                         <x-badge variant="success">Aprobado</x-badge>
@@ -179,6 +179,31 @@
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Vista Móvil -->
+            <div class="md:hidden divide-y divide-border">
+                @foreach($pagosRecientes as $pago)
+                    <div class="py-3 space-y-1.5">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <div class="font-semibold text-sm text-text-primary">{{ $pago->plan?->nombre ?? 'N/A' }} <span class="text-xs font-normal text-text-muted">({{ $pago->ciclo_facturacion }})</span></div>
+                                <div class="font-mono text-[11px] text-text-muted break-all">{{ $pago->reference }}</div>
+                            </div>
+                            @if($pago->status === 'APPROVED')
+                                <x-badge variant="success">Aprobado</x-badge>
+                            @elseif($pago->status === 'PENDING')
+                                <x-badge variant="warning">Pendiente</x-badge>
+                            @else
+                                <x-badge variant="danger">{{ $pago->status }}</x-badge>
+                            @endif
+                        </div>
+                        <div class="flex items-center justify-between gap-3 text-xs">
+                            <span class="text-text-muted">{{ $pago->payment_method_type ?? 'Pendiente' }} &bull; {{ $pago->created_at->format('d/m/Y H:i') }}</span>
+                            <span class="font-semibold tabular-nums text-text-primary whitespace-nowrap">${{ number_format($pago->amount_in_cents / 100, 0, ',', '.') }} COP</span>
+                        </div>
+                    </div>
+                @endforeach
             </div>
         @else
             <p class="text-sm text-text-muted">No se registran transacciones previas en esta empresa.</p>

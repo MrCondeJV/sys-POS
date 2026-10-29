@@ -125,14 +125,14 @@
         </div>
     </x-filter-bar>
 
-    <!-- Tabla Principal de Cuentas por Cobrar -->
-    <x-table>
+    <!-- Tabla Principal de Cuentas por Cobrar (Desktop) -->
+    <x-table class="hidden lg:block">
         <x-slot:head>
             <tr>
                 <th class="px-4 py-3 text-left">Documento / Concepto</th>
                 <th class="px-4 py-3 text-left">Cliente Deudor</th>
                 <th class="px-4 py-3 text-right">Deuda & Saldo</th>
-                <th class="px-4 py-3 text-left">Vencimiento</th>
+                <th class="hidden @4xl:table-cell px-4 py-3 text-left">Vencimiento</th>
                 <th class="px-4 py-3 text-center">Estado</th>
                 <th class="px-4 py-3 text-right">Acciones</th>
             </tr>
@@ -146,14 +146,17 @@
                             CXC
                         </div>
                         <div class="min-w-0">
-                            <div class="flex items-center gap-2">
+                            <div class="flex flex-wrap items-center gap-x-2">
                                 <a href="{{ route('cartera.show', $cuenta) }}" class="font-semibold text-brand-600 hover:text-brand-800 text-sm">
                                     {{ $cuenta->numero_documento }}
                                 </a>
                                 <span class="text-xs text-slate-400">({{ $cuenta->fecha_emision->format('d/m/Y') }})</span>
                             </div>
-                            <span class="text-xs text-slate-600 font-medium block truncate max-w-xs">
+                            <span class="text-xs text-slate-600 font-medium line-clamp-1">
                                 {{ $cuenta->concepto }}
+                            </span>
+                            <span class="@4xl:hidden text-[11px] font-medium block {{ $cuenta->estaVencida() && $cuenta->estado->value !== 'PAGADA' ? 'text-danger-text' : 'text-slate-500' }}">
+                                Vence {{ $cuenta->fecha_vencimiento->format('d/m/Y') }}
                             </span>
                             <span class="text-[11px] text-slate-400 block">
                                 {{ $cuenta->sucursal?->nombre ?? 'Sede Central' }}
@@ -165,7 +168,7 @@
                 <td class="px-4 py-3">
                     <div class="min-w-0">
                         <a href="{{ route('cartera.estado-cuenta', $cuenta->cliente) }}"
-                            class="text-sm font-semibold text-slate-900 hover:text-brand-600 transition block truncate max-w-xs"
+                            class="text-sm font-semibold text-slate-900 hover:text-brand-600 transition line-clamp-2"
                             title="Ver estado de cuenta de {{ $cuenta->cliente->razon_social }}">
                             {{ $cuenta->cliente->razon_social }}
                         </a>
@@ -181,9 +184,9 @@
                 <td class="px-4 py-3 whitespace-nowrap text-right">
                     <div class="text-sm font-semibold font-mono tabular-nums {{ (float) $cuenta->saldo_pendiente > 0 ? 'text-slate-900' : 'text-slate-400' }}">
                         ${{ number_format($cuenta->saldo_pendiente, 2) }}
-                        <span class="text-xs font-normal text-slate-400">/ ${{ number_format($cuenta->monto_total, 2) }}</span>
+                        <span class="block text-xs font-normal text-slate-400">de ${{ number_format($cuenta->monto_total, 2) }}</span>
                     </div>
-                    <div class="w-36 ml-auto mt-1.5">
+                    <div class="w-28 ml-auto mt-1.5">
                         <div class="flex justify-between text-[10px] text-slate-500 font-semibold mb-0.5">
                             <span>{{ $cuenta->porcentajePagado() }}% pagado</span>
                         </div>
@@ -194,7 +197,7 @@
                     </div>
                 </td>
 
-                <td class="px-4 py-3 whitespace-nowrap">
+                <td class="hidden @4xl:table-cell px-4 py-3 whitespace-nowrap">
                     <div class="text-sm font-semibold text-slate-800">
                         {{ $cuenta->fecha_vencimiento->format('d/m/Y') }}
                     </div>
@@ -262,6 +265,74 @@
             </tr>
         @endforelse
     </x-table>
+
+    <!-- Vista Móvil y Tablet -->
+    <div class="lg:hidden bg-white rounded-xl border border-slate-200/80 shadow-xs divide-y divide-slate-100 overflow-hidden">
+        @forelse($cuentas as $cuenta)
+            <div class="p-4 space-y-3">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <a href="{{ route('cartera.show', $cuenta) }}" class="font-semibold text-brand-600 hover:text-brand-800 text-sm">
+                            {{ $cuenta->numero_documento }}
+                        </a>
+                        <div class="text-xs text-slate-600 font-medium line-clamp-2">{{ $cuenta->concepto }}</div>
+                    </div>
+                    <x-status-badge :status="$cuenta->estado->value" />
+                </div>
+
+                <div class="text-xs text-slate-600 space-y-1">
+                    <div>
+                        <span class="text-slate-400">Cliente:</span>
+                        <a href="{{ route('cartera.estado-cuenta', $cuenta->cliente) }}" class="font-semibold text-slate-900 hover:text-brand-600">
+                            {{ $cuenta->cliente->razon_social }}
+                        </a>
+                    </div>
+                    <div><span class="text-slate-400">Emisión:</span> {{ $cuenta->fecha_emision->format('d/m/Y') }}</div>
+                    <div>
+                        <span class="text-slate-400">Vence:</span>
+                        <span class="font-semibold text-slate-800">{{ $cuenta->fecha_vencimiento->format('d/m/Y') }}</span>
+                        @if($cuenta->estado->value !== 'PAGADA' && $cuenta->estaVencida())
+                            <span class="font-semibold text-danger-text">&bull; {{ abs($cuenta->diasDiferenciaVencimiento()) }} días de mora</span>
+                        @endif
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between text-[10px] text-slate-500 font-semibold mb-0.5">
+                        <span>{{ $cuenta->porcentajePagado() }}% pagado</span>
+                        <span class="tabular-nums">de ${{ number_format($cuenta->monto_total, 2) }}</span>
+                    </div>
+                    <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-full rounded-full {{ $cuenta->estado->value === 'PAGADA' ? 'bg-success-text' : ($cuenta->estaVencida() ? 'bg-danger-text' : 'bg-brand-600') }}"
+                             style="width: {{ $cuenta->porcentajePagado() }}%"></div>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex items-center justify-between gap-3 border-t border-slate-100">
+                    <div>
+                        <span class="text-[10px] text-slate-400 uppercase font-semibold block">Saldo</span>
+                        <span class="font-bold font-mono text-base tabular-nums {{ (float) $cuenta->saldo_pendiente > 0 ? 'text-slate-900' : 'text-slate-400' }}">
+                            ${{ number_format($cuenta->saldo_pendiente, 2) }}
+                        </span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        @if((float) $cuenta->saldo_pendiente > 0 && $cuenta->estado->value !== 'ANULADA')
+                            <x-button size="sm" variant="primary" @click="abrirModalAbono({{ json_encode($cuenta) }})" type="button">
+                                Abonar
+                            </x-button>
+                        @endif
+                        <x-icon-button href="{{ route('cartera.show', $cuenta) }}" variant="secondary" icon="eye" title="Ver detalle de la cuenta" />
+                        <x-icon-button href="{{ route('cartera.estado-cuenta', $cuenta->cliente) }}" variant="secondary" icon="document" title="Ver estado de cuenta completo del cliente" />
+                    </div>
+                </div>
+            </div>
+        @empty
+            <x-empty-state
+                title="No hay cuentas por cobrar"
+                description="No se encontraron cuentas con los filtros o términos de búsqueda seleccionados."
+            />
+        @endforelse
+    </div>
 
     @if($cuentas->hasPages())
         <div class="p-4 border-t border-slate-200 bg-slate-50/50 rounded-xl">

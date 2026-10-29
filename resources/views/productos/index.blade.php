@@ -101,11 +101,11 @@
                 <x-slot:thead>
                     <tr>
                         <th class="px-5 py-3 text-left uppercase">Producto</th>
-                        <th class="px-4 py-3 text-left uppercase">Códigos</th>
-                        <th class="px-4 py-3 text-left uppercase">Categoría</th>
-                        <th class="px-4 py-3 text-left uppercase">Marca</th>
+                        <th class="hidden @4xl:table-cell px-4 py-3 text-left uppercase">Códigos</th>
+                        <th class="hidden @5xl:table-cell px-4 py-3 text-left uppercase">Categoría</th>
+                        <th class="hidden @6xl:table-cell px-4 py-3 text-left uppercase">Marca</th>
                         <th class="px-4 py-3 text-right uppercase">Precio Venta</th>
-                        <th class="px-4 py-3 text-right uppercase">P. Mayorista</th>
+                        <th class="hidden @6xl:table-cell px-4 py-3 text-right uppercase">P. Mayorista</th>
                         <th class="px-4 py-3 text-center uppercase">Stock</th>
                         <th class="px-4 py-3 text-center uppercase">Estado</th>
                         <th class="px-5 py-3 text-right uppercase">Acciones</th>
@@ -127,9 +127,10 @@
                                 @endif
                             </div>
                             <div class="min-w-0 flex-1">
-                                <div class="font-semibold text-slate-900 text-xs leading-snug truncate">{{ $p->nombre }}</div>
+                                <div class="font-semibold text-slate-900 text-xs leading-snug line-clamp-2">{{ $p->nombre }}</div>
+                                <div class="@4xl:hidden text-[11px] text-slate-500 font-mono">{{ $p->codigo ?? '—' }}</div>
                                 @if($p->descripcion)
-                                <div class="text-[11px] text-slate-400 truncate max-w-xs mt-0.5">{{ $p->descripcion }}</div>
+                                <div class="text-[11px] text-slate-400 line-clamp-1 mt-0.5">{{ $p->descripcion }}</div>
                                 @else
                                 <div class="text-[11px] text-slate-400 mt-0.5">Unidad: {{ $p->unidadMedida?->nombre ?? 'Unidad' }}</div>
                                 @endif
@@ -138,7 +139,7 @@
                     </td>
 
                     <!-- 2. Códigos -->
-                    <td class="px-4 py-3 font-mono text-xs">
+                    <td class="hidden @4xl:table-cell px-4 py-3 font-mono text-xs">
                         <span class="inline-block px-1.5 py-0.5 rounded bg-slate-100 font-semibold text-slate-700 border border-slate-200 text-[11px]">
                             {{ $p->codigo ?? '—' }}
                         </span>
@@ -150,7 +151,7 @@
                     </td>
 
                     <!-- 3. Categoría -->
-                    <td class="px-4 py-3 text-xs">
+                    <td class="hidden @5xl:table-cell px-4 py-3 text-xs">
                         @if($p->categoria)
                         <x-badge status="neutral" size="sm">{{ $p->categoria->nombre }}</x-badge>
                         @else
@@ -159,7 +160,7 @@
                     </td>
 
                     <!-- 4. Marca -->
-                    <td class="px-4 py-3 text-xs">
+                    <td class="hidden @6xl:table-cell px-4 py-3 text-xs">
                         @if($p->marca)
                         <span class="text-slate-700 font-medium">{{ $p->marca->nombre }}</span>
                         @else
@@ -178,7 +179,7 @@
                     </td>
 
                     <!-- 6. Precio Mayorista -->
-                    <td class="px-4 py-3 text-right whitespace-nowrap text-xs tabular-nums">
+                    <td class="hidden @6xl:table-cell px-4 py-3 text-right whitespace-nowrap text-xs tabular-nums">
                         @if($p->precio_mayorista)
                         <span class="font-semibold text-slate-800">
                             ${{ number_format($p->precio_mayorista, 0, ',', '.') }}

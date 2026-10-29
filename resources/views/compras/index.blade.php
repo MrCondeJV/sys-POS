@@ -108,17 +108,17 @@
     </x-filter-bar>
 
     <!-- Lista de Compras: Desktop Table / Mobile Cards -->
-    <div class="card p-0 overflow-hidden">
+    <div class="@container card p-0 overflow-hidden">
         <!-- Vista Desktop -->
         <div class="hidden lg:block overflow-x-auto">
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Fecha</th>
+                        <th class="hidden @4xl:table-cell">Fecha</th>
                         <th>Factura #</th>
                         <th>Proveedor</th>
-                        <th>Sede Destino</th>
-                        <th>Pago</th>
+                        <th class="hidden @5xl:table-cell">Sede Destino</th>
+                        <th class="hidden @5xl:table-cell">Pago</th>
                         <th class="text-right">Total</th>
                         <th class="text-center">Estado</th>
                         <th class="text-right">Acción</th>
@@ -128,13 +128,14 @@
                     @forelse($compras as $c)
                     <tr>
                         <!-- Fecha -->
-                        <td class="text-xs text-slate-600 font-mono">
+                        <td class="hidden @4xl:table-cell text-xs text-slate-600 font-mono">
                             {{ $c->fecha_emision->format('d/m/Y') }}
                         </td>
 
                         <!-- Factura # -->
                         <td class="font-mono font-semibold text-xs text-slate-900">
                             #{{ $c->numero_factura }}
+                            <div class="@4xl:hidden font-normal text-[11px] text-slate-500">{{ $c->fecha_emision->format('d/m/Y') }}</div>
                         </td>
 
                         <!-- Proveedor -->
@@ -146,12 +147,12 @@
                         </td>
 
                         <!-- Sede Destino -->
-                        <td class="text-xs text-slate-700">
+                        <td class="hidden @5xl:table-cell text-xs text-slate-700">
                             {{ $c->sucursal?->nombre ?? 'Sede N/A' }}
                         </td>
 
                         <!-- Pago -->
-                        <td>
+                        <td class="hidden @5xl:table-cell">
                             <span class="badge {{ $c->tipo_pago?->value === 'CONTADO' ? 'badge-neutral' : 'badge-warning' }}">
                                 {{ $c->tipo_pago?->value ?? 'CONTADO' }}
                             </span>

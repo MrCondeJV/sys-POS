@@ -905,6 +905,91 @@ aside.sidebar-collapsed:not(.pos-sidebar) a.sidebar-link:focus-visible::after {
     pointer-events: none;
 }
 
+/* Menú mini agrupado: un icono por grupo y sus opciones en un panel flotante */
+aside.sidebar-collapsed .sidebar-group-trigger {
+    display: flex !important;
+}
+
+aside.sidebar-collapsed:not(.pos-sidebar) .sidebar-group-items {
+    position: fixed;
+    z-index: 60;
+    width: 15rem;
+    padding: 0.5rem;
+    background-color: var(--color-brand-900);
+    border: 1px solid var(--color-brand-700);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-modal);
+}
+
+/* Puente invisible entre el icono y el panel para no perder el hover */
+aside.sidebar-collapsed:not(.pos-sidebar) .sidebar-group-items::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -0.75rem;
+    width: 0.75rem;
+}
+
+aside.sidebar-collapsed .sidebar-group-items .sidebar-flyout-title {
+    display: block !important;
+}
+
+aside.sidebar-collapsed .sidebar-group-items .sidebar-text,
+aside.sidebar-collapsed .sidebar-group-items .sidebar-badge {
+    display: inline !important;
+    opacity: 1;
+}
+
+aside.sidebar-collapsed .sidebar-group-items .sidebar-badge {
+    margin-left: auto;
+}
+
+aside.sidebar-collapsed .sidebar-group-items a.sidebar-link {
+    justify-content: flex-start !important;
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+}
+
+aside.sidebar-collapsed .sidebar-group-items a.sidebar-link.border-l-\[3px\] {
+    padding-left: 9px !important;
+}
+
+aside.sidebar-collapsed .sidebar-group-items a.sidebar-link svg {
+    margin-right: 0.75rem !important;
+}
+
+aside.sidebar-collapsed .sidebar-group-items a.sidebar-link::after {
+    content: none !important;
+}
+
+/* =============================================================================
+   Densidad de tablas de listados
+   Fuera de @layer a propósito: debe prevalecer sobre los px-4/px-5 que traen
+   las vistas en th/td, para que todas las tablas quepan sin scroll horizontal.
+   ============================================================================= */
+.table th,
+.table td {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
+.table th:first-child,
+.table td:first-child {
+    padding-left: 1rem;
+}
+
+.table th:last-child,
+.table td:last-child {
+    padding-right: 1rem;
+}
+
+.table th {
+    white-space: normal;
+    text-wrap: balance;
+    line-height: 1.25;
+}
+
 /* =============================================================================
    Reglas Globales de Impresión y Reducción de Movimiento
    ============================================================================= */

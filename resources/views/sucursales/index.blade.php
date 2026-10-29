@@ -49,17 +49,17 @@
     </x-page-header>
 
     <!-- Lista de Sucursales -->
-    <div class="card p-0 overflow-hidden">
+    <div class="@container card p-0 overflow-hidden">
         <!-- Vista Desktop -->
         <div class="hidden lg:block overflow-x-auto">
             <table class="table">
                 <thead>
                     <tr>
                         <th>Sucursal</th>
-                        <th>Código</th>
+                        <th class="hidden @5xl:table-cell">Código</th>
                         <th>Ubicación</th>
-                        <th>Contacto</th>
-                        <th>Tipo</th>
+                        <th class="hidden @5xl:table-cell">Contacto</th>
+                        <th class="hidden @4xl:table-cell">Tipo</th>
                         <th class="text-right">Acciones</th>
                     </tr>
                 </thead>
@@ -80,20 +80,23 @@
                                         <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 mr-1"></span> Sede Activa
                                     </span>
                                     @endif
+                                    @if($s->es_principal)
+                                    <span class="@4xl:hidden badge badge-warning mt-0.5">Sede Principal</span>
+                                    @endif
                                 </div>
                             </div>
                         </td>
-                        <td class="text-xs text-slate-600 font-mono">
+                        <td class="hidden @5xl:table-cell text-xs text-slate-600 font-mono">
                             {{ $s->codigo ?? '—' }}
                         </td>
                         <td class="text-xs text-slate-600">
                             <div class="font-medium text-slate-800">{{ $s->ciudad ?? 'N/A' }}</div>
                             <div class="text-slate-400 text-[11px]">{{ $s->direccion ?? 'Sin dirección' }}</div>
                         </td>
-                        <td class="text-xs text-slate-600 font-mono">
+                        <td class="hidden @5xl:table-cell text-xs text-slate-600 font-mono">
                             {{ $s->telefono ?? '—' }}
                         </td>
-                        <td>
+                        <td class="hidden @4xl:table-cell">
                             @if($s->es_principal)
                             <span class="badge badge-warning">
                                 Sede Principal

@@ -106,13 +106,13 @@
     </x-filter-bar>
 
     <!-- Tabla de Usuarios -->
-    <x-table>
+    <x-table class="hidden lg:block">
         <x-slot:header>
             <tr>
                 <th>Usuario / Colaborador</th>
-                <th>Contacto</th>
+                <th class="hidden @4xl:table-cell">Contacto</th>
                 <th>Rol de Acceso</th>
-                <th>Sede / Sucursal</th>
+                <th class="hidden @5xl:table-cell">Sede / Sucursal</th>
                 <th class="text-center">Estado</th>
                 <th class="text-right">Acciones</th>
             </tr>
@@ -137,11 +137,12 @@
                         <div class="text-xs text-text-secondary truncate">
                             {{ $user->cargo ?? 'Sin cargo definido' }}
                         </div>
+                        <div class="@4xl:hidden text-xs text-text-muted font-mono break-all">{{ $user->email }}</div>
                     </div>
                 </div>
             </td>
-            <td>
-                <div class="font-mono text-xs text-text-primary">{{ $user->email }}</div>
+            <td class="hidden @4xl:table-cell">
+                <div class="font-mono text-xs text-text-primary break-all">{{ $user->email }}</div>
                 <div class="text-xs text-text-secondary mt-0.5">{{ $user->telefono ?? 'Sin teléfono' }}</div>
             </td>
             <td>
@@ -153,7 +154,7 @@
                     {{ $userRole ? str_replace('_', ' ', $userRole) : 'Sin Rol' }}
                 </x-badge>
             </td>
-            <td>
+            <td class="hidden @5xl:table-cell">
                 <span class="inline-flex items-center gap-1.5 text-xs text-text-primary">
                     <svg class="h-3.5 w-3.5 text-text-muted shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -165,85 +166,7 @@
                 <x-status-badge :status="$user->estado" />
             </td>
             <td class="text-right">
-                <div class="inline-flex items-center gap-1 justify-end">
-                    @can('update', $user)
-                    <x-icon-button
-                        variant="ghost"
-                        size="sm"
-                        href="{{ route('usuarios.edit', $user) }}"
-                        title="Editar usuario"
-                        aria-label="Editar usuario {{ $user->name }}"
-                    >
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                    </x-icon-button>
-
-                    @if($user->id !== auth()->id())
-                        @php
-                            $esActivo = $user->estado === \App\Enums\EstadoGeneral::ACTIVO;
-                        @endphp
-                        <x-icon-button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            class="{{ $esActivo ? 'text-warning hover:text-warning-text hover:bg-warning-bg' : 'text-success hover:text-success-text hover:bg-success-bg' }}"
-                            :title="$esActivo ? 'Inactivar acceso' : 'Reactivar acceso'"
-                            :aria-label="$esActivo ? 'Inactivar acceso de ' . $user->name : 'Reactivar acceso de ' . $user->name"
-                            @click="$dispatch('open-modal-confirm-usuario', {
-                                triggerEl: $el,
-                                title: @js($esActivo ? '¿Inactivar cuenta de ' . $user->name . '?' : '¿Reactivar cuenta de ' . $user->name . '?'),
-                                message: @js($esActivo ? 'El estado del usuario cambiará a INACTIVO.' : 'El estado del usuario cambiará a ACTIVO.'),
-                                consequence: @js($esActivo
-                                    ? 'No podrá iniciar sesión y, si tiene una sesión abierta, el middleware SetCompanyContext cerrará e invalidará su sesión en su próxima petición HTTP.'
-                                    : 'El colaborador podrá volver a autenticarse con sus credenciales y permisos actuales.'),
-                                confirmText: @js($esActivo ? 'Sí, inactivar usuario' : 'Sí, reactivar usuario'),
-                                variant: @js($esActivo ? 'danger' : 'primary'),
-                                action: @js(route('usuarios.toggle-estado', $user)),
-                                method: 'POST',
-                                formId: @js('form-toggle-usuario-' . $user->id)
-                            })"
-                        >
-                            @if($esActivo)
-                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-                            </svg>
-                            @else
-                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            @endif
-                        </x-icon-button>
-                    @endif
-                    @endcan
-
-                    @can('delete', $user)
-                    @if($user->id !== auth()->id())
-                        <x-icon-button
-                            type="button"
-                            variant="danger"
-                            size="sm"
-                            title="Eliminar usuario"
-                            aria-label="Eliminar usuario {{ $user->name }}"
-                            @click="$dispatch('open-modal-confirm-usuario', {
-                                triggerEl: $el,
-                                title: @js('¿Eliminar colaborador ' . $user->name . '?'),
-                                message: @js('Se aplicará eliminación lógica (soft delete) sobre el registro del usuario.'),
-                                consequence: @js('El usuario dejará de aparecer en los listados activos y no podrá autenticarse. Su correo electrónico permanece reservado en la base de datos y sus registros históricos (ventas, arqueos y movimientos asociados a su ID) se conservan sin cambios.'),
-                                confirmText: 'Sí, eliminar usuario',
-                                variant: 'danger',
-                                action: @js(route('usuarios.destroy', $user)),
-                                method: 'DELETE',
-                                formId: @js('form-delete-usuario-' . $user->id)
-                            })"
-                        >
-                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                        </x-icon-button>
-                    @endif
-                    @endcan
-                </div>
+                @include('usuarios.partials.acciones')
             </td>
         </tr>
         @empty
@@ -262,18 +185,70 @@
             </td>
         </tr>
         @endforelse
+    </x-table>
 
-        @if($usuarios->hasPages())
-        <x-slot:footer>
+    <!-- Vista Móvil y Tablet -->
+    <div class="lg:hidden bg-surface rounded-xl border border-border shadow-xs divide-y divide-border overflow-hidden">
+        @forelse($usuarios as $user)
+        @php
+            $userRole = $user->roles->first()?->name;
+            $isPrivileged = in_array($userRole, [\App\Enums\RolSistema::SUPER_ADMIN->value, \App\Enums\RolSistema::ADMIN_EMPRESA->value]);
+        @endphp
+        <div class="p-4 space-y-3 {{ $user->id === auth()->id() ? 'bg-surface-muted' : '' }}">
+            <div class="flex items-start justify-between gap-3">
+                <div class="flex items-start gap-3 min-w-0">
+                    <div class="h-9 w-9 rounded-md bg-brand-700 text-white font-semibold text-xs flex items-center justify-center shrink-0">
+                        {{ strtoupper(substr($user->name, 0, 2)) }}
+                    </div>
+                    <div class="min-w-0">
+                        <div class="font-semibold text-text-primary text-sm flex flex-wrap items-center gap-1.5">
+                            <span>{{ $user->name }}</span>
+                            @if($user->id === auth()->id())
+                            <span class="badge badge-neutral text-[10px] font-medium">Tú</span>
+                            @endif
+                        </div>
+                        <div class="text-xs text-text-secondary">{{ $user->cargo ?? 'Sin cargo definido' }}</div>
+                    </div>
+                </div>
+                <x-status-badge :status="$user->estado" />
+            </div>
+
+            <div class="text-xs text-text-secondary space-y-1">
+                <div class="font-mono text-text-primary break-all">{{ $user->email }}</div>
+                <div>{{ $user->telefono ?? 'Sin teléfono' }} &bull; {{ $user->sucursal?->nombre ?? 'Todas / Global' }}</div>
+            </div>
+
+            <div class="pt-2 flex items-center justify-between gap-3 border-t border-border">
+                <x-badge :variant="$isPrivileged ? 'info' : 'neutral'" size="sm">
+                    {{ $userRole ? str_replace('_', ' ', $userRole) : 'Sin Rol' }}
+                </x-badge>
+                @include('usuarios.partials.acciones')
+            </div>
+        </div>
+        @empty
+        <x-empty-state
+            title="No se encontraron usuarios"
+            description="No hay colaboradores registrados con los criterios de búsqueda actuales."
+        >
+            @can('create', \App\Models\User::class)
+            <x-button variant="primary" size="sm" href="{{ route('usuarios.create') }}">
+                Registrar Primer Usuario
+            </x-button>
+            @endcan
+        </x-empty-state>
+        @endforelse
+    </div>
+
+    @if($usuarios->hasPages())
+        <div class="px-4 py-3 border border-border bg-surface-muted rounded-xl flex flex-wrap items-center justify-between gap-3">
             <div class="text-xs text-text-secondary">
                 Mostrando {{ $usuarios->firstItem() ?? 0 }}–{{ $usuarios->lastItem() ?? 0 }} de {{ $usuarios->total() }} colaboradores
             </div>
             <div>
                 {{ $usuarios->links() }}
             </div>
-        </x-slot:footer>
-        @endif
-    </x-table>
+        </div>
+    @endif
 
     {{-- Único modal reutilizable teletransportado a body para acciones de fila (toggle-estado y destroy) --}}
     <x-modal-confirm name="confirm-usuario" />

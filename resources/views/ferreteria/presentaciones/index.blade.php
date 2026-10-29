@@ -95,7 +95,7 @@
 
         <!-- Listado de Presentaciones -->
         <div class="lg:col-span-8">
-            <x-table>
+            <x-table class="hidden lg:block">
                 <x-slot:head>
                     <tr>
                         <th class="px-4 py-3 text-left">Presentación</th>
@@ -148,6 +148,47 @@
                     </tr>
                 @endforelse
             </x-table>
+
+            <!-- Vista Móvil y Tablet -->
+            <div class="lg:hidden bg-white rounded-xl border border-slate-200/80 shadow-xs divide-y divide-slate-100 overflow-hidden">
+                @forelse($presentaciones as $pres)
+                    <div class="p-4 space-y-2">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <div class="flex flex-wrap items-center gap-2 font-semibold text-slate-900 text-sm">
+                                    <span>{{ $pres->nombre }}</span>
+                                    @if($pres->es_predeterminada)
+                                        <x-badge color="brand">Default</x-badge>
+                                    @endif
+                                </div>
+                                <div class="text-xs text-slate-600 mt-0.5">
+                                    1 {{ $pres->nombre }} = {{ number_format($pres->factor_conversion, 2) }} {{ $producto->unidadMedida?->nombre ?? 'unidades' }}
+                                </div>
+                            </div>
+                            <span class="font-mono text-xs font-semibold text-slate-700 tabular-nums">x{{ number_format($pres->factor_conversion, 2) }}</span>
+                        </div>
+                        <div class="pt-2 flex items-center justify-between gap-3 border-t border-slate-100">
+                            <span class="font-mono text-base font-semibold text-slate-900 tabular-nums">${{ number_format($pres->precio_venta, 2) }}</span>
+                            <x-modal-confirm
+                                title="¿Eliminar esta presentación?"
+                                message="Se eliminará la presentación «{{ $pres->nombre }}» del producto."
+                                action="{{ route('productos.presentaciones.destroy', [$producto, $pres]) }}"
+                                method="DELETE"
+                                confirmText="Eliminar"
+                                variant="danger"
+                            >
+                                <x-slot:trigger>
+                                    <x-icon-button type="button" variant="danger" icon="trash" title="Eliminar presentación" />
+                                </x-slot:trigger>
+                            </x-modal-confirm>
+                        </div>
+                    </div>
+                @empty
+                    <div class="p-6 text-center text-sm text-slate-500">
+                        No hay presentaciones adicionales configuradas. El producto se comercializa únicamente en su unidad base ({{ $producto->unidadMedida?->nombre ?? 'Unidad' }}).
+                    </div>
+                @endforelse
+            </div>
         </div>
     </div>
 </div>

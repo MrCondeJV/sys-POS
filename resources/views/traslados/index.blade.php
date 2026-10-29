@@ -65,32 +65,35 @@
         </div>
     </x-filter-bar>
 
-    <!-- Tabla -->
-    <x-table>
+    <!-- Tabla (Desktop) -->
+    <x-table class="hidden lg:block">
         <x-slot:thead>
             <tr>
                 <th class="px-5 py-3 text-left uppercase">Consecutivo</th>
                 <th class="px-4 py-3 text-left uppercase">Ruta</th>
-                <th class="px-4 py-3 text-left uppercase">Motivo</th>
+                <th class="hidden @5xl:table-cell px-4 py-3 text-left uppercase">Motivo</th>
                 <th class="px-4 py-3 text-center uppercase">Estado</th>
-                <th class="px-4 py-3 text-left uppercase">Fecha Envío</th>
+                <th class="hidden @4xl:table-cell px-4 py-3 text-left uppercase">Fecha Envío</th>
                 <th class="px-5 py-3 text-right uppercase">Acción</th>
             </tr>
         </x-slot:thead>
 
         @forelse($traslados as $t)
             <tr class="hover:bg-slate-50/70 transition">
-                <td class="px-5 py-3 font-mono font-bold text-slate-900 text-xs">{{ $t->consecutivo }}</td>
+                <td class="px-5 py-3 font-mono font-bold text-slate-900 text-xs">
+                    {{ $t->consecutivo }}
+                    <div class="@4xl:hidden font-normal text-[11px] text-slate-500 tabular-nums">{{ $t->fecha_envio?->format('d/m/Y H:i') ?? '—' }}</div>
+                </td>
                 <td class="px-4 py-3 text-xs text-slate-700">
                     <span class="font-medium text-slate-900">{{ $t->sucursalOrigen?->nombre ?? 'Sin sucursal' }}</span>
                     <span class="text-slate-400 mx-1">&rarr;</span>
                     <span class="font-medium text-slate-900">{{ $t->sucursalDestino?->nombre ?? 'Sin sucursal' }}</span>
                 </td>
-                <td class="px-4 py-3 text-xs text-slate-600 max-w-xs truncate">{{ Str::limit($t->motivo, 40) }}</td>
+                <td class="hidden @5xl:table-cell px-4 py-3 text-xs text-slate-600"><div class="line-clamp-2">{{ Str::limit($t->motivo, 40) }}</div></td>
                 <td class="px-4 py-3 text-center whitespace-nowrap">
                     <x-status-badge :status="$t->estado" size="sm" />
                 </td>
-                <td class="px-4 py-3 text-xs text-slate-500 whitespace-nowrap tabular-nums">
+                <td class="hidden @4xl:table-cell px-4 py-3 text-xs text-slate-500 whitespace-nowrap tabular-nums">
                     {{ $t->fecha_envio?->format('d/m/Y H:i') ?? '—' }}
                 </td>
                 <td class="px-5 py-3 text-right whitespace-nowrap">
@@ -109,12 +112,45 @@
                 </td>
             </tr>
         @endforelse
-
-        @if($traslados->hasPages())
-        <x-slot:pagination>
-            {{ $traslados->links() }}
-        </x-slot:pagination>
-        @endif
     </x-table>
+
+    <!-- Vista Móvil y Tablet -->
+    <div class="lg:hidden bg-white rounded-xl border border-slate-200/80 shadow-xs divide-y divide-slate-100 overflow-hidden">
+        @forelse($traslados as $t)
+            <div class="p-4 space-y-3">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <div class="font-mono font-bold text-slate-900 text-sm">{{ $t->consecutivo }}</div>
+                        <div class="text-[11px] text-slate-500 tabular-nums">Envío: {{ $t->fecha_envio?->format('d/m/Y H:i') ?? '—' }}</div>
+                    </div>
+                    <x-status-badge :status="$t->estado" size="sm" />
+                </div>
+
+                <div class="text-xs text-slate-700">
+                    <span class="font-medium text-slate-900">{{ $t->sucursalOrigen?->nombre ?? 'Sin sucursal' }}</span>
+                    <span class="text-slate-400 mx-1">&rarr;</span>
+                    <span class="font-medium text-slate-900">{{ $t->sucursalDestino?->nombre ?? 'Sin sucursal' }}</span>
+                </div>
+
+                <div class="pt-2 flex items-center justify-between gap-3 border-t border-slate-100">
+                    <div class="text-xs text-slate-600 line-clamp-2 min-w-0">{{ $t->motivo }}</div>
+                    <x-button variant="secondary" size="sm" href="{{ route('traslados.show', $t) }}">
+                        Detalle &rarr;
+                    </x-button>
+                </div>
+            </div>
+        @empty
+            <x-empty-state
+                title="No se encontraron traslados"
+                description="No hay registros de traslados entre sucursales con los filtros seleccionados."
+            />
+        @endforelse
+    </div>
+
+    @if($traslados->hasPages())
+        <div class="p-4 border border-border bg-surface-muted rounded-xl">
+            {{ $traslados->links() }}
+        </div>
+    @endif
 </div>
 @endsection

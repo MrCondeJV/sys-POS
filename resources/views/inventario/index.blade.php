@@ -124,11 +124,11 @@
                 <x-slot:thead>
                     <tr>
                         <th class="px-5 py-3 text-left uppercase">Producto</th>
-                        <th class="px-4 py-3 text-left uppercase">Sucursal</th>
-                        <th class="px-4 py-3 text-left uppercase">Categoría / Marca</th>
+                        <th class="hidden @5xl:table-cell px-4 py-3 text-left uppercase">Sucursal</th>
+                        <th class="hidden @6xl:table-cell px-4 py-3 text-left uppercase">Categoría / Marca</th>
                         <th class="px-4 py-3 text-right uppercase">Existencias</th>
                         <th class="px-4 py-3 text-center uppercase">Nivel de Stock</th>
-                        <th class="px-4 py-3 text-right uppercase">Costo / PVP</th>
+                        <th class="hidden @4xl:table-cell px-4 py-3 text-right uppercase">Costo / PVP</th>
                         <th class="px-4 py-3 text-right uppercase">Valor Total</th>
                         <th class="px-5 py-3 text-right uppercase">Acciones</th>
                     </tr>
@@ -156,13 +156,13 @@
                             </div>
                             <div class="min-w-0">
                                 @if($prod)
-                                <a href="{{ route('inventario.kardex', $prod->id) }}" class="font-semibold text-slate-900 hover:text-brand-600 transition truncate block max-w-xs text-xs" title="{{ $prod->nombre }}">
+                                <a href="{{ route('inventario.kardex', $prod->id) }}" class="font-semibold text-slate-900 hover:text-brand-600 transition line-clamp-2 text-xs" title="{{ $prod->nombre }}">
                                     {{ $prod->nombre }}
                                 </a>
                                 @else
                                 <span class="font-semibold text-slate-400 italic text-xs">Producto no disponible</span>
                                 @endif
-                                <div class="flex items-center space-x-2 text-[11px] text-slate-400 mt-0.5 font-mono">
+                                <div class="flex flex-wrap items-center gap-x-2 text-[11px] text-slate-400 mt-0.5 font-mono">
                                     @if($prod?->codigo)
                                     <span>SKU: {{ $prod->codigo }}</span>
                                     @endif
@@ -170,17 +170,18 @@
                                     <span>&bull; {{ $prod->codigo_barras }}</span>
                                     @endif
                                 </div>
+                                <div class="@5xl:hidden text-[11px] text-slate-500">{{ $inv->sucursal?->nombre ?? 'Sin sucursal' }}</div>
                             </div>
                         </div>
                     </td>
 
                     <!-- Sucursal -->
-                    <td class="px-4 py-3 whitespace-nowrap text-xs text-slate-700">
+                    <td class="hidden @5xl:table-cell px-4 py-3 whitespace-nowrap text-xs text-slate-700">
                         {{ $inv->sucursal?->nombre ?? 'Sin sucursal' }}
                     </td>
 
                     <!-- Categoría / Marca -->
-                    <td class="px-4 py-3 text-xs">
+                    <td class="hidden @6xl:table-cell px-4 py-3 text-xs">
                         <div class="text-slate-900 font-medium">{{ $prod?->categoria?->nombre ?? '—' }}</div>
                         <div class="text-[11px] text-slate-400">{{ $prod?->marca?->nombre ?? '' }}</div>
                     </td>
@@ -206,7 +207,7 @@
                     </td>
 
                     <!-- Costo / PVP -->
-                    <td class="px-4 py-3 text-right whitespace-nowrap text-xs tabular-nums">
+                    <td class="hidden @4xl:table-cell px-4 py-3 text-right whitespace-nowrap text-xs tabular-nums">
                         <div class="text-slate-600 font-medium">${{ number_format($prod?->precio_compra ?? 0, 0, ',', '.') }}</div>
                         <div class="text-slate-900 font-semibold">${{ number_format($prod?->precio_venta ?? 0, 0, ',', '.') }}</div>
                     </td>

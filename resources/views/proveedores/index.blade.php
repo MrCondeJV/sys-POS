@@ -144,17 +144,17 @@
     </x-filter-bar>
 
     <!-- Tabla Desktop / Tarjetas Mobile -->
-    <div class="card p-0 overflow-hidden">
+    <div class="@container card p-0 overflow-hidden">
         <!-- Vista Desktop -->
         <div class="hidden lg:block overflow-x-auto">
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Identificación</th>
+                        <th class="hidden @4xl:table-cell">Identificación</th>
                         <th>Razón Social & Contacto</th>
-                        <th>Comunicación</th>
-                        <th>Ubicación</th>
-                        <th class="text-center">Compras</th>
+                        <th class="hidden @5xl:table-cell">Comunicación</th>
+                        <th class="hidden @6xl:table-cell">Ubicación</th>
+                        <th class="hidden @5xl:table-cell text-center">Compras</th>
                         <th class="text-center">Estado</th>
                         <th class="text-right">Acciones</th>
                     </tr>
@@ -163,7 +163,7 @@
                     @forelse($proveedores as $p)
                     <tr>
                         <!-- Identificación -->
-                        <td class="font-mono text-xs text-slate-700">
+                        <td class="hidden @4xl:table-cell font-mono text-xs text-slate-700">
                             <span class="inline-flex items-center px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold">
                                 {{ $p->tipo_documento?->value ?? 'DOC' }}: {{ $p->numero_documento }}
                             </span>
@@ -172,6 +172,8 @@
                         <!-- Razón Social & Contacto -->
                         <td>
                             <div class="font-semibold text-slate-900 text-sm">{{ $p->razon_social }}</div>
+                            <div class="@4xl:hidden text-xs text-slate-500 font-mono">{{ $p->tipo_documento?->value ?? 'DOC' }}: {{ $p->numero_documento }}</div>
+                            <div class="@5xl:hidden text-xs text-slate-500 tabular-nums">{{ $p->telefono ?? '' }}</div>
                             @if($p->nombre_contacto)
                                 <div class="text-xs text-slate-500 flex items-center mt-0.5">
                                     <svg class="h-3.5 w-3.5 mr-1 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -183,21 +185,21 @@
                         </td>
 
                         <!-- Comunicación -->
-                        <td class="text-xs text-slate-600">
+                        <td class="hidden @5xl:table-cell text-xs text-slate-600">
                             <div class="tabular-nums font-mono">{{ $p->telefono ?? '—' }}</div>
                             @if($p->email)
-                                <div class="text-slate-500 truncate max-w-xs">{{ $p->email }}</div>
+                                <div class="text-slate-500 break-all">{{ $p->email }}</div>
                             @endif
                         </td>
 
                         <!-- Ubicación -->
-                        <td class="text-xs text-slate-600">
+                        <td class="hidden @6xl:table-cell text-xs text-slate-600">
                             <div class="font-medium text-slate-800">{{ $p->ciudad ?? 'N/A' }}{{ $p->departamento ? ', ' . $p->departamento : '' }}</div>
-                            <div class="text-slate-400 truncate max-w-xs">{{ $p->direccion ?? 'Sin dirección' }}</div>
+                            <div class="text-slate-400 line-clamp-1">{{ $p->direccion ?? 'Sin dirección' }}</div>
                         </td>
 
                         <!-- Compras Asociadas -->
-                        <td class="text-center">
+                        <td class="hidden @5xl:table-cell text-center whitespace-nowrap">
                             <span class="badge {{ $p->compras_count > 0 ? 'badge-brand' : 'badge-neutral' }} tabular-nums">
                                 {{ $p->compras_count }} facturas
                             </span>

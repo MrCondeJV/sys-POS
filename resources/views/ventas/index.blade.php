@@ -98,15 +98,15 @@
         </div>
     </x-filter-bar>
 
-    <!-- Tabla de Ventas -->
-    <x-table>
+    <!-- Tabla de Ventas (Desktop) -->
+    <x-table class="hidden lg:block">
         <x-slot:thead>
             <tr>
                 <th class="px-5 py-3 text-left uppercase">N° Venta / Comprobante</th>
-                <th class="px-5 py-3 text-left uppercase">Fecha & Hora</th>
+                <th class="hidden @4xl:table-cell px-5 py-3 text-left uppercase">Fecha & Hora</th>
                 <th class="px-5 py-3 text-left uppercase">Cliente</th>
-                <th class="px-5 py-3 text-left uppercase">Vendedor</th>
-                <th class="px-5 py-3 text-center uppercase">Condición / Medio</th>
+                <th class="hidden @6xl:table-cell px-5 py-3 text-left uppercase">Vendedor</th>
+                <th class="hidden @5xl:table-cell px-5 py-3 text-center uppercase">Condición / Medio</th>
                 <th class="px-5 py-3 text-right uppercase">Total Venta</th>
                 <th class="px-5 py-3 text-center uppercase">Estado</th>
                 <th class="px-5 py-3 text-right uppercase">Acciones</th>
@@ -118,8 +118,9 @@
                 <td class="px-5 py-3">
                     <div class="font-bold text-text-primary font-mono text-xs">{{ $v->numero_venta }}</div>
                     <div class="text-[11px] text-text-muted font-medium">{{ $v->tipo_comprobante->label() }}</div>
+                    <div class="@4xl:hidden text-[11px] text-text-muted tabular-nums">{{ $v->fecha->format('d/m/Y H:i') }}</div>
                 </td>
-                <td class="px-5 py-3 whitespace-nowrap text-text-secondary text-xs tabular-nums">
+                <td class="hidden @4xl:table-cell px-5 py-3 whitespace-nowrap text-text-secondary text-xs tabular-nums">
                     {{ $v->fecha->format('d/m/Y H:i') }}
                 </td>
                 <td class="px-5 py-3">
@@ -130,10 +131,10 @@
                         <span class="text-text-muted italic text-xs">Consumidor Final</span>
                     @endif
                 </td>
-                <td class="px-5 py-3 text-text-secondary text-xs whitespace-nowrap">
+                <td class="hidden @6xl:table-cell px-5 py-3 text-text-secondary text-xs whitespace-nowrap">
                     {{ $v->usuario->name }}
                 </td>
-                <td class="px-5 py-3 text-center whitespace-nowrap">
+                <td class="hidden @5xl:table-cell px-5 py-3 text-center whitespace-nowrap">
                     <x-badge :status="$v->tipo_pago->value === 'CONTADO' ? 'success' : 'warning'" size="sm">
                         {{ $v->tipo_pago->label() }}
                     </x-badge>
@@ -166,13 +167,62 @@
                 </td>
             </tr>
         @endforelse
-
-        @if($ventas->hasPages())
-            <x-slot:pagination>
-                {{ $ventas->links() }}
-            </x-slot:pagination>
-        @endif
     </x-table>
+
+    <!-- Vista Móvil y Tablet -->
+    <div class="lg:hidden bg-surface rounded-xl border border-border shadow-xs divide-y divide-border overflow-hidden">
+        @forelse($ventas as $v)
+            <div class="p-4 space-y-3 {{ $v->isAnulada() ? 'opacity-60 bg-danger-bg/20' : '' }}">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <div class="font-bold text-text-primary font-mono text-sm">{{ $v->numero_venta }}</div>
+                        <div class="text-[11px] text-text-muted">{{ $v->tipo_comprobante->label() }} &bull; {{ $v->fecha->format('d/m/Y H:i') }}</div>
+                    </div>
+                    <x-status-badge :status="$v->estado" size="sm" />
+                </div>
+
+                <div class="text-xs text-text-secondary space-y-1">
+                    <div>
+                        <span class="text-text-muted">Cliente:</span>
+                        <span class="font-semibold text-text-primary">{{ $v->cliente?->razon_social ?? 'Consumidor Final' }}</span>
+                    </div>
+                    <div><span class="text-text-muted">Vendedor:</span> {{ $v->usuario->name }}</div>
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        <x-badge :status="$v->tipo_pago->value === 'CONTADO' ? 'success' : 'warning'" size="sm">
+                            {{ $v->tipo_pago->label() }}
+                        </x-badge>
+                        <span class="text-text-muted">{{ $v->metodo_pago }}</span>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex items-center justify-between gap-3 border-t border-border">
+                    <div>
+                        <span class="text-[10px] text-text-muted uppercase font-semibold block">Total</span>
+                        <span class="font-bold text-text-primary text-base tabular-nums">${{ number_format($v->total, 2) }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <x-button variant="outline" size="sm" href="{{ route('ventas.ticket', $v) }}" target="_blank">
+                            Ticket
+                        </x-button>
+                        <x-button variant="secondary" size="sm" href="{{ route('ventas.show', $v) }}">
+                            Detalle &rarr;
+                        </x-button>
+                    </div>
+                </div>
+            </div>
+        @empty
+            <x-empty-state
+                title="No se encontraron ventas"
+                description="No hay transacciones registradas con los criterios seleccionados."
+            />
+        @endforelse
+    </div>
+
+    @if($ventas->hasPages())
+        <div class="p-4 border border-border bg-surface-muted rounded-xl">
+            {{ $ventas->links() }}
+        </div>
+    @endif
 
 </div>
 @endsection

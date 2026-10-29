@@ -87,16 +87,16 @@
                 </div>
             </div>
         @else
-            <div class="overflow-x-auto">
+            <div class="@container hidden lg:block overflow-x-auto">
                 <table class="table">
                     <thead>
                         <tr>
                             <th>Comprobante</th>
-                            <th>Tipo</th>
+                            <th class="hidden @5xl:table-cell">Tipo</th>
                             <th>Cliente</th>
-                            <th>Emisión</th>
-                            <th class="text-right">Subtotal</th>
-                            <th class="text-right">Impuesto</th>
+                            <th class="hidden @4xl:table-cell">Emisión</th>
+                            <th class="hidden @6xl:table-cell text-right">Subtotal</th>
+                            <th class="hidden @6xl:table-cell text-right">Impuesto</th>
                             <th class="text-right">Total</th>
                             <th class="text-center">Estado</th>
                             <th class="text-right">Acciones</th>
@@ -110,8 +110,10 @@
                                     @if($doc->venta)
                                         <div class="text-[11px] text-slate-400 font-mono">Venta: {{ $doc->venta->numero_venta }}</div>
                                     @endif
+                                    <div class="@5xl:hidden text-[11px] text-slate-500">{{ $doc->tipo->label() }}</div>
+                                    <div class="@4xl:hidden text-[11px] text-slate-500 font-mono">{{ $doc->fecha_emision->format('d/m/Y H:i') }}</div>
                                 </td>
-                                <td>
+                                <td class="hidden @5xl:table-cell">
                                     <span class="badge badge-neutral">
                                         {{ $doc->tipo->label() }}
                                     </span>
@@ -122,14 +124,14 @@
                                         <div class="text-[11px] text-slate-400 font-mono">{{ $doc->cliente->numero_documento }}</div>
                                     @endif
                                 </td>
-                                <td class="text-xs text-slate-600 font-mono">
+                                <td class="hidden @4xl:table-cell text-xs text-slate-600 font-mono">
                                     <div>{{ $doc->fecha_emision->format('d/m/Y') }}</div>
                                     <div class="text-[10px] text-slate-400">{{ $doc->fecha_emision->format('H:i') }}</div>
                                 </td>
-                                <td class="text-xs text-slate-700 text-right font-mono tabular-nums">
+                                <td class="hidden @6xl:table-cell text-xs text-slate-700 text-right font-mono tabular-nums">
                                     ${{ number_format($doc->subtotal, 2) }}
                                 </td>
-                                <td class="text-xs text-slate-700 text-right font-mono tabular-nums">
+                                <td class="hidden @6xl:table-cell text-xs text-slate-700 text-right font-mono tabular-nums">
                                     ${{ number_format($doc->impuesto_total, 2) }}
                                 </td>
                                 <td class="text-xs text-slate-900 font-semibold text-right font-mono tabular-nums">
@@ -149,6 +151,46 @@
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Vista Móvil y Tablet -->
+            <div class="lg:hidden divide-y divide-slate-100">
+                @foreach($documentos as $doc)
+                <div class="p-4 space-y-3">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <div class="font-mono font-semibold text-slate-900 text-sm">{{ $doc->numero_completo }}</div>
+                            <div class="text-[11px] text-slate-500">
+                                {{ $doc->tipo->label() }} &bull; <span class="font-mono">{{ $doc->fecha_emision->format('d/m/Y H:i') }}</span>
+                            </div>
+                        </div>
+                        <span class="badge {{ $doc->estado->badgeClasses() }}">
+                            {{ $doc->estado->label() }}
+                        </span>
+                    </div>
+
+                    <div class="text-xs text-slate-600 space-y-1">
+                        <div><span class="text-slate-400">Cliente:</span> <span class="font-semibold text-slate-800">{{ $doc->cliente?->razon_social ?? 'Consumidor Final' }}</span></div>
+                        @if($doc->venta)
+                            <div><span class="text-slate-400">Venta:</span> <span class="font-mono">{{ $doc->venta->numero_venta }}</span></div>
+                        @endif
+                        <div class="tabular-nums">
+                            <span class="text-slate-400">Subtotal:</span> ${{ number_format($doc->subtotal, 2) }}
+                            &bull; <span class="text-slate-400">Impuesto:</span> ${{ number_format($doc->impuesto_total, 2) }}
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-3 pt-2 border-t border-slate-100">
+                        <div>
+                            <span class="text-xs text-slate-400">Total:</span>
+                            <span class="font-mono font-semibold text-slate-900 text-sm ml-1 tabular-nums">${{ number_format($doc->total, 2) }}</span>
+                        </div>
+                        <a href="{{ route('documentos.show', $doc) }}" class="btn-secondary py-1 px-2.5 text-xs">
+                            Detalle &rarr;
+                        </a>
+                    </div>
+                </div>
+                @endforeach
             </div>
 
             <div class="px-6 py-4 border-t border-slate-200">

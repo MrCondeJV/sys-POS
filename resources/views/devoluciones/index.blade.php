@@ -65,16 +65,16 @@
     </x-filter-bar>
 
     <!-- Tabla de Devoluciones -->
-    <div class="card p-0 overflow-hidden">
-        <div class="overflow-x-auto">
+    <div class="@container card p-0 overflow-hidden">
+        <div class="hidden lg:block overflow-x-auto">
             <table class="table">
                 <thead>
                     <tr>
                         <th>Comprobante / Venta</th>
-                        <th>Fecha</th>
+                        <th class="hidden @4xl:table-cell">Fecha</th>
                         <th>Cliente</th>
-                        <th>Tipo Devolución</th>
-                        <th>Reintegro</th>
+                        <th class="hidden @5xl:table-cell">Tipo Devolución</th>
+                        <th class="hidden @5xl:table-cell">Reintegro</th>
                         <th class="text-right">Total Devuelto</th>
                         <th class="text-right">Acciones</th>
                     </tr>
@@ -87,20 +87,21 @@
                             <a href="{{ route('ventas.show', $dev->venta) }}" class="text-[11px] text-brand-600 hover:text-brand-800 font-mono">
                                 Venta #{{ $dev->venta->numero_venta }}
                             </a>
+                            <div class="@4xl:hidden text-[11px] text-slate-500 font-mono">{{ $dev->created_at->format('d/m/Y H:i') }}</div>
                         </td>
-                        <td class="text-xs text-slate-600">
+                        <td class="hidden @4xl:table-cell text-xs text-slate-600">
                             <span class="font-mono">{{ $dev->created_at->format('d/m/Y H:i') }}</span>
                             <div class="text-[10px] text-slate-400">Por: {{ $dev->usuario->name }}</div>
                         </td>
                         <td class="text-xs font-semibold text-slate-800">
                             {{ $dev->venta->cliente?->razon_social ?? 'Consumidor Final' }}
                         </td>
-                        <td>
+                        <td class="hidden @5xl:table-cell">
                             <span class="badge {{ $dev->tipo_devolucion === App\Enums\TipoDevolucion::TOTAL ? 'badge-danger' : 'badge-warning' }}">
                                 {{ $dev->tipo_devolucion->label() }}
                             </span>
                         </td>
-                        <td>
+                        <td class="hidden @5xl:table-cell">
                             <span class="badge badge-neutral">
                                 {{ $dev->tipo_reintegro->label() }}
                             </span>
@@ -138,6 +139,54 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <!-- Vista Móvil y Tablet -->
+        <div class="lg:hidden divide-y divide-slate-100">
+            @forelse($devoluciones as $dev)
+            <div class="p-4 space-y-3">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                        <div class="font-mono font-semibold text-slate-900 text-sm">{{ $dev->numero_devolucion }}</div>
+                        <a href="{{ route('ventas.show', $dev->venta) }}" class="text-[11px] text-brand-600 hover:text-brand-800 font-mono">
+                            Venta #{{ $dev->venta->numero_venta }}
+                        </a>
+                    </div>
+                    <span class="badge {{ $dev->tipo_devolucion === App\Enums\TipoDevolucion::TOTAL ? 'badge-danger' : 'badge-warning' }}">
+                        {{ $dev->tipo_devolucion->label() }}
+                    </span>
+                </div>
+
+                <div class="text-xs text-slate-600 space-y-1">
+                    <div><span class="text-slate-400">Cliente:</span> <span class="font-semibold text-slate-800">{{ $dev->venta->cliente?->razon_social ?? 'Consumidor Final' }}</span></div>
+                    <div><span class="text-slate-400">Fecha:</span> <span class="font-mono">{{ $dev->created_at->format('d/m/Y H:i') }}</span> &bull; {{ $dev->usuario->name }}</div>
+                    <div><span class="text-slate-400">Reintegro:</span> {{ $dev->tipo_reintegro->label() }}</div>
+                </div>
+
+                <div class="flex items-center justify-between gap-3 pt-2 border-t border-slate-100">
+                    <div>
+                        <span class="text-xs text-slate-400">Total devuelto:</span>
+                        <span class="font-mono font-semibold text-slate-900 text-sm ml-1 tabular-nums">${{ number_format($dev->total, 2) }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a href="{{ route('devoluciones.comprobante', $dev) }}" target="_blank"
+                           class="p-1.5 text-slate-500 hover:text-brand-600 hover:bg-slate-100 rounded transition"
+                           title="Imprimir Comprobante">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                            </svg>
+                        </a>
+                        <a href="{{ route('devoluciones.show', $dev) }}" class="btn-secondary py-1 px-2.5 text-xs">
+                            Detalle &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+            @empty
+            <div class="p-8 text-center text-xs text-slate-500">
+                No se han registrado devoluciones.
+            </div>
+            @endforelse
         </div>
 
         @if($devoluciones->hasPages())

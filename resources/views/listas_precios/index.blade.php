@@ -53,15 +53,15 @@
         </div>
     </x-filter-bar>
 
-    <!-- Tabla de Listas de Precios -->
-    <x-table>
+    <!-- Tabla de Listas de Precios (Desktop) -->
+    <x-table class="hidden lg:block">
         <x-slot:thead>
             <tr>
                 <th class="px-5 py-3 text-left uppercase">Lista / Código</th>
-                <th class="px-4 py-3 text-left uppercase">Tipo de Ajuste</th>
+                <th class="hidden @4xl:table-cell px-4 py-3 text-left uppercase">Tipo de Ajuste</th>
                 <th class="px-4 py-3 text-center uppercase">Ajuste Base</th>
-                <th class="px-4 py-3 text-center uppercase">Precios Específicos</th>
-                <th class="px-4 py-3 text-center uppercase">Clientes</th>
+                <th class="hidden @5xl:table-cell px-4 py-3 text-center uppercase">Precios Específicos</th>
+                <th class="hidden @5xl:table-cell px-4 py-3 text-center uppercase">Clientes</th>
                 <th class="px-4 py-3 text-center uppercase">Estado</th>
                 <th class="px-5 py-3 text-right uppercase">Acciones</th>
             </tr>
@@ -70,7 +70,7 @@
         @forelse($listas as $lista)
         <tr class="hover:bg-slate-50/70 transition">
             <td class="px-5 py-3">
-                <div class="flex items-center space-x-2">
+                <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
                     <span class="font-semibold text-slate-900 text-xs">{{ $lista->nombre }}</span>
                     @if($lista->es_predeterminada)
                         <x-badge status="success" size="sm">Predeterminada</x-badge>
@@ -83,7 +83,7 @@
                     @endif
                 </div>
             </td>
-            <td class="px-4 py-3 text-xs text-slate-700">
+            <td class="hidden @4xl:table-cell px-4 py-3 text-xs text-slate-700">
                 <x-badge status="neutral" size="sm">{{ $lista->tipo_ajuste->label() }}</x-badge>
             </td>
             <td class="px-4 py-3 text-center text-xs tabular-nums">
@@ -95,10 +95,10 @@
                     <span class="text-slate-400">Individual</span>
                 @endif
             </td>
-            <td class="px-4 py-3 text-center text-xs text-slate-700 tabular-nums">
+            <td class="hidden @5xl:table-cell px-4 py-3 text-center text-xs text-slate-700 tabular-nums whitespace-nowrap">
                 {{ $lista->precios_count ?? ($lista->precios?->count() ?? 0) }} ítems
             </td>
-            <td class="px-4 py-3 text-center text-xs text-slate-700 tabular-nums">
+            <td class="hidden @5xl:table-cell px-4 py-3 text-center text-xs text-slate-700 tabular-nums whitespace-nowrap">
                 {{ $lista->clientes_count ?? ($lista->clientes?->count() ?? 0) }} clientes
             </td>
             <td class="px-4 py-3 text-center whitespace-nowrap">
@@ -127,12 +127,68 @@
             </td>
         </tr>
         @endforelse
-
-        @if($listas->hasPages())
-        <x-slot:pagination>
-            {{ $listas->links() }}
-        </x-slot:pagination>
-        @endif
     </x-table>
+
+    <!-- Vista Móvil y Tablet -->
+    <div class="lg:hidden bg-white rounded-xl border border-slate-200/80 shadow-xs divide-y divide-slate-100 overflow-hidden">
+        @forelse($listas as $lista)
+        <div class="p-4 space-y-3">
+            <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                    <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                        <span class="font-semibold text-slate-900 text-sm">{{ $lista->nombre }}</span>
+                        @if($lista->es_predeterminada)
+                            <x-badge status="success" size="sm">Predeterminada</x-badge>
+                        @endif
+                    </div>
+                    <div class="text-[11px] text-slate-400 font-mono mt-0.5">
+                        {{ $lista->codigo ? 'CÓD: ' . $lista->codigo : 'Sin código' }}
+                    </div>
+                    @if($lista->descripcion)
+                        <div class="text-xs text-slate-500 mt-0.5">{{ Str::limit($lista->descripcion, 80) }}</div>
+                    @endif
+                </div>
+                <x-status-badge :status="$lista->estado" size="sm" />
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 text-xs text-slate-600">
+                <x-badge status="neutral" size="sm">{{ $lista->tipo_ajuste->label() }}</x-badge>
+                @if($lista->tipo_ajuste === App\Enums\TipoAjusteListaPrecio::PORCENTAJE_DESCUENTO)
+                    <span class="text-emerald-600 font-bold tabular-nums">&minus;{{ $lista->porcentaje_defecto }}%</span>
+                @elseif($lista->tipo_ajuste === App\Enums\TipoAjusteListaPrecio::PORCENTAJE_AUMENTO)
+                    <span class="text-brand-600 font-bold tabular-nums">+{{ $lista->porcentaje_defecto }}%</span>
+                @endif
+            </div>
+
+            <div class="pt-2 flex items-center justify-between gap-3 border-t border-slate-100">
+                <div class="text-xs text-slate-600 tabular-nums">
+                    {{ $lista->precios_count ?? ($lista->precios?->count() ?? 0) }} ítems &bull;
+                    {{ $lista->clientes_count ?? ($lista->clientes?->count() ?? 0) }} clientes
+                </div>
+                <div class="flex items-center gap-2">
+                    <x-button variant="outline" size="sm" href="{{ route('listas-precios.show', $lista) }}">
+                        Precios
+                    </x-button>
+                    @can('update', $lista)
+                    <x-button variant="secondary" size="sm" href="{{ route('listas-precios.edit', $lista) }}">
+                        Editar
+                    </x-button>
+                    @endcan
+                </div>
+            </div>
+        </div>
+        @empty
+        <x-empty-state
+            title="No se encontraron listas de precios"
+            description="Crea una lista para definir precios preferenciales por cliente o volumen."
+        />
+        @endforelse
+    </div>
+
+    @if($listas->hasPages())
+        <div class="p-4 border border-border bg-surface-muted rounded-xl">
+            {{ $listas->links() }}
+        </div>
+    @endif
 </div>
 @endsection
