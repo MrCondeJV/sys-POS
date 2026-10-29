@@ -159,7 +159,7 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email', 'max:100', Rule::unique('users', 'email')],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'sucursal_id' => ['nullable', 'exists:sucursales,id'],
+            'sucursal_id' => ['nullable', Rule::exists('sucursales', 'id')->where('empresa_id', $empresaId)->whereNull('deleted_at')],
             'cargo' => ['nullable', 'string', 'max:100'],
             'telefono' => ['nullable', 'string', 'max:50'],
             'rol' => ['required', 'string'],
@@ -236,7 +236,7 @@ class UserController extends Controller
         $rules = [
             'name' => ['required', 'string', 'max:150'],
             'email' => ['required', 'email', 'max:100', Rule::unique('users', 'email')->ignore($usuario->id)],
-            'sucursal_id' => ['nullable', 'exists:sucursales,id'],
+            'sucursal_id' => ['nullable', Rule::exists('sucursales', 'id')->where('empresa_id', $usuario->empresa_id)->whereNull('deleted_at')],
             'cargo' => ['nullable', 'string', 'max:100'],
             'telefono' => ['nullable', 'string', 'max:50'],
             'rol' => ['required', 'string'],

@@ -312,6 +312,26 @@ trait EscenarioComercial
         ]);
     }
 
+    /**
+     * Super admin global (sin empresa). El contexto de empresa se limpia antes de
+     * crearlo: si no, el modelo le asigna empresa_id y deja de ser super admin.
+     */
+    protected function crearSuperAdmin(): User
+    {
+        CompanyContext::clear();
+        BranchContext::clear();
+
+        $superAdmin = User::factory()->superAdmin()->create(['estado' => EstadoGeneral::ACTIVO]);
+        setPermissionsTeamId(null);
+        $superAdmin->assignRole(RolSistema::SUPER_ADMIN->value);
+
+        setPermissionsTeamId($this->empresa->id);
+        CompanyContext::setCompany($this->empresa);
+        BranchContext::setId($this->sucursal->id);
+
+        return $superAdmin;
+    }
+
     /** Crea una segunda empresa con datos propios para validar el aislamiento. */
     protected function crearEmpresaAjena(): array
     {

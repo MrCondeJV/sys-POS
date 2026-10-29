@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PermisoSistema;
 use App\Models\Categoria;
 use App\Models\Marca;
 use App\Models\UnidadMedida;
@@ -19,6 +20,8 @@ class CatalogoController extends Controller
      */
     public function index(): View
     {
+        abort_unless(auth()->user()->can(PermisoSistema::PRODUCTOS_VER->value), 403);
+
         $categorias = Categoria::withCount('productos')->latest()->get();
         $marcas = Marca::withCount('productos')->latest()->get();
         $unidades = UnidadMedida::withCount('productos')->latest()->get();

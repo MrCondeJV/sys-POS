@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Enums\PermisoSistema;
 use App\Enums\EstadoVenta;
 use App\Models\Cliente;
 use App\Models\CuentaPorCobrar;
@@ -15,6 +16,8 @@ class ReporteController extends BaseApiController
 {
     public function resumen(Request $request): JsonResponse
     {
+        abort_unless($request->user()->can(PermisoSistema::REPORTES_VER->value), 403);
+
         $hoy = Carbon::today();
         $inicioMes = Carbon::now()->startOfMonth();
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use Illuminate\Support\Facades\Gate;
 use App\Models\Proveedor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -10,6 +11,8 @@ class ProveedorController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
+        Gate::authorize('viewAny', Proveedor::class);
+
         $query = Proveedor::query();
 
         if ($request->filled('q')) {
@@ -27,6 +30,8 @@ class ProveedorController extends BaseApiController
 
     public function show(Proveedor $proveedor): JsonResponse
     {
+        Gate::authorize('view', $proveedor);
+
         $this->authorizeCompanyResource($proveedor);
         return $this->successResponse($proveedor);
     }

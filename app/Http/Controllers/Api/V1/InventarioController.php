@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use Illuminate\Support\Facades\Gate;
+use App\Enums\PermisoSistema;
 use App\Models\Inventario;
 use App\Models\MovimientoInventario;
 use Illuminate\Http\JsonResponse;
@@ -11,6 +13,8 @@ class InventarioController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
+        Gate::authorize('viewAny', Inventario::class);
+
         $query = Inventario::with(['producto', 'sucursal']);
 
         if ($request->filled('sucursal_id')) {
@@ -28,7 +32,9 @@ class InventarioController extends BaseApiController
 
     public function kardex(Request $request): JsonResponse
     {
-        $query = MovimientoInventario::with(['producto', 'sucursal', 'usuario'])
+        abort_unless($request->user()->can(PermisoSistema::INVENTARIO_VER->value), 403);
+
+        $query = MovimientoInventario::with(['producto', 'sucursal', 'user'])
             ->latest('id');
 
         if ($request->filled('producto_id')) {

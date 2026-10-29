@@ -243,7 +243,10 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Fase 24: Ferreterías y Conversión de Unidades / Presentaciones
-    Route::resource('productos.presentaciones', ProductoPresentacionController::class)->only(['index', 'store', 'destroy']);
+    // El parámetro debe llamarse como el argumento del controlador ($presentacion) para que se resuelva el registro
+    Route::resource('productos.presentaciones', ProductoPresentacionController::class)
+        ->only(['index', 'store', 'destroy'])
+        ->parameters(['presentaciones' => 'presentacion']);
 
     // FASE 25: Multisucursal y Traslados
     Route::get('reportes/multisucursal', [\App\Http\Controllers\ReporteMultisucursalController::class, 'index'])->name('reportes.multisucursal');

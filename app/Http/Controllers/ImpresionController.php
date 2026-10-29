@@ -69,6 +69,8 @@ class ImpresionController extends Controller
      */
     public function imprimirAbono(Request $request, \App\Models\PagoCliente $abono): View
     {
+        Gate::authorize('view', $abono);
+
         if (CompanyContext::getId() && CompanyContext::getId() !== $abono->empresa_id) {
             abort(404);
         }

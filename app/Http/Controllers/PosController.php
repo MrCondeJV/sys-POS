@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Rules\BelongsToActiveCompany;
 use App\Actions\Ventas\RegistrarVentaAction;
 use App\Enums\EstadoCaja;
 use App\Enums\EstadoGeneral;
@@ -154,9 +155,9 @@ class PosController extends Controller
         $sucursalId = BranchContext::getId() ?? auth()->user()->sucursal_id;
 
         $validated = $request->validate([
-            'caja_sesion_id' => ['required', 'exists:cajas_sesiones,id'],
-            'cliente_id' => ['nullable', 'exists:clientes,id'],
-            'lista_precio_id' => ['nullable', 'exists:listas_precios,id'],
+            'caja_sesion_id' => ['required', 'exists:cajas_sesiones,id', new BelongsToActiveCompany('cajas_sesiones')],
+            'cliente_id' => ['nullable', 'exists:clientes,id', new BelongsToActiveCompany('clientes')],
+            'lista_precio_id' => ['nullable', 'exists:listas_precios,id', new BelongsToActiveCompany('listas_precios')],
             'tipo_pago' => ['required', 'in:CONTADO,CREDITO'],
             'metodo_pago' => ['required', 'string'],
             'tipo_comprobante' => ['nullable', 'in:TICKET,FACTURA,NOTA_VENTA'],
@@ -167,7 +168,7 @@ class PosController extends Controller
             'pagos.*.referencia' => ['nullable', 'string', 'max:100'],
             'observaciones' => ['nullable', 'string', 'max:500'],
             'items' => ['required', 'array', 'min:1'],
-            'items.*.producto_id' => ['required', 'exists:productos,id'],
+            'items.*.producto_id' => ['required', 'exists:productos,id', new BelongsToActiveCompany('productos')],
             'items.*.cantidad' => ['required', 'numeric', 'min:0.01'],
             'items.*.precio_unitario' => ['required', 'numeric', 'min:0'],
             'items.*.descuento' => ['nullable', 'numeric', 'min:0'],

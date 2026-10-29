@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PermisoSistema;
 use App\Actions\Inventario\RegistrarMovimientoInventarioAction;
 use App\DTOs\MovimientoInventarioDTO;
 use App\Enums\EstadoGeneral;
@@ -29,6 +30,8 @@ class ProductoController extends Controller
      */
     public function index(Request $request): View
     {
+        abort_unless($request->user()->can(PermisoSistema::PRODUCTOS_VER->value), 403);
+
         $term = $request->input('buscar');
         $categoriaId = $request->input('categoria_id');
         $bajoStock = $request->boolean('bajo_stock');

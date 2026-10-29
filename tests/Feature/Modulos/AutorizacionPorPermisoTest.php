@@ -121,6 +121,17 @@ class AutorizacionPorPermisoTest extends TestCase
         $this->actingAs($this->cajero)->get(route('imprimir.caja', $this->sesionCaja))->assertOk();
     }
 
+    // --- Productos y catálogos: productos.ver (el contador no lo tiene) ---
+
+    public function test_listado_de_productos_y_catalogos_requieren_permiso_de_productos(): void
+    {
+        $this->actingAs($this->contador)->get(route('productos.index'))->assertForbidden();
+        $this->actingAs($this->contador)->get(route('catalogos.index'))->assertForbidden();
+
+        $this->actingAs($this->vendedor)->get(route('productos.index'))->assertOk();
+        $this->actingAs($this->vendedor)->get(route('catalogos.index'))->assertOk();
+    }
+
     // --- Suscripción y pagos del SaaS: solo quien gestiona la empresa ---
 
     public function test_suscripcion_requiere_permiso_de_gestion_de_empresa(): void

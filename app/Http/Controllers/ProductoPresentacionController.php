@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Rules\BelongsToActiveCompany;
 use Illuminate\Support\Facades\Gate;
 use App\Models\Producto;
 use App\Models\ProductoPresentacion;
@@ -37,7 +38,7 @@ class ProductoPresentacionController extends Controller
                     $q->where('empresa_id', $empresaId)->where('producto_id', $producto->id)
                 ),
             ],
-            'unidad_medida_id' => ['nullable', 'exists:unidades_medida,id'],
+            'unidad_medida_id' => ['nullable', 'exists:unidades_medida,id', new BelongsToActiveCompany('unidades_medida')],
             'factor_conversion' => ['required', 'numeric', 'min:0.0001'],
             'precio_venta' => ['required', 'numeric', 'min:0'],
             'codigo_barras' => ['nullable', 'string', 'max:100'],
@@ -60,6 +61,7 @@ class ProductoPresentacionController extends Controller
     public function destroy(Producto $producto, ProductoPresentacion $presentacion): RedirectResponse
     {
         Gate::authorize('update', $producto);
+        abort_unless((int) $presentacion->producto_id === (int) $producto->id, 404);
 
         $presentacion->delete();
 

@@ -30,6 +30,12 @@ class SeedCompanyData extends Command
      */
     public function handle()
     {
+        if (app()->isProduction()) {
+            $this->error('Este comando carga datos de prueba y no puede ejecutarse en producción.');
+
+            return Command::FAILURE;
+        }
+
         $empresaId = $this->argument('empresa_id');
 
         $this->info("Iniciando carga de datos de prueba para la empresa ID: {$empresaId}...");

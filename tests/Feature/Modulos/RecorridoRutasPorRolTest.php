@@ -150,10 +150,8 @@ class RecorridoRutasPorRolTest extends TestCase
 
     public function test_super_admin_gestionando_empresa_recorre_todas_las_rutas_sin_errores(): void
     {
-        $superAdmin = User::factory()->superAdmin()->create(['estado' => EstadoGeneral::ACTIVO]);
-        setPermissionsTeamId(null);
-        $superAdmin->assignRole(RolSistema::SUPER_ADMIN->value);
-        setPermissionsTeamId($this->empresa->id);
+        $superAdmin = $this->crearSuperAdmin();
+        $this->assertTrue($superAdmin->isSuperAdmin());
 
         $this->actingAs($superAdmin)->post(route('empresas.seleccionar'), ['empresa_id' => $this->empresa->id]);
 
@@ -162,9 +160,8 @@ class RecorridoRutasPorRolTest extends TestCase
 
     public function test_super_admin_sin_empresa_recorre_todas_las_rutas_sin_errores(): void
     {
-        $superAdmin = User::factory()->superAdmin()->create(['estado' => EstadoGeneral::ACTIVO]);
-        setPermissionsTeamId(null);
-        $superAdmin->assignRole(RolSistema::SUPER_ADMIN->value);
+        $superAdmin = $this->crearSuperAdmin();
+        $this->assertTrue($superAdmin->isSuperAdmin());
         \App\Support\Tenancy\CompanyContext::clear();
         \App\Support\Tenancy\BranchContext::clear();
 

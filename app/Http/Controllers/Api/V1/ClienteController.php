@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use Illuminate\Support\Facades\Gate;
 use App\Models\Cliente;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -11,6 +12,8 @@ class ClienteController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
+        Gate::authorize('viewAny', Cliente::class);
+
         $query = Cliente::query();
 
         if ($request->filled('q')) {
@@ -29,6 +32,8 @@ class ClienteController extends BaseApiController
 
     public function store(Request $request): JsonResponse
     {
+        Gate::authorize('create', Cliente::class);
+
         $empresaId = $request->user()->empresa_id;
 
         $validated = $request->validate([
@@ -55,6 +60,8 @@ class ClienteController extends BaseApiController
 
     public function show(Cliente $cliente): JsonResponse
     {
+        Gate::authorize('view', $cliente);
+
         $this->authorizeCompanyResource($cliente);
         $cliente->load('cuentasPorCobrar');
 
