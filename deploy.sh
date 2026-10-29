@@ -12,19 +12,25 @@ git pull origin main
 # 3. Instalar dependencias optimizadas de composer sin paquetes dev
 composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
-# 4. Ejecutar migraciones de base de datos seguras
+# 4. Compilar assets del frontend (CSS/JS de Vite)
+# public/build está en .gitignore: si no se compila aquí, producción sirve el CSS
+# de un build anterior y las clases nuevas (menú mini, columnas responsive) no existen.
+npm ci --no-audit --no-fund
+npm run build
+
+# 5. Ejecutar migraciones de base de datos seguras
 php artisan migrate --force
 
-# 5. Optimización y Cache de Configuración, Rutas y Vistas
+# 6. Optimización y Cache de Configuración, Rutas y Vistas
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 php artisan event:cache
 
-# 6. Reiniciar workers de cola supervisor
+# 7. Reiniciar workers de cola supervisor
 php artisan queue:restart
 
-# 7. Salir de modo mantenimiento
+# 8. Salir de modo mantenimiento
 php artisan up
 
 echo "=== DESPLIEGUE COMPLETADO CON ÉXITO ==="
