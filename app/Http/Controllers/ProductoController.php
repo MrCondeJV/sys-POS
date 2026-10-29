@@ -2,16 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Inventario\RegistrarMovimientoInventarioAction;
+use App\DTOs\MovimientoInventarioDTO;
 use App\Enums\EstadoGeneral;
+use App\Enums\TipoMovimientoInventario;
 use App\Models\Categoria;
 use App\Models\Impuesto;
 use App\Models\Marca;
 use App\Models\Producto;
 use App\Models\UnidadMedida;
 use App\Rules\BelongsToActiveCompany;
+use App\Support\Tenancy\BranchContext;
 use App\Support\Tenancy\CompanyContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -81,7 +86,7 @@ class ProductoController extends Controller
     /**
      * Almacena un nuevo producto forzando la asignación del tenant activo.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, RegistrarMovimientoInventarioAction $movimientoAction): RedirectResponse
     {
         if (Gate::denies('create', Producto::class)) {
             abort(403, 'No tienes autorización para crear productos.');
@@ -122,15 +127,35 @@ class ProductoController extends Controller
             $imagenPath = $request->file('imagen')->store("productos/{$empresaId}", 'public');
         }
 
-        Producto::create(array_merge($validated, [
-            'empresa_id' => $empresaId,
-            'imagen_path' => $imagenPath,
-            'precio_compra' => $validated['precio_compra'] ?? 0,
-            'stock' => $validated['stock'] ?? 0,
-            'stock_minimo' => $validated['stock_minimo'] ?? 0,
-            'iva' => $validated['iva'] ?? 0,
-            'estado' => $validated['estado'] ?? EstadoGeneral::ACTIVO,
-        ]));
+        $stockInicial = (float) ($validated['stock'] ?? 0);
+        $sucursalId = BranchContext::getId() ?? auth()->user()->sucursal_id;
+
+        DB::transaction(function () use ($validated, $empresaId, $imagenPath, $stockInicial, $sucursalId, $movimientoAction) {
+            $producto = Producto::create(array_merge($validated, [
+                'empresa_id' => $empresaId,
+                'imagen_path' => $imagenPath,
+                'precio_compra' => $validated['precio_compra'] ?? 0,
+                // Con sucursal activa, el stock consolidado lo calcula el movimiento de inventario
+                'stock' => $sucursalId ? 0 : $stockInicial,
+                'stock_minimo' => $validated['stock_minimo'] ?? 0,
+                'iva' => $validated['iva'] ?? 0,
+                'estado' => $validated['estado'] ?? EstadoGeneral::ACTIVO,
+            ]));
+
+            // Registrar el stock inicial en la sucursal activa para que quede en inventario y Kardex
+            if ($sucursalId && $stockInicial > 0) {
+                $movimientoAction->execute(new MovimientoInventarioDTO(
+                    productoId: $producto->id,
+                    sucursalId: (int) $sucursalId,
+                    tipo: TipoMovimientoInventario::AJUSTE_POSITIVO,
+                    cantidad: $stockInicial,
+                    referencia: 'STOCK-INICIAL',
+                    costoUnitario: (float) $producto->precio_compra,
+                    userId: auth()->id(),
+                    notas: 'Stock inicial registrado al crear el producto',
+                ));
+            }
+        });
 
         return redirect()->route('productos.index')
             ->with('success', 'Producto registrado exitosamente.');

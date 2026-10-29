@@ -66,10 +66,17 @@ class PosController extends Controller
             return view('pos.sin_caja', compact('cajasDisponibles'));
         }
 
-        // Cargar Catálogo de Productos con Existencias en la Sucursal
-        $inventarios = Inventario::where('empresa_id', $empresaId)
+        // Cargar Catálogo de Productos activos de la empresa. Se parte de Producto (y no de Inventario)
+        // para que los productos sin registro de existencias en la sucursal también aparezcan (stock 0)
+        // y para que los productos eliminados (soft delete) queden excluidos.
+        $stockSucursal = Inventario::where('empresa_id', $empresaId)
             ->where('sucursal_id', $sucursalId)
-            ->with(['producto.categoria', 'producto.unidadMedida'])
+            ->pluck('stock', 'producto_id');
+
+        $catalogo = Producto::where('empresa_id', $empresaId)
+            ->activo()
+            ->with(['categoria', 'unidadMedida', 'impuesto'])
+            ->orderBy('nombre')
             ->get();
 
         // Listas de Precios Activas
@@ -78,12 +85,7 @@ class PosController extends Controller
             ->with('detalles')
             ->get();
 
-        $productos = $inventarios->map(function ($inv) use ($listasPrecios) {
-            $p = $inv->producto;
-            if (!$p || $p->estado !== EstadoGeneral::ACTIVO) {
-                return null;
-            }
-
+        $productos = $catalogo->map(function ($p) use ($listasPrecios, $stockSucursal) {
             $preciosListas = [];
             foreach ($listasPrecios as $lp) {
                 $preciosListas[$lp->id] = $lp->calcularPrecio($p);
@@ -97,14 +99,14 @@ class PosController extends Controller
                 'sku' => $p->sku ?? '',
                 'precio_venta' => (float) $p->precio_venta,
                 'precios_listas' => $preciosListas,
-                'stock' => (float) $inv->stock,
+                'stock' => (float) ($stockSucursal[$p->id] ?? 0),
                 'categoria_id' => $p->categoria_id,
                 'categoria_nombre' => $p->categoria?->nombre ?? 'General',
                 'unidad' => $p->unidadMedida?->abreviatura ?? 'UND',
-                'iva_porcentaje' => (float) ($p->impuesto_porcentaje ?? 0),
+                'iva_porcentaje' => $p->porcentaje_iva,
                 'imagen_url' => $p->imagen_url,
             ];
-        })->filter()->values();
+        })->values();
 
         // Clientes
         $clientes = Cliente::where('empresa_id', $empresaId)

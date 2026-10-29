@@ -159,7 +159,7 @@ class="max-w-[1720px] mx-auto pb-10">
                             <!-- Price -->
                             <div class="flex items-center justify-between pt-2 border-t border-slate-100 mt-auto">
                                 <span class="text-sm sm:text-base font-bold font-mono tabular-nums text-slate-900">
-                                    $<span x-text="formatCurrency(p.precio_venta)"></span>
+                                    $<span x-text="formatCurrency(precioPara(p))"></span>
                                 </span>
                                 <div class="h-6 w-6 rounded-md bg-slate-100 group-hover:bg-brand-600 group-hover:text-white text-slate-600 flex items-center justify-center transition shadow-xs">
                                     <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" /></svg>
@@ -598,7 +598,18 @@ function posTerminal(config) {
             if (defaultCli) {
                 this.selectedClienteId = defaultCli.id;
             }
+            // Al cambiar de cliente, re-tarifar el carrito con su lista de precios
+            this.$watch('selectedClienteId', () => {
+                this.cart.forEach(item => { item.precio = this.precioPara(item); });
+            });
             this.focusSearch();
+        },
+
+        // Precio según la lista asignada al cliente seleccionado (el servidor aplica la misma regla)
+        precioPara(product) {
+            const listaId = this.selectedCliente?.lista_precio_id;
+            const precioLista = listaId ? product.precios_listas?.[listaId] : undefined;
+            return parseFloat(precioLista ?? product.precio_venta);
         },
 
         focusSearch() {
@@ -666,7 +677,9 @@ function posTerminal(config) {
                     id: product.id,
                     nombre: product.nombre,
                     codigo: product.codigo_barras || product.sku || product.codigo,
-                    precio: parseFloat(product.precio_venta),
+                    precio: this.precioPara(product),
+                    precio_venta: product.precio_venta,
+                    precios_listas: product.precios_listas,
                     cantidad: 1,
                     impuesto_porcentaje: parseFloat(product.iva_porcentaje || 0),
                     descuento: 0,

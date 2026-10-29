@@ -4,14 +4,17 @@ namespace Tests\Feature\Fase11;
 
 use App\Actions\Caja\AbrirCajaAction;
 use App\Enums\EstadoCaja;
+use App\Enums\EstadoGeneral;
 use App\Enums\EstadoSesionCaja;
 use App\Enums\RolSistema;
+use App\Enums\TipoAjusteListaPrecio;
 use App\Enums\TipoPago;
 use App\Models\Caja;
 use App\Models\CajaSesion;
 use App\Models\Cliente;
 use App\Models\Empresa;
 use App\Models\Inventario;
+use App\Models\ListaPrecio;
 use App\Models\Producto;
 use App\Models\Sucursal;
 use App\Models\User;
@@ -89,7 +92,7 @@ class PosTest extends TestCase
             'precio_venta' => 25000.00,
             'stock' => 20,
             'stock_minimo' => 2,
-            'impuesto_porcentaje' => 19,
+            'iva' => 19,
             'estado' => \App\Enums\EstadoGeneral::ACTIVO,
         ]);
 
@@ -280,7 +283,7 @@ class PosTest extends TestCase
                         'producto_id' => $this->productoA->id,
                         'cantidad' => 1,
                         'precio_unitario' => 25000.00,
-                        'impuesto_porcentaje' => 0,
+                        'impuesto_porcentaje' => 19,
                     ],
                 ],
             ]);
@@ -289,8 +292,8 @@ class PosTest extends TestCase
         $this->assertDatabaseHas('cuentas_por_cobrar', [
             'empresa_id' => $this->empresaA->id,
             'cliente_id' => $this->clienteA->id,
-            'monto_total' => 25000.00,
-            'saldo_pendiente' => 25000.00,
+            'monto_total' => 29750.00,
+            'saldo_pendiente' => 29750.00,
         ]);
     }
 
@@ -315,5 +318,115 @@ class PosTest extends TestCase
 
         // Debe fallar con error de validación de caja o excepción de aislamiento
         $this->assertTrue(in_array($response->getStatusCode(), [422, 403, 404]));
+    }
+
+    public function test_pos_ignora_precio_e_iva_manipulados_por_el_cliente(): void
+    {
+        $sesion = app(AbrirCajaAction::class)->execute($this->cajaA, $this->cajeroA, 50000.00);
+
+        $response = $this->actingAs($this->cajeroA)
+            ->postJson(route('pos.procesar'), [
+                'caja_sesion_id' => $sesion->id,
+                'cliente_id' => $this->clienteA->id,
+                'tipo_pago' => 'CONTADO',
+                'metodo_pago' => 'EFECTIVO',
+                'pago_con' => 50000.00,
+                'items' => [
+                    [
+                        'producto_id' => $this->productoA->id,
+                        'cantidad' => 1,
+                        'precio_unitario' => 1.00,
+                        'impuesto_porcentaje' => 0,
+                    ],
+                ],
+            ]);
+
+        $response->assertStatus(200);
+        $response->assertJson(['total' => 29750.00]);
+        $this->assertDatabaseHas('venta_detalles', [
+            'producto_id' => $this->productoA->id,
+            'precio_unitario' => 25000.00,
+            'impuesto_porcentaje' => 19,
+        ]);
+    }
+
+    public function test_pos_aplica_lista_de_precios_asignada_al_cliente(): void
+    {
+        $lista = ListaPrecio::create([
+            'empresa_id' => $this->empresaA->id,
+            'nombre' => 'Mayoristas',
+            'codigo' => 'MAY',
+            'tipo_ajuste' => TipoAjusteListaPrecio::PORCENTAJE_DESCUENTO,
+            'porcentaje_defecto' => 10,
+            'estado' => EstadoGeneral::ACTIVO,
+        ]);
+        $this->clienteA->update(['lista_precio_id' => $lista->id]);
+
+        $sesion = app(AbrirCajaAction::class)->execute($this->cajaA, $this->cajeroA, 50000.00);
+
+        $response = $this->actingAs($this->cajeroA)
+            ->postJson(route('pos.procesar'), [
+                'caja_sesion_id' => $sesion->id,
+                'cliente_id' => $this->clienteA->id,
+                'tipo_pago' => 'CONTADO',
+                'metodo_pago' => 'EFECTIVO',
+                'pago_con' => 50000.00,
+                'items' => [
+                    [
+                        'producto_id' => $this->productoA->id,
+                        'cantidad' => 1,
+                        'precio_unitario' => 25000.00,
+                    ],
+                ],
+            ]);
+
+        // 25.000 - 10% = 22.500 + IVA 19% = 26.775
+        $response->assertStatus(200);
+        $response->assertJson(['total' => 26775.00]);
+    }
+
+    public function test_pos_lista_productos_sin_inventario_y_excluye_eliminados(): void
+    {
+        $this->withoutVite();
+        app(AbrirCajaAction::class)->execute($this->cajaA, $this->cajeroA, 50000.00);
+
+        CompanyContext::setCompany($this->empresaA);
+        $sinInventario = Producto::create([
+            'empresa_id' => $this->empresaA->id,
+            'nombre' => 'Producto Nuevo Sin Existencias',
+            'codigo' => 'NUE-001',
+            'precio_venta' => 1000.00,
+            'iva' => 19,
+            'estado' => EstadoGeneral::ACTIVO,
+        ]);
+        $eliminado = Producto::create([
+            'empresa_id' => $this->empresaA->id,
+            'nombre' => 'Producto Eliminado',
+            'codigo' => 'ELI-001',
+            'precio_venta' => 1000.00,
+            'estado' => EstadoGeneral::ACTIVO,
+        ]);
+        Inventario::create([
+            'empresa_id' => $this->empresaA->id,
+            'sucursal_id' => $this->sucursalA->id,
+            'producto_id' => $eliminado->id,
+            'stock' => 5,
+        ]);
+        $eliminado->delete();
+        CompanyContext::clear();
+
+        $response = $this->actingAs($this->cajeroA)->get(route('pos.index'));
+
+        $response->assertStatus(200);
+        $response->assertViewHas('productos', function ($productos) use ($sinInventario, $eliminado) {
+            $nuevo = $productos->firstWhere('id', $sinInventario->id);
+            $martillo = $productos->firstWhere('id', $this->productoA->id);
+
+            return $nuevo !== null
+                && $nuevo['stock'] === 0.0
+                && $nuevo['iva_porcentaje'] === 19.0
+                && $martillo['iva_porcentaje'] === 19.0
+                && $productos->firstWhere('id', $eliminado->id) === null;
+        });
     }
 }

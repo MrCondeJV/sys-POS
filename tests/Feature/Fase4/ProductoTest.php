@@ -8,6 +8,7 @@ use App\Models\Categoria;
 use App\Models\Empresa;
 use App\Models\Marca;
 use App\Models\Producto;
+use App\Models\Sucursal;
 use App\Models\UnidadMedida;
 use App\Models\User;
 use App\Support\Tenancy\CompanyContext;
@@ -127,6 +128,38 @@ class ProductoTest extends TestCase
         $this->assertEquals(15000, (float) $producto->precio_venta);
         $this->assertEquals(19, (float) $producto->iva);
         $this->assertEquals(17850, $producto->calcularPrecioConIva());
+    }
+
+    public function test_stock_inicial_al_crear_producto_se_registra_en_inventario_y_kardex_de_la_sucursal(): void
+    {
+        $sucursal = Sucursal::factory()->create(['empresa_id' => $this->empresaA->id, 'es_principal' => true]);
+        $this->adminA->update(['sucursal_id' => $sucursal->id]);
+
+        $response = $this->actingAs($this->adminA)->post(route('productos.store'), [
+            'nombre' => 'Llave Inglesa 10"',
+            'codigo' => 'LLA-010',
+            'precio_compra' => 20000,
+            'precio_venta' => 35000,
+            'stock' => 12,
+            'iva' => 19,
+        ]);
+
+        $response->assertRedirect(route('productos.index'));
+
+        $producto = Producto::withoutGlobalScopes()->where('codigo', 'LLA-010')->firstOrFail();
+        $this->assertEquals(12, (float) $producto->stock);
+        $this->assertDatabaseHas('inventarios', [
+            'sucursal_id' => $sucursal->id,
+            'producto_id' => $producto->id,
+            'stock' => 12,
+        ]);
+        $this->assertDatabaseHas('movimientos_inventario', [
+            'sucursal_id' => $sucursal->id,
+            'producto_id' => $producto->id,
+            'tipo' => 'AJUSTE_POSITIVO',
+            'cantidad' => 12,
+            'referencia' => 'STOCK-INICIAL',
+        ]);
     }
 
     public function test_validacion_impide_asociar_categoria_o_marca_de_otra_empresa(): void

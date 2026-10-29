@@ -128,7 +128,7 @@ class ApiTest extends TestCase
             'precio_venta' => 3000000.00,
             'stock' => 15,
             'stock_minimo' => 2,
-            'impuesto_porcentaje' => 19,
+            'iva' => 19,
             'estado' => EstadoGeneral::ACTIVO,
         ]);
 
@@ -146,7 +146,7 @@ class ApiTest extends TestCase
             'precio_venta' => 100000.00,
             'stock' => 20,
             'stock_minimo' => 5,
-            'impuesto_porcentaje' => 19,
+            'iva' => 19,
             'estado' => EstadoGeneral::ACTIVO,
         ]);
     }

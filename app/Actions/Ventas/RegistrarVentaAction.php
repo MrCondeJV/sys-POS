@@ -13,8 +13,11 @@ use App\Enums\TipoMovimientoCaja;
 use App\Enums\TipoMovimientoInventario;
 use App\Enums\TipoPago;
 use App\Models\CajaSesion;
+use App\Enums\EstadoGeneral;
 use App\Models\Cliente;
+use App\Models\ListaPrecio;
 use App\Models\Producto;
+use App\Models\ProductoPresentacion;
 use App\Models\Venta;
 use App\Models\VentaDetalle;
 use App\Models\VentaPago;
@@ -115,6 +118,20 @@ class RegistrarVentaAction
             }
             $numeroVenta = sprintf('VTA-%05d', $consecutivo);
 
+            // 2.1. Resolver la lista de precios aplicable (explícita o la asignada al cliente)
+            if ($listaPrecioId === null && $cliente && $cliente->lista_precio_id) {
+                $listaPrecioId = $cliente->lista_precio_id;
+            }
+
+            $listaPrecio = null;
+            if ($listaPrecioId) {
+                $listaPrecio = ListaPrecio::withoutGlobalScopes()
+                    ->where('empresa_id', $empresaId)
+                    ->where('estado', EstadoGeneral::ACTIVO->value)
+                    ->with('detalles')
+                    ->find($listaPrecioId);
+            }
+
             // 3. Calcular totales e ítems
             $subtotalVenta = 0.0;
             $descuentoVenta = 0.0;
@@ -127,10 +144,28 @@ class RegistrarVentaAction
                     throw new InvalidArgumentException('La cantidad de cada ítem debe ser estrictamente mayor a cero.');
                 }
 
-                $precioUnitario = (float) $item['precio_unitario'];
-                if ($precioUnitario < 0) {
-                    throw new InvalidArgumentException('El precio unitario no puede ser negativo.');
+                $producto = Producto::withoutGlobalScopes()
+                    ->where('empresa_id', $empresaId)
+                    ->with('impuesto')
+                    ->findOrFail($item['producto_id']);
+
+                if ($producto->estado !== EstadoGeneral::ACTIVO) {
+                    throw new InvalidArgumentException("El producto '{$producto->nombre}' se encuentra inactivo y no puede ser vendido.");
                 }
+
+                $presentacionId = $item['presentacion_id'] ?? null;
+                $presentacion = null;
+                $factorConversion = 1.0;
+                if ($presentacionId) {
+                    $presentacion = ProductoPresentacion::where('empresa_id', $empresaId)
+                        ->where('producto_id', $producto->id)
+                        ->findOrFail($presentacionId);
+                    $factorConversion = (float) $presentacion->factor_conversion;
+                }
+
+                // Precio e IVA se toman del catálogo (nunca del cliente) para evitar manipulación de montos
+                $precioUnitario = $this->resolverPrecioUnitario($producto, $presentacion, $listaPrecio);
+                $impuestoPorcentaje = $producto->porcentaje_iva;
 
                 $descuentoItem = isset($item['descuento']) ? (float) $item['descuento'] : 0.0;
                 if ($descuentoItem < 0) {
@@ -145,16 +180,6 @@ class RegistrarVentaAction
                     ));
                 }
 
-                $impuestoPorcentaje = isset($item['impuesto_porcentaje']) ? (float) $item['impuesto_porcentaje'] : 0.0;
-
-                $producto = Producto::withoutGlobalScopes()
-                    ->where('empresa_id', $empresaId)
-                    ->findOrFail($item['producto_id']);
-
-                if ($producto->estado !== \App\Enums\EstadoGeneral::ACTIVO) {
-                    throw new InvalidArgumentException("El producto '{$producto->nombre}' se encuentra inactivo y no puede ser vendido.");
-                }
-
                 $subtotalLinea = round(($cantidad * $precioUnitario) - $descuentoItem, 2);
                 $impuestoLinea = round($subtotalLinea * ($impuestoPorcentaje / 100), 2);
                 $totalLinea = round($subtotalLinea + $impuestoLinea, 2);
@@ -162,15 +187,6 @@ class RegistrarVentaAction
                 $subtotalVenta += ($cantidad * $precioUnitario);
                 $descuentoVenta += $descuentoItem;
                 $impuestoVenta += $impuestoLinea;
-
-                $presentacionId = $item['presentacion_id'] ?? null;
-                $factorConversion = 1.0;
-                if ($presentacionId) {
-                    $presentacion = \App\Models\ProductoPresentacion::where('empresa_id', $empresaId)
-                        ->where('producto_id', $producto->id)
-                        ->findOrFail($presentacionId);
-                    $factorConversion = (float) $presentacion->factor_conversion;
-                }
 
                 $loteId = $item['lote_id'] ?? null;
                 $lote = null;
@@ -238,10 +254,6 @@ class RegistrarVentaAction
                     }
                     $cambio = round($pagoCon - $totalGeneral, 2);
                 }
-            }
-
-            if ($listaPrecioId === null && $cliente && $cliente->lista_precio_id) {
-                $listaPrecioId = $cliente->lista_precio_id;
             }
 
             // 4. Crear Cabecera de Venta
@@ -380,5 +392,23 @@ class RegistrarVentaAction
 
             return $venta->load(['detalles.producto', 'cliente', 'sucursal', 'usuario', 'pagos', 'documentoVenta']);
         });
+    }
+
+    /**
+     * Determina el precio unitario oficial de un ítem: presentación > lista de precios > precio base.
+     */
+    protected function resolverPrecioUnitario(Producto $producto, ?ProductoPresentacion $presentacion, ?ListaPrecio $listaPrecio): float
+    {
+        if ($presentacion) {
+            return (float) $presentacion->precio_venta > 0
+                ? (float) $presentacion->precio_venta
+                : round((float) $producto->precio_venta * (float) $presentacion->factor_conversion, 2);
+        }
+
+        if ($listaPrecio) {
+            return $listaPrecio->calcularPrecio($producto);
+        }
+
+        return (float) $producto->precio_venta;
     }
 }

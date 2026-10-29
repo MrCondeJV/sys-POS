@@ -85,7 +85,7 @@ class DevolucionTest extends TestCase
             'precio_venta' => 60000.00,
             'stock' => 20,
             'stock_minimo' => 2,
-            'impuesto_porcentaje' => 19,
+            'iva' => 19,
             'estado' => EstadoGeneral::ACTIVO,
         ]);
 
@@ -105,7 +105,7 @@ class DevolucionTest extends TestCase
             'precio_venta' => 12000.00,
             'stock' => 50,
             'stock_minimo' => 5,
-            'impuesto_porcentaje' => 0,
+            'iva' => 0,
             'estado' => EstadoGeneral::ACTIVO,
         ]);
 
