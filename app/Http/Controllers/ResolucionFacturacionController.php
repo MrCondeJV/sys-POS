@@ -8,6 +8,7 @@ use App\Models\Sucursal;
 use App\Support\Tenancy\CompanyContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -15,6 +16,8 @@ class ResolucionFacturacionController extends Controller
 {
     public function index(): View
     {
+        Gate::authorize('viewAny', ResolucionFacturacion::class);
+
         $resoluciones = ResolucionFacturacion::with('sucursal')
             ->latest('id')
             ->paginate(15);
@@ -24,6 +27,8 @@ class ResolucionFacturacionController extends Controller
 
     public function create(): View
     {
+        Gate::authorize('create', ResolucionFacturacion::class);
+
         $sucursales = Sucursal::all();
         $estados = EstadoResolucionFacturacion::cases();
 
@@ -32,10 +37,12 @@ class ResolucionFacturacionController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        Gate::authorize('create', ResolucionFacturacion::class);
+
         $empresaId = CompanyContext::getId();
 
         $validated = $request->validate([
-            'sucursal_id' => ['nullable', 'exists:sucursales,id'],
+            'sucursal_id' => ['nullable', Rule::exists('sucursales', 'id')->where('empresa_id', $empresaId)],
             'numero_resolucion' => ['required', 'string', 'max:60'],
             'prefijo' => [
                 'required',
@@ -68,6 +75,8 @@ class ResolucionFacturacionController extends Controller
 
     public function edit(ResolucionFacturacion $resolucione): View
     {
+        Gate::authorize('update', $resolucione);
+
         $resolucion = $resolucione;
         $sucursales = Sucursal::all();
         $estados = EstadoResolucionFacturacion::cases();
@@ -77,11 +86,13 @@ class ResolucionFacturacionController extends Controller
 
     public function update(Request $request, ResolucionFacturacion $resolucione): RedirectResponse
     {
+        Gate::authorize('update', $resolucione);
+
         $resolucion = $resolucione;
         $empresaId = CompanyContext::getId();
 
         $validated = $request->validate([
-            'sucursal_id' => ['nullable', 'exists:sucursales,id'],
+            'sucursal_id' => ['nullable', Rule::exists('sucursales', 'id')->where('empresa_id', $empresaId)],
             'numero_resolucion' => ['required', 'string', 'max:60'],
             'prefijo' => [
                 'required',
@@ -114,6 +125,13 @@ class ResolucionFacturacionController extends Controller
 
     public function destroy(ResolucionFacturacion $resolucione): RedirectResponse
     {
+        Gate::authorize('delete', $resolucione);
+
+        if ($resolucione->documentosElectronicos()->exists()) {
+            return redirect()->route('resoluciones.index')
+                ->with('error', 'No se puede eliminar la resolución porque ya tiene documentos electrónicos emitidos.');
+        }
+
         $resolucione->delete();
 
         return redirect()->route('resoluciones.index')->with('success', 'Resolución eliminada.');

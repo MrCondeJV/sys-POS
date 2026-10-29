@@ -185,14 +185,14 @@
                     {{ $mov->tipo->label() }}
                 </x-badge>
             </td>
-            <td class="px-4 py-3 text-xs text-slate-700 max-w-xs truncate">
-                {{ $mov->motivo ?? '—' }}
-                @if($mov->referencia_tipo)
-                <span class="text-[10px] text-slate-400 block font-mono">Ref: {{ class_basename($mov->referencia_tipo) }} #{{ $mov->referencia_id }}</span>
+            <td class="px-4 py-3 text-xs text-slate-700">
+                <div class="line-clamp-2">{{ $mov->referencia ?? '—' }}</div>
+                @if($mov->notas)
+                <span class="text-[11px] text-slate-400 line-clamp-1">{{ $mov->notas }}</span>
                 @endif
             </td>
             <td class="px-4 py-3 text-xs text-slate-600 whitespace-nowrap">
-                {{ $mov->usuario?->name ?? 'Sistema' }}
+                {{ $mov->user?->name ?? 'Sistema' }}
             </td>
             <td class="px-4 py-3 text-right text-xs font-semibold text-success whitespace-nowrap tabular-nums">
                 {{ $esEntrada ? '+' . number_format($mov->cantidad, 2) : '—' }}
@@ -201,7 +201,7 @@
                 {{ ! $esEntrada ? '-' . number_format($mov->cantidad, 2) : '—' }}
             </td>
             <td class="px-4 py-3 text-right text-xs font-bold text-slate-900 whitespace-nowrap tabular-nums">
-                {{ number_format($mov->saldo_resultante, 2) }}
+                {{ number_format($mov->stock_posterior, 2) }}
             </td>
             <td class="px-5 py-3 text-right text-xs text-slate-600 whitespace-nowrap tabular-nums">
                 ${{ number_format($mov->costo_unitario, 2) }}

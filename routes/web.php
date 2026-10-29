@@ -233,7 +233,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Fase 22: Facturación Electrónica DIAN
-    Route::resource('resoluciones', ResolucionFacturacionController::class);
+    Route::resource('resoluciones', ResolucionFacturacionController::class)->except('show');
     Route::prefix('facturacion-electronica')->name('facturacion-electronica.')->group(function () {
         Route::get('/', [FacturacionElectronicaController::class, 'index'])->name('index');
         Route::get('/{documento}', [FacturacionElectronicaController::class, 'show'])->name('show');

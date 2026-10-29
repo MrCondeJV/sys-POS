@@ -11,12 +11,14 @@
             <a href="{{ route('facturacion-electronica.index') }}" class="btn-secondary">
                 Ver Facturas Electrónicas
             </a>
+            @can('create', App\Models\ResolucionFacturacion::class)
             <a href="{{ route('resoluciones.create') }}" class="btn-primary">
                 <svg class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
                 Nueva Resolución
             </a>
+            @endcan
         </x-slot:actions>
     </x-page-header>
 
@@ -60,9 +62,12 @@
                             </td>
                             <td class="text-right">
                                 <div class="flex items-center justify-end space-x-2">
+                                    @can('update', $res)
                                     <a href="{{ route('resoluciones.edit', $res) }}" class="btn-secondary py-1 px-2.5 text-xs">
                                         Editar
                                     </a>
+                                    @endcan
+                                    @can('delete', $res)
                                     <x-modal-confirm
                                         title="¿Eliminar resolución DIAN?"
                                         message="Se eliminará la resolución {{ $res->numero_resolucion }} ({{ $res->prefijo }}). Solo puede eliminarse si no tiene documentos emitidos."
@@ -77,6 +82,7 @@
                                             </button>
                                         </x-slot:trigger>
                                     </x-modal-confirm>
+                                    @endcan
                                 </div>
                             </td>
                         </tr>
@@ -124,10 +130,14 @@
                     <div><span class="font-sans text-slate-400">Vigencia:</span> {{ $res->fecha_inicio->format('d/m/Y') }} &rarr; {{ $res->fecha_vigencia->format('d/m/Y') }}</div>
                 </div>
 
+                @canany(['update', 'delete'], $res)
                 <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                    @can('update', $res)
                     <a href="{{ route('resoluciones.edit', $res) }}" class="btn-secondary py-1 px-2.5 text-xs">
                         Editar
                     </a>
+                    @endcan
+                    @can('delete', $res)
                     <x-modal-confirm
                         title="¿Eliminar resolución DIAN?"
                         message="Se eliminará la resolución {{ $res->numero_resolucion }} ({{ $res->prefijo }}). Solo puede eliminarse si no tiene documentos emitidos."
@@ -142,7 +152,9 @@
                             </button>
                         </x-slot:trigger>
                     </x-modal-confirm>
+                    @endcan
                 </div>
+                @endcanany
             </div>
             @empty
             <div class="p-8 text-center text-xs text-slate-500">
