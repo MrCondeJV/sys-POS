@@ -79,7 +79,7 @@
                 </div>
             </div>
 
-            @if($documento->tipo === \App\Enums\TipoDocumentoElectronico::FACTURA_ELECTRONICA && $documento->estado_dian === \App\Enums\EstadoDian::ACEPTADO)
+            @if($documento->tipo === \App\Enums\TipoDocumentoElectronico::FACTURA_ELECTRONICA && $documento->estado_dian === \App\Enums\EstadoDian::ACEPTADO && auth()->user()->can('documentos.anular'))
                 <div class="pt-6 border-t border-slate-200" x-data="{ confirmNc: false }">
                     <h3 class="text-xs font-semibold text-slate-800 mb-2">Acciones Fiscales</h3>
                     <form x-ref="formNc" action="{{ route('facturacion-electronica.nota-credito', $documento) }}" method="POST" class="flex gap-2 items-center">

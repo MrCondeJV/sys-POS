@@ -93,6 +93,17 @@ class ListadosConDatosTest extends TestCase
         $this->verListado('listas-precios.index', ['Mayoristas Constructoras', 'MAY-01']);
     }
 
+    public function test_listas_de_precios_cuentan_los_precios_especificos(): void
+    {
+        $this->lista->detalles()->create([
+            'empresa_id' => $this->empresa->id,
+            'producto_id' => $this->producto->id,
+            'precio' => 31000,
+        ]);
+
+        $this->verListado('listas-precios.index', ['1 ítems']);
+    }
+
     public function test_impuestos_lista_impuesto_predeterminado(): void
     {
         $this->verListado('impuestos.index', ['IVA General 19%', 'IVA19']);

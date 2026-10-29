@@ -15,15 +15,19 @@
     >
         <x-slot:actions>
             <div class="flex items-center space-x-2">
+                @can('reportes.ver')
                 <x-button variant="outline" size="sm" href="{{ route('reportes.multisucursal') }}">
                     Ver Consolidado
                 </x-button>
+                @endcan
+                @can('inventario.ajustar')
                 <x-button variant="primary" size="sm" href="{{ route('traslados.create') }}">
                     <svg class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
                     Nuevo Traslado
                 </x-button>
+                @endcan
             </div>
         </x-slot:actions>
     </x-page-header>

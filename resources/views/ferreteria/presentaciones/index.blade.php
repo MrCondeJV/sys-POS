@@ -23,6 +23,7 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- Formulario de Creación -->
+        @can('update', $producto)
         <div class="lg:col-span-4">
             <div class="bg-white rounded-xl border border-slate-200 shadow-xs p-5 space-y-4">
                 <div class="pb-3 border-b border-slate-100">
@@ -92,9 +93,10 @@
                 </form>
             </div>
         </div>
+        @endcan
 
         <!-- Listado de Presentaciones -->
-        <div class="lg:col-span-8">
+        <div class="{{ auth()->user()->can('update', $producto) ? 'lg:col-span-8' : 'lg:col-span-12' }}">
             <x-table class="hidden lg:block">
                 <x-slot:head>
                     <tr>
@@ -126,6 +128,7 @@
                             ${{ number_format($pres->precio_venta, 2) }}
                         </td>
                         <td class="px-4 py-3 text-right">
+                            @can('update', $producto)
                             <x-modal-confirm
                                 title="¿Eliminar esta presentación?"
                                 message="Se eliminará la presentación «{{ $pres->nombre }}» del producto."
@@ -138,6 +141,7 @@
                                     <x-icon-button type="button" variant="danger" icon="trash" title="Eliminar presentación" />
                                 </x-slot:trigger>
                             </x-modal-confirm>
+                            @endcan
                         </td>
                     </tr>
                 @empty
@@ -169,6 +173,7 @@
                         </div>
                         <div class="pt-2 flex items-center justify-between gap-3 border-t border-slate-100">
                             <span class="font-mono text-base font-semibold text-slate-900 tabular-nums">${{ number_format($pres->precio_venta, 2) }}</span>
+                            @can('update', $producto)
                             <x-modal-confirm
                                 title="¿Eliminar esta presentación?"
                                 message="Se eliminará la presentación «{{ $pres->nombre }}» del producto."
@@ -181,6 +186,7 @@
                                     <x-icon-button type="button" variant="danger" icon="trash" title="Eliminar presentación" />
                                 </x-slot:trigger>
                             </x-modal-confirm>
+                            @endcan
                         </div>
                     </div>
                 @empty

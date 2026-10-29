@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PermisoSistema;
 use App\Actions\Ventas\SincronizarVentasOfflineAction;
 use App\Support\Tenancy\BranchContext;
 use App\Support\Tenancy\CompanyContext;
@@ -12,6 +13,8 @@ class PosOfflineSyncController extends Controller
 {
     public function sync(Request $request, SincronizarVentasOfflineAction $action): JsonResponse
     {
+        abort_unless(auth()->user()->can(PermisoSistema::VENTAS_CREAR->value), 403);
+
         $validated = $request->validate([
             'ventas' => ['required', 'array', 'min:1'],
             'ventas.*.client_transaction_id' => ['required', 'string', 'max:100'],

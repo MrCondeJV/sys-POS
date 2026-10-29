@@ -25,7 +25,7 @@
                 <a href="{{ route('facturacion-electronica.show', $documento->documentoElectronico) }}" class="btn-secondary">
                     Ver Factura Electrónica ({{ $documento->documentoElectronico->consecutivo_completo }})
                 </a>
-            @elseif($documento->esEmitido())
+            @elseif($documento->esEmitido() && auth()->user()->can('documentos.emitir'))
                 <x-modal-confirm
                     title="¿Emitir factura electrónica a la DIAN?"
                     message="Se generará y transmitirá el documento electrónico oficial a partir del comprobante {{ $documento->numero_completo }}."

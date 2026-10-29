@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PermisoSistema;
 use App\Models\PagoSuscripcion;
 use App\Models\Plan;
 use App\Services\Wompi\WompiService;
@@ -20,6 +21,8 @@ class SuscripcionController extends Controller
      */
     public function index(): View
     {
+        abort_unless(auth()->user()->can(PermisoSistema::EMPRESA_GESTIONAR->value), 403);
+
         $empresa = CompanyContext::getCompany();
         if (! $empresa) {
             abort(404, 'Empresa no encontrada.');
@@ -52,6 +55,8 @@ class SuscripcionController extends Controller
      */
     public function checkout(Plan $plan, Request $request): View
     {
+        abort_unless(auth()->user()->can(PermisoSistema::EMPRESA_GESTIONAR->value), 403);
+
         $empresa = CompanyContext::getCompany();
         if (! $empresa) {
             abort(404, 'Empresa no encontrada.');
@@ -86,6 +91,8 @@ class SuscripcionController extends Controller
      */
     public function retorno(Request $request): View
     {
+        abort_unless(auth()->user()->can(PermisoSistema::EMPRESA_GESTIONAR->value), 403);
+
         $empresa = CompanyContext::getCompany();
         $wompiTxId = $request->query('id');
 

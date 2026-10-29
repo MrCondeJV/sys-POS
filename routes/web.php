@@ -209,7 +209,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Fase 17: Impuestos Configurables
-    Route::resource('impuestos', ImpuestoController::class);
+    Route::resource('impuestos', ImpuestoController::class)->except('show');
     Route::post('/impuestos/{impuesto}/por-defecto', [ImpuestoController::class, 'hacerPorDefecto'])->name('impuestos.por-defecto');
 
     // Fase 18: Documentos Comerciales

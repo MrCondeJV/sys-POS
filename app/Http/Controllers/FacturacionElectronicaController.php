@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PermisoSistema;
 use App\Enums\EstadoDian;
 use App\Models\DocumentoElectronico;
 use App\Models\DocumentoVenta;
@@ -17,6 +18,8 @@ class FacturacionElectronicaController extends Controller
 {
     public function index(Request $request): View
     {
+        abort_unless(auth()->user()->can(PermisoSistema::DOCUMENTOS_VER->value), 403);
+
         $query = DocumentoElectronico::with(['documentoVenta.venta', 'documentoVenta.cliente', 'resolucion'])
             ->latest('id');
 
@@ -44,6 +47,8 @@ class FacturacionElectronicaController extends Controller
 
     public function show(DocumentoElectronico $documento): View
     {
+        abort_unless(auth()->user()->can(PermisoSistema::DOCUMENTOS_VER->value), 403);
+
         $documento->load(['documentoVenta.venta.detalles.producto', 'documentoVenta.cliente', 'resolucion']);
 
         $xmlContent = null;
@@ -56,6 +61,8 @@ class FacturacionElectronicaController extends Controller
 
     public function emitir(Request $request, DocumentoVenta $documentoVenta, FacturacionElectronicaService $service): RedirectResponse
     {
+        abort_unless(auth()->user()->can(PermisoSistema::DOCUMENTOS_EMITIR->value), 403);
+
         try {
             $docElectronico = $service->emitirFacturaElectronica($documentoVenta);
 
@@ -68,6 +75,8 @@ class FacturacionElectronicaController extends Controller
 
     public function notaCredito(Request $request, DocumentoElectronico $documento, FacturacionElectronicaService $service): RedirectResponse
     {
+        abort_unless(auth()->user()->can(PermisoSistema::DOCUMENTOS_ANULAR->value), 403);
+
         $request->validate([
             'motivo' => ['required', 'string', 'max:255'],
         ]);
@@ -84,6 +93,8 @@ class FacturacionElectronicaController extends Controller
 
     public function descargarXml(DocumentoElectronico $documento): StreamedResponse|RedirectResponse
     {
+        abort_unless(auth()->user()->can(PermisoSistema::DOCUMENTOS_VER->value), 403);
+
         if (!$documento->xml_path || !Storage::disk('local')->exists($documento->xml_path)) {
             return back()->with('error', 'El archivo XML no se encuentra disponible.');
         }

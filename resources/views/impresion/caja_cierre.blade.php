@@ -63,11 +63,11 @@
         </tr>
         <tr class="border-t font-bold">
             <td>Saldo Esperado:</td>
-            <td class="text-right">${{ number_format($sesion->saldo_esperado ?? 0, 2) }}</td>
+            <td class="text-right">${{ number_format($sesion->monto_cierre_esperado ?? 0, 2) }}</td>
         </tr>
         <tr class="font-bold">
             <td>Efectivo Real:</td>
-            <td class="text-right">${{ number_format($sesion->monto_final_real ?? 0, 2) }}</td>
+            <td class="text-right">${{ number_format($sesion->monto_cierre_contado ?? 0, 2) }}</td>
         </tr>
         <tr class="border-t font-bold">
             <td>Diferencia:</td>

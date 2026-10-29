@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Gate;
 use App\Models\Producto;
 use App\Models\ProductoPresentacion;
 use App\Models\UnidadMedida;
@@ -15,6 +16,8 @@ class ProductoPresentacionController extends Controller
 {
     public function index(Producto $producto): View
     {
+        Gate::authorize('view', $producto);
+
         $presentaciones = $producto->presentaciones()->with('unidadMedida')->latest('id')->get();
         $unidades = UnidadMedida::all();
 
@@ -23,6 +26,8 @@ class ProductoPresentacionController extends Controller
 
     public function store(Request $request, Producto $producto): RedirectResponse
     {
+        Gate::authorize('update', $producto);
+
         $empresaId = CompanyContext::getId();
 
         $validated = $request->validate([
@@ -54,6 +59,8 @@ class ProductoPresentacionController extends Controller
 
     public function destroy(Producto $producto, ProductoPresentacion $presentacion): RedirectResponse
     {
+        Gate::authorize('update', $producto);
+
         $presentacion->delete();
 
         return redirect()->route('productos.presentaciones.index', $producto)

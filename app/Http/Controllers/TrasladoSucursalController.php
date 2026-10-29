@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PermisoSistema;
 use App\Actions\Multisucursal\DespacharTrasladoAction;
 use App\Actions\Multisucursal\RecibirTrasladoAction;
 use App\Actions\Multisucursal\RechazarTrasladoAction;
@@ -22,6 +23,8 @@ class TrasladoSucursalController extends Controller
 {
     public function index(Request $request): View
     {
+        abort_unless(auth()->user()->can(PermisoSistema::INVENTARIO_VER->value), 403);
+
         $empresaId = CompanyContext::getId();
 
         $query = TrasladoSucursal::with(['sucursalOrigen', 'sucursalDestino', 'usuarioDespacho', 'usuarioReceptor'])
@@ -49,6 +52,8 @@ class TrasladoSucursalController extends Controller
 
     public function create(Request $request): View
     {
+        abort_unless(auth()->user()->can(PermisoSistema::INVENTARIO_AJUSTAR->value), 403);
+
         $sucursales = Sucursal::activa()->get();
         $sucursalOrigenId = BranchContext::getId() ?: $sucursales->first()?->id;
 
@@ -62,6 +67,8 @@ class TrasladoSucursalController extends Controller
 
     public function store(Request $request, DespacharTrasladoAction $action): RedirectResponse
     {
+        abort_unless(auth()->user()->can(PermisoSistema::INVENTARIO_AJUSTAR->value), 403);
+
         $empresaId = CompanyContext::getId();
 
         $validated = $request->validate([
@@ -102,6 +109,8 @@ class TrasladoSucursalController extends Controller
 
     public function show(TrasladoSucursal $traslado): View
     {
+        abort_unless(auth()->user()->can(PermisoSistema::INVENTARIO_VER->value), 403);
+
         $empresaId = CompanyContext::getId();
         if ($traslado->empresa_id !== $empresaId) {
             abort(404, 'Traslado no encontrado.');
@@ -114,6 +123,8 @@ class TrasladoSucursalController extends Controller
 
     public function recibir(Request $request, TrasladoSucursal $traslado, RecibirTrasladoAction $action): RedirectResponse
     {
+        abort_unless(auth()->user()->can(PermisoSistema::INVENTARIO_AJUSTAR->value), 403);
+
         $empresaId = CompanyContext::getId();
         if ($traslado->empresa_id !== $empresaId) {
             abort(404, 'Traslado no encontrado.');
@@ -139,6 +150,8 @@ class TrasladoSucursalController extends Controller
 
     public function rechazar(Request $request, TrasladoSucursal $traslado, RechazarTrasladoAction $action): RedirectResponse
     {
+        abort_unless(auth()->user()->can(PermisoSistema::INVENTARIO_AJUSTAR->value), 403);
+
         $empresaId = CompanyContext::getId();
         if ($traslado->empresa_id !== $empresaId) {
             abort(404, 'Traslado no encontrado.');

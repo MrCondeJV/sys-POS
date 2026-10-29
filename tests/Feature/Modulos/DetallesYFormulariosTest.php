@@ -139,6 +139,34 @@ class DetallesYFormulariosTest extends TestCase
         $this->verPagina(route('imprimir.caja', $this->sesionCaja));
     }
 
+    public function test_comprobante_impreso_de_cierre_muestra_esperado_y_contado(): void
+    {
+        $this->sesionCaja->recalcularTotales();
+        $esperado = $this->sesionCaja->calcularSaldoEsperadoEfectivo();
+        app(\App\Actions\Caja\CerrarCajaAction::class)->execute($this->sesionCaja, $this->admin, $esperado - 5000, 'Arqueo con faltante');
+
+        $this->verPagina(route('imprimir.caja', $this->sesionCaja), [
+            '$' . number_format($esperado, 2),
+            '$' . number_format($esperado - 5000, 2),
+        ]);
+    }
+
+    public function test_estado_de_cuenta_impreso_muestra_nombre_de_la_empresa(): void
+    {
+        $this->verPagina(route('cartera.estado-cuenta.print', $this->cliente), ['Ferretería Módulos SAS']);
+    }
+
+    public function test_pos_envia_la_unidad_de_medida_real_de_cada_producto(): void
+    {
+        $metro = \App\Models\UnidadMedida::create(['empresa_id' => $this->empresa->id, 'nombre' => 'Metro', 'codigo' => 'MT', 'activo' => true]);
+        $this->producto->update(['unidad_medida_id' => $metro->id]);
+
+        $response = $this->actingAs($this->cajero)->get(route('pos.index'))->assertOk();
+        $productos = $response->viewData('productos');
+
+        $this->assertSame('MT', collect($productos)->firstWhere('id', $this->producto->id)['unidad']);
+    }
+
     public function test_detalle_de_auditoria(): void
     {
         $evento = \App\Models\Auditoria::query()->latest('id')->firstOrFail();

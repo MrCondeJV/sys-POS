@@ -107,7 +107,7 @@
         </div>
         <div class="doc-header-right">
             @if($cliente->empresa)
-                <div style="font-weight:700;font-size:11px;color:var(--color-text-primary);">{{ $cliente->empresa->nombre }}</div>
+                <div style="font-weight:700;font-size:11px;color:var(--color-text-primary);">{{ $cliente->empresa->nombre_comercial }}</div>
                 @if($cliente->empresa->nit)<div>NIT: {{ $cliente->empresa->nit }}</div>@endif
             @endif
             <div style="margin-top:4px;">Fecha de emisión: {{ now()->format('d/m/Y H:i') }}</div>

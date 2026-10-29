@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PermisoSistema;
 use App\Models\Producto;
 use App\Models\Sucursal;
 use App\Models\TrasladoSucursal;
@@ -15,6 +16,8 @@ class ReporteMultisucursalController extends Controller
 {
     public function index(Request $request): View
     {
+        abort_unless(auth()->user()->can(PermisoSistema::REPORTES_VER->value), 403);
+
         $empresaId = CompanyContext::getId();
         $sucursales = Sucursal::activa()->where('empresa_id', $empresaId)->get();
 

@@ -96,7 +96,7 @@
                 @endif
             </td>
             <td class="hidden @5xl:table-cell px-4 py-3 text-center text-xs text-slate-700 tabular-nums whitespace-nowrap">
-                {{ $lista->precios_count ?? ($lista->precios?->count() ?? 0) }} ítems
+                {{ $lista->detalles_count ?? $lista->detalles()->count() }} ítems
             </td>
             <td class="hidden @5xl:table-cell px-4 py-3 text-center text-xs text-slate-700 tabular-nums whitespace-nowrap">
                 {{ $lista->clientes_count ?? ($lista->clientes?->count() ?? 0) }} clientes
@@ -162,7 +162,7 @@
 
             <div class="pt-2 flex items-center justify-between gap-3 border-t border-slate-100">
                 <div class="text-xs text-slate-600 tabular-nums">
-                    {{ $lista->precios_count ?? ($lista->precios?->count() ?? 0) }} ítems &bull;
+                    {{ $lista->detalles_count ?? $lista->detalles()->count() }} ítems &bull;
                     {{ $lista->clientes_count ?? ($lista->clientes?->count() ?? 0) }} clientes
                 </div>
                 <div class="flex items-center gap-2">

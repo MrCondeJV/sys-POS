@@ -75,6 +75,14 @@ class EnsureSubscriptionIsActive
             ], 402);
         }
 
+        // Solo quien gestiona la empresa puede renovar; el resto vuelve con el aviso
+        if (! $user->can('empresa.gestionar')) {
+            return back()->with(
+                'warning',
+                'La suscripción de la empresa se encuentra vencida. Pide a un administrador que renueve el plan para continuar registrando operaciones.'
+            );
+        }
+
         return redirect()->route('suscripcion.index')->with(
             'warning',
             'Tu suscripción se encuentra vencida. Renueva tu plan para continuar registrando operaciones.'

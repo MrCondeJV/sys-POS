@@ -77,7 +77,7 @@
         </div>
 
         <!-- Acciones si está en tránsito -->
-        @if($traslado->isEnTransito())
+        @if($traslado->isEnTransito() && auth()->user()->can('inventario.ajustar'))
             <div class="border-t border-slate-100 pt-5 flex flex-col sm:flex-row justify-end gap-3" x-data="{ motivoRechazo: '' }">
                 <form method="POST" action="{{ route('traslados.rechazar', $traslado) }}" class="flex items-center gap-2">
                     @csrf

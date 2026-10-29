@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PermisoSistema;
 use App\Enums\FormatoImpresion;
 use App\Models\AbonoCartera;
 use App\Models\CajaSesion;
@@ -52,6 +53,8 @@ class ImpresionController extends Controller
      */
     public function imprimirCajaSesion(Request $request, CajaSesion $sesion): View
     {
+        abort_unless(auth()->user()->can(PermisoSistema::CAJA_VER->value), 403);
+
         if (CompanyContext::getId() && CompanyContext::getId() !== $sesion->empresa_id) {
             abort(404);
         }
