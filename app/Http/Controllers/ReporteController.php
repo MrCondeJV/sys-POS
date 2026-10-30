@@ -651,7 +651,8 @@ class ReporteController extends Controller
             $ventasQuery->where('sucursal_id', $sucursalId);
         }
 
-        $totalVentasNeto = (float) (clone $ventasQuery)->sum('subtotal');
+        // Base gravable = subtotal bruto menos descuentos (el IVA se liquida sobre lo realmente cobrado)
+        $totalVentasNeto = (float) (clone $ventasQuery)->sum('subtotal') - (float) (clone $ventasQuery)->sum('descuento');
         $totalIvaGenerado = (float) (clone $ventasQuery)->sum('impuesto');
         $totalVentas = (float) (clone $ventasQuery)->sum('total');
 

@@ -438,7 +438,10 @@ class="max-w-[1720px] mx-auto pb-10">
                 <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                     <div>
                         <span class="text-[10px] font-bold text-brand-600 uppercase tracking-wider block">Finalizar Venta</span>
-                        <h3 class="text-xl font-bold font-mono tabular-nums text-slate-900">Total a Cobrar: $<span x-text="formatCurrency(total)"></span></h3>
+                        <h3 class="text-xl font-bold font-mono tabular-nums text-slate-900">Total a Cobrar: $<span x-text="formatCurrency(totalACobrar)"></span></h3>
+                        <div x-show="descuentoAplicado > 0" class="text-xs text-slate-500 font-mono tabular-nums">
+                            Antes $<span class="line-through" x-text="formatCurrency(total)"></span> · descuento −$<span x-text="formatCurrency(descuentoAplicado)"></span>
+                        </div>
                     </div>
                     <button @click="modalPago = false" class="text-slate-400 hover:text-slate-600 p-1">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -472,6 +475,28 @@ class="max-w-[1720px] mx-auto pb-10">
                     </div>
                 </div>
 
+                <!-- Descuento en valor fijo sobre el total (solo contado) -->
+                <div x-show="tipoPago === 'CONTADO'" class="p-3 rounded-lg border border-slate-200 bg-slate-50 space-y-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="label-base">Descuento ($)</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center font-bold text-slate-400">$</span>
+                                <input type="number" step="100" min="0" x-model.number="descuentoGlobal" @input="alCambiarDescuento()"
+                                       placeholder="0" class="input pl-7 font-mono tabular-nums">
+                            </div>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="label-base">Motivo del descuento <span x-show="descuentoAplicado > 0" class="text-danger-text">*</span></label>
+                            <input type="text" x-model="motivoDescuento" maxlength="255" :disabled="!(descuentoGlobal > 0)"
+                                   placeholder="Ej: Cliente frecuente / producto con detalle / ajuste de precio autorizado"
+                                   class="input text-xs disabled:opacity-60">
+                        </div>
+                    </div>
+                    <p x-show="descuentoGlobal > 0 && descuentoGlobal >= total" class="text-xs font-semibold text-danger-text">El descuento debe ser menor al total de la venta.</p>
+                    <p x-show="descuentoAplicado > 0 && !motivoDescuento.trim()" class="text-xs font-semibold text-danger-text">Escribe el motivo del descuento para poder confirmar la venta.</p>
+                </div>
+
                 <!-- Selector de Método de Pago (Cuando es Contado) -->
                 <div x-show="tipoPago === 'CONTADO'" class="space-y-4">
                     <label class="label-base">Método de Pago</label>
@@ -481,12 +506,12 @@ class="max-w-[1720px] mx-auto pb-10">
                                 class="p-3 rounded-lg border text-xs flex flex-col items-center justify-center space-y-1 transition">
                             <span>Efectivo</span>
                         </button>
-                        <button type="button" @click="metodoPago = 'TARJETA'; pagoCon = total"
+                        <button type="button" @click="metodoPago = 'TARJETA'; pagoCon = totalACobrar"
                                 :class="metodoPago === 'TARJETA' ? 'border-brand-600 bg-brand-50/40 text-brand-800 font-semibold ring-1 ring-brand-500' : 'border-slate-200 text-slate-700 hover:border-slate-300'"
                                 class="p-3 rounded-lg border text-xs flex flex-col items-center justify-center space-y-1 transition">
                             <span>Tarjeta</span>
                         </button>
-                        <button type="button" @click="metodoPago = 'TRANSFERENCIA'; pagoCon = total"
+                        <button type="button" @click="metodoPago = 'TRANSFERENCIA'; pagoCon = totalACobrar"
                                 :class="metodoPago === 'TRANSFERENCIA' ? 'border-brand-600 bg-brand-50/40 text-brand-800 font-semibold ring-1 ring-brand-500' : 'border-slate-200 text-slate-700 hover:border-slate-300'"
                                 class="p-3 rounded-lg border text-xs flex flex-col items-center justify-center space-y-1 transition">
                             <span>Transferencia</span>
@@ -523,12 +548,12 @@ class="max-w-[1720px] mx-auto pb-10">
                         <div class="pt-2">
                             <span class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Billetes sugeridos:</span>
                             <div class="flex flex-wrap gap-2">
-                                <button type="button" @click="pagoCon = total" class="px-2.5 py-1 rounded bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50">
-                                    Exacto ($<span x-text="formatCurrency(total)"></span>)
+                                <button type="button" @click="pagoCon = totalACobrar" class="px-2.5 py-1 rounded bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                                    Exacto ($<span x-text="formatCurrency(totalACobrar)"></span>)
                                 </button>
-                                <button type="button" @click="pagoCon = 10000" x-show="total <= 10000" class="px-2.5 py-1 rounded bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50">$10.000</button>
-                                <button type="button" @click="pagoCon = 20000" x-show="total <= 20000" class="px-2.5 py-1 rounded bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50">$20.000</button>
-                                <button type="button" @click="pagoCon = 50000" x-show="total <= 50000" class="px-2.5 py-1 rounded bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50">$50.000</button>
+                                <button type="button" @click="pagoCon = 10000" x-show="totalACobrar <= 10000" class="px-2.5 py-1 rounded bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50">$10.000</button>
+                                <button type="button" @click="pagoCon = 20000" x-show="totalACobrar <= 20000" class="px-2.5 py-1 rounded bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50">$20.000</button>
+                                <button type="button" @click="pagoCon = 50000" x-show="totalACobrar <= 50000" class="px-2.5 py-1 rounded bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50">$50.000</button>
                                 <button type="button" @click="pagoCon = 100000" class="px-2.5 py-1 rounded bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50">$100.000</button>
                             </div>
                         </div>
@@ -568,8 +593,8 @@ class="max-w-[1720px] mx-auto pb-10">
 
                         <div class="flex justify-between items-center text-xs pt-1">
                             <span class="font-semibold text-slate-700 font-mono tabular-nums">Suma ingresada: $<span x-text="formatCurrency(sumaPagosMixtos)"></span></span>
-                            <span :class="sumaPagosMixtos >= total ? 'text-emerald-700 font-semibold' : 'text-danger-text font-semibold'">
-                                <span x-text="sumaPagosMixtos >= total ? '¡Monto cubierto!' : 'Faltan $' + formatCurrency(total - sumaPagosMixtos)"></span>
+                            <span :class="sumaPagosMixtos >= totalACobrar ? 'text-emerald-700 font-semibold' : 'text-danger-text font-semibold'">
+                                <span x-text="sumaPagosMixtos >= totalACobrar ? '¡Monto cubierto!' : 'Faltan $' + formatCurrency(totalACobrar - sumaPagosMixtos)"></span>
                             </span>
                         </div>
                     </div>
@@ -608,7 +633,7 @@ class="max-w-[1720px] mx-auto pb-10">
                     </button>
                     <button type="button"
                             @click="enviarVenta()"
-                            :disabled="loading || (tipoPago === 'CONTADO' && metodoPago === 'EFECTIVO' && cambio < 0) || (tipoPago === 'CONTADO' && metodoPago === 'MIXTO' && sumaPagosMixtos < total)"
+                            :disabled="loading || !descuentoValido || (tipoPago === 'CONTADO' && metodoPago === 'EFECTIVO' && cambio < 0) || (tipoPago === 'CONTADO' && metodoPago === 'MIXTO' && sumaPagosMixtos < totalACobrar)"
                             class="bg-accent-pos hover:bg-accent-pos-hover text-white font-semibold rounded-lg inline-flex items-center justify-center transition text-xs sm:text-sm py-2.5 px-5 disabled:opacity-50">
                         <template x-if="loading">
                             <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
@@ -687,6 +712,8 @@ function posTerminal(config) {
         puedeVerCartera: config.puedeVerCartera,
 
         cotizacion: config.cotizacion || null,
+        descuentoGlobal: 0,
+        motivoDescuento: '',
         itemsOmitidos: [],
         cartera: null,
         carteraCargando: false,
@@ -813,8 +840,33 @@ function posTerminal(config) {
             return Math.max(0, this.subtotal - this.descuentoTotal + this.impuestosTotal);
         },
 
+        // Descuento en valor fijo sobre el total: solo contado y nunca igual o mayor al total
+        get descuentoAplicado() {
+            if (this.tipoPago !== 'CONTADO') return 0;
+            const d = parseFloat(this.descuentoGlobal) || 0;
+            return d > 0 && d < this.total ? Math.round(d * 100) / 100 : 0;
+        },
+
+        get totalACobrar() {
+            return Math.max(0, this.total - this.descuentoAplicado);
+        },
+
+        get descuentoValido() {
+            const d = parseFloat(this.descuentoGlobal) || 0;
+            if (this.tipoPago !== 'CONTADO' || d <= 0) return true;
+            return d < this.total && this.motivoDescuento.trim().length > 0;
+        },
+
+        alCambiarDescuento() {
+            if (this.metodoPago === 'MIXTO') {
+                this.prepararPagoMixto();
+            } else {
+                this.pagoCon = this.totalACobrar;
+            }
+        },
+
         get cambio() {
-            return (this.pagoCon || 0) - this.total;
+            return (this.pagoCon || 0) - this.totalACobrar;
         },
 
         get sumaPagosMixtos() {
@@ -889,6 +941,8 @@ function posTerminal(config) {
         // Selector principal Contado / Crédito del POS
         cambiarTipoVenta(tipo) {
             if (tipo === 'CREDITO') {
+                this.descuentoGlobal = 0;
+                this.motivoDescuento = '';
                 this.tipoPago = 'CREDITO';
                 this.metodoPago = 'CREDITO';
                 this.cargarCartera();
@@ -943,7 +997,7 @@ function posTerminal(config) {
         },
 
         autoCalcularEfectivo() {
-            this.pagoCon = this.total;
+            this.pagoCon = this.totalACobrar;
         },
 
         // Cualquier cliente identificado puede comprar a crédito; el consumidor final genérico no
@@ -963,8 +1017,8 @@ function posTerminal(config) {
 
         prepararPagoMixto() {
             this.pagosMixtos = [
-                { metodo_pago: 'EFECTIVO', monto: Math.round(this.total / 2), referencia: '' },
-                { metodo_pago: 'TARJETA', monto: Math.round(this.total - Math.round(this.total / 2)), referencia: '' }
+                { metodo_pago: 'EFECTIVO', monto: Math.round(this.totalACobrar / 2), referencia: '' },
+                { metodo_pago: 'TARJETA', monto: Math.round(this.totalACobrar - Math.round(this.totalACobrar / 2)), referencia: '' }
             ];
         },
 
@@ -1006,7 +1060,9 @@ function posTerminal(config) {
                 metodo_pago: this.metodoPago,
                 tipo_comprobante: this.tipoComprobante,
                 observaciones: this.observaciones,
-                pago_con: this.metodoPago === 'EFECTIVO' ? this.pagoCon : this.total,
+                pago_con: this.metodoPago === 'EFECTIVO' ? this.pagoCon : this.totalACobrar,
+                descuento_global: this.descuentoAplicado,
+                motivo_descuento: this.descuentoAplicado > 0 ? this.motivoDescuento.trim() : null,
                 items: this.cart.map(i => ({
                     producto_id: i.id,
                     cantidad: i.cantidad,
@@ -1082,6 +1138,8 @@ function posTerminal(config) {
             this.metodoPago = 'EFECTIVO';
             this.pagoCon = 0;
             this.pagosMixtos = [];
+            this.descuentoGlobal = 0;
+            this.motivoDescuento = '';
             this.cartera = null;
             this.carteraError = '';
             const defaultCli = this.clientes.find(c => c.es_consumidor_final) || this.clientes[0];

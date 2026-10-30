@@ -244,6 +244,8 @@ class PosController extends Controller
             'pagos.*.monto' => ['required', 'numeric', 'min:0.01'],
             'pagos.*.referencia' => ['nullable', 'string', 'max:100'],
             'observaciones' => ['nullable', 'string', 'max:500'],
+            'descuento_global' => ['nullable', 'numeric', 'min:0'],
+            'motivo_descuento' => ['nullable', 'string', 'max:255'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.producto_id' => ['required', 'exists:productos,id', new BelongsToActiveCompany('productos')],
             'items.*.cantidad' => ['required', 'numeric', 'min:0.01'],
@@ -282,7 +284,9 @@ class PosController extends Controller
                     pagoCon: isset($validated['pago_con']) ? (float) $validated['pago_con'] : null,
                     pagos: $validated['pagos'] ?? null,
                     observaciones: $validated['observaciones'] ?? null,
-                    listaPrecioId: isset($validated['lista_precio_id']) ? (int) $validated['lista_precio_id'] : null
+                    listaPrecioId: isset($validated['lista_precio_id']) ? (int) $validated['lista_precio_id'] : null,
+                    descuentoGlobal: (float) ($validated['descuento_global'] ?? 0),
+                    motivoDescuento: $validated['motivo_descuento'] ?? null
                 );
 
                 $cotizacion?->update([

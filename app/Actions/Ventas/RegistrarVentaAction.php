@@ -51,7 +51,9 @@ class RegistrarVentaAction
         ?float $pagoCon = null,
         ?array $pagos = null,
         ?string $observaciones = null,
-        ?int $listaPrecioId = null
+        ?int $listaPrecioId = null,
+        float $descuentoGlobal = 0.0,
+        ?string $motivoDescuento = null
     ): Venta {
         if (empty($items)) {
             throw new InvalidArgumentException('La venta debe contener al menos un producto.');
@@ -70,7 +72,9 @@ class RegistrarVentaAction
             $pagoCon,
             $pagos,
             $observaciones,
-            $listaPrecioId
+            $listaPrecioId,
+            $descuentoGlobal,
+            $motivoDescuento
         ) {
             // 1. Validar Cliente si la venta es a Crédito
             $cliente = null;
@@ -216,6 +220,35 @@ class RegistrarVentaAction
                 ];
             }
 
+            // 3.0. Descuento en valor fijo sobre el total (solo contado). Se reparte entre las líneas para que
+            // IVA, caja, utilidad, devoluciones y documentos reflejen lo realmente cobrado.
+            $descuentoGlobal = round(max(0.0, $descuentoGlobal), 2);
+            if ($descuentoGlobal > 0) {
+                if ($tipoPago === TipoPago::CREDITO) {
+                    throw new InvalidArgumentException('El descuento sobre el total solo aplica a ventas de contado.');
+                }
+
+                $motivoDescuento = trim((string) $motivoDescuento);
+                if ($motivoDescuento === '') {
+                    throw new InvalidArgumentException('Debes indicar el motivo del descuento.');
+                }
+
+                $totalAntesDescuento = round(array_sum(array_column($detallesParaInsertar, 'total')), 2);
+                if ($descuentoGlobal >= $totalAntesDescuento) {
+                    throw new InvalidArgumentException(sprintf(
+                        'El descuento ($%s) debe ser menor al total de la venta ($%s).',
+                        number_format($descuentoGlobal, 2),
+                        number_format($totalAntesDescuento, 2)
+                    ));
+                }
+
+                $detallesParaInsertar = $this->repartirDescuentoGlobal($detallesParaInsertar, $descuentoGlobal, $totalAntesDescuento);
+                $descuentoVenta = array_sum(array_column($detallesParaInsertar, 'descuento'));
+                $impuestoVenta = array_sum(array_column($detallesParaInsertar, 'impuesto_monto'));
+            } else {
+                $motivoDescuento = null;
+            }
+
             $totalGeneral = round(($subtotalVenta - $descuentoVenta) + $impuestoVenta, 2);
 
             // 3.1. Validar suficiencia de pagos para ventas al contado y calcular cambio
@@ -259,8 +292,10 @@ class RegistrarVentaAction
                 'tipo_pago' => $tipoPago,
                 'metodo_pago' => strtoupper($metodoPago),
                 'subtotal' => $subtotalVenta,
-                'descuento' => $descuentoVenta,
-                'impuesto' => $impuestoVenta,
+                'descuento' => round($descuentoVenta, 2),
+                'descuento_global' => $descuentoGlobal,
+                'motivo_descuento' => $motivoDescuento,
+                'impuesto' => round($impuestoVenta, 2),
                 'total' => $totalGeneral,
                 'pago_con' => $pagoCon,
                 'cambio' => $cambio,
@@ -368,6 +403,23 @@ class RegistrarVentaAction
                 );
             }
 
+            // 8.1. Dejar rastro del descuento autorizado en la auditoría
+            if ($descuentoGlobal > 0) {
+                \App\Actions\Auditoria\RegistrarAuditoriaAction::execute(
+                    accion: 'DESCUENTO_VENTA',
+                    modulo: 'VENTAS',
+                    model: $venta,
+                    datosAnteriores: null,
+                    datosNuevos: [
+                        'numero_venta' => $numeroVenta,
+                        'descuento' => $descuentoGlobal,
+                        'motivo' => $motivoDescuento,
+                        'total_cobrado' => $totalGeneral,
+                    ],
+                    descripcion: "Descuento de \${$descuentoGlobal} en la venta {$numeroVenta}. Motivo: {$motivoDescuento}"
+                );
+            }
+
             // 9. Emitir Documento Comercial Formal (Fase 18)
             $tipoDoc = match ($tipoComprobante) {
                 TipoComprobanteVenta::FACTURA => \App\Enums\TipoDocumentoVenta::FACTURA,
@@ -381,6 +433,47 @@ class RegistrarVentaAction
 
             return $venta->load(['detalles.producto', 'cliente', 'sucursal', 'usuario', 'pagos', 'documentoVenta']);
         });
+    }
+
+    /**
+     * Reparte un descuento en valor fijo (sobre el total con IVA) entre las líneas, proporcional a su total.
+     * Cada parte se convierte a base antes de IVA, de modo que el total cobrado baje exactamente el valor indicado.
+     *
+     * @param  array<int, array<string, mixed>>  $detalles
+     * @return array<int, array<string, mixed>>
+     */
+    protected function repartirDescuentoGlobal(array $detalles, float $descuento, float $totalAntes): array
+    {
+        $restante = $descuento;
+        $ultimo = array_key_last($detalles);
+
+        foreach ($detalles as $i => $det) {
+            $parte = $i === $ultimo ? $restante : round($descuento * ((float) $det['total'] / $totalAntes), 2);
+            $parte = min($parte, (float) $det['total']);
+            $restante = round($restante - $parte, 2);
+
+            $tasa = (float) $det['impuesto_porcentaje'] / 100;
+            $reduccionBase = round($parte / (1 + $tasa), 2);
+
+            $subtotal = round((float) $det['subtotal'] - $reduccionBase, 2);
+            $impuesto = round($subtotal * $tasa, 2);
+
+            $detalles[$i]['descuento'] = round((float) $det['descuento'] + $reduccionBase, 2);
+            $detalles[$i]['subtotal'] = $subtotal;
+            $detalles[$i]['impuesto_monto'] = $impuesto;
+            $detalles[$i]['total'] = round($subtotal + $impuesto, 2);
+        }
+
+        // Ajuste de centavos por redondeo: el total debe quedar exactamente en (total anterior - descuento)
+        $objetivo = round($totalAntes - $descuento, 2);
+        $diferencia = round(array_sum(array_column($detalles, 'total')) - $objetivo, 2);
+        if ($diferencia != 0.0) {
+            $detalles[$ultimo]['descuento'] = round($detalles[$ultimo]['descuento'] + $diferencia, 2);
+            $detalles[$ultimo]['subtotal'] = round($detalles[$ultimo]['subtotal'] - $diferencia, 2);
+            $detalles[$ultimo]['total'] = round($detalles[$ultimo]['total'] - $diferencia, 2);
+        }
+
+        return $detalles;
     }
 
     /**

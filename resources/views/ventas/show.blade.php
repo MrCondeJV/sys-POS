@@ -166,8 +166,17 @@
                 </div>
                 @if($venta->descuento > 0)
                 <div class="flex justify-between text-danger font-medium">
-                    <span>Descuento aplicado:</span>
+                    <span>Descuento aplicado (antes de IVA):</span>
                     <span class="tabular-nums">&minus;${{ number_format($venta->descuento, 2) }}</span>
+                </div>
+                @endif
+                @if((float) $venta->descuento_global > 0)
+                <div class="p-2.5 rounded-lg bg-warning-bg border border-warning-border text-xs space-y-0.5">
+                    <div class="flex justify-between font-semibold text-warning-text">
+                        <span>Descuento sobre el total:</span>
+                        <span class="tabular-nums">&minus;${{ number_format($venta->descuento_global, 2) }}</span>
+                    </div>
+                    <div class="text-text-secondary"><span class="font-semibold">Motivo:</span> {{ $venta->motivo_descuento }}</div>
                 </div>
                 @endif
                 @if($venta->impuesto > 0)

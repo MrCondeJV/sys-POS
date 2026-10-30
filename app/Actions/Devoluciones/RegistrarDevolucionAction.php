@@ -95,12 +95,14 @@ class RegistrarDevolucionAction
                     ));
                 }
 
-                $precioUnitario = (float) $detalle->precio_unitario;
                 $impuestoPorcentaje = (float) ($detalle->impuesto_porcentaje ?? 0);
 
-                $subtotalLinea = round($cantidadADevolver * $precioUnitario, 2);
-                $impuestoLinea = round($subtotalLinea * ($impuestoPorcentaje / 100), 2);
+                // Se reintegra lo efectivamente cobrado (neto de descuentos), en proporción a las unidades devueltas
+                $proporcion = $cantidadADevolver / (float) $detalle->cantidad;
+                $subtotalLinea = round((float) $detalle->subtotal * $proporcion, 2);
+                $impuestoLinea = round((float) $detalle->impuesto_monto * $proporcion, 2);
                 $totalLinea = round($subtotalLinea + $impuestoLinea, 2);
+                $precioUnitario = round($subtotalLinea / $cantidadADevolver, 2);
 
                 $subtotalDevolucion += $subtotalLinea;
                 $impuestoDevolucion += $impuestoLinea;
@@ -111,6 +113,7 @@ class RegistrarDevolucionAction
                     'producto_id' => $detalle->producto_id,
                     'cantidad' => $cantidadADevolver,
                     'precio_unitario' => $precioUnitario,
+                    'costo_unitario' => (float) $detalle->costo_unitario,
                     'subtotal' => $subtotalLinea,
                     'impuesto_porcentaje' => $impuestoPorcentaje,
                     'impuesto_monto' => $impuestoLinea,
@@ -182,7 +185,8 @@ class RegistrarDevolucionAction
                         tipo: TipoMovimientoInventario::DEVOLUCION_CLIENTE,
                         cantidad: $d['cantidad'],
                         referencia: $numeroDevolucion,
-                        costoUnitario: (float) $d['precio_unitario'],
+                        // El inventario reingresa valorizado al costo de la venta, no al precio de venta
+                        costoUnitario: (float) $d['costo_unitario'],
                         userId: $userId,
                         notas: "Devolución {$numeroDevolucion} de Venta #{$venta->numero_venta}"
                     ));
