@@ -288,4 +288,51 @@ class NotificacionTest extends TestCase
             'leida' => false,
         ]);
     }
+
+    public function test_campana_del_header_muestra_todas_las_no_leidas_agrupadas_por_tipo(): void
+    {
+        CompanyContext::setCompany($this->empresaA);
+
+        foreach (range(1, 7) as $i) {
+            NotificacionSistema::create([
+                'empresa_id' => $this->empresaA->id,
+                'tipo' => TipoNotificacion::STOCK_BAJO,
+                'nivel' => NivelNotificacion::WARNING,
+                'titulo' => "Stock bajo producto {$i}",
+                'mensaje' => 'Quedan pocas unidades.',
+                'leida' => false,
+            ]);
+        }
+
+        NotificacionSistema::create([
+            'empresa_id' => $this->empresaA->id,
+            'tipo' => TipoNotificacion::CAJA_CERRADA,
+            'nivel' => NivelNotificacion::INFO,
+            'titulo' => 'Caja cerrada turno mañana',
+            'mensaje' => 'Arqueo sin diferencias.',
+            'leida' => false,
+        ]);
+
+        NotificacionSistema::create([
+            'empresa_id' => $this->empresaA->id,
+            'tipo' => TipoNotificacion::CAJA_CERRADA,
+            'nivel' => NivelNotificacion::INFO,
+            'titulo' => 'Notificación ya leída',
+            'mensaje' => 'No debe aparecer en la campana.',
+            'leida' => true,
+        ]);
+
+        $response = $this->actingAs($this->adminA)->get(route('dashboard'));
+
+        $response->assertOk();
+        $response->assertSee('btn-notificaciones', false);
+        $response->assertSee(TipoNotificacion::STOCK_BAJO->label());
+        $response->assertSee(TipoNotificacion::CAJA_CERRADA->label());
+        $response->assertSee('Stock bajo producto 1');
+        $response->assertSee('Stock bajo producto 7');
+        $response->assertSee('Caja cerrada turno mañana');
+        $response->assertSee('(8 sin leer)');
+        $response->assertDontSee('Notificación ya leída');
+        $response->assertSee('Ver centro de notificaciones');
+    }
 }

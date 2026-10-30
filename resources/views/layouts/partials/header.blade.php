@@ -5,7 +5,9 @@
     $empresaActualHeader = \App\Support\Tenancy\CompanyContext::getCompany() ?? auth()->user()->empresa;
     $tieneEmpresas = $todasEmpresasActivas->count() > 0;
     $tieneSucursales = $empresaActualHeader && $empresaActualHeader->sucursales->count() > 0;
-    $alertasPendientes = \App\Models\NotificacionSistema::noLeidas()->count();
+    $notificacionesPendientes = \App\Models\NotificacionSistema::noLeidas()->latest()->get();
+    $alertasPendientes = $notificacionesPendientes->count();
+    $notificacionesPorTipo = $notificacionesPendientes->groupBy(fn ($n) => $n->tipo->value);
     $rolRealHeader = auth()->user()->roles->first()?->name
         ? str_replace('_', ' ', auth()->user()->roles->first()->name)
         : 'Usuario';
@@ -135,20 +137,78 @@
         @endif
 
         <!-- Campana de Notificaciones -->
-        <a href="{{ route('notificaciones.index') }}"
-           class="relative p-2 text-text-secondary hover:text-text-primary hover:bg-surface-muted rounded-lg transition"
-           title="Notificaciones"
-           aria-label="Notificaciones">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-            @if($alertasPendientes > 0)
-                <span class="absolute top-1.5 right-1.5 flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-danger opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-danger"></span>
-                </span>
-            @endif
-        </a>
+        <div class="relative" x-data="{ openNotificaciones: false }">
+            <button @click="openNotificaciones = !openNotificaciones" type="button"
+                    class="relative p-2 text-text-secondary hover:text-text-primary hover:bg-surface-muted rounded-lg transition cursor-pointer"
+                    title="Notificaciones"
+                    aria-label="Notificaciones"
+                    id="btn-notificaciones">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                @if($alertasPendientes > 0)
+                    <span class="absolute top-0.5 right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-danger text-white text-[10px] font-bold leading-4 text-center tabular-nums">
+                        {{ $alertasPendientes > 99 ? '99+' : $alertasPendientes }}
+                    </span>
+                @endif
+            </button>
+
+            <div x-cloak x-show="openNotificaciones" @click.away="openNotificaciones = false"
+                 class="absolute right-0 mt-2 w-80 sm:w-96 max-w-[calc(100vw-2rem)] rounded-xl bg-surface shadow-lg z-50 border border-border flex flex-col">
+                <div class="px-3.5 py-2.5 border-b border-border flex items-center justify-between gap-2">
+                    <div class="text-xs font-semibold text-text-primary">
+                        Notificaciones
+                        @if($alertasPendientes > 0)
+                            <span class="ml-1 text-text-muted font-normal">({{ $alertasPendientes }} sin leer)</span>
+                        @endif
+                    </div>
+                    @if($alertasPendientes > 0)
+                        <form action="{{ route('notificaciones.marcar-todas') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="text-[11px] font-medium text-brand-600 hover:text-brand-700 cursor-pointer">
+                                Marcar todas como leídas
+                            </button>
+                        </form>
+                    @endif
+                </div>
+
+                <div class="max-h-[60vh] overflow-y-auto">
+                    @forelse($notificacionesPorTipo as $tipoValor => $grupo)
+                        @php $tipoGrupo = $grupo->first()->tipo; @endphp
+                        <div class="border-b border-border last:border-b-0">
+                            <a href="{{ route('notificaciones.index', ['filtro' => 'no_leidas', 'tipo' => $tipoValor]) }}"
+                               class="sticky top-0 bg-surface-muted px-3.5 py-1.5 flex items-center justify-between text-[11px] font-semibold text-text-muted uppercase tracking-wider hover:text-text-primary transition">
+                                <span class="truncate">{{ $tipoGrupo->icono() }} {{ $tipoGrupo->label() }}</span>
+                                <span class="ml-2 inline-flex items-center justify-center px-1.5 py-0.5 rounded-full bg-surface border border-border text-[10px] tabular-nums">
+                                    {{ $grupo->count() }}
+                                </span>
+                            </a>
+                            @foreach($grupo as $notificacion)
+                                <form action="{{ route('notificaciones.marcar-leida', $notificacion) }}" method="POST">
+                                    @csrf
+                                    <button type="submit"
+                                            class="w-full text-left px-3.5 py-2 hover:bg-surface-muted transition cursor-pointer {{ $notificacion->nivel->borderClasses() }}"
+                                            title="{{ $notificacion->url_accion ? 'Ir al detalle' : 'Marcar como leída' }}">
+                                        <div class="text-xs font-semibold text-text-primary truncate">{{ $notificacion->titulo }}</div>
+                                        <div class="text-[11px] text-text-secondary line-clamp-2 mt-0.5">{{ $notificacion->mensaje }}</div>
+                                        <div class="text-[10px] text-text-muted mt-1 tabular-nums">{{ $notificacion->created_at->diffForHumans() }}</div>
+                                    </button>
+                                </form>
+                            @endforeach
+                        </div>
+                    @empty
+                        <div class="px-4 py-8 text-center text-xs text-text-muted">
+                            No tienes notificaciones pendientes.
+                        </div>
+                    @endforelse
+                </div>
+
+                <a href="{{ route('notificaciones.index') }}"
+                   class="px-3.5 py-2.5 border-t border-border text-center text-xs font-medium text-brand-600 hover:bg-surface-muted rounded-b-xl transition">
+                    Ver centro de notificaciones
+                </a>
+            </div>
+        </div>
 
         <!-- Menú de Usuario con Avatar sobre brand-700 -->
         <div class="relative" x-data="{ openUserMenu: false }">
