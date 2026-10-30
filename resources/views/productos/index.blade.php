@@ -11,8 +11,16 @@
         this.deleteFormAction = action;
         this.deleteProductName = name;
         this.deleteModalOpen = true;
+    },
+    imagenModalOpen: false,
+    imagenModalUrl: '',
+    imagenModalNombre: '',
+    verImagen(url, nombre) {
+        this.imagenModalUrl = url;
+        this.imagenModalNombre = nombre;
+        this.imagenModalOpen = true;
     }
-}">
+}" @keydown.escape.window="imagenModalOpen = false">
     <!-- Header Principal -->
     <x-page-header
         title="Catálogo de Productos"
@@ -119,7 +127,10 @@
                         <div class="flex items-center space-x-3 min-w-0">
                             <div class="h-10 w-10 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden flex-shrink-0 flex items-center justify-center">
                                 @if($p->imagen_path)
-                                    <img src="{{ $p->imagen_url }}" alt="{{ $p->nombre }}" class="h-full w-full object-cover">
+                                    <button type="button" @click="verImagen(@js($p->imagen_url), @js($p->nombre))"
+                                            class="h-full w-full cursor-zoom-in" title="Ver imagen de {{ $p->nombre }}">
+                                        <img src="{{ $p->imagen_url }}" alt="{{ $p->nombre }}" class="h-full w-full object-cover">
+                                    </button>
                                 @else
                                     <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -127,7 +138,7 @@
                                 @endif
                             </div>
                             <div class="min-w-0 flex-1">
-                                <div class="font-semibold text-slate-900 text-xs leading-snug line-clamp-2">{{ $p->nombre }}</div>
+                                <a href="{{ route('productos.edit', $p) }}" class="font-semibold text-slate-900 hover:text-brand-600 hover:underline text-xs leading-snug line-clamp-2" title="Editar {{ $p->nombre }}">{{ $p->nombre }}</a>
                                 <div class="@4xl:hidden text-[11px] text-slate-500 font-mono">{{ $p->codigo ?? '—' }}</div>
                                 @if($p->descripcion)
                                 <div class="text-[11px] text-slate-400 line-clamp-1 mt-0.5">{{ $p->descripcion }}</div>
@@ -255,7 +266,10 @@
                     <div class="flex items-start space-x-3 min-w-0">
                         <div class="h-10 w-10 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden flex-shrink-0 flex items-center justify-center">
                             @if($p->imagen_path)
-                                <img src="{{ $p->imagen_url }}" alt="{{ $p->nombre }}" class="h-full w-full object-cover">
+                                <button type="button" @click="verImagen(@js($p->imagen_url), @js($p->nombre))"
+                                        class="h-full w-full cursor-zoom-in" title="Ver imagen de {{ $p->nombre }}">
+                                    <img src="{{ $p->imagen_url }}" alt="{{ $p->nombre }}" class="h-full w-full object-cover">
+                                </button>
                             @else
                                 <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -263,7 +277,7 @@
                             @endif
                         </div>
                         <div class="min-w-0">
-                            <div class="font-semibold text-slate-900 text-sm leading-snug truncate">{{ $p->nombre }}</div>
+                            <a href="{{ route('productos.edit', $p) }}" class="block font-semibold text-slate-900 hover:text-brand-600 hover:underline text-sm leading-snug truncate" title="Editar {{ $p->nombre }}">{{ $p->nombre }}</a>
                             <div class="text-[11px] text-slate-500 font-mono mt-0.5">
                                 SKU: {{ $p->codigo ?? '—' }} | EAN: {{ $p->codigo_barras ?? '—' }}
                             </div>
@@ -316,6 +330,22 @@
                 {{ $productos->links() }}
             </div>
             @endif
+        </div>
+    </div>
+
+    <!-- Modal de Imagen del Producto -->
+    <div x-cloak x-show="imagenModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm" @click="imagenModalOpen = false"></div>
+        <div class="relative bg-white rounded-xl shadow-xl border border-slate-200 max-w-2xl w-full overflow-hidden">
+            <div class="flex items-center justify-between gap-3 px-4 py-3 border-b border-slate-200">
+                <h3 class="text-sm font-semibold text-slate-900 truncate" x-text="imagenModalNombre"></h3>
+                <button type="button" @click="imagenModalOpen = false" class="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition" aria-label="Cerrar">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div class="bg-slate-50 flex items-center justify-center p-4">
+                <img :src="imagenModalUrl" :alt="imagenModalNombre" class="max-h-[70vh] w-auto max-w-full object-contain rounded-lg">
+            </div>
         </div>
     </div>
 
