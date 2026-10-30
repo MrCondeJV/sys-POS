@@ -23,7 +23,6 @@
         </x-slot:actions>
     </x-page-header>
 
-    <x-flash-messages />
 
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <x-kpi-card

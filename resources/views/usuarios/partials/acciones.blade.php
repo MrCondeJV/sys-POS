@@ -15,6 +15,19 @@
     @if($user->id !== auth()->id())
         @php
             $esActivo = $user->estado === \App\Enums\EstadoGeneral::ACTIVO;
+            // Las directivas Blade no se compilan dentro de atributos de componentes x-...: el payload se arma aquí
+            $payloadEstado = [
+                'title' => $esActivo ? '¿Inactivar cuenta de ' . $user->name . '?' : '¿Reactivar cuenta de ' . $user->name . '?',
+                'message' => $esActivo ? 'El estado del usuario cambiará a INACTIVO.' : 'El estado del usuario cambiará a ACTIVO.',
+                'consequence' => $esActivo
+                    ? 'No podrá iniciar sesión y, si tiene una sesión abierta, el middleware SetCompanyContext cerrará e invalidará su sesión en su próxima petición HTTP.'
+                    : 'El colaborador podrá volver a autenticarse con sus credenciales y permisos actuales.',
+                'confirmText' => $esActivo ? 'Sí, inactivar usuario' : 'Sí, reactivar usuario',
+                'variant' => $esActivo ? 'danger' : 'primary',
+                'action' => route('usuarios.toggle-estado', $user),
+                'method' => 'POST',
+                'formId' => 'form-toggle-usuario-' . $user->id,
+            ];
         @endphp
         <x-icon-button
             type="button"
@@ -23,19 +36,7 @@
             class="{{ $esActivo ? 'text-warning hover:text-warning-text hover:bg-warning-bg' : 'text-success hover:text-success-text hover:bg-success-bg' }}"
             :title="$esActivo ? 'Inactivar acceso' : 'Reactivar acceso'"
             :aria-label="$esActivo ? 'Inactivar acceso de ' . $user->name : 'Reactivar acceso de ' . $user->name"
-            @click="$dispatch('open-modal-confirm-usuario', {
-                triggerEl: $el,
-                title: @js($esActivo ? '¿Inactivar cuenta de ' . $user->name . '?' : '¿Reactivar cuenta de ' . $user->name . '?'),
-                message: @js($esActivo ? 'El estado del usuario cambiará a INACTIVO.' : 'El estado del usuario cambiará a ACTIVO.'),
-                consequence: @js($esActivo
-                    ? 'No podrá iniciar sesión y, si tiene una sesión abierta, el middleware SetCompanyContext cerrará e invalidará su sesión en su próxima petición HTTP.'
-                    : 'El colaborador podrá volver a autenticarse con sus credenciales y permisos actuales.'),
-                confirmText: @js($esActivo ? 'Sí, inactivar usuario' : 'Sí, reactivar usuario'),
-                variant: @js($esActivo ? 'danger' : 'primary'),
-                action: @js(route('usuarios.toggle-estado', $user)),
-                method: 'POST',
-                formId: @js('form-toggle-usuario-' . $user->id)
-            })"
+            @click="$dispatch('open-modal-confirm-usuario', { ...{{ \Illuminate\Support\Js::from($payloadEstado) }}, triggerEl: $el })"
         >
             @if($esActivo)
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -52,23 +53,25 @@
 
     @can('delete', $user)
     @if($user->id !== auth()->id())
+        @php
+            $payloadEliminar = [
+                'title' => '¿Eliminar colaborador ' . $user->name . '?',
+                'message' => 'Se aplicará eliminación lógica (soft delete) sobre el registro del usuario.',
+                'consequence' => 'El usuario dejará de aparecer en los listados activos y no podrá autenticarse. Su correo electrónico permanece reservado en la base de datos y sus registros históricos (ventas, arqueos y movimientos asociados a su ID) se conservan sin cambios.',
+                'confirmText' => 'Sí, eliminar usuario',
+                'variant' => 'danger',
+                'action' => route('usuarios.destroy', $user),
+                'method' => 'DELETE',
+                'formId' => 'form-delete-usuario-' . $user->id,
+            ];
+        @endphp
         <x-icon-button
             type="button"
             variant="danger"
             size="sm"
             title="Eliminar usuario"
             aria-label="Eliminar usuario {{ $user->name }}"
-            @click="$dispatch('open-modal-confirm-usuario', {
-                triggerEl: $el,
-                title: @js('¿Eliminar colaborador ' . $user->name . '?'),
-                message: @js('Se aplicará eliminación lógica (soft delete) sobre el registro del usuario.'),
-                consequence: @js('El usuario dejará de aparecer en los listados activos y no podrá autenticarse. Su correo electrónico permanece reservado en la base de datos y sus registros históricos (ventas, arqueos y movimientos asociados a su ID) se conservan sin cambios.'),
-                confirmText: 'Sí, eliminar usuario',
-                variant: 'danger',
-                action: @js(route('usuarios.destroy', $user)),
-                method: 'DELETE',
-                formId: @js('form-delete-usuario-' . $user->id)
-            })"
+            @click="$dispatch('open-modal-confirm-usuario', { ...{{ \Illuminate\Support\Js::from($payloadEliminar) }}, triggerEl: $el })"
         >
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

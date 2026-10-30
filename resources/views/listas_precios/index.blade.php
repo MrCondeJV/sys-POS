@@ -114,6 +114,22 @@
                         Editar
                     </x-button>
                     @endcan
+                    @can('delete', $lista)
+                        @if(! $lista->es_predeterminada)
+                        <x-modal-confirm
+                            title="¿Eliminar lista de precios?"
+                            message="Se eliminará la lista «{{ $lista->nombre }}» y sus precios especiales. Solo es posible si no está asignada a clientes."
+                            action="{{ route('listas-precios.destroy', $lista) }}"
+                            method="DELETE"
+                            confirmText="Eliminar"
+                            variant="danger"
+                        >
+                            <x-slot:trigger>
+                                <x-icon-button type="button" variant="danger" icon="trash" title="Eliminar lista de precios" />
+                            </x-slot:trigger>
+                        </x-modal-confirm>
+                        @endif
+                    @endcan
                 </div>
             </td>
         </tr>
@@ -173,6 +189,22 @@
                     <x-button variant="secondary" size="sm" href="{{ route('listas-precios.edit', $lista) }}">
                         Editar
                     </x-button>
+                    @endcan
+                    @can('delete', $lista)
+                        @if(! $lista->es_predeterminada)
+                        <x-modal-confirm
+                            title="¿Eliminar lista de precios?"
+                            message="Se eliminará la lista «{{ $lista->nombre }}» y sus precios especiales. Solo es posible si no está asignada a clientes."
+                            action="{{ route('listas-precios.destroy', $lista) }}"
+                            method="DELETE"
+                            confirmText="Eliminar"
+                            variant="danger"
+                        >
+                            <x-slot:trigger>
+                                <x-icon-button type="button" variant="danger" icon="trash" title="Eliminar lista de precios" />
+                            </x-slot:trigger>
+                        </x-modal-confirm>
+                        @endif
                     @endcan
                 </div>
             </div>

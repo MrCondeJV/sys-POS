@@ -98,10 +98,13 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('catalogos')->name('catalogos.')->group(function () {
         Route::get('/', [CatalogoController::class, 'index'])->name('index');
         Route::post('/categorias', [CatalogoController::class, 'storeCategoria'])->name('categorias.store');
+        Route::put('/categorias/{categoria}', [CatalogoController::class, 'updateCategoria'])->name('categorias.update');
         Route::delete('/categorias/{categoria}', [CatalogoController::class, 'destroyCategoria'])->name('categorias.destroy');
         Route::post('/marcas', [CatalogoController::class, 'storeMarca'])->name('marcas.store');
+        Route::put('/marcas/{marca}', [CatalogoController::class, 'updateMarca'])->name('marcas.update');
         Route::delete('/marcas/{marca}', [CatalogoController::class, 'destroyMarca'])->name('marcas.destroy');
         Route::post('/unidades', [CatalogoController::class, 'storeUnidad'])->name('unidades.store');
+        Route::put('/unidades/{unidad}', [CatalogoController::class, 'updateUnidad'])->name('unidades.update');
         Route::delete('/unidades/{unidad}', [CatalogoController::class, 'destroyUnidad'])->name('unidades.destroy');
     });
 

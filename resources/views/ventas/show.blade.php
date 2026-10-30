@@ -64,13 +64,6 @@
         </x-slot:actions>
     </x-page-header>
 
-    <x-flash-messages />
-
-    @if($errors->has('email') || $errors->has('mensaje'))
-        <div class="p-4 rounded-lg bg-danger-bg border border-danger-border text-danger-text text-sm">
-            {{ $errors->first('email') ?: $errors->first('mensaje') }}
-        </div>
-    @endif
 
     <!-- Alerta de Venta Anulada -->
     @if($venta->isAnulada())

@@ -29,27 +29,30 @@
     </x-icon-button>
 
     <!-- Activar / Suspender con confirmación accesible reutilizable -->
+    @php
+        // Las directivas Blade no se compilan dentro de atributos de componentes x-...: el payload se arma aquí
+        $payloadEstadoEmpresa = [
+            'title' => ($empEstadoActivo ? '¿Suspender ' : '¿Activar ') . $emp->nombre_comercial . '?',
+            'message' => $empEstadoActivo
+                ? 'El estado del registro de la empresa cambiará a INACTIVO en el directorio de tenants.'
+                : 'El estado del registro de la empresa cambiará a ACTIVO en el directorio de tenants.',
+            'consequence' => $empEstadoActivo
+                ? 'Al suspender la empresa, sus usuarios no podrán iniciar sesión ni operar en el sistema. Las sesiones activas serán cerradas en su siguiente petición.'
+                : 'Esta acción reactiva el acceso de la empresa y permite a sus usuarios volver a iniciar sesión y operar.',
+            'confirmText' => $empEstadoActivo ? 'Suspender empresa' : 'Activar empresa',
+            'variant' => $empEstadoActivo ? 'danger' : 'primary',
+            'action' => route('empresas.toggle-estado', $emp),
+            'method' => 'POST',
+            'formId' => 'form-toggle-empresa-' . $emp->id,
+        ];
+    @endphp
     <x-icon-button
         type="button"
         variant="ghost"
         size="sm"
         :title="$empEstadoActivo ? 'Suspender empresa' : 'Activar empresa'"
         :aria-label="($empEstadoActivo ? 'Suspender ' : 'Activar ') . $emp->nombre_comercial"
-        @click="$dispatch('open-modal-confirm-empresa', {
-            triggerEl: $el,
-            title: @js(($empEstadoActivo ? '¿Suspender ' : '¿Activar ') . $emp->nombre_comercial . '?'),
-            message: @js($empEstadoActivo
-                ? 'El estado del registro de la empresa cambiará a INACTIVO en el directorio de tenants.'
-                : 'El estado del registro de la empresa cambiará a ACTIVO en el directorio de tenants.'),
-            consequence: @js($empEstadoActivo
-                ? 'Al suspender la empresa, sus usuarios no podrán iniciar sesión ni operar en el sistema. Las sesiones activas serán cerradas en su siguiente petición.'
-                : 'Esta acción reactiva el acceso de la empresa y permite a sus usuarios volver a iniciar sesión y operar.'),
-            confirmText: @js($empEstadoActivo ? 'Suspender empresa' : 'Activar empresa'),
-            variant: @js($empEstadoActivo ? 'danger' : 'primary'),
-            action: @js(route('empresas.toggle-estado', $emp)),
-            method: 'POST',
-            formId: @js('form-toggle-empresa-' . $emp->id)
-        })"
+        @click="$dispatch('open-modal-confirm-empresa', { ...{{ \Illuminate\Support\Js::from($payloadEstadoEmpresa) }}, triggerEl: $el })"
     >
         @if($empEstadoActivo)
         <svg class="h-4 w-4 text-text-secondary hover:text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor">

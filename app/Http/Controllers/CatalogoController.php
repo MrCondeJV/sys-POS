@@ -59,6 +59,30 @@ class CatalogoController extends Controller
     }
 
     /**
+     * Actualiza nombre y descripción de una categoría.
+     */
+    public function updateCategoria(Request $request, Categoria $categoria): RedirectResponse
+    {
+        if (Gate::denies('update', $categoria)) {
+            abort(403, 'No tienes autorización para editar esta categoría.');
+        }
+
+        $validated = $request->validate([
+            'nombre' => [
+                'required',
+                'string',
+                'max:150',
+                Rule::unique('categorias', 'nombre')->where('empresa_id', $categoria->empresa_id)->whereNull('deleted_at')->ignore($categoria->id),
+            ],
+            'descripcion' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $categoria->update($validated);
+
+        return back()->with('success', 'Categoría actualizada.');
+    }
+
+    /**
      * Elimina una categoría.
      */
     public function destroyCategoria(Categoria $categoria): RedirectResponse
@@ -102,6 +126,30 @@ class CatalogoController extends Controller
     }
 
     /**
+     * Actualiza nombre y descripción de una marca.
+     */
+    public function updateMarca(Request $request, Marca $marca): RedirectResponse
+    {
+        if (Gate::denies('update', $marca)) {
+            abort(403, 'No tienes autorización para editar esta marca.');
+        }
+
+        $validated = $request->validate([
+            'nombre' => [
+                'required',
+                'string',
+                'max:150',
+                Rule::unique('marcas', 'nombre')->where('empresa_id', $marca->empresa_id)->whereNull('deleted_at')->ignore($marca->id),
+            ],
+            'descripcion' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $marca->update($validated);
+
+        return back()->with('success', 'Marca actualizada.');
+    }
+
+    /**
      * Elimina una marca.
      */
     public function destroyMarca(Marca $marca): RedirectResponse
@@ -142,6 +190,30 @@ class CatalogoController extends Controller
         ]));
 
         return back()->with('success', 'Unidad de medida creada exitosamente.');
+    }
+
+    /**
+     * Actualiza código y nombre de una unidad de medida.
+     */
+    public function updateUnidad(Request $request, UnidadMedida $unidad): RedirectResponse
+    {
+        if (Gate::denies('update', $unidad)) {
+            abort(403, 'No tienes autorización para editar esta unidad de medida.');
+        }
+
+        $validated = $request->validate([
+            'nombre' => ['required', 'string', 'max:100'],
+            'codigo' => [
+                'required',
+                'string',
+                'max:20',
+                Rule::unique('unidades_medida', 'codigo')->where('empresa_id', $unidad->empresa_id)->whereNull('deleted_at')->ignore($unidad->id),
+            ],
+        ]);
+
+        $unidad->update($validated);
+
+        return back()->with('success', 'Unidad de medida actualizada.');
     }
 
     /**

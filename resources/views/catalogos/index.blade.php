@@ -3,7 +3,14 @@
 @section('title', 'Catálogos Auxiliares')
 
 @section('content')
-<div class="space-y-6" x-data="{ activeTab: 'categorias' }">
+<div class="space-y-6" x-data="{
+    activeTab: 'categorias',
+    edicion: { abierta: false, tipo: '', titulo: '', action: '', nombre: '', descripcion: '', codigo: '' },
+    abrirEdicion(datos) {
+        this.edicion = { abierta: true, descripcion: '', codigo: '', ...datos };
+        this.$nextTick(() => this.$refs.edicionNombre?.focus());
+    }
+}" @keydown.escape.window="edicion.abierta = false">
     <x-page-header
         title="Clasificación y Catálogos"
         description="Gestiona las categorías, marcas comerciales y unidades de medida de tu inventario."
@@ -111,8 +118,13 @@
                                 </x-badge>
                             </div>
                         </div>
-                        <div>
+                        <div class="flex items-center gap-1.5">
+                            @can('update', $cat)
+                            <x-icon-button type="button" variant="secondary" icon="pencil" title="Editar categoría"
+                                @click="abrirEdicion({{ \Illuminate\Support\Js::from(['tipo' => 'categorias', 'titulo' => 'Editar Categoría', 'action' => route('catalogos.categorias.update', $cat), 'nombre' => $cat->nombre, 'descripcion' => $cat->descripcion ?? '']) }})" />
+                            @endcan
                             @if($cat->productos_count === 0)
+                            @can('delete', $cat)
                             <x-modal-confirm
                                 title="¿Eliminar esta categoría?"
                                 message="Se eliminará permanentemente la categoría «{{ $cat->nombre }}»."
@@ -125,6 +137,7 @@
                                     <x-icon-button type="button" variant="danger" icon="trash" title="Eliminar categoría" />
                                 </x-slot:trigger>
                             </x-modal-confirm>
+                            @endcan
                             @else
                             <x-badge color="neutral" title="No se puede eliminar porque tiene productos vinculados">
                                 En uso
@@ -193,8 +206,13 @@
                                 </x-badge>
                             </div>
                         </div>
-                        <div>
+                        <div class="flex items-center gap-1.5">
+                            @can('update', $m)
+                            <x-icon-button type="button" variant="secondary" icon="pencil" title="Editar marca"
+                                @click="abrirEdicion({{ \Illuminate\Support\Js::from(['tipo' => 'marcas', 'titulo' => 'Editar Marca', 'action' => route('catalogos.marcas.update', $m), 'nombre' => $m->nombre, 'descripcion' => $m->descripcion ?? '']) }})" />
+                            @endcan
                             @if($m->productos_count === 0)
+                            @can('delete', $m)
                             <x-modal-confirm
                                 title="¿Eliminar esta marca?"
                                 message="Se eliminará permanentemente la marca «{{ $m->nombre }}»."
@@ -207,6 +225,7 @@
                                     <x-icon-button type="button" variant="danger" icon="trash" title="Eliminar marca" />
                                 </x-slot:trigger>
                             </x-modal-confirm>
+                            @endcan
                             @else
                             <x-badge color="neutral" title="No se puede eliminar porque tiene productos vinculados">
                                 En uso
@@ -279,8 +298,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div>
+                        <div class="flex items-center gap-1.5">
+                            @can('update', $u)
+                            <x-icon-button type="button" variant="secondary" icon="pencil" title="Editar unidad"
+                                @click="abrirEdicion({{ \Illuminate\Support\Js::from(['tipo' => 'unidades', 'titulo' => 'Editar Unidad', 'action' => route('catalogos.unidades.update', $u), 'nombre' => $u->nombre, 'codigo' => $u->codigo]) }})" />
+                            @endcan
                             @if($u->productos_count === 0)
+                            @can('delete', $u)
                             <x-modal-confirm
                                 title="¿Eliminar esta unidad de medida?"
                                 message="Se eliminará permanentemente la unidad «{{ $u->nombre }}»."
@@ -293,6 +317,7 @@
                                     <x-icon-button type="button" variant="danger" icon="trash" title="Eliminar unidad" />
                                 </x-slot:trigger>
                             </x-modal-confirm>
+                            @endcan
                             @else
                             <x-badge color="neutral" title="No se puede eliminar porque tiene productos vinculados">
                                 En uso
@@ -308,6 +333,44 @@
                 </div>
             </div>
         </div>
+    </div>
+    <!-- Modal de edición compartido por categorías, marcas y unidades -->
+    <div x-cloak x-show="edicion.abierta" class="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" @click="edicion.abierta = false"></div>
+        <form :action="edicion.action" method="POST" class="relative bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-md p-5 space-y-4">
+            @csrf
+            @method('PUT')
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <h3 class="font-bold text-slate-900 text-sm" x-text="edicion.titulo"></h3>
+                <button type="button" @click="edicion.abierta = false" class="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg" aria-label="Cerrar">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+
+            <template x-if="edicion.tipo === 'unidades'">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Código Corto / Símbolo <span class="text-danger-text">*</span></label>
+                    <input type="text" name="codigo" x-model="edicion.codigo" required maxlength="20" class="input uppercase font-mono">
+                </div>
+            </template>
+
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Nombre <span class="text-danger-text">*</span></label>
+                <input type="text" name="nombre" x-ref="edicionNombre" x-model="edicion.nombre" required maxlength="150" class="input">
+            </div>
+
+            <template x-if="edicion.tipo !== 'unidades'">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Descripción (Opcional)</label>
+                    <textarea name="descripcion" x-model="edicion.descripcion" rows="3" maxlength="255" class="input"></textarea>
+                </div>
+            </template>
+
+            <div class="flex justify-end gap-2 pt-2">
+                <x-button variant="secondary" type="button" @click="edicion.abierta = false">Cancelar</x-button>
+                <x-button variant="primary" type="submit">Guardar cambios</x-button>
+            </div>
+        </form>
     </div>
 </div>
 @endsection

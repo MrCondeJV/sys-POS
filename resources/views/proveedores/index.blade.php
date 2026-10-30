@@ -225,6 +225,7 @@
                                     </svg>
                                 </button>
 
+                                @can('delete', $p)
                                 <x-modal-confirm
                                     name="delete-proveedor-{{ $p->id }}"
                                     title="Eliminar proveedor {{ $p->razon_social }}"
@@ -245,6 +246,7 @@
                                         </button>
                                     </x-slot:trigger>
                                 </x-modal-confirm>
+                                @endcan
                             </div>
                         </td>
                     </tr>

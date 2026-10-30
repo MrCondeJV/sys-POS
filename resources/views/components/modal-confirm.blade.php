@@ -23,8 +23,10 @@
     $onConfirm = $attributes->get('@confirm') ?? $attributes->get('x-on:confirm');
     $onCancel = $attributes->get('@cancel') ?? $attributes->get('x-on:cancel');
 
-    $closeExpr = $hasExternalShow ? ($show . ' = false') : 'open = false';
-    $openExpr = $hasExternalShow ? ($show . ' = true') : 'open = true';
+    // Dentro de los métodos de Alpine el estado propio va con "this.": un "open" suelto apunta a window.open
+    // y el modal nunca se abre. La variable externa (show) sí se resuelve por el scope del componente padre.
+    $closeExpr = $hasExternalShow ? ($show . ' = false') : 'this.open = false';
+    $openExpr = $hasExternalShow ? ($show . ' = true') : 'this.open = true';
     $cancelClickExpr = ($onCancel ? ($onCancel . '; ') : '') . 'closeModal()';
     $confirmClickExpr = $onConfirm
         ? ($onConfirm . '; closeModal()')

@@ -246,7 +246,7 @@ class ListaPrecioController extends Controller
             abort(403, 'No tienes autorización para modificar precios en esta lista.');
         }
 
-        if ($detalle->lista_precio_id !== $listaPrecio->id) {
+        if ((int) $detalle->lista_precio_id !== (int) $listaPrecio->id) {
             abort(404);
         }
 

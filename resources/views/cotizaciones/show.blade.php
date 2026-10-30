@@ -46,13 +46,6 @@
         </x-slot:actions>
     </x-page-header>
 
-    <x-flash-messages />
-
-    @if($errors->any())
-        <div class="p-4 rounded-lg bg-danger-bg border border-danger-border text-danger-text text-sm">
-            @foreach($errors->all() as $error)<div>{{ $error }}</div>@endforeach
-        </div>
-    @endif
 
     @if($cotizacion->venta)
         <div class="p-4 rounded-lg bg-success-bg border border-success-border text-success-text text-sm flex items-center justify-between gap-3">

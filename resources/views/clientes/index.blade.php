@@ -177,6 +177,7 @@
                         />
 
                         @if($cliente->puedeEliminarse())
+                            @can('delete', $cliente)
                             <x-modal-confirm
                                 name="delete-cliente-{{ $cliente->id }}"
                                 title="Eliminar cliente {{ $cliente->razon_social }}"
@@ -196,6 +197,7 @@
                                     />
                                 </x-slot:trigger>
                             </x-modal-confirm>
+                            @endcan
                         @else
                             <span class="p-1.5 text-slate-300 cursor-not-allowed" title="El Consumidor Final predeterminado no puede ser eliminado">
                                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -265,6 +267,7 @@
                     <div class="flex items-center gap-1">
                         <x-icon-button href="{{ route('clientes.edit', $cliente) }}" variant="secondary" icon="pencil" title="Editar cliente" />
                         @if($cliente->puedeEliminarse())
+                            @can('delete', $cliente)
                             <x-modal-confirm
                                 name="delete-cliente-movil-{{ $cliente->id }}"
                                 title="Eliminar cliente {{ $cliente->razon_social }}"
@@ -279,6 +282,7 @@
                                     <x-icon-button type="button" variant="danger" icon="trash" title="Eliminar cliente" />
                                 </x-slot:trigger>
                             </x-modal-confirm>
+                            @endcan
                         @endif
                     </div>
                 </div>

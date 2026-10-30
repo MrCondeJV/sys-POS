@@ -229,6 +229,7 @@
                             <x-button variant="secondary" size="sm" href="{{ route('productos.edit', $p) }}">
                                 Editar
                             </x-button>
+                            @can('delete', $p)
                             <x-icon-button
                                 type="button"
                                 variant="danger"
@@ -236,6 +237,7 @@
                                 label="Eliminar Producto"
                                 @click="confirmDelete('{{ route('productos.destroy', $p) }}', '{{ addslashes($p->nombre) }}')"
                             />
+                            @endcan
                         </div>
                     </td>
                 </tr>
@@ -313,9 +315,11 @@
                         <x-button variant="secondary" size="sm" href="{{ route('productos.edit', $p) }}">
                             Editar
                         </x-button>
+                        @can('delete', $p)
                         <x-button variant="danger" size="sm" type="button" @click="confirmDelete('{{ route('productos.destroy', $p) }}', '{{ addslashes($p->nombre) }}')">
                             Eliminar
                         </x-button>
+                        @endcan
                     </div>
                 </div>
             </div>

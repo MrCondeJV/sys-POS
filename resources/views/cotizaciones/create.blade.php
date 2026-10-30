@@ -21,17 +21,6 @@
         </x-slot:actions>
     </x-page-header>
 
-    <x-flash-messages />
-
-    @if($errors->any())
-        <div class="p-4 rounded-lg bg-danger-bg border border-danger-border text-danger-text text-sm">
-            <ul class="list-disc pl-5 space-y-0.5">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
 
     <form action="{{ route('cotizaciones.store') }}" method="POST" class="grid grid-cols-1 lg:grid-cols-12 gap-5"
           @submit="if (items.length === 0) { $event.preventDefault(); alert('Agrega al menos un producto.'); }">

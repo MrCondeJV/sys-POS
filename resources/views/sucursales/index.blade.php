@@ -124,6 +124,7 @@
                                 </button>
 
                                 @if(!$s->es_principal)
+                                @can('delete', $s)
                                 <x-modal-confirm
                                     title="¿Eliminar sucursal?"
                                     message="Se eliminará la sucursal «{{ $s->nombre }}». Esta acción solo es permitida si no posee inventario ni documentos asociados."
@@ -138,6 +139,7 @@
                                         </button>
                                     </x-slot:trigger>
                                 </x-modal-confirm>
+                                @endcan
                                 @endif
                             </div>
                         </td>
@@ -215,6 +217,7 @@
                         </button>
 
                         @if(!$s->es_principal)
+                        @can('delete', $s)
                         <x-modal-confirm
                             title="¿Eliminar sucursal?"
                             message="Se eliminará la sucursal «{{ $s->nombre }}»."
@@ -229,6 +232,7 @@
                                 </button>
                             </x-slot:trigger>
                         </x-modal-confirm>
+                        @endcan
                         @endif
                     </div>
                 </div>
