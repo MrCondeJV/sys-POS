@@ -199,7 +199,12 @@ class PosTest extends TestCase
             'ticket_url',
             'show_url',
             'message',
+            'stocks',
+            'cliente' => ['id', 'tiene_credito', 'cupo_disponible'],
         ]);
+
+        // El POS recibe las existencias actualizadas para refrescar el catálogo sin recargar
+        $response->assertJsonPath("stocks.{$this->productoA->id}", 18);
 
         $this->assertDatabaseHas('ventas', [
             'empresa_id' => $this->empresaA->id,
@@ -289,6 +294,8 @@ class PosTest extends TestCase
             ]);
 
         $response->assertStatus(200);
+        $response->assertJsonPath('cliente.id', $this->clienteA->id);
+        $this->assertEquals($this->clienteA->fresh()->cupoDisponible(), $response->json('cliente.cupo_disponible'));
         $this->assertDatabaseHas('cuentas_por_cobrar', [
             'empresa_id' => $this->empresaA->id,
             'cliente_id' => $this->clienteA->id,

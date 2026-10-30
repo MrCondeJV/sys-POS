@@ -197,8 +197,22 @@ class PosController extends Controller
                 listaPrecioId: isset($validated['lista_precio_id']) ? (int) $validated['lista_precio_id'] : null
             );
 
+            // Existencias frescas de la sucursal (incluye lo vendido por otras cajas) para refrescar el catálogo del POS
+            $stocks = Inventario::where('empresa_id', $empresaId)
+                ->where('sucursal_id', $sucursalId)
+                ->pluck('stock', 'producto_id')
+                ->map(fn ($stock) => (float) $stock);
+
+            $cliente = $venta->cliente_id ? Cliente::find($venta->cliente_id) : null;
+
             return response()->json([
                 'success' => true,
+                'stocks' => $stocks,
+                'cliente' => $cliente ? [
+                    'id' => $cliente->id,
+                    'tiene_credito' => $cliente->tieneCredito(),
+                    'cupo_disponible' => (float) $cliente->cupoDisponible(),
+                ] : null,
                 'venta_id' => $venta->id,
                 'numero_venta' => $venta->numero_venta,
                 'total' => (float) $venta->total,

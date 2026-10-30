@@ -849,6 +849,9 @@ function posTerminal(config) {
                     ticket_url: data.ticket_url
                 };
 
+                this.aplicarStocks(data.stocks);
+                this.aplicarCliente(data.cliente);
+
                 this.modalPago = false;
                 this.modalExito = true;
                 this.cart = [];
@@ -861,9 +864,34 @@ function posTerminal(config) {
             }
         },
 
+        // Refresca las existencias del catálogo con las devueltas por el servidor tras la venta
+        aplicarStocks(stocks) {
+            if (!stocks) return;
+            this.allProducts.forEach(p => {
+                p.stock = parseFloat(stocks[p.id] ?? 0);
+            });
+        },
+
+        aplicarCliente(datos) {
+            if (!datos) return;
+            const cli = this.clientes.find(c => c.id == datos.id);
+            if (cli) {
+                cli.tiene_credito = datos.tiene_credito;
+                cli.cupo_disponible = datos.cupo_disponible;
+            }
+        },
+
         nuevaVenta() {
             this.modalExito = false;
-            this.initTerminal();
+            this.tipoPago = 'CONTADO';
+            this.metodoPago = 'EFECTIVO';
+            this.pagoCon = 0;
+            this.pagosMixtos = [];
+            const defaultCli = this.clientes.find(c => c.es_consumidor_final) || this.clientes[0];
+            if (defaultCli) {
+                this.selectedClienteId = defaultCli.id;
+            }
+            this.focusSearch();
         },
 
         formatCurrency(amount) {
