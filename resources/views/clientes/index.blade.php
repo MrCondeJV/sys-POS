@@ -37,9 +37,9 @@
             icon="check"
         />
         <x-kpi-card
-            title="Con Crédito Comercial"
-            :value="number_format($totalConCredito)"
-            subtitle="Cupo y cartera autorizada"
+            title="Clientes con Deuda"
+            :value="number_format($totalConDeuda)"
+            subtitle="Con ventas fiadas por cobrar"
             icon="credit-card"
         />
         <x-kpi-card
@@ -90,7 +90,7 @@
                 <th class="px-4 py-3 text-left">Cliente / Razón Social</th>
                 <th class="hidden @4xl:table-cell px-4 py-3 text-left">Identificación</th>
                 <th class="hidden @5xl:table-cell px-4 py-3 text-left">Contacto</th>
-                <th class="px-4 py-3 text-right">Línea de Crédito</th>
+                <th class="px-4 py-3 text-right">Debe</th>
                 <th class="px-4 py-3 text-center">Estado</th>
                 <th class="px-4 py-3 text-right">Acciones</th>
             </tr>
@@ -149,15 +149,19 @@
                     </div>
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap text-right">
-                    @if($cliente->tieneCredito())
-                        <div class="text-sm font-semibold font-mono tabular-nums text-slate-900">
-                            ${{ number_format($cliente->cupo_credito, 2) }}
-                        </div>
-                        <div class="text-xs text-slate-500">
-                            Plazo: {{ $cliente->plazo_dias }} días
-                        </div>
+                    @if((float) $cliente->deuda_pendiente > 0)
+                        @can('viewAny', \App\Models\CuentaPorCobrar::class)
+                            <a href="{{ route('cartera.estado-cuenta', $cliente) }}" class="text-sm font-semibold font-mono tabular-nums text-slate-900 hover:text-brand-600">
+                                ${{ number_format($cliente->deuda_pendiente, 2) }}
+                            </a>
+                        @else
+                            <span class="text-sm font-semibold font-mono tabular-nums text-slate-900">${{ number_format($cliente->deuda_pendiente, 2) }}</span>
+                        @endcan
                     @else
-                        <span class="text-xs text-slate-400 italic">Sin crédito</span>
+                        <span class="text-xs text-slate-400 italic">Sin deuda</span>
+                    @endif
+                    @if($cliente->plazo_dias > 0)
+                        <div class="text-xs text-slate-500">Plazo acordado: {{ $cliente->plazo_dias }} días</div>
                     @endif
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap text-center">
@@ -248,12 +252,14 @@
 
                 <div class="pt-2 flex items-center justify-between gap-3 border-t border-slate-100">
                     <div>
-                        <span class="text-[10px] text-slate-400 uppercase font-semibold block">Línea de Crédito</span>
-                        @if($cliente->tieneCredito())
-                            <span class="font-bold font-mono text-sm tabular-nums text-slate-900">${{ number_format($cliente->cupo_credito, 2) }}</span>
-                            <span class="text-[11px] text-slate-500">&bull; {{ $cliente->plazo_dias }} días</span>
+                        <span class="text-[10px] text-slate-400 uppercase font-semibold block">Debe</span>
+                        @if((float) $cliente->deuda_pendiente > 0)
+                            <span class="font-bold font-mono text-sm tabular-nums text-slate-900">${{ number_format($cliente->deuda_pendiente, 2) }}</span>
                         @else
-                            <span class="text-xs text-slate-400 italic">Sin crédito</span>
+                            <span class="text-xs text-slate-400 italic">Sin deuda</span>
+                        @endif
+                        @if($cliente->plazo_dias > 0)
+                            <span class="text-[11px] text-slate-500">&bull; Plazo {{ $cliente->plazo_dias }} días</span>
                         @endif
                     </div>
                     <div class="flex items-center gap-1">

@@ -6,6 +6,7 @@ use App\Rules\BelongsToActiveCompany;
 use App\Actions\Ventas\RegistrarVentaAction;
 use App\Enums\EstadoCaja;
 use App\Enums\EstadoGeneral;
+use App\Enums\EstadoPagoCartera;
 use App\Enums\EstadoSesionCaja;
 use App\Enums\TipoComprobanteVenta;
 use App\Enums\TipoPago;
@@ -13,6 +14,7 @@ use App\Models\Caja;
 use App\Models\CajaSesion;
 use App\Models\Categoria;
 use App\Models\Cliente;
+use App\Models\CuentaPorCobrar;
 use App\Models\Inventario;
 use App\Models\Producto;
 use App\Support\Tenancy\BranchContext;
@@ -121,8 +123,6 @@ class PosController extends Controller
                     'tipo_documento' => $c->tipo_documento->value,
                     'es_consumidor_final' => (bool) $c->es_predeterminado,
                     'lista_precio_id' => $c->lista_precio_id,
-                    'tiene_credito' => $c->tieneCredito(),
-                    'cupo_disponible' => (float) $c->cupoDisponible(),
                     'plazo_dias' => $c->plazo_dias,
                 ];
             });
@@ -140,6 +140,56 @@ class PosController extends Controller
             'categorias',
             'listasPrecios'
         ));
+    }
+
+    /**
+     * Resumen de crédito del cliente para el POS: deuda pendiente, facturas abiertas e historial de abonos.
+     * El cobro de los abonos se realiza en el módulo de Cartera.
+     */
+    public function carteraCliente(Cliente $cliente): JsonResponse
+    {
+        if (CompanyContext::getId() !== $cliente->empresa_id) {
+            abort(404);
+        }
+
+        if (Gate::denies('viewAny', CuentaPorCobrar::class)) {
+            return response()->json(['error' => 'No tienes autorización para consultar la cartera de clientes.'], 403);
+        }
+
+        $cuentasPendientes = $cliente->cuentasPorCobrar()->pendientes()->orderBy('fecha_emision')->get();
+        $totalDeuda = (float) $cuentasPendientes->sum('saldo_pendiente');
+
+        $abonos = $cliente->pagos()->with('cuentaPorCobrar')->take(10)->get();
+
+        return response()->json([
+            'cliente_id' => $cliente->id,
+            'total_deuda' => $totalDeuda,
+            'deuda_vencida' => (float) $cuentasPendientes->filter(fn ($c) => $c->estaVencida())->sum('saldo_pendiente'),
+            'cuentas' => $cuentasPendientes->map(fn ($c) => [
+                'id' => $c->id,
+                'numero_documento' => $c->numero_documento,
+                'concepto' => $c->concepto,
+                'monto_total' => (float) $c->monto_total,
+                'saldo_pendiente' => (float) $c->saldo_pendiente,
+                'fecha_emision' => $c->fecha_emision->format('d/m/Y'),
+                'dias_antiguedad' => $c->diasAntiguedad(),
+                'fecha_vencimiento' => $c->fecha_vencimiento?->format('d/m/Y'),
+                'vencida' => $c->estaVencida(),
+                'estado' => $c->estado->label(),
+                'url' => route('cartera.show', $c),
+            ])->values(),
+            'abonos' => $abonos->map(fn ($p) => [
+                'id' => $p->id,
+                'numero_recibo' => $p->numero_recibo,
+                'monto' => (float) $p->monto,
+                'metodo_pago' => $p->metodo_pago->label(),
+                'fecha_pago' => $p->fecha_pago?->format('d/m/Y'),
+                'documento' => $p->cuentaPorCobrar?->numero_documento,
+                'anulado' => $p->estado === EstadoPagoCartera::ANULADO,
+                'url' => route('cartera.recibo', $p),
+            ])->values(),
+            'estado_cuenta_url' => route('cartera.estado-cuenta', $cliente),
+        ]);
     }
 
     /**
@@ -203,16 +253,9 @@ class PosController extends Controller
                 ->pluck('stock', 'producto_id')
                 ->map(fn ($stock) => (float) $stock);
 
-            $cliente = $venta->cliente_id ? Cliente::find($venta->cliente_id) : null;
-
             return response()->json([
                 'success' => true,
                 'stocks' => $stocks,
-                'cliente' => $cliente ? [
-                    'id' => $cliente->id,
-                    'tiene_credito' => $cliente->tieneCredito(),
-                    'cupo_disponible' => (float) $cliente->cupoDisponible(),
-                ] : null,
                 'venta_id' => $venta->id,
                 'numero_venta' => $venta->numero_venta,
                 'total' => (float) $venta->total,

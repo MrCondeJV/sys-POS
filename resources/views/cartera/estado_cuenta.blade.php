@@ -177,7 +177,7 @@
     {{-- Encabezado & Acciones en Pantalla --}}
     <x-page-header
         title="Estado de Cuenta: {{ $cliente->razon_social }}"
-        description="Resumen integral de facturas a crédito, pagos aplicados y cupo comercial."
+        description="Resumen de ventas fiadas, abonos aplicados y saldo pendiente del cliente."
         :breadcrumbs="[
             ['label' => 'Crédito & Cartera', 'url' => route('cartera.index')],
             ['label' => 'Estado de Cuenta']
@@ -199,7 +199,7 @@
         </x-slot:actions>
     </x-page-header>
 
-    <!-- Banner de Resumen de Cartera y Cupo -->
+    <!-- Banner de Resumen de Cartera -->
     <div class="bg-white rounded-lg border border-slate-200 shadow-xs p-5 sm:p-6 space-y-6">
         <div class="flex flex-col sm:flex-row justify-between items-start pb-5 border-b border-slate-100 gap-4 print:pb-2 print:border-slate-200">
             <div class="flex items-center space-x-4">
@@ -209,10 +209,10 @@
                 <div>
                     <div class="flex items-center gap-2">
                         <h2 class="text-lg font-bold text-slate-900 print:text-base">{{ $cliente->razon_social }}</h2>
-                        @if($deudaVencida > 0)
-                            <x-badge color="danger">MORA</x-badge>
+                        @if($totalDeuda > 0)
+                            <x-badge color="warning">CON SALDO</x-badge>
                         @else
-                            <x-badge color="success">AL DÍA</x-badge>
+                            <x-badge color="success">PAZ Y SALVO</x-badge>
                         @endif
                     </div>
                     <p class="text-xs text-slate-500 font-mono mt-0.5 print:text-[9.5px]">
@@ -231,48 +231,24 @@
             </div>
         </div>
 
-        <!-- 4 Tarjetas de Métricas del Cliente -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 kpi-container">
+        <!-- Tarjetas de Métricas del Cliente -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 kpi-container">
             <div class="p-4 rounded-lg bg-slate-50 border border-slate-200/80 print-kpi-box">
-                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider block print:text-[8pt]">Cupo de Crédito</span>
-                <div class="text-xl font-bold font-mono tabular-nums text-slate-900 mt-1">${{ number_format($cupoTotal, 2) }}</div>
-                <div class="text-xs text-slate-500 mt-0.5 print:text-[7.5pt]">Plazo: {{ $cliente->plazo_dias }} días</div>
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider block print:text-[8pt]">Total Fiado</span>
+                <div class="text-xl font-bold font-mono tabular-nums text-slate-900 mt-1">${{ number_format($totalFiado, 2) }}</div>
+                <div class="text-xs text-slate-500 mt-0.5 print:text-[7.5pt]">Ventas a crédito registradas</div>
             </div>
 
             <div class="p-4 rounded-lg bg-slate-50 border border-slate-200/80 print-kpi-box">
-                <span class="text-xs font-semibold text-warning-text uppercase tracking-wider block print:text-[8pt]">Deuda Total Pendiente</span>
+                <span class="text-xs font-semibold text-success-text uppercase tracking-wider block print:text-[8pt]">Total Abonado</span>
+                <div class="text-xl font-bold font-mono tabular-nums text-success-text mt-1">${{ number_format($totalAbonado, 2) }}</div>
+                <div class="text-xs text-success-text mt-0.5 print:text-[7.5pt]">Pagos y abonos aplicados</div>
+            </div>
+
+            <div class="p-4 rounded-lg bg-slate-50 border border-slate-200/80 print-kpi-box">
+                <span class="text-xs font-semibold text-warning-text uppercase tracking-wider block print:text-[8pt]">Lo que Debe</span>
                 <div class="text-xl font-bold font-mono tabular-nums text-warning-text mt-1">${{ number_format($totalDeuda, 2) }}</div>
-                <div class="text-xs text-warning-text mt-0.5 print:text-[7.5pt]">{{ $cuentasPendientes->count() }} facturas activas</div>
-            </div>
-
-            <div class="p-4 rounded-lg bg-slate-50 border border-slate-200/80 print-kpi-box">
-                <span class="text-xs font-semibold text-success-text uppercase tracking-wider block print:text-[8pt]">Cupo Disponible</span>
-                <div class="text-xl font-bold font-mono tabular-nums text-success-text mt-1">${{ number_format($cupoDisponible, 2) }}</div>
-                <div class="text-xs text-success-text mt-0.5 print:text-[7.5pt]">{{ 100 - $porcentajeUtilizado }}% libre</div>
-            </div>
-
-            <div class="p-4 rounded-lg {{ $deudaVencida > 0 ? 'bg-danger-bg border border-danger-border' : 'bg-slate-50 border border-slate-200/80' }} print-kpi-box">
-                <span class="text-xs font-semibold {{ $deudaVencida > 0 ? 'text-danger-text' : 'text-slate-500' }} uppercase tracking-wider block print:text-[8pt]">
-                    Saldo Vencido (Mora)
-                </span>
-                <div class="text-xl font-bold font-mono tabular-nums mt-1 {{ $deudaVencida > 0 ? 'text-danger-text' : 'text-slate-400' }}">
-                    ${{ number_format($deudaVencida, 2) }}
-                </div>
-                <div class="text-xs {{ $deudaVencida > 0 ? 'text-danger-text font-medium' : 'text-slate-400' }} mt-0.5 print:text-[7.5pt]">
-                    {{ $deudaVencida > 0 ? 'Exige recaudo prioritario' : 'Sin morosidad' }}
-                </div>
-            </div>
-        </div>
-
-        <!-- Barra de uso de cupo -->
-        <div class="print:mt-1">
-            <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1.5 print:text-[8pt] print:mb-0.5">
-                <span>Cupo Utilizado</span>
-                <span>{{ $porcentajeUtilizado }}%</span>
-            </div>
-            <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden print:h-1.5">
-                <div class="h-full rounded-full {{ $porcentajeUtilizado > 90 ? 'bg-danger-text' : ($porcentajeUtilizado > 70 ? 'bg-warning-text' : 'bg-brand-600') }}"
-                     style="width: {{ $porcentajeUtilizado }}%"></div>
+                <div class="text-xs text-warning-text mt-0.5 print:text-[7.5pt]">{{ $cuentasPendientes->count() }} {{ $cuentasPendientes->count() === 1 ? 'cuenta abierta' : 'cuentas abiertas' }}</div>
             </div>
         </div>
     </div>
@@ -293,11 +269,11 @@
                     <tr>
                         <th class="px-4 py-3 text-left uppercase">Documento / Concepto</th>
                         <th class="px-4 py-3 text-left uppercase">Emisión</th>
-                        <th class="px-4 py-3 text-left uppercase">Vencimiento</th>
+                        <th class="px-4 py-3 text-left uppercase">Acordado</th>
                         <th class="px-4 py-3 text-right uppercase">Total</th>
                         <th class="px-4 py-3 text-right uppercase">Abonado</th>
                         <th class="px-4 py-3 text-right uppercase">Saldo Pendiente</th>
-                        <th class="px-4 py-3 text-center uppercase">Condición</th>
+                        <th class="px-4 py-3 text-center uppercase">Antigüedad</th>
                         <th class="px-4 py-3 text-right uppercase no-print">Acción</th>
                     </tr>
                 </thead>
@@ -309,19 +285,15 @@
                                 <div class="text-slate-500 truncate max-w-xs print:max-w-none print:text-[7pt]">{{ $c->concepto }}</div>
                             </td>
                             <td class="px-4 py-3 text-slate-700 whitespace-nowrap">{{ $c->fecha_emision->format('d/m/Y') }}</td>
-                            <td class="px-4 py-3 text-slate-700 whitespace-nowrap">{{ $c->fecha_vencimiento->format('d/m/Y') }}</td>
+                            <td class="px-4 py-3 whitespace-nowrap {{ $c->fecha_vencimiento ? 'text-slate-700' : 'text-slate-400' }}">{{ $c->fecha_vencimiento?->format('d/m/Y') ?? 'Sin acuerdo' }}</td>
                             <td class="px-4 py-3 text-right font-mono text-slate-800 whitespace-nowrap">${{ number_format($c->monto_total, 2) }}</td>
                             <td class="px-4 py-3 text-right font-mono font-semibold text-success-text whitespace-nowrap">${{ number_format($c->monto_pagado, 2) }}</td>
                             <td class="px-4 py-3 text-right font-mono font-bold text-slate-900 whitespace-nowrap">${{ number_format($c->saldo_pendiente, 2) }}</td>
                             <td class="px-4 py-3 text-center whitespace-nowrap">
                                 @if($c->estaVencida())
-                                    <x-badge color="danger">
-                                        {{ abs($c->diasDiferenciaVencimiento()) }} días mora
-                                    </x-badge>
+                                    <x-badge color="danger">Pasó fecha acordada</x-badge>
                                 @else
-                                    <x-badge color="neutral">
-                                        {{ $c->diasDiferenciaVencimiento() }} días restantes
-                                    </x-badge>
+                                    <x-badge color="neutral">{{ $c->diasAntiguedad() }} días fiado</x-badge>
                                 @endif
                             </td>
                             <td class="px-4 py-3 text-right whitespace-nowrap no-print">

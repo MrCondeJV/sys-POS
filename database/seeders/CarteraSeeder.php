@@ -42,7 +42,6 @@ class CarteraSeeder extends Seeder
                     clienteId: $clienteCreditoA->id,
                     montoTotal: 1250000.00,
                     fechaEmision: now()->subDays(5)->toDateString(),
-                    fechaVencimiento: now()->addDays(25)->toDateString(),
                     concepto: 'Factura a Crédito de Materiales de Construcción #0012',
                     observaciones: 'Pago acordado a 30 días.',
                     userId: $admin?->id
@@ -55,7 +54,6 @@ class CarteraSeeder extends Seeder
                     clienteId: $clienteCreditoA->id,
                     montoTotal: 850000.00,
                     fechaEmision: now()->subDays(20)->toDateString(),
-                    fechaVencimiento: now()->addDays(10)->toDateString(),
                     concepto: 'Factura a Crédito Tuberías y Grifería #0008',
                     observaciones: null,
                     userId: $admin?->id
@@ -80,7 +78,6 @@ class CarteraSeeder extends Seeder
                     clienteId: $clienteCreditoB->id,
                     montoTotal: 420000.00,
                     fechaEmision: now()->subDays(40)->toDateString(),
-                    fechaVencimiento: now()->subDays(10)->toDateString(), // Vencida hace 10 días
                     concepto: 'Crédito Herramientas Manuales y Taladro #0004',
                     observaciones: 'Cliente notificado por WhatsApp.',
                     userId: $admin?->id
@@ -93,7 +90,6 @@ class CarteraSeeder extends Seeder
                     clienteId: $clienteCreditoB->id,
                     montoTotal: 250000.00,
                     fechaEmision: now()->subDays(30)->toDateString(),
-                    fechaVencimiento: now()->subDays(5)->toDateString(),
                     concepto: 'Compra de Pinturas y Accesorios #0001',
                     observaciones: null,
                     userId: $admin?->id

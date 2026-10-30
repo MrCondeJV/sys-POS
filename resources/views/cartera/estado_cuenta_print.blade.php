@@ -42,7 +42,7 @@
         .badge-mora { background: var(--color-danger-bg); color: var(--color-danger-text); border: 1px solid var(--color-danger-border); }
         .badge-ok   { background: var(--color-success-bg); color: var(--color-success-text); border: 1px solid var(--color-success-border); }
 
-        .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
         .print-kpi-box { border: 1px solid var(--color-border); border-radius: 5px; padding: 8px 10px; }
         .print-kpi-box.amber { border-color: var(--color-warning-border); background: var(--color-warning-bg); }
         .print-kpi-box.green { border-color: var(--color-success-border); background: var(--color-success-bg); }
@@ -121,10 +121,10 @@
             <div class="client-name">
                 {{ $cliente->razon_social }}
                 &nbsp;
-                @if($deudaVencida > 0)
-                    <span class="status-badge badge-mora">EN MORA</span>
+                @if($totalDeuda > 0)
+                    <span class="status-badge badge-mora">CON SALDO</span>
                 @else
-                    <span class="status-badge badge-ok">AL DÍA</span>
+                    <span class="status-badge badge-ok">PAZ Y SALVO</span>
                 @endif
             </div>
             <div class="client-sub">
@@ -135,40 +135,25 @@
             </div>
             @if($cliente->direccion)<div class="client-sub">{{ $cliente->direccion }}</div>@endif
         </div>
-        <div style="text-align:right;white-space:nowrap;">
-            <div class="kpi-label">Plazo crédito</div>
-            <div style="font-size:13px;font-weight:700;color:var(--color-text-primary);">{{ $cliente->plazo_dias }} días</div>
-        </div>
     </div>
 
     {{-- KPIs --}}
     <div class="kpi-grid">
         <div class="print-kpi-box">
-            <div class="kpi-label">Cupo de Crédito</div>
-            <div class="kpi-value">${{ number_format($cupoTotal, 2) }}</div>
-            <div class="kpi-sub">Plazo: {{ $cliente->plazo_dias }} días</div>
-        </div>
-        <div class="print-kpi-box amber">
-            <div class="kpi-label">Deuda Total Pendiente</div>
-            <div class="kpi-value">${{ number_format($totalDeuda, 2) }}</div>
-            <div class="kpi-sub">{{ $cuentasPendientes->count() }} factura(s) activas</div>
+            <div class="kpi-label">Total Fiado</div>
+            <div class="kpi-value">${{ number_format($totalFiado, 2) }}</div>
+            <div class="kpi-sub">Ventas a crédito registradas</div>
         </div>
         <div class="print-kpi-box green">
-            <div class="kpi-label">Cupo Disponible</div>
-            <div class="kpi-value">${{ number_format($cupoDisponible, 2) }}</div>
-            <div class="kpi-sub">{{ 100 - $porcentajeUtilizado }}% libre</div>
+            <div class="kpi-label">Total Abonado</div>
+            <div class="kpi-value">${{ number_format($totalAbonado, 2) }}</div>
+            <div class="kpi-sub">Pagos y abonos aplicados</div>
         </div>
-        <div class="print-kpi-box {{ $deudaVencida > 0 ? 'danger' : '' }}">
-            <div class="kpi-label">Saldo Vencido (Mora)</div>
-            <div class="kpi-value">${{ number_format($deudaVencida, 2) }}</div>
-            <div class="kpi-sub">{{ $deudaVencida > 0 ? 'Exige recaudo prioritario' : 'Sin morosidad' }}</div>
+        <div class="print-kpi-box amber">
+            <div class="kpi-label">Lo que Debe</div>
+            <div class="kpi-value">${{ number_format($totalDeuda, 2) }}</div>
+            <div class="kpi-sub">{{ $cuentasPendientes->count() }} cuenta(s) abierta(s)</div>
         </div>
-    </div>
-
-    {{-- Barra cupo --}}
-    <div class="progress-row"><span>Cupo Utilizado</span><span>{{ $porcentajeUtilizado }}%</span></div>
-    <div class="progress-track">
-        <div class="progress-fill" style="width:{{ $porcentajeUtilizado }}%;background:{{ $porcentajeUtilizado > 90 ? 'var(--color-danger)' : ($porcentajeUtilizado > 70 ? 'var(--color-warning)' : 'var(--color-brand-600)') }};"></div>
     </div>
 
     {{-- Tabla 1 --}}
@@ -183,11 +168,11 @@
         <thead><tr>
             <th style="width:22%">Documento / Concepto</th>
             <th style="width:10%">Emisión</th>
-            <th style="width:10%">Vencimiento</th>
+            <th style="width:10%">Acordado</th>
             <th style="width:13%;text-align:right">Total</th>
             <th style="width:13%;text-align:right">Abonado</th>
             <th style="width:13%;text-align:right">Saldo Pendiente</th>
-            <th style="width:19%;text-align:center">Condición</th>
+            <th style="width:19%;text-align:center">Antigüedad</th>
         </tr></thead>
         <tbody>
         @forelse($cuentasPendientes as $c)
@@ -197,15 +182,15 @@
                     <div style="color:var(--color-text-secondary);font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;">{{ $c->concepto }}</div>
                 </td>
                 <td style="white-space:nowrap;">{{ $c->fecha_emision->format('d/m/Y') }}</td>
-                <td style="white-space:nowrap;">{{ $c->fecha_vencimiento->format('d/m/Y') }}</td>
+                <td style="white-space:nowrap;">{{ $c->fecha_vencimiento?->format('d/m/Y') ?? 'Sin acuerdo' }}</td>
                 <td style="text-align:right;white-space:nowrap;">${{ number_format($c->monto_total, 2) }}</td>
                 <td style="text-align:right;font-weight:700;color:var(--color-success-text);white-space:nowrap;">${{ number_format($c->monto_pagado, 2) }}</td>
                 <td style="text-align:right;font-weight:700;white-space:nowrap;">${{ number_format($c->saldo_pendiente, 2) }}</td>
                 <td style="text-align:center;">
                     @if($c->estaVencida())
-                        <span class="pill pill-mora">{{ abs($c->diasDiferenciaVencimiento()) }} días mora</span>
+                        <span class="pill pill-mora">Pasó fecha acordada</span>
                     @else
-                        <span class="pill pill-pending">{{ $c->diasDiferenciaVencimiento() }} días restantes</span>
+                        <span class="pill pill-pending">{{ $c->diasAntiguedad() }} días fiado</span>
                     @endif
                 </td>
             </tr>

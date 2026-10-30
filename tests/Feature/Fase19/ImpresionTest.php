@@ -242,7 +242,6 @@ class ImpresionTest extends TestCase
             clienteId: $this->clienteA->id,
             montoTotal: 500000.00,
             fechaEmision: now()->toDateString(),
-            fechaVencimiento: now()->addDays(30)->toDateString(),
             concepto: 'Factura a Crédito de Prueba',
             userId: $this->adminA->id
         );

@@ -265,14 +265,12 @@ class VentaTest extends TestCase
         $this->assertEquals(400000.00, $this->clienteA->fresh()->cupoDisponible());
     }
 
-    public function test_venta_a_credito_falla_si_supera_cupo_disponible(): void
+    public function test_venta_a_credito_no_esta_limitada_por_el_cupo(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-
         $action = app(RegistrarVentaAction::class);
 
-        // 40 bolsas x 30.000 = 1.200.000 (Supera el cupo de 1.000.000)
-        $action->execute(
+        // 40 bolsas x 30.000 = 1.200.000 (supera el cupo registrado de 1.000.000 y aun así se fía)
+        $venta = $action->execute(
             empresaId: $this->empresaA->id,
             sucursalId: $this->sucursalA->id,
             userId: $this->adminA->id,
@@ -287,6 +285,40 @@ class VentaTest extends TestCase
             tipoPago: TipoPago::CREDITO,
             metodoPago: 'CREDITO'
         );
+
+        $this->assertEquals(1200000.00, $venta->total);
+        $this->assertDatabaseHas('cuentas_por_cobrar', [
+            'cliente_id' => $this->clienteA->id,
+            'monto_total' => 1200000.00,
+            'saldo_pendiente' => 1200000.00,
+        ]);
+    }
+
+    public function test_cliente_sin_cupo_registrado_puede_comprar_a_credito(): void
+    {
+        $clienteSinCupo = Cliente::factory()->for($this->empresaA)->create(['cupo_credito' => 0]);
+
+        $venta = app(RegistrarVentaAction::class)->execute(
+            empresaId: $this->empresaA->id,
+            sucursalId: $this->sucursalA->id,
+            userId: $this->adminA->id,
+            items: [
+                [
+                    'producto_id' => $this->productoA->id,
+                    'cantidad' => 2,
+                    'precio_unitario' => 30000.00,
+                ],
+            ],
+            clienteId: $clienteSinCupo->id,
+            tipoPago: TipoPago::CREDITO,
+            metodoPago: 'CREDITO'
+        );
+
+        $this->assertEquals(TipoPago::CREDITO, $venta->tipo_pago);
+        $this->assertDatabaseHas('cuentas_por_cobrar', [
+            'cliente_id' => $clienteSinCupo->id,
+            'saldo_pendiente' => 60000.00,
+        ]);
     }
 
     public function test_anulacion_de_venta_reingresa_existencias_al_inventario(): void

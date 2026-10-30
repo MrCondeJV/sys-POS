@@ -6,7 +6,7 @@
 <div class="space-y-6">
     <x-page-header
         title="Reporte de Cartera y Antigüedad de Saldos"
-        subtitle="Monitoreo de cuentas por cobrar, vencimientos y clasificación de riesgo por mora."
+        subtitle="Ventas fiadas por cobrar, abonos recibidos y antigüedad de la deuda desde la venta."
         :breadcrumbs="[
             ['label' => 'Reportes', 'url' => route('reportes.index')],
             ['label' => 'Cartera']
@@ -59,33 +59,33 @@
         />
 
         <x-kpi-card
-            label="Corriente (Al día)"
-            value="${{ number_format($corriente, 2) }}"
-            context="No vencida"
+            label="Hasta 30 Días"
+            value="${{ number_format($hasta30, 2) }}"
+            context="Fiado reciente"
             variant="success"
             icon="check"
         />
 
         <x-kpi-card
-            label="Mora 1 - 30 Días"
-            value="${{ number_format($mora1a30, 2) }}"
-            context="Vencimiento reciente"
+            label="31 - 60 Días"
+            value="${{ number_format($de31a60, 2) }}"
+            context="Desde la venta"
             variant="warning"
-            icon="alert"
+            icon="calendar"
         />
 
         <x-kpi-card
-            label="Mora 31 - 60 Días"
-            value="${{ number_format($mora31a60, 2) }}"
-            context="Mora intermedia"
+            label="61 - 90 Días"
+            value="${{ number_format($de61a90, 2) }}"
+            context="Desde la venta"
             variant="warning"
-            icon="alert"
+            icon="calendar"
         />
 
         <x-kpi-card
-            label="Mora > 60 Días"
-            value="${{ number_format($moraMas60, 2) }}"
-            context="Cartera de alto riesgo"
+            label="Más de 90 Días"
+            value="${{ number_format($mas90, 2) }}"
+            context="Deuda más antigua"
             variant="danger"
             icon="alert"
         />
@@ -100,7 +100,7 @@
                         <th>Documento</th>
                         <th>Cliente</th>
                         <th>Emisión</th>
-                        <th>Vencimiento</th>
+                        <th>Antigüedad / Acuerdo</th>
                         <th class="text-right">Monto Original</th>
                         <th class="text-right">Abonado</th>
                         <th class="text-right">Saldo Pendiente</th>
@@ -114,9 +114,9 @@
                         <td class="text-xs font-medium text-slate-800">{{ $cp->cliente?->razon_social }}</td>
                         <td class="text-xs text-slate-500 font-mono">{{ $cp->fecha_emision->format('d/m/Y') }}</td>
                         <td class="text-xs font-mono {{ $cp->estaVencida() ? 'text-danger-text font-semibold' : 'text-slate-600' }}">
-                            {{ $cp->fecha_vencimiento->format('d/m/Y') }}
-                            @if($cp->estaVencida())
-                                <span class="text-[10px] text-danger-text">({{ abs($cp->diasDiferenciaVencimiento()) }} d mora)</span>
+                            {{ $cp->diasAntiguedad() }} d
+                            @if($cp->fecha_vencimiento)
+                                <span class="text-[10px] {{ $cp->estaVencida() ? 'text-danger-text' : 'text-slate-400' }}">(acordado {{ $cp->fecha_vencimiento->format('d/m/Y') }})</span>
                             @endif
                         </td>
                         <td class="text-right font-mono text-xs text-slate-700 tabular-nums">${{ number_format($cp->monto_total, 2) }}</td>

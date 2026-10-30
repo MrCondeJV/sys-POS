@@ -532,30 +532,27 @@ class ReporteController extends Controller
         $totalOriginal = (float) $cuentas->sum('monto_total');
         $totalCobrado = (float) $cuentas->sum('monto_pagado');
 
-        // Baldes de envejecimiento
-        $hoy = Carbon::today();
-        $corriente = 0.0;
-        $mora1a30 = 0.0;
-        $mora31a60 = 0.0;
-        $moraMas60 = 0.0;
+        // Antigüedad de la deuda desde la venta (el crédito no maneja plazos obligatorios)
+        $hasta30 = 0.0;
+        $de31a60 = 0.0;
+        $de61a90 = 0.0;
+        $mas90 = 0.0;
 
         foreach ($cuentas->whereIn('estado', [EstadoCuentaCobrar::PENDIENTE, EstadoCuentaCobrar::PARCIAL]) as $c) {
             $saldo = (float) $c->saldo_pendiente;
-            if ($c->fecha_vencimiento >= $hoy) {
-                $corriente += $saldo;
+            $dias = $c->diasAntiguedad();
+            if ($dias <= 30) {
+                $hasta30 += $saldo;
+            } elseif ($dias <= 60) {
+                $de31a60 += $saldo;
+            } elseif ($dias <= 90) {
+                $de61a90 += $saldo;
             } else {
-                $diasMora = $c->fecha_vencimiento->diffInDays($hoy);
-                if ($diasMora <= 30) {
-                    $mora1a30 += $saldo;
-                } elseif ($diasMora <= 60) {
-                    $mora31a60 += $saldo;
-                } else {
-                    $moraMas60 += $saldo;
-                }
+                $mas90 += $saldo;
             }
         }
 
-        $cuentasPaginadas = $query->latest('fecha_vencimiento')->paginate(25)->withQueryString();
+        $cuentasPaginadas = $query->latest('fecha_emision')->paginate(25)->withQueryString();
 
         $clientes = Cliente::orderBy('razon_social')->take(50)->get();
         $sucursales = Sucursal::orderBy('nombre')->get();
@@ -565,10 +562,10 @@ class ReporteController extends Controller
             'saldoTotalPendiente',
             'totalOriginal',
             'totalCobrado',
-            'corriente',
-            'mora1a30',
-            'mora31a60',
-            'moraMas60',
+            'hasta30',
+            'de31a60',
+            'de61a90',
+            'mas90',
             'clientes',
             'sucursales',
             'clienteId',
@@ -586,7 +583,7 @@ class ReporteController extends Controller
 
         $cuentas = CuentaPorCobrar::with(['cliente', 'sucursal'])
             ->pendientes()
-            ->orderBy('fecha_vencimiento')
+            ->orderBy('fecha_emision')
             ->take(500)
             ->get();
 

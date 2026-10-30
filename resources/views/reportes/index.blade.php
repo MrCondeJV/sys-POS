@@ -131,8 +131,8 @@
                     </span>
                     <span class="kpi-label">Créditos</span>
                 </div>
-                <h3 class="text-sm font-semibold text-slate-900 group-hover:text-brand-700 transition">Cartera y Mora</h3>
-                <p class="text-xs text-slate-500 mt-1 leading-relaxed">Cuentas por cobrar clasificadas por antigüedad de vencimiento: Corriente, 1-30, 31-60 y más de 60 días de mora.</p>
+                <h3 class="text-sm font-semibold text-slate-900 group-hover:text-brand-700 transition">Cartera por Cobrar</h3>
+                <p class="text-xs text-slate-500 mt-1 leading-relaxed">Ventas fiadas por cobrar clasificadas por antigüedad desde la venta: hasta 30, 31-60, 61-90 y más de 90 días.</p>
             </div>
             <div class="mt-4 flex items-center justify-between text-xs font-semibold text-brand-600">
                 <span>Generar Reporte</span>

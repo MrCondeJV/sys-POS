@@ -87,19 +87,14 @@ class CuentaPorCobrar extends Model
     }
 
     /**
-     * Scope para cuentas vencidas (en mora).
+     * Scope para cuentas con fecha de pago acordada que ya pasó.
+     * Las cuentas sin acuerdo de pago (sin fecha) nunca se consideran vencidas.
      */
     public function scopeVencidas(Builder $query): Builder
     {
-        return $query->pendientes()->where('fecha_vencimiento', '<', now()->toDateString());
-    }
-
-    /**
-     * Scope para cuentas vigentes (no vencidas).
-     */
-    public function scopeVigentes(Builder $query): Builder
-    {
-        return $query->pendientes()->where('fecha_vencimiento', '>=', now()->toDateString());
+        return $query->pendientes()
+            ->whereNotNull('fecha_vencimiento')
+            ->where('fecha_vencimiento', '<', now()->toDateString());
     }
 
     /**
@@ -133,25 +128,28 @@ class CuentaPorCobrar extends Model
     }
 
     /**
-     * Determina si la cuenta está vencida a la fecha actual.
+     * Días transcurridos desde que se fió la venta (antigüedad de la deuda).
+     * El crédito no maneja plazos de pago: es solo un dato informativo.
+     */
+    public function diasAntiguedad(): int
+    {
+        return (int) $this->fecha_emision->copy()->startOfDay()->diffInDays(Carbon::today());
+    }
+
+    /**
+     * Indica si tiene una fecha de pago acordada y ya pasó. Es solo un aviso: no bloquea ventas ni abonos.
      */
     public function estaVencida(): bool
     {
+        if (! $this->fecha_vencimiento) {
+            return false;
+        }
+
         if ($this->estado === EstadoCuentaCobrar::PAGADA || $this->estado === EstadoCuentaCobrar::ANULADA) {
             return false;
         }
 
         return $this->fecha_vencimiento->isPast() && ! $this->fecha_vencimiento->isToday();
-    }
-
-    /**
-     * Días restantes para el vencimiento (positivo: faltan días; negativo: días de mora).
-     */
-    public function diasDiferenciaVencimiento(): int
-    {
-        $hoy = Carbon::today();
-
-        return (int) $hoy->diffInDays($this->fecha_vencimiento, false);
     }
 
     /**

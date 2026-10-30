@@ -28,7 +28,8 @@ class ClienteController extends Controller
         $tipoPersona = $request->input('tipo_persona');
         $estado = $request->input('estado');
 
-        $query = Cliente::latest();
+        $query = Cliente::latest()
+            ->withSum(['cuentasPorCobrar as deuda_pendiente' => fn ($q) => $q->pendientes()], 'saldo_pendiente');
 
         if (! empty($term)) {
             $query->buscar($term);
@@ -47,7 +48,7 @@ class ClienteController extends Controller
         // Métricas / KPIs del Catálogo
         $totalClientes = Cliente::count();
         $totalActivos = Cliente::activo()->count();
-        $totalConCredito = Cliente::where('cupo_credito', '>', 0)->count();
+        $totalConDeuda = Cliente::whereHas('cuentasPorCobrar', fn ($q) => $q->pendientes())->count();
         $totalJuridicos = Cliente::where('tipo_persona', TipoPersona::JURIDICA->value)->count();
 
         return view('clientes.index', compact(
@@ -57,7 +58,7 @@ class ClienteController extends Controller
             'estado',
             'totalClientes',
             'totalActivos',
-            'totalConCredito',
+            'totalConDeuda',
             'totalJuridicos'
         ));
     }
@@ -103,14 +104,12 @@ class ClienteController extends Controller
             'direccion' => ['nullable', 'string', 'max:255'],
             'ciudad' => ['nullable', 'string', 'max:100'],
             'departamento' => ['nullable', 'string', 'max:100'],
-            'cupo_credito' => ['nullable', 'numeric', 'min:0'],
             'plazo_dias' => ['nullable', 'integer', 'min:0', 'max:365'],
             'estado' => ['required', Rule::enum(EstadoGeneral::class)],
         ], [
             'numero_documento.unique' => 'Ya existe un cliente registrado con este número de documento en la empresa.',
         ]);
 
-        $validated['cupo_credito'] = (float) ($validated['cupo_credito'] ?? 0);
         $validated['plazo_dias'] = (int) ($validated['plazo_dias'] ?? 0);
 
         Cliente::create(array_merge($validated, [
@@ -154,7 +153,6 @@ class ClienteController extends Controller
             'direccion' => ['nullable', 'string', 'max:255'],
             'ciudad' => ['nullable', 'string', 'max:100'],
             'departamento' => ['nullable', 'string', 'max:100'],
-            'cupo_credito' => ['nullable', 'numeric', 'min:0'],
             'plazo_dias' => ['nullable', 'integer', 'min:0', 'max:365'],
             'estado' => ['required', Rule::enum(EstadoGeneral::class)],
         ];
@@ -176,7 +174,6 @@ class ClienteController extends Controller
             'numero_documento.unique' => 'Ya existe un cliente registrado con este número de documento en la empresa.',
         ]);
 
-        $validated['cupo_credito'] = (float) ($validated['cupo_credito'] ?? 0);
         $validated['plazo_dias'] = (int) ($validated['plazo_dias'] ?? 0);
 
         $cliente->update($validated);

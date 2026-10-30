@@ -19,10 +19,10 @@ class RegistrarCuentaPorCobrarAction
         int $clienteId,
         float $montoTotal,
         string $fechaEmision,
-        string $fechaVencimiento,
         string $concepto,
         ?string $observaciones = null,
-        ?int $userId = null
+        ?int $userId = null,
+        ?string $fechaVencimiento = null
     ): CuentaPorCobrar {
         if ($montoTotal <= 0) {
             throw new InvalidArgumentException('El monto total de la cuenta por cobrar debe ser mayor a cero.');
@@ -34,10 +34,10 @@ class RegistrarCuentaPorCobrarAction
             $clienteId,
             $montoTotal,
             $fechaEmision,
-            $fechaVencimiento,
             $concepto,
             $observaciones,
-            $userId
+            $userId,
+            $fechaVencimiento
         ) {
             // Generación de consecutivo atómico CXC-00001
             $ultimoRegistro = CuentaPorCobrar::withoutGlobalScopes()
@@ -63,6 +63,7 @@ class RegistrarCuentaPorCobrarAction
                 'monto_pagado' => 0,
                 'saldo_pendiente' => $montoTotal,
                 'fecha_emision' => $fechaEmision,
+                // Acuerdo de pago opcional: sin fecha, la deuda queda abierta sin plazo
                 'fecha_vencimiento' => $fechaVencimiento,
                 'estado' => EstadoCuentaCobrar::PENDIENTE,
                 'observaciones' => $observaciones,

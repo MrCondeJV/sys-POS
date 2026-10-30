@@ -379,11 +379,11 @@ class SimulacionVentaCompletaTest extends TestCase
     }
 
     /**
-     * SIMULACIÓN 4: Detección de fallo cuando una venta a crédito supera el cupo permitido.
+     * SIMULACIÓN 4: El crédito no está limitado por cupo: se fía lo que se le venda al cliente.
      */
-    public function test_simulacion_rechaza_credito_si_supera_cupo_del_cliente(): void
+    public function test_simulacion_permite_credito_aunque_supere_el_cupo_registrado(): void
     {
-        // Cliente tiene $1.500.000 de cupo. Intentamos venderle 5 taladros ($2.082.500 con IVA)
+        // Cliente tiene $1.500.000 registrados como cupo. Se le venden 5 taladros ($2.082.500 con IVA)
         $payload = [
             'caja_sesion_id' => $this->sesionA->id,
             'cliente_id' => $this->clienteCredito->id,
@@ -401,17 +401,18 @@ class SimulacionVentaCompletaTest extends TestCase
 
         $response = $this->actingAs($this->cajeroA)->postJson(route('pos.procesar'), $payload);
 
-        // Debe fallar con código 422 y mensaje explicativo de cupo excedido
-        $response->assertStatus(422);
-        $response->assertJson([
-            'success' => false,
-        ]);
-        $this->assertStringContainsString('supera el cupo de crédito disponible', $response->json('error'));
+        $response->assertOk();
+        $response->assertJson(['success' => true]);
 
-        // El inventario NO debe ser alterado
+        $this->assertDatabaseHas('cuentas_por_cobrar', [
+            'cliente_id' => $this->clienteCredito->id,
+            'monto_total' => 2082500.00,
+            'saldo_pendiente' => 2082500.00,
+        ]);
+
         $this->assertDatabaseHas('inventarios', [
             'producto_id' => $this->productoTaladro->id,
-            'stock' => 5,
+            'stock' => 0,
         ]);
     }
 
@@ -438,7 +439,7 @@ class SimulacionVentaCompletaTest extends TestCase
         $response = $this->actingAs($this->cajeroA)->postJson(route('pos.procesar'), $payload);
 
         $response->assertStatus(422);
-        $this->assertStringContainsString('no tiene crédito comercial habilitado', $response->json('error'));
+        $this->assertStringContainsString('No se puede vender a crédito al Consumidor Final', $response->json('error'));
     }
 
     /**

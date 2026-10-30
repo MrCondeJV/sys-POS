@@ -384,7 +384,6 @@ class AuditoriaVulnerabilidadesTest extends TestCase
             clienteId: $this->clienteA->id,
             montoTotal: 50000.00,
             fechaEmision: now()->toDateString(),
-            fechaVencimiento: now()->addDays(30)->toDateString(),
             concepto: 'Factura para prueba de sobrepago'
         );
 

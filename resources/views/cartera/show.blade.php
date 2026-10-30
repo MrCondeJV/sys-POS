@@ -115,22 +115,21 @@
                         <span class="font-medium text-slate-800">{{ $cuenta->fecha_emision->format('d/m/Y') }}</span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-slate-500">Fecha de Vencimiento:</span>
-                        <span class="font-medium text-slate-800">{{ $cuenta->fecha_vencimiento->format('d/m/Y') }}</span>
+                        <span class="text-slate-500">Fecha de Pago Acordada:</span>
+                        <span class="font-medium {{ $cuenta->fecha_vencimiento ? 'text-slate-800' : 'text-slate-400' }}">
+                            {{ $cuenta->fecha_vencimiento?->format('d/m/Y') ?? 'Sin acuerdo' }}
+                        </span>
                     </div>
                     <div class="flex items-center justify-between pt-1">
-                        <span class="text-slate-500">Condición de Plazo:</span>
+                        <span class="text-slate-500">Antigüedad:</span>
                         @if($cuenta->estado->value === 'PAGADA')
                             <span class="font-semibold text-success-text">Totalmente Cancelada</span>
                         @elseif($cuenta->estaVencida())
-                            <span class="font-semibold text-danger-text flex items-center">
-                                <svg class="h-3.5 w-3.5 mr-1 text-danger-text" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                </svg>
-                                {{ abs($cuenta->diasDiferenciaVencimiento()) }} días de mora
+                            <span class="font-semibold text-danger-text">
+                                {{ $cuenta->diasAntiguedad() }} días · pasó la fecha acordada
                             </span>
                         @else
-                            <span class="font-medium text-slate-700">Faltan {{ $cuenta->diasDiferenciaVencimiento() }} días</span>
+                            <span class="font-medium text-slate-700">{{ $cuenta->diasAntiguedad() }} {{ $cuenta->diasAntiguedad() === 1 ? 'día' : 'días' }} desde la venta</span>
                         @endif
                     </div>
                 </div>
@@ -176,12 +175,8 @@
                         <span class="font-medium text-slate-900 truncate max-w-xs">{{ $cuenta->cliente->email ?? 'Sin registrar' }}</span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span>Cupo de Crédito:</span>
-                        <span class="font-semibold font-mono text-slate-900">${{ number_format($cuenta->cliente->cupo_credito, 2) }}</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span>Cupo Disponible:</span>
-                        <span class="font-bold font-mono text-success-text">${{ number_format($cuenta->cliente->cupoDisponible(), 2) }}</span>
+                        <span>Deuda Total del Cliente:</span>
+                        <span class="font-bold font-mono text-slate-900">${{ number_format($cuenta->cliente->saldoTotalPendiente(), 2) }}</span>
                     </div>
                 </div>
             </div>

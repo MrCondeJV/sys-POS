@@ -56,7 +56,6 @@
           x-data="{
               tipoPersona: '{{ old('tipo_persona', $cliente->tipo_persona->value) }}',
               tipoDoc: '{{ old('tipo_documento', $cliente->tipo_documento->value) }}',
-              cupoCredito: '{{ old('cupo_credito', $cliente->cupo_credito) }}',
               plazoDias: '{{ old('plazo_dias', $cliente->plazo_dias) }}',
               onTipoPersonaChange() {
                   if (this.tipoPersona === 'JURIDICA' && this.tipoDoc === 'CC') {
@@ -243,34 +242,19 @@
                 </div>
                 <div>
                     <h2 class="text-sm font-bold text-slate-900">Condiciones Comerciales & Crédito</h2>
-                    <p class="text-xs text-slate-500">Parámetros para ventas a crédito, plazos de pago y estado operativo.</p>
+                    <p class="text-xs text-slate-500">Acuerdo de pago opcional para ventas a crédito y estado operativo.</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                    <label for="cupo_credito" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                        Cupo de Crédito ($ COP)
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-medium text-sm">$</div>
-                        <input type="number" step="0.01" min="0" id="cupo_credito" name="cupo_credito" value="{{ old('cupo_credito', $cliente->cupo_credito) }}"
-                            class="block w-full pl-7 pr-3 py-2 border border-slate-300 rounded-lg text-sm font-mono tabular-nums placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
-                    </div>
-                    <p class="text-[11px] text-slate-500 mt-1">Dejar en 0 si no maneja crédito.</p>
-                    @error('cupo_credito')
-                        <p class="text-xs text-danger-text mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label for="plazo_dias" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                        Plazo de Pago (Días)
+                        Plazo Acordado (Días) <span class="text-slate-400 text-[11px] font-normal normal-case">(Opcional)</span>
                     </label>
                     <input type="number" min="0" max="365" id="plazo_dias" name="plazo_dias" value="{{ old('plazo_dias', $cliente->plazo_dias) }}"
                         placeholder="Ej: 15, 30, 60"
                         class="block w-full py-2 px-3 border border-slate-300 rounded-lg text-sm font-mono tabular-nums placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
-                    <p class="text-[11px] text-slate-500 mt-1">Días autorizados para cancelar la factura.</p>
+                    <p class="text-[11px] text-slate-500 mt-1">Solo como referencia: si se define, las ventas a crédito anotan la fecha acordada. Déjalo en 0 si no hay acuerdo.</p>
                     @error('plazo_dias')
                         <p class="text-xs text-danger-text mt-1">{{ $message }}</p>
                     @enderror

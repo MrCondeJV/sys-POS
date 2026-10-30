@@ -8,7 +8,9 @@
     productos: {{ Js::from($productos) }},
     clientes: {{ Js::from($clientes) }},
     csrfToken: '{{ csrf_token() }}',
-    procesarUrl: '{{ route('pos.procesar') }}'
+    procesarUrl: '{{ route('pos.procesar') }}',
+    carteraUrlTemplate: '{{ route('pos.cliente-cartera', '__CLIENTE__') }}',
+    puedeVerCartera: @js(auth()->user()->can('viewAny', \App\Models\CuentaPorCobrar::class))
 })"
 x-init="initTerminal()"
 @keydown.window="handleHotkeys($event)"
@@ -183,23 +185,115 @@ class="max-w-[1720px] mx-auto pb-10">
         <div class="lg:col-span-5 space-y-4">
             
             <div class="card p-5 space-y-4 flex flex-col justify-between">
-                
+
+                <!-- Tipo de Venta: Contado o Crédito -->
+                <div>
+                    <label class="label-base">Tipo de venta</label>
+                    <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-lg">
+                        <button type="button" @click="cambiarTipoVenta('CONTADO')"
+                                :class="tipoPago === 'CONTADO' ? 'bg-white text-slate-900 font-semibold shadow-xs' : 'text-slate-600 font-medium hover:text-slate-900'"
+                                class="py-2 text-xs rounded-md transition">
+                            Venta de contado
+                        </button>
+                        <button type="button" @click="cambiarTipoVenta('CREDITO')"
+                                :class="tipoPago === 'CREDITO' ? 'bg-white text-amber-800 font-semibold shadow-xs' : 'text-slate-600 font-medium hover:text-slate-900'"
+                                class="py-2 text-xs rounded-md transition">
+                            Venta a crédito
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Selector de Cliente -->
                 <div>
-                    <div class="flex items-center justify-between mb-1.5">
-                        <label class="label-base">Cliente</label>
-                        <template x-if="selectedCliente && selectedCliente.tiene_credito">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold font-mono text-emerald-800 bg-emerald-50 border border-emerald-200">
-                                Cupo Crédito: $<span x-text="formatCurrency(selectedCliente.cupo_disponible)"></span>
-                            </span>
-                        </template>
-                    </div>
+                    <label class="label-base">Cliente</label>
                     <select x-model="selectedClienteId"
                             class="input text-xs sm:text-sm font-medium">
                         <template x-for="c in clientes" :key="c.id">
                             <option :value="c.id" x-text="c.razon_social + (c.es_consumidor_final ? ' (Consumidor Final)' : ' - ' + c.numero_documento)"></option>
                         </template>
                     </select>
+                </div>
+
+                <!-- Panel de Crédito del Cliente: deuda, facturas pendientes e historial de abonos -->
+                <div x-show="tipoPago === 'CREDITO'" x-cloak class="border border-amber-200 bg-amber-50/60 rounded-lg p-3 space-y-3">
+                    <template x-if="selectedCliente && selectedCliente.es_consumidor_final">
+                        <p class="text-xs font-semibold text-danger-text">
+                            No se puede vender a crédito al Consumidor Final. Selecciona el cliente al que se le fía la venta.
+                        </p>
+                    </template>
+
+                    <template x-if="selectedCliente && !selectedCliente.es_consumidor_final">
+                        <div class="space-y-3">
+                            <div class="grid grid-cols-2 gap-2 text-center">
+                                <div class="bg-white rounded-md border border-amber-200 px-2 py-1.5">
+                                    <div class="text-[10px] font-semibold text-slate-500 uppercase">Debe</div>
+                                    <div class="text-sm font-bold font-mono tabular-nums text-slate-900">$<span x-text="formatCurrency(cartera?.total_deuda)"></span></div>
+                                </div>
+                                <div class="bg-white rounded-md border border-amber-200 px-2 py-1.5">
+                                    <div class="text-[10px] font-semibold text-slate-500 uppercase">Cuentas abiertas</div>
+                                    <div class="text-sm font-bold font-mono tabular-nums text-slate-900" x-text="cartera ? cartera.cuentas.length : 0"></div>
+                                </div>
+                            </div>
+
+                            <template x-if="!puedeVerCartera">
+                                <p class="text-[11px] text-slate-600">No tienes permiso para consultar el historial de cartera.</p>
+                            </template>
+
+                            <template x-if="puedeVerCartera">
+                                <div class="space-y-3">
+                                    <p x-show="carteraCargando" class="text-[11px] text-slate-500">Cargando cartera del cliente...</p>
+                                    <p x-show="carteraError" class="text-[11px] font-semibold text-danger-text" x-text="carteraError"></p>
+
+                                    <template x-if="cartera && !carteraCargando">
+                                        <div class="space-y-3">
+                                            <div>
+                                                <div class="text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">
+                                                    Facturas pendientes (<span x-text="cartera.cuentas.length"></span>)
+                                                </div>
+                                                <div class="max-h-32 overflow-y-auto divide-y divide-amber-100 bg-white rounded-md border border-amber-200">
+                                                    <template x-for="c in cartera.cuentas" :key="c.id">
+                                                        <a :href="c.url" target="_blank" class="flex items-center justify-between gap-2 px-2.5 py-1.5 text-[11px] hover:bg-amber-50">
+                                                            <span class="min-w-0">
+                                                                <span class="font-mono font-semibold text-slate-900" x-text="c.numero_documento"></span>
+                                                                <span class="block text-slate-500" :class="c.vencida ? 'text-danger-text font-semibold' : ''">
+                                                                    <span x-text="c.fecha_emision"></span> · <span x-text="c.dias_antiguedad + (c.dias_antiguedad === 1 ? ' día' : ' días')"></span>
+                                                                    <template x-if="c.fecha_vencimiento"><span> · acordado <span x-text="c.fecha_vencimiento"></span></span></template>
+                                                                </span>
+                                                            </span>
+                                                            <span class="font-mono font-bold tabular-nums text-slate-900 flex-shrink-0">$<span x-text="formatCurrency(c.saldo_pendiente)"></span></span>
+                                                        </a>
+                                                    </template>
+                                                    <p x-show="cartera.cuentas.length === 0" class="px-2.5 py-2 text-[11px] text-slate-500">Sin deudas pendientes.</p>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <div class="text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Últimos pagos y abonos</div>
+                                                <div class="max-h-32 overflow-y-auto divide-y divide-amber-100 bg-white rounded-md border border-amber-200">
+                                                    <template x-for="a in cartera.abonos" :key="a.id">
+                                                        <a :href="a.url" target="_blank" class="flex items-center justify-between gap-2 px-2.5 py-1.5 text-[11px] hover:bg-amber-50" :class="a.anulado ? 'opacity-60 line-through' : ''">
+                                                            <span class="min-w-0">
+                                                                <span class="font-mono font-semibold text-slate-900" x-text="a.numero_recibo"></span>
+                                                                <span class="block text-slate-500"><span x-text="a.fecha_pago"></span> · <span x-text="a.metodo_pago"></span><span x-show="a.documento"> · <span x-text="a.documento"></span></span></span>
+                                                            </span>
+                                                            <span class="font-mono font-bold tabular-nums text-emerald-700 flex-shrink-0">$<span x-text="formatCurrency(a.monto)"></span></span>
+                                                        </a>
+                                                    </template>
+                                                    <p x-show="cartera.abonos.length === 0" class="px-2.5 py-2 text-[11px] text-slate-500">Sin abonos registrados.</p>
+                                                </div>
+                                            </div>
+
+                                            <a :href="cartera.estado_cuenta_url" target="_blank"
+                                               class="w-full inline-flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-lg bg-white border border-amber-300 text-amber-900 hover:bg-amber-100 transition">
+                                                Cobrar abono / Ver estado de cuenta en Cartera
+                                                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                            </a>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
                 </div>
 
                 <!-- Tabla de Items en Carrito -->
@@ -344,7 +438,7 @@ class="max-w-[1720px] mx-auto pb-10">
                     <div>
                         <label class="label-base">Condición</label>
                         <div class="grid grid-cols-2 gap-2">
-                            <button type="button" @click="tipoPago = 'CONTADO'"
+                            <button type="button" @click="cambiarTipoVenta('CONTADO')"
                                     :class="tipoPago === 'CONTADO' ? 'bg-slate-900 text-white font-semibold shadow-xs' : 'bg-slate-100 text-slate-700 font-medium'"
                                     class="py-2 text-xs rounded-lg transition">
                                 Contado
@@ -469,7 +563,8 @@ class="max-w-[1720px] mx-auto pb-10">
                         <strong x-text="selectedCliente ? selectedCliente.razon_social : ''"></strong>.
                     </p>
                     <div class="text-xs font-semibold text-amber-900 pt-1">
-                        Plazo acordado: <span x-text="selectedCliente ? selectedCliente.plazo_dias : 30"></span> días.
+                        <span x-show="selectedCliente && selectedCliente.plazo_dias > 0">Plazo acordado con el cliente: <span x-text="selectedCliente?.plazo_dias"></span> días.</span>
+                        <span x-show="!selectedCliente || !(selectedCliente.plazo_dias > 0)">Sin plazo acordado: la deuda queda abierta hasta que el cliente abone.</span>
                     </div>
                 </div>
 
@@ -568,6 +663,12 @@ function posTerminal(config) {
         clientes: config.clientes || [],
         csrfToken: config.csrfToken,
         procesarUrl: config.procesarUrl,
+        carteraUrlTemplate: config.carteraUrlTemplate,
+        puedeVerCartera: config.puedeVerCartera,
+
+        cartera: null,
+        carteraCargando: false,
+        carteraError: '',
 
         searchQuery: '',
         selectedCategory: null,
@@ -601,6 +702,7 @@ function posTerminal(config) {
             // Al cambiar de cliente, re-tarifar el carrito con su lista de precios
             this.$watch('selectedClienteId', () => {
                 this.cart.forEach(item => { item.precio = this.precioPara(item); });
+                if (this.tipoPago === 'CREDITO') this.cargarCartera();
             });
             this.focusSearch();
         },
@@ -733,10 +835,51 @@ function posTerminal(config) {
             }
         },
 
+        // Selector principal Contado / Crédito del POS
+        cambiarTipoVenta(tipo) {
+            if (tipo === 'CREDITO') {
+                this.tipoPago = 'CREDITO';
+                this.metodoPago = 'CREDITO';
+                this.cargarCartera();
+            } else {
+                this.tipoPago = 'CONTADO';
+                this.metodoPago = 'EFECTIVO';
+                this.autoCalcularEfectivo();
+            }
+        },
+
+        async cargarCartera() {
+            this.cartera = null;
+            this.carteraError = '';
+            const cli = this.selectedCliente;
+            if (!this.puedeVerCartera || !cli || cli.es_consumidor_final) return;
+
+            this.carteraCargando = true;
+            try {
+                const response = await fetch(this.carteraUrlTemplate.replace('__CLIENTE__', cli.id), {
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'No se pudo cargar la cartera del cliente.');
+                // Evita pintar la respuesta de un cliente anterior si el usuario cambió de selección
+                if (data.cliente_id != this.selectedClienteId) return;
+                this.cartera = data;
+            } catch (err) {
+                this.carteraError = err.message;
+            } finally {
+                this.carteraCargando = false;
+            }
+        },
+
         openPaymentModal() {
             if (this.cart.length === 0) return;
             this.errorMsg = '';
-            this.tipoPago = 'CONTADO';
+            if (this.tipoPago === 'CREDITO') {
+                if (!this.puedeFiarCliente()) return;
+                this.metodoPago = 'CREDITO';
+                this.modalPago = true;
+                return;
+            }
             this.metodoPago = 'EFECTIVO';
             this.autoCalcularEfectivo();
             this.modalPago = true;
@@ -752,18 +895,19 @@ function posTerminal(config) {
             this.pagoCon = this.total;
         },
 
-        selectCredito() {
+        // Cualquier cliente identificado puede comprar a crédito; el consumidor final genérico no
+        puedeFiarCliente() {
             const cli = this.selectedCliente;
-            if (!cli || !cli.tiene_credito) {
-                alert('El cliente seleccionado no tiene habilitada la línea de crédito comercial.');
-                return;
+            if (!cli || cli.es_consumidor_final) {
+                alert('No se puede vender a crédito al Consumidor Final. Selecciona el cliente al que se le fía la venta.');
+                return false;
             }
-            if (cli.cupo_disponible < this.total) {
-                alert('El cupo disponible del cliente ($' + this.formatCurrency(cli.cupo_disponible) + ') es insuficiente para cubrir esta venta ($' + this.formatCurrency(this.total) + ').');
-                return;
-            }
-            this.tipoPago = 'CREDITO';
-            this.metodoPago = 'CREDITO';
+            return true;
+        },
+
+        selectCredito() {
+            if (!this.puedeFiarCliente()) return;
+            this.cambiarTipoVenta('CREDITO');
         },
 
         prepararPagoMixto() {
@@ -850,7 +994,6 @@ function posTerminal(config) {
                 };
 
                 this.aplicarStocks(data.stocks);
-                this.aplicarCliente(data.cliente);
 
                 this.modalPago = false;
                 this.modalExito = true;
@@ -872,21 +1015,14 @@ function posTerminal(config) {
             });
         },
 
-        aplicarCliente(datos) {
-            if (!datos) return;
-            const cli = this.clientes.find(c => c.id == datos.id);
-            if (cli) {
-                cli.tiene_credito = datos.tiene_credito;
-                cli.cupo_disponible = datos.cupo_disponible;
-            }
-        },
-
         nuevaVenta() {
             this.modalExito = false;
             this.tipoPago = 'CONTADO';
             this.metodoPago = 'EFECTIVO';
             this.pagoCon = 0;
             this.pagosMixtos = [];
+            this.cartera = null;
+            this.carteraError = '';
             const defaultCli = this.clientes.find(c => c.es_consumidor_final) || this.clientes[0];
             if (defaultCli) {
                 this.selectedClienteId = defaultCli.id;

@@ -168,8 +168,7 @@ class ClienteTest extends TestCase
             'tipo_documento' => 'NIT',
             'numero_documento' => '900987654-3',
             'razon_social' => 'Distribuciones del Sinú S.A.S.',
-            'cupo_credito' => 15000000,
-            'plazo_dias' => 45,
+            'plazo_dias' => 45, // Plazo acordado opcional; el cupo ya no se gestiona desde el formulario
         ]);
     }
 

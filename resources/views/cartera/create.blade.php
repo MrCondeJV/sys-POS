@@ -45,8 +45,7 @@
                   'id' => $c->id,
                   'nombre' => $c->razon_social,
                   'documento' => $c->tipo_documento->value . ' ' . $c->numero_documento,
-                  'cupo' => (float) $c->cupo_credito,
-                  'disponible' => $c->cupoDisponible(),
+                  'deuda' => $c->saldoTotalPendiente(),
                   'plazo' => (int) $c->plazo_dias,
               ])) }},
               clienteId: '{{ old('cliente_id', '') }}',
@@ -89,22 +88,12 @@
             <template x-if="clienteSeleccionado">
                 <div class="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
                     <div class="flex items-center justify-between text-xs">
-                        <span class="text-slate-500 font-medium">Línea de Crédito Autorizada:</span>
-                        <span class="font-semibold font-mono text-slate-900" x-text="'$' + clienteSeleccionado.cupo.toLocaleString('es-CO', {minimumFractionDigits: 2})"></span>
+                        <span class="text-slate-500 font-medium">Deuda Actual del Cliente:</span>
+                        <span class="font-bold font-mono text-slate-900" x-text="'$' + clienteSeleccionado.deuda.toLocaleString('es-CO', {minimumFractionDigits: 2})"></span>
                     </div>
-                    <div class="flex items-center justify-between text-xs">
-                        <span class="text-slate-500 font-medium">Cupo Disponible:</span>
-                        <span class="font-bold font-mono text-success-text" x-text="'$' + clienteSeleccionado.disponible.toLocaleString('es-CO', {minimumFractionDigits: 2})"></span>
-                    </div>
-                    <div class="flex items-center justify-between text-xs">
-                        <span class="text-slate-500 font-medium">Plazo Predeterminado:</span>
+                    <div x-show="clienteSeleccionado.plazo > 0" class="flex items-center justify-between text-xs">
+                        <span class="text-slate-500 font-medium">Plazo Acordado Habitual:</span>
                         <span class="font-semibold text-brand-600" x-text="clienteSeleccionado.plazo + ' días'"></span>
-                    </div>
-                    <div x-show="monto > clienteSeleccionado.disponible && clienteSeleccionado.cupo > 0" class="pt-2 text-xs font-semibold text-warning-text flex items-center">
-                        <svg class="h-4 w-4 mr-1 text-warning-text" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
-                        Atención: El monto ingresado excede el cupo disponible del cliente.
                     </div>
                 </div>
             </template>
@@ -138,7 +127,7 @@
                 @enderror
             </div>
 
-            <!-- Fechas de Emisión y Vencimiento -->
+            <!-- Fecha de Emisión y Acuerdo de Pago (opcional) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label for="fecha_emision" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
@@ -153,9 +142,9 @@
 
                 <div>
                     <label for="fecha_vencimiento" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                        Fecha Límite de Vencimiento <span class="text-danger-text">*</span>
+                        Fecha de Pago Acordada <span class="text-slate-400 text-[11px] font-normal">(Opcional)</span>
                     </label>
-                    <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" x-model="fechaVencimiento" required
+                    <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" x-model="fechaVencimiento"
                         class="block w-full py-2 px-3 border border-slate-300 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
                     @error('fecha_vencimiento')
                         <p class="text-xs text-danger-text mt-1">{{ $message }}</p>

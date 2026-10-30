@@ -28,7 +28,7 @@
     <!-- Encabezado & Acciones -->
     <x-page-header
         title="Crédito y Cartera"
-        description="Control de cuentas por cobrar, recaudos, abonos parciales, cartera en mora y estados de cuenta."
+        description="Registro de ventas fiadas, abonos de los clientes y estados de cuenta."
         :breadcrumbs="[
             ['label' => 'Crédito y Cartera']
         ]">
@@ -71,16 +71,16 @@
             icon="credit-card"
         />
         <x-kpi-card
-            title="Cartera Vigente"
-            :value="'$' . number_format($carteraVigente, 2)"
-            subtitle="Facturas dentro del plazo"
-            icon="check"
+            title="Cuentas Abiertas"
+            :value="number_format($cuentasAbiertas)"
+            subtitle="Ventas fiadas con saldo"
+            icon="coins"
         />
         <x-kpi-card
-            title="Cartera Vencida (Mora)"
-            :value="'$' . number_format($carteraVencida, 2)"
-            :subtitle="$facturasEnMora . ($facturasEnMora === 1 ? ' cuenta vencida' : ' cuentas vencidas')"
-            icon="alert"
+            title="Clientes con Deuda"
+            :value="number_format($clientesConDeuda)"
+            subtitle="Clientes que deben actualmente"
+            icon="users"
         />
         <x-kpi-card
             title="Recaudo de Cartera (Mes)"
@@ -118,8 +118,7 @@
             <select name="estado" class="input">
                 <option value="">Todos los estados</option>
                 <option value="PENDIENTES" @selected(($estado ?? '') === 'PENDIENTES')>Todas Pendientes (Con saldo)</option>
-                <option value="VIGENTE" @selected(($estado ?? '') === 'VIGENTE')>Vigentes (Al día)</option>
-                <option value="VENCIDA" @selected(($estado ?? '') === 'VENCIDA')>Vencidas (En mora)</option>
+                <option value="VENCIDA" @selected(($estado ?? '') === 'VENCIDA')>Pasó la fecha acordada</option>
                 <option value="PAGADA" @selected(($estado ?? '') === 'PAGADA')>Totalmente Pagadas</option>
             </select>
         </div>
@@ -132,7 +131,7 @@
                 <th class="px-4 py-3 text-left">Documento / Concepto</th>
                 <th class="px-4 py-3 text-left">Cliente Deudor</th>
                 <th class="px-4 py-3 text-right">Deuda & Saldo</th>
-                <th class="hidden @4xl:table-cell px-4 py-3 text-left">Vencimiento</th>
+                <th class="hidden @4xl:table-cell px-4 py-3 text-left">Antigüedad / Acuerdo</th>
                 <th class="px-4 py-3 text-center">Estado</th>
                 <th class="px-4 py-3 text-right">Acciones</th>
             </tr>
@@ -155,9 +154,11 @@
                             <span class="text-xs text-slate-600 font-medium line-clamp-1">
                                 {{ $cuenta->concepto }}
                             </span>
-                            <span class="@4xl:hidden text-[11px] font-medium block {{ $cuenta->estaVencida() && $cuenta->estado->value !== 'PAGADA' ? 'text-danger-text' : 'text-slate-500' }}">
-                                Vence {{ $cuenta->fecha_vencimiento->format('d/m/Y') }}
-                            </span>
+                            @if($cuenta->fecha_vencimiento)
+                                <span class="@4xl:hidden text-[11px] font-medium block {{ $cuenta->estaVencida() ? 'text-danger-text' : 'text-slate-500' }}">
+                                    Acordado {{ $cuenta->fecha_vencimiento->format('d/m/Y') }}
+                                </span>
+                            @endif
                             <span class="text-[11px] text-slate-400 block">
                                 {{ $cuenta->sucursal?->nombre ?? 'Sede Central' }}
                             </span>
@@ -198,22 +199,21 @@
                 </td>
 
                 <td class="hidden @4xl:table-cell px-4 py-3 whitespace-nowrap">
-                    <div class="text-sm font-semibold text-slate-800">
-                        {{ $cuenta->fecha_vencimiento->format('d/m/Y') }}
-                    </div>
                     @if($cuenta->estado->value === 'PAGADA')
                         <span class="text-xs text-success-text font-medium">Cancelada</span>
-                    @elseif($cuenta->estaVencida())
-                        <div class="mt-0.5 inline-flex items-center text-xs font-semibold text-danger-text">
-                            <svg class="h-3.5 w-3.5 mr-1 text-danger-text" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                            {{ abs($cuenta->diasDiferenciaVencimiento()) }} días de mora
-                        </div>
                     @else
-                        <span class="text-xs text-slate-500">
-                            Vence en {{ $cuenta->diasDiferenciaVencimiento() }} días
-                        </span>
+                        <div class="text-sm font-semibold text-slate-800">
+                            {{ $cuenta->diasAntiguedad() }} {{ $cuenta->diasAntiguedad() === 1 ? 'día' : 'días' }} fiado
+                        </div>
+                        @if($cuenta->estaVencida())
+                            <span class="text-xs font-semibold text-danger-text">
+                                Pasó la fecha acordada ({{ $cuenta->fecha_vencimiento->format('d/m/Y') }})
+                            </span>
+                        @elseif($cuenta->fecha_vencimiento)
+                            <span class="text-xs text-slate-500">Acordado para el {{ $cuenta->fecha_vencimiento->format('d/m/Y') }}</span>
+                        @else
+                            <span class="text-xs text-slate-400">Sin fecha acordada</span>
+                        @endif
                     @endif
                 </td>
 
@@ -288,13 +288,15 @@
                         </a>
                     </div>
                     <div><span class="text-slate-400">Emisión:</span> {{ $cuenta->fecha_emision->format('d/m/Y') }}</div>
-                    <div>
-                        <span class="text-slate-400">Vence:</span>
-                        <span class="font-semibold text-slate-800">{{ $cuenta->fecha_vencimiento->format('d/m/Y') }}</span>
-                        @if($cuenta->estado->value !== 'PAGADA' && $cuenta->estaVencida())
-                            <span class="font-semibold text-danger-text">&bull; {{ abs($cuenta->diasDiferenciaVencimiento()) }} días de mora</span>
-                        @endif
-                    </div>
+                    @if($cuenta->fecha_vencimiento)
+                        <div>
+                            <span class="text-slate-400">Acordado:</span>
+                            <span class="font-semibold text-slate-800">{{ $cuenta->fecha_vencimiento->format('d/m/Y') }}</span>
+                            @if($cuenta->estaVencida())
+                                <span class="font-semibold text-danger-text">&bull; Pasó la fecha acordada</span>
+                            @endif
+                        </div>
+                    @endif
                 </div>
 
                 <div>

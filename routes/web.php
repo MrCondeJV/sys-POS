@@ -159,6 +159,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('pos')->name('pos.')->group(function () {
         Route::get('/', [PosController::class, 'index'])->name('index');
         Route::post('/procesar', [PosController::class, 'procesar'])->name('procesar');
+        Route::get('/clientes/{cliente}/cartera', [PosController::class, 'carteraCliente'])->name('cliente-cartera');
     });
 
     // Fase 13: Listas de Precios

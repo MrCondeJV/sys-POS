@@ -22,14 +22,15 @@
     <p>Saldo Total Adeudado: <strong>${{ number_format($saldoTotalPendiente, 2) }}</strong></p>
     <table>
         <thead>
-            <tr><th>Documento</th><th>Cliente</th><th>Vencimiento</th><th class="text-right">Monto Total</th><th class="text-right">Saldo Pendiente</th></tr>
+            <tr><th>Documento</th><th>Cliente</th><th>Emisión</th><th>Acordado</th><th class="text-right">Monto Total</th><th class="text-right">Saldo Pendiente</th></tr>
         </thead>
         <tbody>
             @foreach($cuentas as $c)
             <tr>
                 <td class="bold">{{ $c->numero_documento }}</td>
                 <td>{{ $c->cliente?->razon_social }}</td>
-                <td>{{ $c->fecha_vencimiento->format('d/m/Y') }}</td>
+                <td>{{ $c->fecha_emision->format('d/m/Y') }}</td>
+                <td>{{ $c->fecha_vencimiento?->format('d/m/Y') ?? '—' }}</td>
                 <td class="text-right">${{ number_format($c->monto_total, 2) }}</td>
                 <td class="text-right bold text-danger-text">${{ number_format($c->saldo_pendiente, 2) }}</td>
             </tr>

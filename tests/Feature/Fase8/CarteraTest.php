@@ -99,7 +99,6 @@ class CarteraTest extends TestCase
             clienteId: $this->clienteA->id,
             montoTotal: 500000.00,
             fechaEmision: now()->toDateString(),
-            fechaVencimiento: now()->addDays(30)->toDateString(),
             concepto: 'Factura Alfa #001',
             userId: $this->adminA->id
         );
@@ -123,7 +122,6 @@ class CarteraTest extends TestCase
             clienteId: $this->clienteA->id,
             montoTotal: 700000.00,
             fechaEmision: now()->toDateString(),
-            fechaVencimiento: now()->addDays(15)->toDateString(),
             concepto: 'Obligación Exclusiva Alfa',
             userId: $this->adminA->id
         );
@@ -134,7 +132,6 @@ class CarteraTest extends TestCase
             clienteId: $this->clienteB->id,
             montoTotal: 900000.00,
             fechaEmision: now()->toDateString(),
-            fechaVencimiento: now()->addDays(15)->toDateString(),
             concepto: 'Obligación Confidencial Beta',
             userId: $this->adminB->id
         );
@@ -199,7 +196,6 @@ class CarteraTest extends TestCase
             clienteId: $this->clienteA->id,
             montoTotal: 1000000.00,
             fechaEmision: now()->toDateString(),
-            fechaVencimiento: now()->addDays(30)->toDateString(),
             concepto: 'Factura Alfa #10'
         );
 
@@ -241,7 +237,6 @@ class CarteraTest extends TestCase
             clienteId: $this->clienteA->id,
             montoTotal: 500000.00,
             fechaEmision: now()->toDateString(),
-            fechaVencimiento: now()->addDays(30)->toDateString(),
             concepto: 'Factura Alfa Total'
         );
 
@@ -269,7 +264,6 @@ class CarteraTest extends TestCase
             clienteId: $this->clienteA->id,
             montoTotal: 300000.00,
             fechaEmision: now()->toDateString(),
-            fechaVencimiento: now()->addDays(30)->toDateString(),
             concepto: 'Factura Alfa Límite'
         );
 
@@ -296,7 +290,6 @@ class CarteraTest extends TestCase
             clienteId: $this->clienteA->id,
             montoTotal: 600000.00,
             fechaEmision: now()->toDateString(),
-            fechaVencimiento: now()->addDays(30)->toDateString(),
             concepto: 'Factura para Anular Abono'
         );
 
@@ -325,42 +318,60 @@ class CarteraTest extends TestCase
         $this->assertEquals(EstadoPagoCartera::ANULADO, $pago->estado);
     }
 
-    public function test_filtro_de_cartera_vencida_y_vigente(): void
+    public function test_filtro_de_fecha_acordada_vencida_ignora_cuentas_sin_acuerdo(): void
     {
         $actionCrear = app(RegistrarCuentaPorCobrarAction::class);
 
-        // Cuenta Vencida
+        // Acuerdo de pago que ya pasó
         $actionCrear->execute(
             empresaId: $this->empresaA->id,
             sucursalId: $this->sucursalA->id,
             clienteId: $this->clienteA->id,
             montoTotal: 150000.00,
             fechaEmision: now()->subDays(40)->toDateString(),
-            fechaVencimiento: now()->subDays(10)->toDateString(),
-            concepto: 'Cuenta Vencida Alfa'
+            concepto: 'Cuenta Acuerdo Vencido Alfa',
+            fechaVencimiento: now()->subDays(10)->toDateString()
         );
 
-        // Cuenta Vigente
+        // Fiado antiguo sin acuerdo de pago: nunca se considera vencido
         $actionCrear->execute(
             empresaId: $this->empresaA->id,
             sucursalId: $this->sucursalA->id,
             clienteId: $this->clienteA->id,
             montoTotal: 250000.00,
-            fechaEmision: now()->toDateString(),
-            fechaVencimiento: now()->addDays(20)->toDateString(),
-            concepto: 'Cuenta Vigente Alfa'
+            fechaEmision: now()->subDays(90)->toDateString(),
+            concepto: 'Cuenta Sin Acuerdo Alfa'
         );
 
         $resVencida = $this->actingAs($this->adminA)->get(route('cartera.index', ['estado' => 'VENCIDA']));
-        $resVencida->assertSee('Cuenta Vencida Alfa');
-        $resVencida->assertDontSee('Cuenta Vigente Alfa');
+        $resVencida->assertSee('Cuenta Acuerdo Vencido Alfa');
+        $resVencida->assertDontSee('Cuenta Sin Acuerdo Alfa');
 
-        $resVigente = $this->actingAs($this->adminA)->get(route('cartera.index', ['estado' => 'VIGENTE']));
-        $resVigente->assertSee('Cuenta Vigente Alfa');
-        $resVigente->assertDontSee('Cuenta Vencida Alfa');
+        $resTodas = $this->actingAs($this->adminA)->get(route('cartera.index', ['estado' => 'PENDIENTES']));
+        $resTodas->assertSee('Cuenta Acuerdo Vencido Alfa');
+        $resTodas->assertSee('Cuenta Sin Acuerdo Alfa');
+        $resTodas->assertSee('Sin fecha acordada');
     }
 
-    public function test_vista_estado_de_cuenta_del_cliente_consolida_saldos_y_cupo(): void
+    public function test_cuenta_manual_sin_fecha_acordada_queda_abierta_sin_vencimiento(): void
+    {
+        $response = $this->actingAs($this->adminA)->post(route('cartera.store'), [
+            'cliente_id' => $this->clienteA->id,
+            'concepto' => 'Fiado de mostrador',
+            'monto_total' => 45000,
+            'fecha_emision' => now()->toDateString(),
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('cuentas_por_cobrar', [
+            'cliente_id' => $this->clienteA->id,
+            'concepto' => 'Fiado de mostrador',
+            'saldo_pendiente' => 45000,
+            'fecha_vencimiento' => null,
+        ]);
+    }
+
+    public function test_vista_estado_de_cuenta_del_cliente_consolida_fiado_abonos_y_saldo(): void
     {
         $actionCrear = app(RegistrarCuentaPorCobrarAction::class);
         $actionCrear->execute(
@@ -369,7 +380,6 @@ class CarteraTest extends TestCase
             clienteId: $this->clienteA->id,
             montoTotal: 800000.00,
             fechaEmision: now()->toDateString(),
-            fechaVencimiento: now()->addDays(30)->toDateString(),
             concepto: 'Materiales Especiales'
         );
 
@@ -377,9 +387,10 @@ class CarteraTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('Estado de Cuenta: Cliente Alfa Crédito');
-        $response->assertSee('5,000,000.00'); // Cupo de crédito
+        $response->assertSee('Total Fiado');
+        $response->assertSee('Lo que Debe');
         $response->assertSee('800,000.00');   // Deuda
-        $response->assertSee('4,200,000.00'); // Cupo disponible
+        $response->assertDontSee('Cupo Disponible');
     }
 
     public function test_vista_recibo_de_caja_se_renderiza_correctamente(): void
@@ -393,7 +404,6 @@ class CarteraTest extends TestCase
             clienteId: $this->clienteA->id,
             montoTotal: 300000.00,
             fechaEmision: now()->toDateString(),
-            fechaVencimiento: now()->addDays(15)->toDateString(),
             concepto: 'Factura para Recibo'
         );
 
@@ -421,7 +431,6 @@ class CarteraTest extends TestCase
             clienteId: $this->clienteB->id,
             montoTotal: 500000.00,
             fechaEmision: now()->toDateString(),
-            fechaVencimiento: now()->addDays(20)->toDateString(),
             concepto: 'Cuenta de Empresa B'
         );
 

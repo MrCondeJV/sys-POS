@@ -84,8 +84,9 @@ class RegistrarVentaAction
                 if (! $cliente) {
                     throw new InvalidArgumentException('Para registrar una venta a crédito se debe seleccionar un cliente válido.');
                 }
-                if (! $cliente->tieneCredito()) {
-                    throw new InvalidArgumentException('El cliente seleccionado no tiene crédito comercial habilitado.');
+                // Cualquier cliente identificado puede comprar a crédito; el consumidor final genérico no, porque la deuda no tendría a quién cobrarse
+                if ($cliente->es_predeterminado) {
+                    throw new InvalidArgumentException('No se puede vender a crédito al Consumidor Final. Selecciona un cliente identificado.');
                 }
             }
 
@@ -216,18 +217,6 @@ class RegistrarVentaAction
             }
 
             $totalGeneral = round(($subtotalVenta - $descuentoVenta) + $impuestoVenta, 2);
-
-            // Validar cupo si es crédito
-            if ($tipoPago === TipoPago::CREDITO && $cliente) {
-                $cupoDisponible = $cliente->cupoDisponible();
-                if ($totalGeneral > $cupoDisponible) {
-                    throw new InvalidArgumentException(sprintf(
-                        'El total de la venta ($%s) supera el cupo de crédito disponible del cliente ($%s).',
-                        number_format($totalGeneral, 2),
-                        number_format($cupoDisponible, 2)
-                    ));
-                }
-            }
 
             // 3.1. Validar suficiencia de pagos para ventas al contado y calcular cambio
             $cambio = 0.0;
@@ -366,16 +355,16 @@ class RegistrarVentaAction
 
             // 8. Impactar Cartera si la venta fue a Crédito
             if ($tipoPago === TipoPago::CREDITO && $cliente) {
-                $plazoDias = $cliente->plazo_dias > 0 ? $cliente->plazo_dias : 30;
                 $this->carteraAction->execute(
                     empresaId: $empresaId,
                     sucursalId: $sucursalId,
                     clienteId: $cliente->id,
                     montoTotal: $totalGeneral,
                     fechaEmision: now()->toDateString(),
-                    fechaVencimiento: now()->addDays($plazoDias)->toDateString(),
                     concepto: "Factura a Crédito {$numeroVenta}",
-                    userId: $userId
+                    userId: $userId,
+                    // Plazo acordado opcional con el cliente; sin plazo la deuda no tiene fecha de pago
+                    fechaVencimiento: $cliente->plazo_dias > 0 ? now()->addDays($cliente->plazo_dias)->toDateString() : null
                 );
             }
 

@@ -200,7 +200,6 @@ class PosTest extends TestCase
             'show_url',
             'message',
             'stocks',
-            'cliente' => ['id', 'tiene_credito', 'cupo_disponible'],
         ]);
 
         // El POS recibe las existencias actualizadas para refrescar el catálogo sin recargar
@@ -276,11 +275,13 @@ class PosTest extends TestCase
     public function test_pos_procesar_venta_a_credito_crea_cuenta_en_cartera(): void
     {
         $sesion = app(AbrirCajaAction::class)->execute($this->cajaA, $this->cajeroA, 50000.00);
+        // Cliente identificado sin cupo ni plazo acordado: igual se le puede fiar
+        $cliente = Cliente::factory()->for($this->empresaA)->create(['cupo_credito' => 0, 'plazo_dias' => 0]);
 
         $response = $this->actingAs($this->cajeroA)
             ->postJson(route('pos.procesar'), [
                 'caja_sesion_id' => $sesion->id,
-                'cliente_id' => $this->clienteA->id,
+                'cliente_id' => $cliente->id,
                 'tipo_pago' => 'CREDITO',
                 'metodo_pago' => 'CREDITO',
                 'items' => [
@@ -294,13 +295,12 @@ class PosTest extends TestCase
             ]);
 
         $response->assertStatus(200);
-        $response->assertJsonPath('cliente.id', $this->clienteA->id);
-        $this->assertEquals($this->clienteA->fresh()->cupoDisponible(), $response->json('cliente.cupo_disponible'));
         $this->assertDatabaseHas('cuentas_por_cobrar', [
             'empresa_id' => $this->empresaA->id,
-            'cliente_id' => $this->clienteA->id,
+            'cliente_id' => $cliente->id,
             'monto_total' => 29750.00,
             'saldo_pendiente' => 29750.00,
+            'fecha_vencimiento' => null,
         ]);
     }
 
@@ -435,5 +435,53 @@ class PosTest extends TestCase
                 && $martillo['iva_porcentaje'] === 19.0
                 && $productos->firstWhere('id', $eliminado->id) === null;
         });
+    }
+
+    public function test_pos_consulta_cartera_del_cliente_con_deuda_y_abonos(): void
+    {
+        $sesion = app(AbrirCajaAction::class)->execute($this->cajaA, $this->cajeroA, 50000.00);
+        // Cliente con plazo acordado opcional: la cuenta registra la fecha acordada
+        $cliente = Cliente::factory()->for($this->empresaA)->create(['plazo_dias' => 15]);
+
+        $this->actingAs($this->cajeroA)
+            ->postJson(route('pos.procesar'), [
+                'caja_sesion_id' => $sesion->id,
+                'cliente_id' => $cliente->id,
+                'tipo_pago' => 'CREDITO',
+                'metodo_pago' => 'CREDITO',
+                'items' => [
+                    [
+                        'producto_id' => $this->productoA->id,
+                        'cantidad' => 1,
+                        'precio_unitario' => 25000.00,
+                        'impuesto_porcentaje' => 19,
+                    ],
+                ],
+            ])->assertOk();
+
+        $response = $this->actingAs($this->cajeroA)
+            ->getJson(route('pos.cliente-cartera', $cliente));
+
+        $response->assertOk();
+        $response->assertJsonPath('cliente_id', $cliente->id);
+        $response->assertJsonCount(1, 'cuentas');
+        $response->assertJsonCount(0, 'abonos');
+        $response->assertJsonStructure([
+            'total_deuda', 'deuda_vencida',
+            'cuentas' => [['id', 'numero_documento', 'saldo_pendiente', 'fecha_vencimiento', 'vencida', 'url']],
+            'abonos',
+            'estado_cuenta_url',
+        ]);
+        $this->assertEquals(29750, $response->json('total_deuda'));
+        $this->assertEquals(now()->addDays(15)->format('d/m/Y'), $response->json('cuentas.0.fecha_vencimiento'));
+        $this->assertFalse($response->json('cuentas.0.vencida'));
+    }
+
+    public function test_pos_no_expone_cartera_de_clientes_de_otra_empresa(): void
+    {
+        $response = $this->actingAs($this->adminB)
+            ->getJson(route('pos.cliente-cartera', $this->clienteA));
+
+        $this->assertContains($response->status(), [403, 404]);
     }
 }

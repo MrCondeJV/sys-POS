@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Actions\Cartera\AnularAbonoCarteraAction;
 use App\Actions\Cartera\RegistrarAbonoCarteraAction;
 use App\Actions\Cartera\RegistrarCuentaPorCobrarAction;
+use App\Enums\EstadoCuentaCobrar;
 use App\Enums\MetodoPagoCartera;
 use App\Models\Cliente;
 use App\Models\CuentaPorCobrar;
@@ -12,7 +13,6 @@ use App\Models\PagoCliente;
 use App\Rules\BelongsToActiveCompany;
 use App\Support\Tenancy\BranchContext;
 use App\Support\Tenancy\CompanyContext;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -48,8 +48,6 @@ class CarteraController extends Controller
         if (! empty($estado)) {
             if ($estado === 'VENCIDA') {
                 $query->vencidas();
-            } elseif ($estado === 'VIGENTE') {
-                $query->vigentes();
             } elseif ($estado === 'PENDIENTES') {
                 $query->pendientes();
             } elseif (in_array($estado, ['PENDIENTE', 'PARCIAL', 'PAGADA', 'ANULADA'])) {
@@ -59,13 +57,10 @@ class CarteraController extends Controller
 
         $cuentas = $query->paginate(15)->withQueryString();
 
-        // Cálculo de KPIs de Cartera
-        $hoy = Carbon::today()->toDateString();
-
+        // Cálculo de KPIs de Cartera (el crédito no maneja plazos: solo se registra lo fiado y lo abonado)
         $totalCartera = (float) CuentaPorCobrar::pendientes()->sum('saldo_pendiente');
-        $carteraVigente = (float) CuentaPorCobrar::pendientes()->where('fecha_vencimiento', '>=', $hoy)->sum('saldo_pendiente');
-        $carteraVencida = (float) CuentaPorCobrar::pendientes()->where('fecha_vencimiento', '<', $hoy)->sum('saldo_pendiente');
-        $facturasEnMora = CuentaPorCobrar::pendientes()->where('fecha_vencimiento', '<', $hoy)->count();
+        $cuentasAbiertas = CuentaPorCobrar::pendientes()->count();
+        $clientesConDeuda = CuentaPorCobrar::pendientes()->distinct()->count('cliente_id');
 
         $totalRecaudadoMes = (float) PagoCliente::aplicados()
             ->whereMonth('fecha_pago', now()->month)
@@ -81,9 +76,8 @@ class CarteraController extends Controller
             'clienteId',
             'clientes',
             'totalCartera',
-            'carteraVigente',
-            'carteraVencida',
-            'facturasEnMora',
+            'cuentasAbiertas',
+            'clientesConDeuda',
             'totalRecaudadoMes'
         ));
     }
@@ -119,7 +113,7 @@ class CarteraController extends Controller
             'concepto' => ['required', 'string', 'max:255'],
             'monto_total' => ['required', 'numeric', 'min:0.01'],
             'fecha_emision' => ['required', 'date'],
-            'fecha_vencimiento' => ['required', 'date', 'after_or_equal:fecha_emision'],
+            'fecha_vencimiento' => ['nullable', 'date', 'after_or_equal:fecha_emision'],
             'observaciones' => ['nullable', 'string', 'max:500'],
         ]);
 
@@ -130,10 +124,10 @@ class CarteraController extends Controller
                 clienteId: (int) $validated['cliente_id'],
                 montoTotal: (float) $validated['monto_total'],
                 fechaEmision: $validated['fecha_emision'],
-                fechaVencimiento: $validated['fecha_vencimiento'],
                 concepto: $validated['concepto'],
                 observaciones: $validated['observaciones'] ?? null,
-                userId: auth()->id()
+                userId: auth()->id(),
+                fechaVencimiento: $validated['fecha_vencimiento'] ?? null
             );
 
             return redirect()->route('cartera.show', $cuenta)
@@ -243,12 +237,10 @@ class CarteraController extends Controller
 
         $cliente->load(['cuentasPorCobrar.pagos', 'pagos.cuentaPorCobrar', 'empresa']);
 
-        $cuentasPendientes = $cliente->cuentasPorCobrar()->pendientes()->get();
+        $cuentasPendientes = $cliente->cuentasPorCobrar()->pendientes()->orderBy('fecha_emision')->get();
         $totalDeuda = (float) $cuentasPendientes->sum('saldo_pendiente');
-        $deudaVencida = (float) $cuentasPendientes->filter(fn ($c) => $c->estaVencida())->sum('saldo_pendiente');
-        $cupoTotal = (float) $cliente->cupo_credito;
-        $cupoDisponible = max(0.0, $cupoTotal - $totalDeuda);
-        $porcentajeUtilizado = $cupoTotal > 0 ? min(100.0, round(($totalDeuda / $cupoTotal) * 100, 1)) : 0;
+        $totalFiado = (float) $cliente->cuentasPorCobrar()->where('estado', '!=', EstadoCuentaCobrar::ANULADA->value)->sum('monto_total');
+        $totalAbonado = (float) $cliente->pagos()->aplicados()->sum('monto');
 
         $historialPagos = $cliente->pagos()->with('cuentaPorCobrar')->latest()->take(20)->get();
 
@@ -256,10 +248,8 @@ class CarteraController extends Controller
             'cliente',
             'cuentasPendientes',
             'totalDeuda',
-            'deudaVencida',
-            'cupoTotal',
-            'cupoDisponible',
-            'porcentajeUtilizado',
+            'totalFiado',
+            'totalAbonado',
             'historialPagos'
         ));
     }
@@ -279,12 +269,10 @@ class CarteraController extends Controller
 
         $cliente->load(['cuentasPorCobrar.pagos', 'pagos.cuentaPorCobrar', 'empresa']);
 
-        $cuentasPendientes = $cliente->cuentasPorCobrar()->pendientes()->get();
+        $cuentasPendientes = $cliente->cuentasPorCobrar()->pendientes()->orderBy('fecha_emision')->get();
         $totalDeuda = (float) $cuentasPendientes->sum('saldo_pendiente');
-        $deudaVencida = (float) $cuentasPendientes->filter(fn ($c) => $c->estaVencida())->sum('saldo_pendiente');
-        $cupoTotal = (float) $cliente->cupo_credito;
-        $cupoDisponible = max(0.0, $cupoTotal - $totalDeuda);
-        $porcentajeUtilizado = $cupoTotal > 0 ? min(100.0, round(($totalDeuda / $cupoTotal) * 100, 1)) : 0;
+        $totalFiado = (float) $cliente->cuentasPorCobrar()->where('estado', '!=', EstadoCuentaCobrar::ANULADA->value)->sum('monto_total');
+        $totalAbonado = (float) $cliente->pagos()->aplicados()->sum('monto');
 
         $historialPagos = $cliente->pagos()->with('cuentaPorCobrar')->latest()->take(50)->get();
 
@@ -292,10 +280,8 @@ class CarteraController extends Controller
             'cliente',
             'cuentasPendientes',
             'totalDeuda',
-            'deudaVencida',
-            'cupoTotal',
-            'cupoDisponible',
-            'porcentajeUtilizado',
+            'totalFiado',
+            'totalAbonado',
             'historialPagos'
         ));
     }

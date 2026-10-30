@@ -21,7 +21,6 @@ class CuentaPorCobrarFactory extends Factory
     {
         $monto = fake()->randomFloat(2, 50000, 2000000);
         $fechaEmision = fake()->dateTimeBetween('-30 days', 'now')->format('Y-m-d');
-        $fechaVencimiento = fake()->dateTimeBetween('now', '+30 days')->format('Y-m-d');
 
         return [
             'empresa_id' => Empresa::factory(),
@@ -38,7 +37,6 @@ class CuentaPorCobrarFactory extends Factory
             'monto_pagado' => 0,
             'saldo_pendiente' => $monto,
             'fecha_emision' => $fechaEmision,
-            'fecha_vencimiento' => $fechaVencimiento,
             'estado' => EstadoCuentaCobrar::PENDIENTE,
             'observaciones' => fake()->optional()->sentence(),
             'created_by' => User::factory(),
@@ -77,17 +75,5 @@ class CuentaPorCobrarFactory extends Factory
                 'estado' => EstadoCuentaCobrar::PAGADA,
             ];
         });
-    }
-
-    /**
-     * Estado para cuenta vencida (en mora).
-     */
-    public function vencida(int $diasMora = 15): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'fecha_emision' => now()->subDays($diasMora + 30)->toDateString(),
-            'fecha_vencimiento' => now()->subDays($diasMora)->toDateString(),
-            'estado' => EstadoCuentaCobrar::PENDIENTE,
-        ]);
     }
 }
