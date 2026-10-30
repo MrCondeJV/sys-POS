@@ -3,7 +3,7 @@
         'gestion' => request()->routeIs('empresa.*', 'suscripcion.*', 'usuarios.*', 'sucursales.*', 'traslados.*'),
         'inventario' => request()->routeIs('productos.*', 'listas-precios.*', 'inventario.*', 'catalogos.*'),
         'compras' => request()->routeIs('compras.*', 'proveedores.*'),
-        'ventas' => request()->routeIs('ventas.*', 'devoluciones.*', 'documentos.*', 'clientes.*', 'cartera.*'),
+        'ventas' => request()->routeIs('ventas.*', 'cotizaciones.*', 'devoluciones.*', 'documentos.*', 'clientes.*', 'cartera.*'),
         'caja' => request()->routeIs('cajas.*', 'pos.*'),
         'analitica' => request()->routeIs('reportes.*', 'auditoria.*', 'impuestos.*'),
         'dian' => request()->routeIs('facturacion-electronica.*', 'resoluciones.*'),
@@ -325,6 +325,17 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
                     <span class="sidebar-text truncate whitespace-nowrap">Ventas Realizadas</span>
+                </a>
+                @endcan
+
+                @can('ventas.ver')
+                <a href="{{ route('cotizaciones.index') }}"
+                   class="sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('cotizaciones.*') ? 'bg-white/[0.08] text-white border-l-[3px] border-brand-500 pl-[9px]' : 'text-slate-300 hover:text-white hover:bg-white/[0.05]' }}"
+                   data-title="Cotizaciones">
+                    <svg class="w-[18px] h-[18px] mr-3 flex-shrink-0 {{ request()->routeIs('cotizaciones.*') ? 'text-brand-400' : 'text-slate-400' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                    </svg>
+                    <span class="sidebar-text truncate whitespace-nowrap">Cotizaciones</span>
                 </a>
                 @endcan
 

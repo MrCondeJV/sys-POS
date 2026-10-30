@@ -10,11 +10,31 @@
     csrfToken: '{{ csrf_token() }}',
     procesarUrl: '{{ route('pos.procesar') }}',
     carteraUrlTemplate: '{{ route('pos.cliente-cartera', '__CLIENTE__') }}',
-    puedeVerCartera: @js(auth()->user()->can('viewAny', \App\Models\CuentaPorCobrar::class))
+    puedeVerCartera: @js(auth()->user()->can('viewAny', \App\Models\CuentaPorCobrar::class)),
+    cotizacion: @js($cotizacion)
 })"
 x-init="initTerminal()"
 @keydown.window="handleHotkeys($event)"
 class="max-w-[1720px] mx-auto pb-10">
+
+    <!-- Aviso de conversión de cotización -->
+    <template x-if="cotizacion">
+        <div class="mb-4 p-3 rounded-lg border border-brand-200 bg-brand-50 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div class="text-xs text-brand-900">
+                <div class="font-semibold">
+                    Convirtiendo la cotización <span class="font-mono" x-text="cotizacion.numero"></span> en venta.
+                    <span x-show="cotizacion.vencida" class="text-danger-text">(La fecha de validez ya pasó.)</span>
+                </div>
+                <div x-show="Math.abs(total - cotizacion.total) >= 1">
+                    Los precios actuales del catálogo difieren de lo cotizado: cotizado $<span x-text="formatCurrency(cotizacion.total)"></span>, ahora $<span x-text="formatCurrency(total)"></span>.
+                </div>
+                <div x-show="itemsOmitidos.length > 0" class="text-danger-text">
+                    No están disponibles en el catálogo: <span x-text="itemsOmitidos.join(', ')"></span>.
+                </div>
+            </div>
+            <button type="button" @click="cancelarCotizacion()" class="text-xs font-semibold text-brand-700 hover:underline flex-shrink-0">Cancelar conversión</button>
+        </div>
+    </template>
 
     <!-- Header Terminal POS Compacto -->
     <div class="card px-4 py-2.5 mb-4 min-h-14 flex flex-col md:flex-row md:items-center justify-between gap-3">
@@ -666,6 +686,8 @@ function posTerminal(config) {
         carteraUrlTemplate: config.carteraUrlTemplate,
         puedeVerCartera: config.puedeVerCartera,
 
+        cotizacion: config.cotizacion || null,
+        itemsOmitidos: [],
         cartera: null,
         carteraCargando: false,
         carteraError: '',
@@ -704,7 +726,36 @@ function posTerminal(config) {
                 this.cart.forEach(item => { item.precio = this.precioPara(item); });
                 if (this.tipoPago === 'CREDITO') this.cargarCartera();
             });
+            this.cargarCotizacion();
             this.focusSearch();
+        },
+
+        // Precarga cliente e ítems de una cotización; el servidor vuelve a tarifar con el catálogo vigente
+        cargarCotizacion() {
+            if (!this.cotizacion) return;
+            if (this.cotizacion.cliente_id && this.clientes.some(c => c.id == this.cotizacion.cliente_id)) {
+                this.selectedClienteId = this.cotizacion.cliente_id;
+            }
+            this.cart = [];
+            this.itemsOmitidos = [];
+            this.cotizacion.items.forEach(it => {
+                const producto = this.allProducts.find(p => p.id === it.producto_id);
+                if (!producto) {
+                    this.itemsOmitidos.push(it.descripcion);
+                    return;
+                }
+                this.addToCart(producto);
+                const linea = this.cart.find(i => i.id === producto.id);
+                linea.cantidad = it.cantidad;
+                linea.descuento = it.cantidad > 0 ? it.descuento / it.cantidad : 0;
+            });
+        },
+
+        cancelarCotizacion() {
+            this.cotizacion = null;
+            this.itemsOmitidos = [];
+            this.cart = [];
+            history.replaceState(null, '', window.location.pathname);
         },
 
         // Precio según la lista asignada al cliente seleccionado (el servidor aplica la misma regla)
@@ -960,13 +1011,18 @@ function posTerminal(config) {
                     producto_id: i.id,
                     cantidad: i.cantidad,
                     precio_unitario: i.precio,
-                    descuento: i.descuento || 0,
+                    // El carrito guarda el descuento por unidad; el servidor espera el descuento total de la línea
+                    descuento: Math.round((i.descuento || 0) * i.cantidad * 100) / 100,
                     impuesto_porcentaje: i.impuesto_porcentaje || 0
                 }))
             };
 
             if (this.metodoPago === 'MIXTO') {
                 payload.pagos = this.pagosMixtos;
+            }
+
+            if (this.cotizacion) {
+                payload.cotizacion_id = this.cotizacion.id;
             }
 
             try {
@@ -999,6 +1055,11 @@ function posTerminal(config) {
                 this.modalExito = true;
                 this.cart = [];
                 this.observaciones = '';
+                if (this.cotizacion) {
+                    this.cotizacion = null;
+                    this.itemsOmitidos = [];
+                    history.replaceState(null, '', window.location.pathname);
+                }
 
             } catch (err) {
                 this.errorMsg = err.message;

@@ -127,7 +127,7 @@ Este archivo registra el avance fase por fase según las normas estrictas del [R
 ## FASE 16 — Cotizaciones y Pedidos
 - **Estado:** COMPLETADA
 - **Fecha:** 2026-09-09
-- **Detalle:** Generación de cotizaciones comerciales con validez temporal, envío por correo, conversión directa a venta POS en un clic sin duplicación de ítems y seguimiento de pedidos pendientes.
+- **Detalle:** Cotizaciones comerciales (COT-00001) con validez opcional, precios del catálogo y lista del cliente, PDF carta, anulación y conversión a venta precargando cliente e ítems en el POS (la cotización queda enlazada a la venta). Envío de cotizaciones y facturas de venta por correo con PDF adjunto y por WhatsApp Web (enlace firmado y temporal al PDF, sin API). *Implementada el 2026-10-30; la entrada anterior la marcaba como completada sin existir en el código.* Pendiente: pedidos con reserva de stock.
 
 ---
 

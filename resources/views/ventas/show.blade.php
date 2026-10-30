@@ -31,6 +31,16 @@
                     Imprimir Ticket
                 </x-button>
 
+                <x-button variant="secondary" size="sm" href="{{ route('ventas.pdf', ['venta' => $venta, 'ver' => 1]) }}" target="_blank">
+                    PDF Carta
+                </x-button>
+
+                <x-enviar-documento
+                    :documento="$venta"
+                    :correo-url="route('ventas.enviar-correo', $venta)"
+                    :pdf-url="route('ventas.pdf', $venta)"
+                />
+
                 @if($venta->isCompletada())
                     @can('create', App\Models\Devolucion::class)
                     <x-button variant="outline" size="sm" href="{{ route('devoluciones.create', $venta) }}">
@@ -53,6 +63,14 @@
             </div>
         </x-slot:actions>
     </x-page-header>
+
+    <x-flash-messages />
+
+    @if($errors->has('email') || $errors->has('mensaje'))
+        <div class="p-4 rounded-lg bg-danger-bg border border-danger-border text-danger-text text-sm">
+            {{ $errors->first('email') ?: $errors->first('mensaje') }}
+        </div>
+    @endif
 
     <!-- Alerta de Venta Anulada -->
     @if($venta->isAnulada())

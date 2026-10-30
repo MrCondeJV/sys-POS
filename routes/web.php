@@ -17,6 +17,8 @@ use App\Http\Controllers\ImpresionController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\ListaPrecioController;
 use App\Http\Controllers\NotificacionController;
+use App\Http\Controllers\CotizacionController;
+use App\Http\Controllers\EnvioDocumentoController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProductoPresentacionController;
@@ -45,6 +47,12 @@ Route::middleware('guest')->group(function () {
 Route::post('/webhooks/wompi', [WompiWebhookController::class, 'handle'])->name('webhooks.wompi');
 
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
+
+// PDF compartido con el cliente por WhatsApp: enlace corto público, solo con un token vigente
+Route::get('/d/{token}/{archivo?}', [EnvioDocumentoController::class, 'pdfCompartido'])
+    ->where('token', '[A-Za-z0-9]{12,32}')
+    ->middleware('throttle:30,1')
+    ->name('documentos.compartido');
 
 // Rutas Protegidas bajo Autenticación y Aislamiento Multiempresa
 Route::middleware(['auth'])->group(function () {
@@ -153,6 +161,19 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{venta}', [VentaController::class, 'show'])->name('show');
         Route::post('/{venta}/anular', [VentaController::class, 'anular'])->name('anular');
         Route::get('/{venta}/ticket', [VentaController::class, 'ticket'])->name('ticket');
+        Route::get('/{venta}/pdf', [EnvioDocumentoController::class, 'pdfVenta'])->name('pdf');
+        Route::post('/{venta}/enviar-correo', [EnvioDocumentoController::class, 'correoVenta'])->middleware('throttle:10,1')->name('enviar-correo');
+    });
+
+    // Cotizaciones comerciales (no afectan inventario hasta convertirse en venta)
+    Route::prefix('cotizaciones')->name('cotizaciones.')->group(function () {
+        Route::get('/', [CotizacionController::class, 'index'])->name('index');
+        Route::get('/nueva', [CotizacionController::class, 'create'])->name('create');
+        Route::post('/', [CotizacionController::class, 'store'])->name('store');
+        Route::get('/{cotizacion}', [CotizacionController::class, 'show'])->name('show');
+        Route::get('/{cotizacion}/pdf', [CotizacionController::class, 'pdf'])->name('pdf');
+        Route::post('/{cotizacion}/anular', [CotizacionController::class, 'anular'])->name('anular');
+        Route::post('/{cotizacion}/enviar-correo', [EnvioDocumentoController::class, 'correoCotizacion'])->middleware('throttle:10,1')->name('enviar-correo');
     });
 
     // Fase 11 & 12: Terminal Punto de Venta (POS) & Métodos de Pago

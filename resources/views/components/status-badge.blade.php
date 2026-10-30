@@ -24,7 +24,7 @@
     $variant = match ($normalized) {
         // Success (Verde)
         'COMPLETADA', 'PAGADA', 'ACTIVO', 'ACTIVA', 'ABIERTA', 'REGISTRADA', 'RECIBIDA', 'RECIBIDO',
-        'APROBADA', 'PROCESADA', 'ACEPTADA', 'ACEPTADO', 'EMITIDO', 'DISPONIBLE', 'APLICADO', 'EXITOSO',
+        'APROBADA', 'PROCESADA', 'ACEPTADA', 'ACEPTADO', 'EMITIDO', 'DISPONIBLE', 'APLICADO', 'EXITOSO', 'CONVERTIDA',
         'EN_STOCK', '1', 'TRUE' => 'success',
 
         // Warning (Ámbar)
@@ -58,6 +58,7 @@
         'REGISTRADA' => 'Registrada',
         'RECIBIDA', 'RECIBIDO' => 'Recibido',
         'PENDIENTE' => 'Pendiente',
+        'CONVERTIDA' => 'Convertida',
         'PARCIAL' => 'Parcial',
         'PAGADA' => 'Pagada',
         'PRUEBA' => 'Prueba',

@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Modulos;
 
+use App\Actions\Ventas\RegistrarCotizacionAction;
 use App\Enums\EstadoGeneral;
 use App\Enums\RolSistema;
 use App\Models\Auditoria;
+use App\Models\Cotizacion;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Route;
@@ -27,10 +29,20 @@ class RecorridoRutasPorRolTest extends TestCase
         'login', 'logout', 'suscripcion.retorno', 'suscripcion.checkout', 'notificaciones.conteo',
     ];
 
+    private Cotizacion $cotizacion;
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->crearEscenarioComercial();
+
+        $this->cotizacion = app(RegistrarCotizacionAction::class)->execute(
+            empresaId: $this->empresa->id,
+            sucursalId: $this->sucursal->id,
+            userId: $this->cajero->id,
+            items: [['producto_id' => $this->producto->id, 'cantidad' => 2]],
+            clienteId: $this->cliente->id
+        );
     }
 
     /** Valor para cada parámetro de ruta, con excepciones según el nombre de la ruta. */
@@ -59,6 +71,10 @@ class RecorridoRutasPorRolTest extends TestCase
             'usuario' => $this->cajero->id,
             'empresa' => $this->empresa->id,
             'plan' => \App\Models\Plan::query()->value('id'),
+            'cotizacion' => $this->cotizacion->id,
+            // PDF compartido por WhatsApp: con un token inexistente debe responder 410, nunca error de servidor
+            'token' => 'TokenInvalido',
+            'archivo' => 'COT-00001.pdf',
         ];
 
         $params = [];

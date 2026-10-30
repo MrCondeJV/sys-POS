@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Rules\BelongsToActiveCompany;
 use App\Actions\Ventas\RegistrarVentaAction;
 use App\Enums\EstadoCaja;
+use App\Enums\EstadoCotizacion;
 use App\Enums\EstadoGeneral;
 use App\Enums\EstadoPagoCartera;
 use App\Enums\EstadoSesionCaja;
@@ -14,6 +15,7 @@ use App\Models\Caja;
 use App\Models\CajaSesion;
 use App\Models\Categoria;
 use App\Models\Cliente;
+use App\Models\Cotizacion;
 use App\Models\CuentaPorCobrar;
 use App\Models\Inventario;
 use App\Models\Producto;
@@ -22,7 +24,9 @@ use App\Support\Tenancy\CompanyContext;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use InvalidArgumentException;
 use Illuminate\View\View;
 
 class PosController extends Controller
@@ -133,12 +137,35 @@ class PosController extends Controller
             ->orderBy('nombre')
             ->get();
 
+        // Conversión de cotización: precarga cliente e ítems en el carrito (?cotizacion=ID)
+        $cotizacion = null;
+        if ($request->filled('cotizacion')) {
+            $modelo = Cotizacion::with('detalles')->find($request->integer('cotizacion'));
+
+            if ($modelo && Gate::allows('view', $modelo) && $modelo->isPendiente()) {
+                $cotizacion = [
+                    'id' => $modelo->id,
+                    'numero' => $modelo->numero_cotizacion,
+                    'cliente_id' => $modelo->cliente_id,
+                    'total' => (float) $modelo->total,
+                    'vencida' => $modelo->estaVencida(),
+                    'items' => $modelo->detalles->map(fn ($d) => [
+                        'producto_id' => $d->producto_id,
+                        'descripcion' => $d->descripcion,
+                        'cantidad' => (float) $d->cantidad,
+                        'descuento' => (float) $d->descuento,
+                    ])->values(),
+                ];
+            }
+        }
+
         return view('pos.index', compact(
             'sesionCaja',
             'productos',
             'clientes',
             'categorias',
-            'listasPrecios'
+            'listasPrecios',
+            'cotizacion'
         ));
     }
 
@@ -223,6 +250,7 @@ class PosController extends Controller
             'items.*.precio_unitario' => ['required', 'numeric', 'min:0'],
             'items.*.descuento' => ['nullable', 'numeric', 'min:0'],
             'items.*.impuesto_porcentaje' => ['nullable', 'numeric', 'min:0'],
+            'cotizacion_id' => ['nullable', 'integer', 'exists:cotizaciones,id', new BelongsToActiveCompany('cotizaciones')],
         ]);
 
         try {
@@ -231,21 +259,40 @@ class PosController extends Controller
                 ? TipoComprobanteVenta::from($validated['tipo_comprobante'])
                 : TipoComprobanteVenta::TICKET;
 
-            $venta = $action->execute(
-                empresaId: $empresaId,
-                sucursalId: $sucursalId,
-                userId: auth()->id(),
-                items: $validated['items'],
-                clienteId: $validated['cliente_id'] ?? null,
-                tipoPago: $tipoPago,
-                metodoPago: $validated['metodo_pago'],
-                tipoComprobante: $tipoComprobante,
-                cajaSesionId: (int) $validated['caja_sesion_id'],
-                pagoCon: isset($validated['pago_con']) ? (float) $validated['pago_con'] : null,
-                pagos: $validated['pagos'] ?? null,
-                observaciones: $validated['observaciones'] ?? null,
-                listaPrecioId: isset($validated['lista_precio_id']) ? (int) $validated['lista_precio_id'] : null
-            );
+            // La venta y el cierre de la cotización van en la misma transacción
+            $venta = DB::transaction(function () use ($action, $validated, $empresaId, $sucursalId, $tipoPago, $tipoComprobante) {
+                $cotizacion = null;
+                if (! empty($validated['cotizacion_id'])) {
+                    $cotizacion = Cotizacion::lockForUpdate()->findOrFail($validated['cotizacion_id']);
+                    if (! $cotizacion->isPendiente()) {
+                        throw new InvalidArgumentException("La cotización {$cotizacion->numero_cotizacion} ya fue convertida o anulada.");
+                    }
+                }
+
+                $venta = $action->execute(
+                    empresaId: $empresaId,
+                    sucursalId: $sucursalId,
+                    userId: auth()->id(),
+                    items: $validated['items'],
+                    clienteId: $validated['cliente_id'] ?? null,
+                    tipoPago: $tipoPago,
+                    metodoPago: $validated['metodo_pago'],
+                    tipoComprobante: $tipoComprobante,
+                    cajaSesionId: (int) $validated['caja_sesion_id'],
+                    pagoCon: isset($validated['pago_con']) ? (float) $validated['pago_con'] : null,
+                    pagos: $validated['pagos'] ?? null,
+                    observaciones: $validated['observaciones'] ?? null,
+                    listaPrecioId: isset($validated['lista_precio_id']) ? (int) $validated['lista_precio_id'] : null
+                );
+
+                $cotizacion?->update([
+                    'estado' => EstadoCotizacion::CONVERTIDA,
+                    'venta_id' => $venta->id,
+                    'fecha_conversion' => now(),
+                ]);
+
+                return $venta;
+            });
 
             // Existencias frescas de la sucursal (incluye lo vendido por otras cajas) para refrescar el catálogo del POS
             $stocks = Inventario::where('empresa_id', $empresaId)
