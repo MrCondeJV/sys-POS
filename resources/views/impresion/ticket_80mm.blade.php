@@ -95,11 +95,12 @@
                     <tr>
                         <td colspan="4" class="font-bold" style="font-family: sans-serif; padding-top: 4px;">
                             {{ $det->producto->nombre ?? 'Artículo' }}
+                            @if($det->presentacion_id)<br><span style="font-size: 10px;">{{ $det->unidadTexto() }}</span>@endif
                         </td>
                     </tr>
                     <tr class="border-b">
                         <td style="font-size: 10px; color: rgb(85, 85, 85);">{{ $det->producto->codigo ?? '' }}</td>
-                        <td class="text-center">{{ number_format($det->cantidad, 2) }}</td>
+                        <td class="text-center">{{ $det->cantidadTexto() }}</td>
                         <td class="text-right">${{ number_format($det->precio_unitario, 2) }}</td>
                         <td class="text-right font-bold">${{ number_format($det->subtotal, 2) }}</td>
                     </tr>

@@ -50,8 +50,8 @@ class Producto extends Model
         'precio_venta' => 'decimal:2',
         'precio_mayorista' => 'decimal:2',
         'precio_distribuidor' => 'decimal:2',
-        'stock' => 'decimal:2',
-        'stock_minimo' => 'decimal:2',
+        'stock' => 'decimal:4',
+        'stock_minimo' => 'decimal:4',
         'iva' => 'decimal:2',
         'estado' => EstadoGeneral::class,
     ];

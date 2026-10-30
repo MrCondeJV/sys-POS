@@ -22,8 +22,8 @@ class TrasladoDetalle extends Model
     ];
 
     protected $casts = [
-        'cantidad_enviada' => 'decimal:3',
-        'cantidad_recibida' => 'decimal:3',
+        'cantidad_enviada' => 'decimal:4',
+        'cantidad_recibida' => 'decimal:4',
     ];
 
     public function traslado(): BelongsTo

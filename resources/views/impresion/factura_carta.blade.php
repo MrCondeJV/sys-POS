@@ -116,8 +116,8 @@
                 @foreach($venta->detalles as $det)
                     <tr>
                         <td class="font-mono" style="color: rgb(100, 116, 139);">{{ $det->producto->codigo ?? '' }}</td>
-                        <td style="font-weight: 600; color: rgb(30, 41, 59);">{{ $det->producto->nombre ?? 'Artículo' }}</td>
-                        <td class="text-center font-mono">{{ number_format($det->cantidad, 2) }}</td>
+                        <td style="font-weight: 600; color: rgb(30, 41, 59);">{{ $det->producto->nombre ?? 'Artículo' }}@if($det->presentacion_id)<div style="font-weight: 400; font-size: 10px; color: rgb(100, 116, 139);">{{ $det->unidadTexto() }}</div>@endif</td>
+                        <td class="text-center font-mono">{{ $det->cantidadTexto() }}</td>
                         <td class="text-right font-mono">${{ number_format($det->precio_unitario, 2) }}</td>
                         <td class="text-center font-mono">{{ number_format($det->impuesto_porcentaje ?? 0, 0) }}%</td>
                         <td class="text-right font-mono" style="font-weight: 700;">${{ number_format($det->subtotal, 2) }}</td>

@@ -16,7 +16,7 @@ class ImpresionService
      */
     public function renderVenta(Venta $venta, FormatoImpresion $formato = FormatoImpresion::TICKET_80MM): View
     {
-        $venta->loadMissing(['empresa', 'sucursal', 'cliente', 'usuario', 'detalles.producto', 'pagos', 'documentoVenta']);
+        $venta->loadMissing(['empresa', 'sucursal', 'cliente', 'usuario', 'detalles.producto.unidadMedida', 'detalles.presentacion', 'pagos', 'documentoVenta']);
 
         return match ($formato) {
             FormatoImpresion::TICKET_58MM => view('impresion.ticket_58mm', [
@@ -53,7 +53,8 @@ class ImpresionService
             'sucursal',
             'cliente',
             'usuario',
-            'venta.detalles.producto',
+            'venta.detalles.producto.unidadMedida',
+            'venta.detalles.presentacion',
             'venta.pagos',
         ]);
 

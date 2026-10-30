@@ -139,7 +139,7 @@
                         <div class="text-text-muted text-[11px] font-mono">{{ $det->producto->codigo_barras ?? $det->producto->codigo }}</div>
                     </td>
                     <td class="px-5 py-3 text-center font-medium text-text-primary text-xs tabular-nums whitespace-nowrap">
-                        {{ number_format($det->cantidad, 2) }} {{ $det->producto->unidadMedida?->codigo ?? 'UND' }}
+                        {{ $det->cantidadTexto() }} {{ $det->unidadTexto() }}
                     </td>
                     <td class="px-5 py-3 text-right text-text-secondary text-xs tabular-nums whitespace-nowrap">
                         ${{ number_format($det->precio_unitario, 2) }}

@@ -74,10 +74,10 @@
             @if($venta && $venta->detalles)
                 @foreach($venta->detalles as $det)
                     <tr>
-                        <td colspan="2" class="font-bold">{{ $det->producto->nombre ?? 'Artículo' }}</td>
+                        <td colspan="2" class="font-bold">{{ $det->producto->nombre ?? 'Artículo' }}@if($det->presentacion_id) · {{ $det->unidadTexto() }}@endif</td>
                     </tr>
                     <tr>
-                        <td>{{ number_format($det->cantidad, 2) }} x ${{ number_format($det->precio_unitario, 2) }}</td>
+                        <td>{{ $det->cantidadTexto() }} x ${{ number_format($det->precio_unitario, 2) }}</td>
                         <td class="text-right font-bold">${{ number_format($det->subtotal, 2) }}</td>
                     </tr>
                 @endforeach

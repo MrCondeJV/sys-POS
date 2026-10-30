@@ -32,10 +32,10 @@ class MovimientoInventario extends Model
 
     protected $casts = [
         'tipo' => TipoMovimientoInventario::class,
-        'cantidad' => 'decimal:2',
+        'cantidad' => 'decimal:4',
         'costo_unitario' => 'decimal:2',
-        'stock_anterior' => 'decimal:2',
-        'stock_posterior' => 'decimal:2',
+        'stock_anterior' => 'decimal:4',
+        'stock_posterior' => 'decimal:4',
     ];
 
     /**

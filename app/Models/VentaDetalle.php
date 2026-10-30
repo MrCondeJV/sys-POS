@@ -46,12 +46,35 @@ class VentaDetalle extends Model
 
     public function presentacion(): BelongsTo
     {
-        return $this->belongsTo(ProductoPresentacion::class, 'presentacion_id');
+        return $this->belongsTo(ProductoPresentacion::class, 'presentacion_id')->withTrashed();
     }
 
     public function lote(): BelongsTo
     {
         return $this->belongsTo(ProductoLote::class, 'lote_id');
+    }
+
+    /**
+     * Unidad en que se vendió la línea, ej. "Caja (1,44 M2)" o "M2".
+     */
+    public function unidadTexto(): string
+    {
+        $base = $this->producto?->unidadMedida?->codigo ?? 'UND';
+        if ($this->presentacion_id && $this->presentacion) {
+            $factor = rtrim(rtrim(number_format((float) $this->factor_conversion, 4, ',', '.'), '0'), ',');
+
+            return "{$this->presentacion->nombre} ({$factor} {$base})";
+        }
+
+        return $base;
+    }
+
+    /**
+     * Cantidad sin ceros sobrantes (2,35 · 2 · 0,5).
+     */
+    public function cantidadTexto(string $campo = 'cantidad'): string
+    {
+        return rtrim(rtrim(number_format((float) $this->{$campo}, 4, ',', '.'), '0'), ',');
     }
 
     public function cantidadPendienteDevolucion(): float

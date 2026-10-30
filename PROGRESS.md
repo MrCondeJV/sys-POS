@@ -7,7 +7,7 @@ Este archivo registra el avance fase por fase según las normas estrictas del [R
 ## Resumen Ejecutivo de Estado
 - **Total Fases Planificadas:** 30
 - **Total Fases Completadas:** 30 (100%)
-- **Cobertura de Pruebas:** 262 tests automatizados (921 aserciones) — 100% pasando sin errores ni advertencias.
+- **Cobertura de Pruebas:** 508 tests automatizados (2.212 aserciones) — 100% pasando.
 - **Arquitectura:** Monolito modular por capas, Multi-inquilino (Multitenancy con aislamiento estricto en BD), Facturación Electrónica DIAN UBL 2.1, PWA Offline, Soporte Droguería/Lotes, API RESTful y Modelo SaaS.
 
 ---
@@ -226,3 +226,8 @@ Este archivo registra el avance fase por fase según las normas estrictas del [R
 - **Estado:** COMPLETADA
 - **Fecha:** 2026-09-09
 - **Detalle:** Plantilla de configuración `.env.production.example`, orquestación con `docker/supervisord.conf` (FPM, Queue Worker, Scheduler), script automatizado de despliegue con zero-downtime `deploy.sh` (migraciones atómicas, caché de rutas/vistas/eventos) y validación de seguridad de endpoints.
+
+## Actualización funcional — Venta por medida
+- **Estado:** COMPLETADA
+- **Fecha:** 2026-10-30
+- **Detalle:** Alta y edición de productos aceptan opcionalmente los m² por caja. Al guardar el factor, el sistema convierte automáticamente existencias, mínimos y costos a M2, conserva la caja con su precio, registra el cambio en kardex y auditoría, y habilita venta por caja o por fracción de M2 cuando se defina su precio. POS, cotizaciones, devoluciones y documentos conservan la unidad presentada. La conversión rechaza productos con listas de precios especiales o traslados en tránsito.

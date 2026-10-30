@@ -115,7 +115,7 @@ class VentaController extends Controller
             abort(403, 'No tienes autorización para ver esta venta.');
         }
 
-        $venta->load(['cliente', 'sucursal', 'usuario', 'anulador', 'detalles.producto.unidadMedida', 'pagos']);
+        $venta->load(['cliente', 'sucursal', 'usuario', 'anulador', 'detalles.producto.unidadMedida', 'detalles.presentacion', 'pagos']);
 
         return view('ventas.show', compact('venta'));
     }
@@ -221,7 +221,7 @@ class VentaController extends Controller
             abort(403, 'No tienes autorización para consultar este comprobante.');
         }
 
-        $venta->load(['cliente', 'sucursal', 'usuario', 'detalles.producto.unidadMedida', 'pagos']);
+        $venta->load(['cliente', 'sucursal', 'usuario', 'detalles.producto.unidadMedida', 'detalles.presentacion', 'pagos']);
 
         return view('ventas.ticket', compact('venta'));
     }

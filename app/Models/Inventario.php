@@ -24,8 +24,8 @@ class Inventario extends Model
     ];
 
     protected $casts = [
-        'stock' => 'decimal:2',
-        'stock_minimo' => 'decimal:2',
+        'stock' => 'decimal:4',
+        'stock_minimo' => 'decimal:4',
     ];
 
     /**

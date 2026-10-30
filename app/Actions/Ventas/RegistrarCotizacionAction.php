@@ -8,6 +8,7 @@ use App\Models\Cliente;
 use App\Models\Cotizacion;
 use App\Models\ListaPrecio;
 use App\Models\Producto;
+use App\Models\ProductoPresentacion;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
@@ -16,7 +17,7 @@ class RegistrarCotizacionAction
     /**
      * Registra una cotización. No mueve inventario, caja ni cartera: solo documenta precios ofrecidos.
      *
-     * @param array<int, array{producto_id: int, cantidad: float, descuento?: float}> $items
+     * @param array<int, array{producto_id: int, cantidad: float, descuento?: float, presentacion_id?: int|null}> $items
      */
     public function execute(
         int $empresaId,
@@ -77,8 +78,27 @@ class RegistrarCotizacionAction
                     throw new InvalidArgumentException("El producto '{$producto->nombre}' se encuentra inactivo y no puede cotizarse.");
                 }
 
+                // Venta por medida: la presentación (ej. caja) tiene precio propio; las listas solo aplican a la unidad base
+                $presentacion = null;
+                if (! empty($item['presentacion_id'])) {
+                    $presentacion = ProductoPresentacion::withoutGlobalScopes()
+                        ->where('empresa_id', $empresaId)
+                        ->where('producto_id', $producto->id)
+                        ->findOrFail($item['presentacion_id']);
+                }
+
                 // Precio e IVA siempre del catálogo, nunca del formulario
-                $precioUnitario = $listaPrecio ? $listaPrecio->calcularPrecio($producto) : (float) $producto->precio_venta;
+                if ($presentacion) {
+                    $precioUnitario = (float) $presentacion->precio_venta > 0
+                        ? (float) $presentacion->precio_venta
+                        : round((float) $producto->precio_venta * (float) $presentacion->factor_conversion, 2);
+                } else {
+                    $precioUnitario = $listaPrecio ? $listaPrecio->calcularPrecio($producto) : (float) $producto->precio_venta;
+                    if ($precioUnitario <= 0 && $producto->presentaciones()->exists()) {
+                        $unidad = $producto->unidadMedida?->codigo ?? 'unidad base';
+                        throw new InvalidArgumentException("El producto '{$producto->nombre}' aún no tiene precio por {$unidad}. Cotízalo por su presentación (ej. caja) o define el precio por {$unidad}.");
+                    }
+                }
                 $impuestoPorcentaje = (float) $producto->porcentaje_iva;
 
                 $descuentoItem = (float) ($item['descuento'] ?? 0);
@@ -97,8 +117,10 @@ class RegistrarCotizacionAction
                 $detalles[] = [
                     'empresa_id' => $empresaId,
                     'producto_id' => $producto->id,
+                    'presentacion_id' => $presentacion?->id,
                     'descripcion' => $producto->nombre,
                     'cantidad' => $cantidad,
+                    'factor_conversion' => $presentacion ? (float) $presentacion->factor_conversion : 1,
                     'precio_unitario' => $precioUnitario,
                     'descuento' => $descuentoItem,
                     'impuesto_porcentaje' => $impuestoPorcentaje,

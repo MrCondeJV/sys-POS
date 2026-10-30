@@ -79,7 +79,7 @@ class DevolucionController extends Controller
         $empresaId = CompanyContext::getId();
         $sucursalId = BranchContext::getId() ?? $venta->sucursal_id;
 
-        $venta->load(['detalles.producto', 'cliente', 'sucursal']);
+        $venta->load(['detalles.producto.unidadMedida', 'detalles.presentacion', 'cliente', 'sucursal']);
 
         // Buscar caja abierta en caso de reintegro en efectivo
         $sesionCaja = CajaSesion::where('empresa_id', $empresaId)

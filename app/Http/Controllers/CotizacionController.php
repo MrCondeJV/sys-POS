@@ -85,7 +85,7 @@ class CotizacionController extends Controller
 
         $productos = Producto::where('empresa_id', $empresaId)
             ->activo()
-            ->with(['categoria', 'unidadMedida'])
+            ->with(['categoria', 'unidadMedida', 'presentaciones' => fn ($q) => $q->where('estado', EstadoGeneral::ACTIVO->value)->with('unidadMedida')])
             ->orderBy('nombre')
             ->get()
             ->map(function ($p) use ($listasPrecios, $stockSucursal) {
@@ -107,7 +107,16 @@ class CotizacionController extends Controller
                     'categoria_id' => $p->categoria_id,
                     'categoria_nombre' => $p->categoria?->nombre ?? 'General',
                     'unidad' => $p->unidadMedida?->codigo ?? 'UND',
+                    'permite_decimales' => (bool) $p->unidadMedida?->permite_decimales,
                     'imagen_url' => $p->imagen_url,
+                    'presentaciones' => $p->presentaciones->map(fn ($pr) => [
+                        'id' => $pr->id,
+                        'nombre' => $pr->nombre,
+                        'factor' => (float) $pr->factor_conversion,
+                        'precio' => (float) $pr->precio_venta > 0 ? (float) $pr->precio_venta : round((float) $p->precio_venta * (float) $pr->factor_conversion, 2),
+                        'permite_decimales' => (bool) $pr->unidadMedida?->permite_decimales,
+                        'predeterminada' => (bool) $pr->es_predeterminada,
+                    ])->values(),
                 ];
             })->values();
 
@@ -145,6 +154,7 @@ class CotizacionController extends Controller
             'items.*.producto_id' => ['required', 'exists:productos,id', new BelongsToActiveCompany('productos')],
             'items.*.cantidad' => ['required', 'numeric', 'min:0.01'],
             'items.*.descuento' => ['nullable', 'numeric', 'min:0'],
+            'items.*.presentacion_id' => ['nullable', 'integer', 'exists:producto_presentaciones,id', new BelongsToActiveCompany('producto_presentaciones')],
         ]);
 
         try {
@@ -171,7 +181,7 @@ class CotizacionController extends Controller
             abort(403, 'No tienes autorización para ver esta cotización.');
         }
 
-        $cotizacion->load(['cliente', 'sucursal', 'usuario', 'venta', 'detalles.producto']);
+        $cotizacion->load(['cliente', 'sucursal', 'usuario', 'venta', 'detalles.producto.unidadMedida', 'detalles.presentacion']);
 
         return view('cotizaciones.show', compact('cotizacion'));
     }

@@ -236,6 +236,17 @@
                         </select>
                     </x-field>
                 </div>
+
+                @if (strtoupper($producto->unidadMedida?->codigo ?? '') !== 'M2')
+                    <div class="sm:col-span-6">
+                        <x-field label="M2 por caja (opcional)" name="m2_por_caja"
+                            hint="Úsalo si la unidad actual es Caja. Al guardar, convierte stock y costos a M2, conserva la caja y su precio; el precio por M2 queda en $0 para que lo definas.">
+                            <input type="number" min="0.0001" step="0.0001" name="m2_por_caja" id="m2_por_caja"
+                                value="{{ old('m2_por_caja') }}" placeholder="Ej: 1.44"
+                                class="block w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900 tabular-nums placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+                        </x-field>
+                    </div>
+                @endif
             </div>
         </div>
 
@@ -280,7 +291,13 @@
 
                 <!-- Precio de Venta (PVP) -->
                 <div>
-                    <x-field label="Precio Venta Público ($)" name="precio_venta" :required="true">
+                    @php
+                        // Venta por medida: el precio del producto es el de su unidad base (ej. m²); la caja tiene precio propio
+                        $tienePresentaciones = $producto->presentaciones()->exists();
+                        $unidadBase = $producto->unidadMedida?->codigo ?? 'unidad';
+                    @endphp
+                    <x-field :label="$tienePresentaciones ? 'Precio por '.$unidadBase.' ($)' : 'Precio Venta Público ($)'" name="precio_venta" :required="true"
+                        :hint="$tienePresentaciones ? 'Precio al vender por '.$unidadBase.' (fracciones). En $0 solo se vende por su presentación (ej. caja), cuyo precio se edita en Presentaciones.' : null">
                         <input type="number" step="0.01" name="precio_venta" id="precio_venta" required
                             x-model="precioVenta"
                             placeholder="0.00"
@@ -335,7 +352,7 @@
                 <!-- Stock Mínimo -->
                 <div>
                     <x-field label="Stock Mínimo (Alerta)" name="stock_minimo">
-                        <input type="number" step="0.01" name="stock_minimo" id="stock_minimo" value="{{ old('stock_minimo', $producto->stock_minimo) }}"
+                        <input type="number" step="0.01" name="stock_minimo" id="stock_minimo" value="{{ old('stock_minimo', (float) $producto->stock_minimo) }}"
                             placeholder="5"
                             class="block w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900 tabular-nums placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
                     </x-field>

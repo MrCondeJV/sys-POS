@@ -80,8 +80,11 @@
             @foreach($lineas as $linea)
                 <tr>
                     <td class="mono muted">{{ $linea['codigo'] }}</td>
-                    <td style="font-weight: bold;">{{ $linea['descripcion'] }}</td>
-                    <td class="c mono">{{ rtrim(rtrim(number_format($linea['cantidad'], 2, ',', '.'), '0'), ',') }}</td>
+                    <td style="font-weight: bold;">
+                        {{ $linea['descripcion'] }}
+                        @if(! empty($linea['unidad']))<div class="muted" style="font-weight: normal; font-size: 8px;">Unidad: {{ $linea['unidad'] }}</div>@endif
+                    </td>
+                    <td class="c mono">{{ rtrim(rtrim(number_format($linea['cantidad'], 4, ',', '.'), '0'), ',') }}</td>
                     <td class="r mono">${{ number_format($linea['precio_unitario'], 0, ',', '.') }}</td>
                     <td class="r mono">{{ $linea['descuento'] > 0 ? '$' . number_format($linea['descuento'], 0, ',', '.') : '—' }}</td>
                     <td class="c mono">{{ number_format($linea['impuesto_porcentaje'], 0) }}%</td>

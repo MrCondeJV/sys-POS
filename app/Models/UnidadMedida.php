@@ -19,10 +19,12 @@ class UnidadMedida extends Model
         'empresa_id',
         'nombre',
         'codigo',
+        'permite_decimales',
         'activo',
     ];
 
     protected $casts = [
+        'permite_decimales' => 'boolean',
         'activo' => 'boolean',
     ];
 

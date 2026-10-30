@@ -113,7 +113,9 @@ class RegistrarDevolucionAction
                     'producto_id' => $detalle->producto_id,
                     'cantidad' => $cantidadADevolver,
                     'precio_unitario' => $precioUnitario,
-                    'costo_unitario' => (float) $detalle->costo_unitario,
+                    // Lo vendido por presentación (ej. caja = 1,44 m²) reingresa en unidad base
+                    'factor_conversion' => (float) ($detalle->factor_conversion ?: 1),
+                    'costo_base' => round((float) $detalle->costo_unitario / (float) ($detalle->factor_conversion ?: 1), 2),
                     'subtotal' => $subtotalLinea,
                     'impuesto_porcentaje' => $impuestoPorcentaje,
                     'impuesto_monto' => $impuestoLinea,
@@ -183,10 +185,10 @@ class RegistrarDevolucionAction
                         productoId: $d['producto_id'],
                         sucursalId: $sucursalId,
                         tipo: TipoMovimientoInventario::DEVOLUCION_CLIENTE,
-                        cantidad: $d['cantidad'],
+                        cantidad: round($d['cantidad'] * $d['factor_conversion'], 4),
                         referencia: $numeroDevolucion,
                         // El inventario reingresa valorizado al costo de la venta, no al precio de venta
-                        costoUnitario: (float) $d['costo_unitario'],
+                        costoUnitario: $d['costo_base'],
                         userId: $userId,
                         notas: "Devolución {$numeroDevolucion} de Venta #{$venta->numero_venta}"
                     ));

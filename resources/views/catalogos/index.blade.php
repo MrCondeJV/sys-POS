@@ -5,9 +5,9 @@
 @section('content')
 <div class="space-y-6" x-data="{
     activeTab: 'categorias',
-    edicion: { abierta: false, tipo: '', titulo: '', action: '', nombre: '', descripcion: '', codigo: '' },
+    edicion: { abierta: false, tipo: '', titulo: '', action: '', nombre: '', descripcion: '', codigo: '', permite_decimales: false },
     abrirEdicion(datos) {
-        this.edicion = { abierta: true, descripcion: '', codigo: '', ...datos };
+        this.edicion = { abierta: true, descripcion: '', codigo: '', permite_decimales: false, ...datos };
         this.$nextTick(() => this.$refs.edicionNombre?.focus());
     }
 }" @keydown.escape.window="edicion.abierta = false">
@@ -269,6 +269,10 @@
                             placeholder="Ej: Unidad, Kilogramo, Litro, Metro"
                             class="block w-full px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition shadow-xs">
                     </div>
+                    <label class="flex items-start gap-2 text-xs text-slate-700">
+                        <input type="checkbox" name="permite_decimales" value="1" class="mt-0.5 rounded border-slate-300">
+                        <span><span class="font-semibold">Permite fracciones</span> (ej. 2,5 m² o 1,25 kg). Déjalo sin marcar para unidades enteras como cajas o unidades.</span>
+                    </label>
                     <x-button variant="primary" type="submit" class="w-full justify-center">
                         Guardar Unidad
                     </x-button>
@@ -292,6 +296,9 @@
                             <div>
                                 <div class="font-semibold text-slate-900 text-sm">{{ $u->nombre }}</div>
                                 <div class="mt-1">
+                                    @if($u->permite_decimales)
+                                        <x-badge color="info">Permite fracciones</x-badge>
+                                    @endif
                                     <x-badge color="neutral">
                                         {{ $u->productos_count }} {{ $u->productos_count == 1 ? 'producto' : 'productos' }}
                                     </x-badge>
@@ -301,7 +308,7 @@
                         <div class="flex items-center gap-1.5">
                             @can('update', $u)
                             <x-icon-button type="button" variant="secondary" icon="pencil" title="Editar unidad"
-                                @click="abrirEdicion({{ \Illuminate\Support\Js::from(['tipo' => 'unidades', 'titulo' => 'Editar Unidad', 'action' => route('catalogos.unidades.update', $u), 'nombre' => $u->nombre, 'codigo' => $u->codigo]) }})" />
+                                @click="abrirEdicion({{ \Illuminate\Support\Js::from(['tipo' => 'unidades', 'titulo' => 'Editar Unidad', 'action' => route('catalogos.unidades.update', $u), 'nombre' => $u->nombre, 'codigo' => $u->codigo, 'permite_decimales' => (bool) $u->permite_decimales]) }})" />
                             @endcan
                             @if($u->productos_count === 0)
                             @can('delete', $u)
@@ -358,6 +365,13 @@
                 <label class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1.5">Nombre <span class="text-danger-text">*</span></label>
                 <input type="text" name="nombre" x-ref="edicionNombre" x-model="edicion.nombre" required maxlength="150" class="input">
             </div>
+
+            <template x-if="edicion.tipo === 'unidades'">
+                <label class="flex items-start gap-2 text-xs text-slate-700">
+                    <input type="checkbox" name="permite_decimales" value="1" x-model="edicion.permite_decimales" class="mt-0.5 rounded border-slate-300">
+                    <span><span class="font-semibold">Permite fracciones</span> (ej. 2,5 m² o 1,25 kg)</span>
+                </label>
+            </template>
 
             <template x-if="edicion.tipo !== 'unidades'">
                 <div>

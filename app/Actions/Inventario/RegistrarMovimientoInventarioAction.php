@@ -41,7 +41,7 @@ class RegistrarMovimientoInventarioAction
 
             // 2. Calcular nuevo stock y validar que no quede negativo en operaciones de salida
             if ($dto->tipo->esEntrada()) {
-                $stockPosterior = round($stockAnterior + $cantidad, 2);
+                $stockPosterior = round($stockAnterior + $cantidad, 4);
             } else {
                 if ($stockAnterior < $cantidad) {
                     $productoNombre = $inventario->producto?->nombre ?? 'Producto #'.$dto->productoId;
@@ -51,7 +51,7 @@ class RegistrarMovimientoInventarioAction
                         cantidadRequerida: $cantidad
                     );
                 }
-                $stockPosterior = round($stockAnterior - $cantidad, 2);
+                $stockPosterior = round($stockAnterior - $cantidad, 4);
             }
 
             // 3. Persistir existencias actualizadas en la sucursal

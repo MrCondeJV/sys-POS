@@ -168,7 +168,7 @@ class="max-w-[1720px] mx-auto pb-10">
                                 <!-- Badge de Stock (flotante superior derecha) -->
                                 <span :class="p.stock > 5 ? 'badge-success' : (p.stock > 0 ? 'badge-warning' : 'badge-danger')"
                                       class="badge absolute top-1.5 right-1.5 text-[10px] font-bold font-mono px-1.5 py-0.5 shadow-xs">
-                                    <span x-text="p.stock"></span> <span x-text="p.unidad"></span>
+                                    <span x-text="formatCantidad(p.stock)"></span> <span x-text="p.unidad"></span>
                                 </span>
                             </div>
 
@@ -181,7 +181,7 @@ class="max-w-[1720px] mx-auto pb-10">
                             <!-- Price -->
                             <div class="flex items-center justify-between pt-2 border-t border-slate-100 mt-auto">
                                 <span class="text-sm sm:text-base font-bold font-mono tabular-nums text-slate-900">
-                                    $<span x-text="formatCurrency(precioPara(p))"></span>
+                                    $<span x-text="formatCurrency(precioGrilla(p).precio)"></span><span class="text-[10px] font-semibold text-slate-400" x-text="precioGrilla(p).etiqueta"></span>
                                 </span>
                                 <div class="h-6 w-6 rounded-md bg-slate-100 group-hover:bg-brand-600 group-hover:text-white text-slate-600 flex items-center justify-center transition shadow-xs">
                                     <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" /></svg>
@@ -326,7 +326,7 @@ class="max-w-[1720px] mx-auto pb-10">
                     </div>
 
                     <div class="max-h-[320px] overflow-y-auto divide-y divide-slate-100">
-                        <template x-for="(item, idx) in cart" :key="item.id">
+                        <template x-for="(item, idx) in cart" :key="item.key">
                             <div class="p-3 hover:bg-slate-50/70 transition flex items-center justify-between gap-2.5">
                                 <!-- Mini Thumbnail -->
                                 <div class="h-10 w-10 rounded-md bg-slate-100 border border-slate-200/80 overflow-hidden flex-shrink-0 flex items-center justify-center">
@@ -343,7 +343,10 @@ class="max-w-[1720px] mx-auto pb-10">
                                 <div class="flex-1 min-w-0">
                                     <h5 class="text-xs font-semibold text-slate-900 truncate" x-text="item.nombre"></h5>
                                     <div class="text-[11px] text-slate-500 tabular-nums">
-                                        $<span x-text="formatCurrency(item.precio)"></span> x <span x-text="item.unidad"></span>
+                                        $<span x-text="formatCurrency(item.precio)"></span> x <span class="font-semibold text-slate-700" x-text="item.unidad"></span>
+                                        <template x-if="item.presentacion_id">
+                                            <span class="text-slate-400">(= <span x-text="formatCantidad(item.cantidad * item.factor)"></span> <span x-text="item.unidad_base"></span>)</span>
+                                        </template>
                                         <template x-if="item.impuesto_porcentaje > 0">
                                             <span class="text-slate-400 font-mono">(IVA <span x-text="item.impuesto_porcentaje"></span>%)</span>
                                         </template>
@@ -355,7 +358,7 @@ class="max-w-[1720px] mx-auto pb-10">
                                     <button @click="updateQty(idx, -1)" class="h-7 w-7 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs">
                                         -
                                     </button>
-                                    <input type="number" step="1" min="1" x-model.number="item.cantidad" @change="if(item.cantidad < 1) item.cantidad = 1"
+                                    <input type="number" :step="item.permite_decimales ? 0.01 : 1" :min="item.permite_decimales ? 0.01 : 1" x-model.number="item.cantidad" @change="normalizarCantidad(item)"
                                            class="w-12 text-center text-xs font-semibold font-mono tabular-nums py-1 px-1 border border-slate-200 rounded">
                                     <button @click="updateQty(idx, 1)" class="h-7 w-7 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs">
                                         +
@@ -649,6 +652,64 @@ class="max-w-[1720px] mx-auto pb-10">
         </div>
     </div>
 
+    <!-- SELECTOR DE PRESENTACIÓN (venta por medida: m² o caja) -->
+    <div x-cloak x-show="selector.abierto" class="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" @keydown.escape.window="selector.abierto = false">
+        <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" @click="selector.abierto = false"></div>
+        <div class="relative bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-md p-5 space-y-4" x-show="selector.producto">
+            <div class="flex items-start justify-between gap-3 pb-3 border-b border-slate-100">
+                <div class="min-w-0">
+                    <div class="text-[10px] font-bold text-brand-600 uppercase tracking-wider">¿Cómo se vende?</div>
+                    <h3 class="text-sm font-bold text-slate-900" x-text="selector.producto?.nombre"></h3>
+                    <div class="text-[11px] text-slate-500 font-mono tabular-nums">
+                        Stock: <span x-text="formatCantidad(selector.producto?.stock)"></span> <span x-text="selector.producto?.unidad"></span>
+                        <template x-for="pr in (selector.producto?.presentaciones || [])" :key="pr.id">
+                            <span> · ≈ <span x-text="formatCantidad((selector.producto?.stock || 0) / pr.factor)"></span> <span x-text="pr.nombre"></span></span>
+                        </template>
+                    </div>
+                </div>
+                <button type="button" @click="selector.abierto = false" class="p-1 text-slate-400 hover:text-slate-600" aria-label="Cerrar">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+
+            <div class="space-y-2">
+                <template x-for="pr in (selector.producto?.presentaciones || [])" :key="pr.id">
+                    <button type="button" @click="elegirOpcion(pr.id)"
+                            :class="selector.opcion === pr.id ? 'border-brand-600 ring-1 ring-brand-500 bg-brand-50/40' : 'border-slate-200 hover:border-slate-300'"
+                            class="w-full text-left p-3 rounded-lg border flex items-center justify-between gap-3 transition">
+                        <span>
+                            <span class="block text-sm font-semibold text-slate-900">Por <span x-text="pr.nombre.toLowerCase()"></span></span>
+                            <span class="block text-[11px] text-slate-500">1 <span x-text="pr.nombre"></span> = <span x-text="formatCantidad(pr.factor)"></span> <span x-text="selector.producto?.unidad"></span></span>
+                        </span>
+                        <span class="text-sm font-bold font-mono tabular-nums text-slate-900">$<span x-text="formatCurrency(pr.precio)"></span></span>
+                    </button>
+                </template>
+                <button type="button" @click="precioBase(selector.producto) > 0 && elegirOpcion('base')" :disabled="!(precioBase(selector.producto) > 0)"
+                        :class="selector.opcion === 'base' ? 'border-brand-600 ring-1 ring-brand-500 bg-brand-50/40' : 'border-slate-200 hover:border-slate-300'"
+                        class="w-full text-left p-3 rounded-lg border flex items-center justify-between gap-3 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span>
+                        <span class="block text-sm font-semibold text-slate-900">Por <span x-text="selector.producto?.unidad"></span> (fracciones)</span>
+                        <span class="block text-[11px]" :class="precioBase(selector.producto) > 0 ? 'text-slate-500' : 'text-danger-text font-semibold'"
+                              x-text="precioBase(selector.producto) > 0 ? 'Ej. 2,35 ' + (selector.producto?.unidad || '') : 'Sin precio por ' + (selector.producto?.unidad || '') + ': defínelo en el producto'"></span>
+                    </span>
+                    <span class="text-sm font-bold font-mono tabular-nums text-slate-900" x-show="precioBase(selector.producto) > 0">$<span x-text="formatCurrency(precioBase(selector.producto))"></span></span>
+                </button>
+            </div>
+
+            <div>
+                <label class="label-base">Cantidad (<span x-text="unidadSelector"></span>)</label>
+                <input type="number" x-ref="selectorCantidad" x-model.number="selector.cantidad" @keydown.enter.prevent="confirmarSelector()"
+                       :step="selectorPermiteDecimales ? 0.01 : 1" :min="selectorPermiteDecimales ? 0.01 : 1" class="input text-lg font-bold font-mono tabular-nums">
+                <p class="text-[11px] text-slate-500 mt-1 font-mono tabular-nums" x-text="equivalenciaSelector"></p>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
+                <button type="button" @click="selector.abierto = false" class="btn-secondary text-xs">Cancelar</button>
+                <button type="button" @click="confirmarSelector()" :disabled="!(selector.cantidad > 0)" class="btn-primary text-xs disabled:opacity-50">Agregar al carrito</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL DE ÉXITO Y TICKET -->
     <div x-cloak x-show="modalExito" class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4 p-6">
@@ -712,6 +773,7 @@ function posTerminal(config) {
         puedeVerCartera: config.puedeVerCartera,
 
         cotizacion: config.cotizacion || null,
+        selector: { abierto: false, producto: null, opcion: null, cantidad: 1 },
         descuentoGlobal: 0,
         motivoDescuento: '',
         itemsOmitidos: [],
@@ -771,9 +833,13 @@ function posTerminal(config) {
                     this.itemsOmitidos.push(it.descripcion);
                     return;
                 }
-                this.addToCart(producto);
-                const linea = this.cart.find(i => i.id === producto.id);
-                linea.cantidad = it.cantidad;
+                const presentacion = it.presentacion_id ? (producto.presentaciones || []).find(x => x.id === it.presentacion_id) : null;
+                if (it.presentacion_id && !presentacion) {
+                    this.itemsOmitidos.push(it.descripcion + ' (presentación no disponible)');
+                    return;
+                }
+                const linea = this.agregarLinea(producto, presentacion, 0);
+                linea.cantidad = this.redondearCantidad(linea.cantidad + it.cantidad);
                 linea.descuento = it.cantidad > 0 ? it.descuento / it.cantidad : 0;
             });
         },
@@ -787,6 +853,8 @@ function posTerminal(config) {
 
         // Precio según la lista asignada al cliente seleccionado (el servidor aplica la misma regla)
         precioPara(product) {
+            // La presentación (ej. caja) tiene precio propio; las listas de precios solo aplican a la unidad base
+            if (product.presentacion_id) return parseFloat(product.precio_presentacion);
             const listaId = this.selectedCliente?.lista_precio_id;
             const precioLista = listaId ? product.precios_listas?.[listaId] : undefined;
             return parseFloat(precioLista ?? product.precio_venta);
@@ -874,25 +942,121 @@ function posTerminal(config) {
         },
 
         addToCart(product) {
-            const existing = this.cart.find(i => i.id === product.id);
-            if (existing) {
-                existing.cantidad += 1;
-            } else {
-                this.cart.push({
-                    id: product.id,
-                    nombre: product.nombre,
-                    codigo: product.codigo_barras || product.sku || product.codigo,
-                    precio: this.precioPara(product),
-                    precio_venta: product.precio_venta,
-                    precios_listas: product.precios_listas,
-                    cantidad: 1,
-                    impuesto_porcentaje: parseFloat(product.iva_porcentaje || 0),
-                    descuento: 0,
-                    stock: product.stock,
-                    unidad: product.unidad,
-                    imagen_url: product.imagen_url || null
-                });
+            // Venta por medida: si el producto tiene presentaciones se elige cómo venderlo (caja o m²)
+            if (product.presentaciones && product.presentaciones.length) {
+                this.abrirSelector(product);
+                return;
             }
+            this.agregarLinea(product, null, 1);
+        },
+
+        agregarLinea(product, presentacion, cantidad) {
+            const key = product.id + '-' + (presentacion ? presentacion.id : 0);
+            const existing = this.cart.find(i => i.key === key);
+            if (existing) {
+                existing.cantidad = this.redondearCantidad(existing.cantidad + cantidad);
+                return existing;
+            }
+            const linea = {
+                key,
+                id: product.id,
+                nombre: product.nombre,
+                codigo: product.codigo_barras || product.sku || product.codigo,
+                presentacion_id: presentacion ? presentacion.id : null,
+                precio_presentacion: presentacion ? presentacion.precio : null,
+                factor: presentacion ? presentacion.factor : 1,
+                unidad: presentacion ? presentacion.nombre + ' (' + this.formatCantidad(presentacion.factor) + ' ' + product.unidad + ')' : product.unidad,
+                unidad_base: product.unidad,
+                permite_decimales: presentacion ? !!presentacion.permite_decimales : !!product.permite_decimales,
+                precio_venta: product.precio_venta,
+                precios_listas: product.precios_listas,
+                cantidad: cantidad,
+                impuesto_porcentaje: parseFloat(product.iva_porcentaje || 0),
+                descuento: 0,
+                stock: product.stock,
+                imagen_url: product.imagen_url || null
+            };
+            linea.precio = this.precioPara(linea);
+            this.cart.push(linea);
+            return linea;
+        },
+
+        precioBase(product) {
+            if (!product) return 0;
+            return this.precioPara({ ...product, presentacion_id: null });
+        },
+
+        // En la grilla: si el producto aún no tiene precio por unidad base, se muestra el de su presentación
+        precioGrilla(product) {
+            const base = this.precioBase(product);
+            if (base > 0 || !(product.presentaciones && product.presentaciones.length)) {
+                return { precio: base, etiqueta: product.presentaciones?.length ? '/' + product.unidad : '' };
+            }
+            const pr = product.presentaciones.find(x => x.predeterminada) || product.presentaciones[0];
+            return { precio: pr.precio, etiqueta: '/' + pr.nombre };
+        },
+
+        abrirSelector(product, opcion = null) {
+            const pr = product.presentaciones.find(x => x.predeterminada) || product.presentaciones[0];
+            this.selector = { abierto: true, producto: product, opcion: opcion ?? pr.id, cantidad: 1 };
+            this.$nextTick(() => { this.$refs.selectorCantidad?.focus(); this.$refs.selectorCantidad?.select(); });
+        },
+
+        elegirOpcion(opcion) {
+            this.selector.opcion = opcion;
+            if (!this.selectorPermiteDecimales) this.selector.cantidad = Math.max(1, Math.round(this.selector.cantidad || 1));
+            this.$nextTick(() => this.$refs.selectorCantidad?.focus());
+        },
+
+        get presentacionSelector() {
+            return (this.selector.producto?.presentaciones || []).find(x => x.id === this.selector.opcion) || null;
+        },
+
+        get selectorPermiteDecimales() {
+            return this.presentacionSelector ? !!this.presentacionSelector.permite_decimales : !!this.selector.producto?.permite_decimales;
+        },
+
+        get unidadSelector() {
+            return this.presentacionSelector ? this.presentacionSelector.nombre : (this.selector.producto?.unidad || '');
+        },
+
+        // Equivalencia informativa entre unidades (sin redondear ni sumar desperdicio)
+        get equivalenciaSelector() {
+            const prod = this.selector.producto;
+            const q = parseFloat(this.selector.cantidad) || 0;
+            if (!prod || q <= 0) return '';
+            const pr = this.presentacionSelector;
+            if (pr) {
+                return '= ' + this.formatCantidad(q * pr.factor) + ' ' + prod.unidad;
+            }
+            const ref = prod.presentaciones.find(x => x.predeterminada) || prod.presentaciones[0];
+            const completas = Math.floor((q + 1e-9) / ref.factor);
+            const resto = this.redondearCantidad(q - completas * ref.factor);
+            return '= ' + completas + ' ' + ref.nombre + (completas === 1 ? '' : 's') + (resto > 0 ? ' + ' + this.formatCantidad(resto) + ' ' + prod.unidad : '') + ' (1 ' + ref.nombre + ' = ' + this.formatCantidad(ref.factor) + ' ' + prod.unidad + ')';
+        },
+
+        confirmarSelector() {
+            let cantidad = parseFloat(this.selector.cantidad) || 0;
+            if (cantidad <= 0) return;
+            if (!this.selectorPermiteDecimales) cantidad = Math.round(cantidad);
+            if (cantidad <= 0) return;
+            this.agregarLinea(this.selector.producto, this.presentacionSelector, this.redondearCantidad(cantidad));
+            this.selector.abierto = false;
+            this.focusSearch();
+        },
+
+        normalizarCantidad(item) {
+            let q = parseFloat(item.cantidad) || 0;
+            if (!item.permite_decimales) q = Math.round(q);
+            item.cantidad = q > 0 ? this.redondearCantidad(q) : (item.permite_decimales ? 0.01 : 1);
+        },
+
+        redondearCantidad(q) {
+            return Math.round(q * 10000) / 10000;
+        },
+
+        formatCantidad(q) {
+            return new Intl.NumberFormat('es-CO', { maximumFractionDigits: 4 }).format(q || 0);
         },
 
         updateQty(idx, delta) {
@@ -929,6 +1093,16 @@ function posTerminal(config) {
                 this.addToCart(exact);
                 this.searchQuery = '';
                 return;
+            }
+
+            // Código de barras de una presentación (ej. la caja): se agrega directo en esa presentación
+            for (const prod of this.allProducts) {
+                const pr = (prod.presentaciones || []).find(x => x.codigo_barras && x.codigo_barras.toLowerCase() === q);
+                if (pr) {
+                    this.agregarLinea(prod, pr, 1);
+                    this.searchQuery = '';
+                    return;
+                }
             }
 
             if (this.filteredProducts.length === 1) {
@@ -1065,6 +1239,7 @@ function posTerminal(config) {
                 motivo_descuento: this.descuentoAplicado > 0 ? this.motivoDescuento.trim() : null,
                 items: this.cart.map(i => ({
                     producto_id: i.id,
+                    presentacion_id: i.presentacion_id || null,
                     cantidad: i.cantidad,
                     precio_unitario: i.precio,
                     // El carrito guarda el descuento por unidad; el servidor espera el descuento total de la línea

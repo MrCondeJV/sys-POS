@@ -94,7 +94,7 @@
                     <div class="text-sm font-semibold text-slate-900">{{ $d->descripcion }}</div>
                     <div class="text-[11px] text-slate-500 font-mono">{{ $d->producto?->codigo ?? '—' }}</div>
                 </td>
-                <td class="px-4 py-3 text-center font-mono">{{ rtrim(rtrim(number_format($d->cantidad, 2, ',', '.'), '0'), ',') }}</td>
+                <td class="px-4 py-3 text-center font-mono">{{ $d->cantidadTexto() }} <span class="block text-[11px] text-slate-500 font-sans">{{ $d->unidadTexto() }}</span></td>
                 <td class="px-4 py-3 text-right font-mono">${{ number_format($d->precio_unitario, 0, ',', '.') }}</td>
                 <td class="px-4 py-3 text-right font-mono">{{ (float) $d->descuento > 0 ? '$' . number_format($d->descuento, 0, ',', '.') : '—' }}</td>
                 <td class="px-4 py-3 text-center font-mono">{{ number_format($d->impuesto_porcentaje, 0) }}%</td>

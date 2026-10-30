@@ -14,7 +14,7 @@ class DocumentoPdfService
 {
     public function cotizacion(Cotizacion $cotizacion): DomPdf
     {
-        $cotizacion->loadMissing(['empresa', 'sucursal', 'cliente', 'usuario', 'detalles.producto']);
+        $cotizacion->loadMissing(['empresa', 'sucursal', 'cliente', 'usuario', 'detalles.producto.unidadMedida', 'detalles.presentacion']);
 
         $datos = ['Fecha' => $cotizacion->fecha->format('d/m/Y')];
         if ($cotizacion->fecha_validez) {
@@ -34,6 +34,7 @@ class DocumentoPdfService
             'lineas' => $cotizacion->detalles->map(fn ($d) => [
                 'codigo' => $d->producto?->codigo ?? '',
                 'descripcion' => $d->descripcion,
+                'unidad' => $d->unidadTexto(),
                 'cantidad' => (float) $d->cantidad,
                 'precio_unitario' => (float) $d->precio_unitario,
                 'descuento' => (float) $d->descuento,
@@ -52,7 +53,7 @@ class DocumentoPdfService
 
     public function venta(Venta $venta): DomPdf
     {
-        $venta->loadMissing(['empresa', 'sucursal', 'cliente', 'usuario', 'detalles.producto']);
+        $venta->loadMissing(['empresa', 'sucursal', 'cliente', 'usuario', 'detalles.producto.unidadMedida', 'detalles.presentacion']);
 
         $datos = [
             'Fecha' => $venta->fecha->format('d/m/Y H:i'),
@@ -73,6 +74,7 @@ class DocumentoPdfService
             'lineas' => $venta->detalles->map(fn ($d) => [
                 'codigo' => $d->producto?->codigo ?? '',
                 'descripcion' => $d->producto?->nombre ?? 'Artículo',
+                'unidad' => $d->unidadTexto(),
                 'cantidad' => (float) $d->cantidad,
                 'precio_unitario' => (float) $d->precio_unitario,
                 'descuento' => (float) $d->descuento,

@@ -226,6 +226,15 @@
                         </select>
                     </x-field>
                 </div>
+
+                <div class="sm:col-span-6">
+                    <x-field label="M2 por caja (opcional)" name="m2_por_caja"
+                        hint="Úsalo si la unidad actual es Caja. Al guardar, convierte stock y costos a M2, conserva la caja y su precio; el precio por M2 queda en $0 para que lo definas.">
+                        <input type="number" min="0.0001" step="0.0001" name="m2_por_caja" id="m2_por_caja"
+                            value="{{ old('m2_por_caja') }}" placeholder="Ej: 1.44"
+                            class="block w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900 tabular-nums placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+                    </x-field>
+                </div>
             </div>
         </div>
 

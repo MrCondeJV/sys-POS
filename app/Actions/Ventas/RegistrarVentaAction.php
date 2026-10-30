@@ -172,6 +172,12 @@ class RegistrarVentaAction
                 $precioUnitario = $this->resolverPrecioUnitario($producto, $presentacion, $listaPrecio);
                 $impuestoPorcentaje = $producto->porcentaje_iva;
 
+                // Venta por medida: si el precio de la unidad base (ej. m²) aún no se define, solo se vende por presentación
+                if (! $presentacion && $precioUnitario <= 0 && $producto->presentaciones()->exists()) {
+                    $unidad = $producto->unidadMedida?->codigo ?? 'unidad base';
+                    throw new InvalidArgumentException("El producto '{$producto->nombre}' aún no tiene precio por {$unidad}. Véndelo por su presentación (ej. caja) o define el precio por {$unidad}.");
+                }
+
                 $descuentoItem = isset($item['descuento']) ? (float) $item['descuento'] : 0.0;
                 if ($descuentoItem < 0) {
                     throw new InvalidArgumentException('El descuento de un ítem no puede ser negativo.');
@@ -211,7 +217,9 @@ class RegistrarVentaAction
                     'lote_id' => $loteId,
                     'lote' => $lote,
                     'precio_unitario' => $precioUnitario,
-                    'costo_unitario' => (float) ($producto->precio_costo ?? 0),
+                    // Costo por unidad vendida (una caja cuesta factor × costo de la unidad base)
+                    'costo_unitario' => round((float) ($producto->precio_costo ?? 0) * $factorConversion, 2),
+                    'costo_base' => (float) ($producto->precio_costo ?? 0),
                     'descuento' => $descuentoItem,
                     'impuesto_porcentaje' => $impuestoPorcentaje,
                     'impuesto_monto' => $impuestoLinea,
@@ -334,7 +342,7 @@ class RegistrarVentaAction
                     tipo: TipoMovimientoInventario::SALIDA_VENTA,
                     cantidad: $det['cantidad_base'],
                     referencia: $numeroVenta,
-                    costoUnitario: $det['costo_unitario'],
+                    costoUnitario: $det['costo_base'],
                     userId: $userId,
                     notas: "Venta {$numeroVenta}"
                 ));

@@ -82,7 +82,7 @@ class PosController extends Controller
 
         $catalogo = Producto::where('empresa_id', $empresaId)
             ->activo()
-            ->with(['categoria', 'unidadMedida', 'impuesto'])
+            ->with(['categoria', 'unidadMedida', 'impuesto', 'presentaciones' => fn ($q) => $q->where('estado', EstadoGeneral::ACTIVO->value)->with('unidadMedida')])
             ->orderBy('nombre')
             ->get();
 
@@ -109,8 +109,19 @@ class PosController extends Controller
                 'categoria_id' => $p->categoria_id,
                 'categoria_nombre' => $p->categoria?->nombre ?? 'General',
                 'unidad' => $p->unidadMedida?->codigo ?? 'UND',
+                'permite_decimales' => (bool) $p->unidadMedida?->permite_decimales,
                 'iva_porcentaje' => $p->porcentaje_iva,
                 'imagen_url' => $p->imagen_url,
+                // Venta por medida: cómo más se puede vender (ej. Caja = 1,44 m²). El precio de la presentación no usa listas.
+                'presentaciones' => $p->presentaciones->map(fn ($pr) => [
+                    'id' => $pr->id,
+                    'nombre' => $pr->nombre,
+                    'factor' => (float) $pr->factor_conversion,
+                    'precio' => (float) $pr->precio_venta > 0 ? (float) $pr->precio_venta : round((float) $p->precio_venta * (float) $pr->factor_conversion, 2),
+                    'codigo_barras' => $pr->codigo_barras ?? '',
+                    'permite_decimales' => (bool) $pr->unidadMedida?->permite_decimales,
+                    'predeterminada' => (bool) $pr->es_predeterminada,
+                ])->values(),
             ];
         })->values();
 
@@ -151,6 +162,7 @@ class PosController extends Controller
                     'vencida' => $modelo->estaVencida(),
                     'items' => $modelo->detalles->map(fn ($d) => [
                         'producto_id' => $d->producto_id,
+                        'presentacion_id' => $d->presentacion_id,
                         'descripcion' => $d->descripcion,
                         'cantidad' => (float) $d->cantidad,
                         'descuento' => (float) $d->descuento,
@@ -252,6 +264,7 @@ class PosController extends Controller
             'items.*.precio_unitario' => ['required', 'numeric', 'min:0'],
             'items.*.descuento' => ['nullable', 'numeric', 'min:0'],
             'items.*.impuesto_porcentaje' => ['nullable', 'numeric', 'min:0'],
+            'items.*.presentacion_id' => ['nullable', 'integer', 'exists:producto_presentaciones,id', new BelongsToActiveCompany('producto_presentaciones')],
             'cotizacion_id' => ['nullable', 'integer', 'exists:cotizaciones,id', new BelongsToActiveCompany('cotizaciones')],
         ]);
 

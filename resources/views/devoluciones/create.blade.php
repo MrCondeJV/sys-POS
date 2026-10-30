@@ -56,6 +56,7 @@
                         <tr class="{{ $disponible <= 0 ? 'bg-slate-50/70 opacity-60' : '' }}">
                             <td>
                                 <div class="font-semibold text-slate-900 text-xs">{{ $det->producto->nombre }}</div>
+                                <div class="text-[11px] text-slate-500">Vendido en: {{ $det->unidadTexto() }}</div>
                                 <div class="text-[11px] text-slate-400 font-mono">{{ $det->producto->codigo ?? $det->producto->sku ?? '' }}</div>
                                 <input type="hidden" name="items[{{ $idx }}][venta_detalle_id]" value="{{ $det->id }}">
                             </td>

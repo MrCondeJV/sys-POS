@@ -186,6 +186,7 @@ class CatalogoController extends Controller
 
         UnidadMedida::create(array_merge($validated, [
             'empresa_id' => $empresaId,
+            'permite_decimales' => $request->boolean('permite_decimales'),
             'activo' => true,
         ]));
 
@@ -211,7 +212,7 @@ class CatalogoController extends Controller
             ],
         ]);
 
-        $unidad->update($validated);
+        $unidad->update(array_merge($validated, ['permite_decimales' => $request->boolean('permite_decimales')]));
 
         return back()->with('success', 'Unidad de medida actualizada.');
     }
