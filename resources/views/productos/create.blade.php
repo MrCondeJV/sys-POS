@@ -28,6 +28,7 @@
           x-data="{
               precioCompra: {{ old('precio_compra', 0) }},
               precioVenta: {{ old('precio_venta', 0) }},
+              m2PorCaja: @js(old('m2_por_caja', '')),
               iva: {{ old('iva', 0) }},
               get margenGanancia() {
                   let pc = parseFloat(this.precioCompra) || 0;
@@ -229,10 +230,18 @@
 
                 <div class="sm:col-span-6">
                     <x-field label="M2 por caja (opcional)" name="m2_por_caja"
-                        hint="Úsalo si la unidad actual es Caja. Al guardar, convierte stock y costos a M2, conserva la caja y su precio; el precio por M2 queda en $0 para que lo definas.">
+                        hint="Al indicar el factor, el stock y el costo se convertirán a M2 y se conservará la caja con su precio.">
                         <input type="number" min="0.0001" step="0.0001" name="m2_por_caja" id="m2_por_caja"
-                            value="{{ old('m2_por_caja') }}" placeholder="Ej: 1.44"
+                            x-model="m2PorCaja" value="{{ old('m2_por_caja') }}" placeholder="Ej: 1.44"
                             class="block w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900 tabular-nums placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
+                    </x-field>
+                </div>
+                <div class="sm:col-span-6" x-cloak x-show="Number(m2PorCaja) > 0">
+                    <x-field label="Precio de venta por M2 ($)" name="precio_venta_m2"
+                        hint="Este será el precio unitario para vender por M2. El precio de caja se conserva en el campo de precio de venta.">
+                        <input type="number" min="0" step="0.01" name="precio_venta_m2" id="precio_venta_m2"
+                            value="{{ old('precio_venta_m2') }}" placeholder="Ej: 85000"
+                            class="block w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-bold text-slate-900 tabular-nums placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500 transition">
                     </x-field>
                 </div>
             </div>

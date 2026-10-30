@@ -17,15 +17,19 @@ class ConvertirProductoAMedidaAction
 {
     public const REFERENCIA = 'CONVERSION-UNIDAD';
 
-    public function execute(Producto $producto, float $factor, ?int $userId = null): ProductoPresentacion
-    {
+    public function execute(
+        Producto $producto,
+        float $factor,
+        ?int $userId = null,
+        ?float $precioVentaM2 = null
+    ): ProductoPresentacion {
         if ($factor <= 0) {
             throw ValidationException::withMessages([
                 'm2_por_caja' => 'El factor de conversión debe ser mayor a cero.',
             ]);
         }
 
-        return DB::transaction(function () use ($producto, $factor, $userId) {
+        return DB::transaction(function () use ($producto, $factor, $userId, $precioVentaM2) {
             $producto = Producto::withoutGlobalScopes()
                 ->where('empresa_id', $producto->empresa_id)
                 ->lockForUpdate()
@@ -149,7 +153,7 @@ class ConvertirProductoAMedidaAction
             $producto->update([
                 'unidad_medida_id' => $unidadDestino->id,
                 'precio_compra' => $costoBase,
-                'precio_venta' => 0,
+                'precio_venta' => $precioVentaM2 ?? 0,
                 'precio_mayorista' => $producto->precio_mayorista !== null
                     ? round((float) $producto->precio_mayorista / $factor, 2)
                     : null,

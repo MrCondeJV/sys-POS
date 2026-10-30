@@ -371,10 +371,13 @@ class ConversionYVentaPorMedidaTest extends TestCase
     {
         $this->actingAs($this->admin)->get(route('productos.create'))
             ->assertOk()
-            ->assertSee('m2_por_caja');
+            ->assertSee('m2_por_caja')
+            ->assertSee('precio_venta_m2')
+            ->assertSee('x-show="Number(m2PorCaja) > 0"', false);
         $this->actingAs($this->admin)->get(route('productos.edit', $this->piso))
             ->assertOk()
-            ->assertSee('m2_por_caja');
+            ->assertSee('m2_por_caja')
+            ->assertSee('precio_venta_m2');
 
         $this->convertir();
 
@@ -392,6 +395,7 @@ class ConversionYVentaPorMedidaTest extends TestCase
             'unidad_medida_id' => $this->caja->id,
             'precio_compra' => 79700,
             'precio_venta' => 112000,
+            'precio_venta_m2' => 85000,
             'precio_mayorista' => 100000,
             'precio_distribuidor' => 90000,
             'stock' => 2,
@@ -399,7 +403,7 @@ class ConversionYVentaPorMedidaTest extends TestCase
             'iva' => 19,
             'm2_por_caja' => 1.44,
         ])->assertRedirect(route('productos.index'))
-            ->assertSessionHas('success', 'Producto registrado y convertido a M2. Define el precio de venta por M2 para habilitar esa modalidad.');
+            ->assertSessionHas('success', 'Producto convertido a M2 con precio configurado; ya se puede vender por caja o por M2.');
 
         $producto = Producto::withoutGlobalScopes()->where('codigo', 'PISO-NUEVO')->firstOrFail();
         $presentacion = ProductoPresentacion::withoutGlobalScopes()
@@ -409,7 +413,7 @@ class ConversionYVentaPorMedidaTest extends TestCase
         $this->assertEquals($this->m2->id, $producto->unidad_medida_id);
         $this->assertEquals(2.88, (float) $producto->stock);
         $this->assertEquals(round(79700 / 1.44, 2), (float) $producto->precio_compra);
-        $this->assertEquals(0, (float) $producto->precio_venta);
+        $this->assertEquals(85000, (float) $producto->precio_venta);
         $this->assertEquals(round(100000 / 1.44, 2), (float) $producto->precio_mayorista);
         $this->assertEquals(round(90000 / 1.44, 2), (float) $producto->precio_distribuidor);
         $this->assertEquals(1.44, (float) $presentacion->factor_conversion);
@@ -425,12 +429,14 @@ class ConversionYVentaPorMedidaTest extends TestCase
             'unidad_medida_id' => $this->caja->id,
             'precio_compra' => 79700,
             'precio_venta' => 112000,
+            'precio_venta_m2' => 87000,
             'stock_minimo' => 2,
             'iva' => 19,
             'm2_por_caja' => 1.44,
         ])->assertRedirect(route('productos.index'));
 
         $this->assertEquals($this->m2->id, $this->piso->fresh()->unidad_medida_id);
+        $this->assertEquals(87000, (float) $this->piso->fresh()->precio_venta);
         $this->assertEquals(15.12, $this->stock());
         $this->assertEquals(2.88, (float) Inventario::withoutGlobalScopes()->where('producto_id', $this->piso->id)->value('stock_minimo'));
         $this->assertEquals(1.44, (float) $this->presentacionCaja()->factor_conversion);

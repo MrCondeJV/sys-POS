@@ -123,6 +123,7 @@ class ProductoController extends Controller
             'precio_mayorista' => ['nullable', 'numeric', 'min:0'],
             'precio_distribuidor' => ['nullable', 'numeric', 'min:0'],
             'm2_por_caja' => ['nullable', 'numeric', 'gt:0', 'max:99999999.9999'],
+            'precio_venta_m2' => ['nullable', 'numeric', 'min:0'],
             'stock' => ['nullable', 'numeric', 'min:0'],
             'stock_minimo' => ['nullable', 'numeric', 'min:0'],
             'iva' => ['nullable', 'numeric', 'min:0', 'max:100'],
@@ -130,7 +131,9 @@ class ProductoController extends Controller
             'imagen' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ]);
         $factorM2PorCaja = $validated['m2_por_caja'] ?? null;
+        $precioVentaM2 = $validated['precio_venta_m2'] ?? null;
         unset($validated['m2_por_caja']);
+        unset($validated['precio_venta_m2']);
 
         $imagenPath = null;
         if ($request->hasFile('imagen') && $request->file('imagen')->isValid()) {
@@ -148,7 +151,8 @@ class ProductoController extends Controller
             $sucursalId,
             $movimientoAction,
             $conversionAction,
-            $factorM2PorCaja
+            $factorM2PorCaja,
+            $precioVentaM2
         ) {
             $producto = Producto::create(array_merge($validated, [
                 'empresa_id' => $empresaId,
@@ -176,7 +180,12 @@ class ProductoController extends Controller
             }
 
             if ($factorM2PorCaja !== null) {
-                $conversionAction->execute($producto, (float) $factorM2PorCaja, auth()->id());
+                $conversionAction->execute(
+                    $producto,
+                    (float) $factorM2PorCaja,
+                    auth()->id(),
+                    $precioVentaM2 !== null ? (float) $precioVentaM2 : null
+                );
             }
         });
 
@@ -184,7 +193,9 @@ class ProductoController extends Controller
             ->with(
                 'success',
                 $factorM2PorCaja !== null
-                    ? 'Producto registrado y convertido a M2. Define el precio de venta por M2 para habilitar esa modalidad.'
+                    ? ((float) ($precioVentaM2 ?? 0) > 0
+                        ? 'Producto convertido a M2 con precio configurado; ya se puede vender por caja o por M2.'
+                        : 'Producto registrado y convertido a M2. Define el precio por M2 para habilitar esa modalidad.')
                     : 'Producto registrado exitosamente.'
             );
     }
@@ -245,6 +256,7 @@ class ProductoController extends Controller
             'precio_mayorista' => ['nullable', 'numeric', 'min:0'],
             'precio_distribuidor' => ['nullable', 'numeric', 'min:0'],
             'm2_por_caja' => ['nullable', 'numeric', 'gt:0', 'max:99999999.9999'],
+            'precio_venta_m2' => ['nullable', 'numeric', 'min:0'],
             'stock' => ['nullable', 'numeric', 'min:0'],
             'stock_minimo' => ['nullable', 'numeric', 'min:0'],
             'iva' => ['nullable', 'numeric', 'min:0', 'max:100'],
@@ -253,7 +265,9 @@ class ProductoController extends Controller
             'eliminar_imagen' => ['nullable', 'boolean'],
         ]);
         $factorM2PorCaja = $validated['m2_por_caja'] ?? null;
+        $precioVentaM2 = $validated['precio_venta_m2'] ?? null;
         unset($validated['m2_por_caja']);
+        unset($validated['precio_venta_m2']);
 
         $imagenPath = $producto->imagen_path;
 
@@ -269,7 +283,7 @@ class ProductoController extends Controller
             $imagenPath = $request->file('imagen')->store("productos/{$empresaId}", 'public');
         }
 
-        DB::transaction(function () use ($producto, $validated, $imagenPath, $factorM2PorCaja, $conversionAction) {
+        DB::transaction(function () use ($producto, $validated, $imagenPath, $factorM2PorCaja, $precioVentaM2, $conversionAction) {
             $producto->update(array_merge($validated, [
                 'imagen_path' => $imagenPath,
                 'precio_compra' => $validated['precio_compra'] ?? 0,
@@ -279,7 +293,12 @@ class ProductoController extends Controller
             ]));
 
             if ($factorM2PorCaja !== null) {
-                $conversionAction->execute($producto, (float) $factorM2PorCaja, auth()->id());
+                $conversionAction->execute(
+                    $producto,
+                    (float) $factorM2PorCaja,
+                    auth()->id(),
+                    $precioVentaM2 !== null ? (float) $precioVentaM2 : null
+                );
             }
         });
 
@@ -287,7 +306,9 @@ class ProductoController extends Controller
             ->with(
                 'success',
                 $factorM2PorCaja !== null
-                    ? 'Producto convertido a M2. Define el precio de venta por M2 para habilitar esa modalidad.'
+                    ? ((float) ($precioVentaM2 ?? 0) > 0
+                        ? 'Producto convertido a M2 con precio configurado; ya se puede vender por caja o por M2.'
+                        : 'Producto convertido a M2. Define el precio por M2 para habilitar esa modalidad.')
                     : 'Producto actualizado exitosamente.'
             );
     }
